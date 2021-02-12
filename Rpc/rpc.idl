@@ -1,0 +1,16 @@
+[
+    uuid(ed838ecd-8a1e-4da7-bfda-9f2d12d07893),
+    version(1.0),
+    implicit_handle(handle_t hSpyBinding),
+]
+
+interface ISpy
+{
+    import "rpc_types.h";
+
+    int IsLogin();
+    int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
+
+    void EnableReceiveMsg();
+    [callback] int ReceiveMsg([ in ] RpcMessage_t *msg);
+};

@@ -1,0 +1,13 @@
+.*
+!.gitignore
+!.editorconfig
+
+# VS2019 build files
+Debug/
+Release/
+x64/
+
+# RPC generated files
+*_c.c
+*_s.c
+*_h.h

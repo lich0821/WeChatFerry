@@ -1,0 +1,46 @@
+#pragma once
+
+#include "framework.h"
+#include <queue>
+
+#include "rpc_types.h"
+
+typedef struct UserInfoCall {
+    DWORD wxid;
+    DWORD nickName;
+    DWORD mobile;
+} UserInfoCall_t;
+
+typedef struct RecvMsg {
+    DWORD hook;    // Hook地址
+    DWORD call;    // Call地址
+    DWORD type;    // 消息类型地址
+    DWORD isSelf;  // 是否自己发送标志地址
+    DWORD msgId;   // 消息ID地址
+    DWORD msgXml;  // 消息xml内容地址
+    DWORD roomId;  // 群聊时，为群ID；私聊时，为微信ID
+    DWORD wxId;    // 私聊时，为空；群群时，为发送者微信ID
+    DWORD content; // 消息内容地址
+} RecvMsg_t;
+
+typedef struct SendImg {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+} SendImg_t;
+
+typedef struct WxCalls {
+    DWORD login;       // 登录状态
+    UserInfoCall_t ui; // 用户信息
+    DWORD sendTextMsg; // 发送消息
+    RecvMsg_t recvMsg; // 接收消息
+} WxCalls_t;
+
+typedef struct TextStruct {
+    wchar_t *text;
+    DWORD size;
+    DWORD capacity;
+    char fill[8];
+} TextStruct_t;
+
+typedef std::queue<RpcMessage_t> MsgQueue_t;

@@ -1,0 +1,5 @@
+EXPORTS
+	WxInitSDK
+	WxSetTextMsgCb
+	WxSendTextMsg
+	WxGetMsgTypes
