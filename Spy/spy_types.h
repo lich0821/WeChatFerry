@@ -34,6 +34,7 @@ typedef struct WxCalls {
     UserInfoCall_t ui; // 用户信息
     DWORD sendTextMsg; // 发送消息
     RecvMsg_t recvMsg; // 接收消息
+    SendImg_t sendImg; // 发送图片
 } WxCalls_t;
 
 typedef struct TextStruct {

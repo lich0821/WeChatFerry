@@ -225,6 +225,24 @@ int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg)
     return innerWxSendTextMsg(wxid.c_str(), at_wxid.c_str(), msg.c_str());
 }
 
+static int innerWxSendImageMsg(const wchar_t *wxid, const wchar_t *path)
+{
+    int ret              = 0;
+    unsigned long ulCode = 0;
+
+    RpcTryExcept { ret = client_SendImageMsg(wxid, path); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept
+
+        return ret;
+}
+
+int WxSendImageMsg(wstring wxid, wstring path) { return innerWxSendImageMsg(wxid.c_str(), path.c_str()); }
+
 static int getAddrHandle(DWORD *addr, HANDLE *handle)
 {
     DWORD processID     = 0;

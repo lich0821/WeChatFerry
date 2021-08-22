@@ -25,6 +25,7 @@ PYBIND11_MODULE(wcferry, m)
     m.def("WxInitSDK", &WxInitSDK);
     m.def("WxSetTextMsgCb", &WxSetTextMsgCbPy);
     m.def("WxSendTextMsg", &WxSendTextMsg);
+    m.def("WxSendImageMsg", &WxSendImageMsg);
     m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference);
 
 #ifdef VERSION_INFO

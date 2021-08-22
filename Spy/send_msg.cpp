@@ -47,3 +47,48 @@ void SendTextMessage(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t 
             add esp, 0xC
     }
 }
+
+void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
+{
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+    char buf1[0x20]      = { 0 };
+    char buf2[0x378]     = { 0 };
+    TextStruct_t imgWxid = { 0 };
+    TextStruct_t imgPath = { 0 };
+
+    wstring wsWxid = wxid;
+    wstring wsPath = path;
+
+    imgWxid.text     = (wchar_t *)wsWxid.c_str();
+    imgWxid.size     = wsWxid.size();
+    imgWxid.capacity = wsWxid.capacity();
+
+    imgPath.text     = (wchar_t *)wsPath.c_str();
+    imgPath.size     = wsPath.size();
+    imgPath.capacity = wsPath.capacity();
+
+    // 发送图片Call地址 = 微信基址 + 偏移
+    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
+    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call2;
+    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call3;
+
+    __asm {
+        pushad
+        sub esp, 0x14
+        lea eax, buf1
+        mov ecx, esp
+        push eax
+        call sendCall1
+        lea ebx, imgPath
+        push ebx
+        lea eax, imgWxid
+        push eax
+        lea eax, buf2
+        push eax
+        call sendCall2
+        mov ecx, eax
+        call sendCall3
+    }
+}

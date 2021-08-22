@@ -46,6 +46,13 @@ int server_SendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_
     return 0;
 }
 
+int server_SendImageMsg(const wchar_t *wxid, const wchar_t *path)
+{
+    SendImageMessage(wxid, path);
+
+    return 0;
+}
+
 RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
 {
     return RPC_S_OK; // Always allow anyone.

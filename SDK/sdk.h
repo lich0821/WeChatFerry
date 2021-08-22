@@ -22,4 +22,5 @@ typedef map<int, wstring> MsgTypesMap_t;
 int WxInitSDK();
 int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg);
 int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg);
+int WxSendImageMsg(wstring wxid, wstring path);
 MsgTypesMap_t WxGetMsgTypes();

@@ -10,6 +10,7 @@ interface ISpy
 
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
+    int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
 
     void EnableReceiveMsg();
     [callback] int ReceiveMsg([ in ] RpcMessage_t *msg);

@@ -3,3 +3,4 @@ EXPORTS
 	WxSetTextMsgCb
 	WxSendTextMsg
 	WxGetMsgTypes
+	WxSendImageMsg

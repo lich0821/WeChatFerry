@@ -24,6 +24,10 @@ def main():
     print("发送文本消息......")
     sdk.WxSendTextMsg("filehelper", "", "message from WeChatFerry...")
 
+    time.sleep(2)
+    print("发送图片消息......")
+    sdk.WxSendImageMsg("filehelper", "test.jpg")
+
     # 接收消息。先定义消息处理回调
     def OnTextMsg(msg: sdk.WxMessage):
         if msg.self == 1:  # 忽略自己发的消息

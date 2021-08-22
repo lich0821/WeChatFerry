@@ -123,7 +123,8 @@ xcopy /y $(OutDir)Spy.dll $(OutDir)wx\
 xcopy /y $(OutDir)SDK.dll $(OutDir)wx\
 xcopy /y $(OutDir)wcferry.pyd $(OutDir)wx\
 xcopy /y $(OutDir)App.exe $(OutDir)wx\
-xcopy /y $(SolutionDir)App\App.py $(OutDir)wx\</Command>
+xcopy /y $(SolutionDir)App\App.py $(OutDir)wx\
+xcopy /y $(SolutionDir)App\test.jpg $(OutDir)wx\</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy output</Message>

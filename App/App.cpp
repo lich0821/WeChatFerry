@@ -26,10 +26,11 @@ int onTextMsg(WxMessage_t msg)
 
 int main()
 {
-    DWORD status    = 0;
-    wstring wxid    = L"filehelper"; // 微信ID
-    wstring at_wxid = L"";
-    wstring content = L"这里填写消息内容";
+    DWORD status     = 0;
+    wstring wxid     = L"filehelper"; // 微信ID
+    wstring at_wxid  = L"";
+    wstring content  = L"这里填写消息内容";
+    wstring img_path = L"test.jpg";
 
     //_setmode(_fileno(stdout), _O_WTEXT); // 没有这个wcout遇到一些字符会导致console卡死，用了会导致脱离控制台
     _wsetlocale(LC_ALL, L"chs"); // 这是个大坑，不设置中文直接不见了。。。
@@ -51,6 +52,8 @@ int main()
 
     // 测试消息发送
     WxSendTextMsg(wxid, at_wxid, content);
+    // 发送照片
+    WxSendImageMsg(wxid, img_path);
 
     while (1) {
         Sleep(10000); // 休眠，释放CPU
