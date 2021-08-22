@@ -3,13 +3,13 @@
 
 #include "load_calls.h"
 
-#define SUPPORT_VERSION L"3.0.0.57"
-WxCalls_t wxCalls = { 0x1874F38,                           // Login Status
-                      { 0x1856BF0, 0x1856A8C, 0x1856AC0 }, // User Info: wxid, nickname, mobile
-                      0x38D8A0,                            // Send Message
-                      // Receive Message:
-                      // Hook,      call,   type, self,  id, msgXml, roomId, wxId, content
-                      { 0x36A350, 0x36A5A0, 0x30, 0x34, 0x164, 0x1A4, 0x40, 0x150, 0x68 } };
+#define SUPPORT_VERSION L"3.3.0.115"
+WxCalls_t wxCalls = { 0x1DDF60C,                           // Login Status
+                      { 0x1DDF4BC, 0x1DDF534, 0x1DDF568 }, // User Info: wxid, nickname, mobile
+                      0x3E3B80,                            // Send Message
+                      /* Receive Message:
+                            Hook,   call,   type, self,   id, msgXml, roomId, wxId, content */
+                      { 0x3C0D70, 0x3C0FA0, 0x38, 0x3C, 0x184, 0x1D8, 0x48, 0x170, 0x70 } };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)
 {
