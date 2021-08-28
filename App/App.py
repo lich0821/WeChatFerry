@@ -9,6 +9,7 @@ def main():
     print(dir(sdk))                     # 查看SDK支持的方法和属性
     help(sdk.WxSetTextMsgCb)            # 查看某方法的情况
     help(sdk.WxMessage)                 # 查看消息结构
+    help(sdk.WxContact)                 # 查看通讯录结构
     WxMsgTypes = sdk.WxGetMsgTypes()    # 获取消息类型
     print(WxMsgTypes)                   # 查看消息类型
 
@@ -21,6 +22,12 @@ def main():
     print("初始化成功")
 
     time.sleep(2)
+    print("打印通讯录......")
+    contacts = sdk.WxGetContacts()
+    for k, v in contacts.items():
+        print(k, v.wxCode, v.wxName, v.wxCountry, v.wxProvince, v.wxCity, v.wxGender)
+
+    time.sleep(2)
     print("发送文本消息......")
     sdk.WxSendTextMsg("filehelper", "", "message from WeChatFerry...")
 
@@ -30,15 +37,20 @@ def main():
 
     # 接收消息。先定义消息处理回调
     def OnTextMsg(msg: sdk.WxMessage):
+        s = "收到"
         if msg.self == 1:  # 忽略自己发的消息
+            s += f"来自自己的消息"
+            print(f"\n{s}")
+
             return 0
 
-        s = ""
         msgType = WxMsgTypes.get(msg.type, '未知消息类型')
+        nickName = contacts.get(msg.wxId, {'wxName': 'NoBody'}).wxName
         if msg.source == 0:
-            s += f"收到来自好友[{msg.wxId}]的{msgType}消息："
+            s += f"来自好友[{nickName}]的{msgType}消息："
         else:
-            s += f"收到来自群[{msg.roomId}]的[{msg.wxId}]的{msgType}消息："
+            groupName = contacts.get(msg.roomId, {'wxName': 'Unknown'}).wxName
+            s += f"来自群[{groupName}]的[{nickName}]的{msgType}消息："
 
         s += f"\r\n{msg.content}"
         if msg.type != 0x01:

@@ -17,10 +17,22 @@ typedef struct WxMessage {
     wstring content; // 消息内容，MAC版最大：16384，即16KB
 } WxMessage_t;
 
+typedef struct WxContact {
+    wstring wxId;
+    wstring wxCode;
+    wstring wxName;
+    wstring wxCountry;
+    wstring wxProvince;
+    wstring wxCity;
+    wstring wxGender;
+} WxContact_t;
+
 typedef map<int, wstring> MsgTypesMap_t;
+typedef map<wstring, WxContact_t> ContactMap_t;
 
 int WxInitSDK();
 int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg);
 int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg);
 int WxSendImageMsg(wstring wxid, wstring path);
+ContactMap_t WxGetContacts();
 MsgTypesMap_t WxGetMsgTypes();

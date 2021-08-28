@@ -22,10 +22,20 @@ PYBIND11_MODULE(wcferry, m)
         .def_readonly("roomId", &WxMessage::roomId)
         .def_readonly("content", &WxMessage::content);
 
+    py::class_<WxContact>(m, "WxContact")
+        .def_readonly("wxId", &WxContact::wxId)
+        .def_readonly("wxCode", &WxContact::wxCode)
+        .def_readonly("wxName", &WxContact::wxName)
+        .def_readonly("wxCountry", &WxContact::wxCountry)
+        .def_readonly("wxProvince", &WxContact::wxProvince)
+        .def_readonly("wxCity", &WxContact::wxCity)
+        .def_readonly("wxGender", &WxContact::wxGender);
+
     m.def("WxInitSDK", &WxInitSDK);
     m.def("WxSetTextMsgCb", &WxSetTextMsgCbPy);
     m.def("WxSendTextMsg", &WxSendTextMsg);
     m.def("WxSendImageMsg", &WxSendImageMsg);
+    m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference);
     m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference);
 
 #ifdef VERSION_INFO

@@ -4,3 +4,4 @@ EXPORTS
 	WxSendTextMsg
 	WxGetMsgTypes
 	WxSendImageMsg
+	WxGetContacts

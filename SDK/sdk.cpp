@@ -297,4 +297,73 @@ static int getAddrHandle(DWORD *addr, HANDLE *handle)
     return 0;
 }
 
+ContactMap_t WxGetContacts()
+{
+    ContactMap_t mContact;
+    DWORD moduleBaseAddress;
+    HANDLE hProcess;
+
+    if (getAddrHandle(&moduleBaseAddress, &hProcess) != 0) {
+        return mContact;
+    }
+
+    DWORD Address1 = moduleBaseAddress + 0x1DB9728;
+    DWORD Address2 = GetMemoryIntByAddress(hProcess, Address1);
+    DWORD Address3 = GetMemoryIntByAddress(hProcess, Address2 + 0x28 + 0xBC);
+
+    vector<DWORD> nodeAddressList;
+    nodeAddressList.push_back(Address3);
+
+    DWORD nodeAddress1 = GetMemoryIntByAddress(hProcess, Address3 + 0x0);
+    DWORD nodeAddress2 = GetMemoryIntByAddress(hProcess, Address3 + 0x4);
+    DWORD nodeAddress3 = GetMemoryIntByAddress(hProcess, Address3 + 0x8);
+    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress1) == nodeAddressList.end())
+        nodeAddressList.push_back(nodeAddress1);
+    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress2) == nodeAddressList.end())
+        nodeAddressList.push_back(nodeAddress2);
+    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress3) == nodeAddressList.end())
+        nodeAddressList.push_back(nodeAddress3);
+
+    unsigned int index = 1;
+    while (index < nodeAddressList.size()) {
+        WxContact_t contactItem;
+        DWORD nodeAddress     = nodeAddressList[index++];
+        DWORD checkNullResult = GetMemoryIntByAddress(hProcess, nodeAddress + 0xD);
+        if (checkNullResult == 0) {
+            index++;
+            continue;
+        }
+        contactItem.wxId       = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x38);
+        contactItem.wxCode     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x4C);
+        contactItem.wxName     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x94);
+        contactItem.wxCountry  = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x1D8);
+        contactItem.wxProvince = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x1EC);
+        contactItem.wxCity     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x200);
+        DWORD gender           = GetMemoryIntByAddress(hProcess, nodeAddress + 0x18C);
+
+        if (gender == 1)
+            contactItem.wxGender = L"男";
+        else if (gender == 2)
+            contactItem.wxGender = L"女";
+        else
+            contactItem.wxGender = L"未知";
+
+        mContact.insert(make_pair(contactItem.wxId, contactItem));
+
+        DWORD nodeAddress1 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x0);
+        DWORD nodeAddress2 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x4);
+        DWORD nodeAddress3 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x8);
+        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress1) == nodeAddressList.end())
+            nodeAddressList.push_back(nodeAddress1);
+        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress2) == nodeAddressList.end())
+            nodeAddressList.push_back(nodeAddress2);
+        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress3) == nodeAddressList.end())
+            nodeAddressList.push_back(nodeAddress3);
+    }
+
+    CloseHandle(hProcess);
+
+    return mContact;
+}
+
 MsgTypesMap_t WxGetMsgTypes() { return WxMsgTypes; }
