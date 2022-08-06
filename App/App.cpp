@@ -56,7 +56,7 @@ int main()
     if (status != 0) {
         return 0;
     }
-
+#if 0
     wcout << L"Message: 接收通知中......" << endl;
     WxSetTextMsgCb(onTextMsg);
 
@@ -69,7 +69,7 @@ int main()
     // 测试联系人获取
     auto mContact = WxGetContacts();
     printContacts(mContact);
-
+#endif
     while (1) {
         Sleep(10000); // 休眠，释放CPU
     }

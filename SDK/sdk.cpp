@@ -95,7 +95,7 @@ int WxInitSDK()
     if (status != 0) {
         return status;
     }
-
+    Sleep(2000); // 等待微信打开
     if (!InjectDll(pid, DllPath)) {
         return -1;
     }

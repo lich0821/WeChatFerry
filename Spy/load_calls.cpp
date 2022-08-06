@@ -3,9 +3,9 @@
 
 #include "load_calls.h"
 
-#define SUPPORT_VERSION L"3.3.0.115"
+#define SUPPORT_VERSION L"3.7.0.29"
 WxCalls_t wxCalls = {
-    0x1DDF60C,                           // Login Status
+    0x23631D0,                           // Login Status
     { 0x1DDF4BC, 0x1DDF534, 0x1DDF568 }, // User Info: wxid, nickname, mobile
     0x3E3B80,                            // Send Message
     /* Receive Message:

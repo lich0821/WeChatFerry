@@ -1,4 +1,4 @@
-﻿#include "Shlwapi.h"
+#include "Shlwapi.h"
 #include "framework.h"
 #include <string.h>
 #include <strsafe.h>
@@ -54,6 +54,19 @@ int GetWeChatWinDLLPath(wchar_t *path)
 
     PathRemoveFileSpecW(path);
     PathAppendW(path, WECHATWINDLL);
+    if (!PathFileExists(path)) {
+        // 微信从（大约）3.7开始，增加了一层版本目录: [3.7.0.29]
+        PathRemoveFileSpec(path);
+        _wfinddata_t findData;
+        wstring dir = wstring(path) + L"\\[*.*";
+        intptr_t handle = _wfindfirst(dir.c_str(), &findData);
+        if (handle == -1) { // 检查是否成功
+            return -1;
+        }
+        wstring dllPath = wstring(path) + L"\\" + findData.name;
+        wcscpy_s(path, MAX_PATH, dllPath.c_str());
+        PathAppend(path, WECHATWINDLL);
+    }
 
     return ret;
 }

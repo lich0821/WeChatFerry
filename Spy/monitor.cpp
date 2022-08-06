@@ -17,7 +17,7 @@ int InitDLL(void)
 
     g_WeChatWinDllAddr = (DWORD)LoadLibrary(L"WeChatWin.dll"); //获取wechatWin模块地址
     if (g_WeChatWinDllAddr == 0) {
-        MessageBox(NULL, L"获取wechatWin.dll模块地址", L"错误", 0);
+        MessageBox(NULL, L"获取wechatWin.dll模块地址失败", L"错误", 0);
         return -1;
     }
 
@@ -39,7 +39,7 @@ int InitDLL(void)
 
 DWORD WINAPI Monitor(HMODULE hModule)
 {
-    ListenMessage();
+    //ListenMessage();
 
     return TRUE;
 }
