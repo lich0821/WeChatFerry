@@ -53,7 +53,7 @@ void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    DWORD tmpEAX = 0;
+    DWORD tmpEAX         = 0;
     char buf1[0x48]      = { 0 };
     char buf2[0x3B0]     = { 0 };
     TextStruct_t imgWxid = { 0 };
