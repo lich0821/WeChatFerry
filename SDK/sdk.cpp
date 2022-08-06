@@ -1,4 +1,4 @@
-#include "Shlwapi.h"
+﻿#include "Shlwapi.h"
 #include "framework.h"
 #include <process.h>
 #include <queue>

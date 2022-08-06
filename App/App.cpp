@@ -1,4 +1,4 @@
-#include <fcntl.h>
+﻿#include <fcntl.h>
 #include <io.h>
 #include <iostream>
 #include <process.h>
@@ -61,11 +61,13 @@ int main()
     WxSetTextMsgCb(onTextMsg);
 
     // 测试消息发送
+    wcout << L"测试消息发送" << endl;
     WxSendTextMsg(wxid, at_wxid, content);
-#if 0
-    // 发送照片
-    WxSendImageMsg(wxid, img_path);
 
+    // 发送照片
+    wcout << L"测试发送照片" << endl;
+    WxSendImageMsg(wxid, img_path);
+#if 0
     Sleep(10000); // 等待10秒
     // 测试联系人获取
     auto mContact = WxGetContacts();

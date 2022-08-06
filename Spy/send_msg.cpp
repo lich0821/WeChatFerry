@@ -53,8 +53,9 @@ void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    char buf1[0x20]      = { 0 };
-    char buf2[0x378]     = { 0 };
+    DWORD tmpEAX = 0;
+    char buf1[0x48]      = { 0 };
+    char buf2[0x3B0]     = { 0 };
     TextStruct_t imgWxid = { 0 };
     TextStruct_t imgPath = { 0 };
 
@@ -76,19 +77,21 @@ void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
 
     __asm {
         pushad
+        call sendCall1
         sub esp, 0x14
+        mov tmpEAX, eax
         lea eax, buf1
         mov ecx, esp
+        lea edi, imgPath
         push eax
-        call sendCall1
-        lea ebx, imgPath
-        push ebx
+        call sendCall2
+        mov ecx, dword ptr [tmpEAX]
         lea eax, imgWxid
+        push edi
         push eax
         lea eax, buf2
         push eax
-        call sendCall2
-        mov ecx, eax
         call sendCall3
+        popad
     }
 }
