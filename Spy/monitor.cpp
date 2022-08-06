@@ -8,7 +8,6 @@
 
 HANDLE g_hEvent          = NULL;
 WxCalls_t g_WxCalls      = { 0 };
-RpcMessage_t *g_pMsg     = NULL; // Find a palce to free
 DWORD g_WeChatWinDllAddr = 0;
 
 int InitDLL(void)
@@ -31,7 +30,6 @@ int InitDLL(void)
         return -3;
     }
 
-    g_pMsg   = new RpcMessage_t;
     g_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
     return 0;
@@ -39,7 +37,7 @@ int InitDLL(void)
 
 DWORD WINAPI Monitor(HMODULE hModule)
 {
-    //ListenMessage();
+    ListenMessage();
 
     return TRUE;
 }

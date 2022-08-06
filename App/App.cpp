@@ -56,10 +56,10 @@ int main()
     if (status != 0) {
         return 0;
     }
-#if 0
+
     wcout << L"Message: 接收通知中......" << endl;
     WxSetTextMsgCb(onTextMsg);
-
+#if 0
     // 测试消息发送
     WxSendTextMsg(wxid, at_wxid, content);
     // 发送照片
