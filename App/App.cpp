@@ -59,9 +59,10 @@ int main()
 
     wcout << L"Message: 接收通知中......" << endl;
     WxSetTextMsgCb(onTextMsg);
-#if 0
+
     // 测试消息发送
     WxSendTextMsg(wxid, at_wxid, content);
+#if 0
     // 发送照片
     WxSendImageMsg(wxid, img_path);
 
