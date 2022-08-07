@@ -6,12 +6,23 @@
 
 interface ISpy
 {
-    import "rpc_types.h";
+    import "oaidl.idl";
+
+    typedef struct RpcMessage {
+        int self;     // 是否自己发的消息：0=否，1=是
+        int type;     // 消息类型
+        int source;   // 消息来源：0=好友消息，1=群消息
+        BSTR id;      // 消息ID
+        BSTR xml;     // 群其他消息
+        BSTR wxId;    // 发送人微信ID
+        BSTR roomId;  // 群ID
+        BSTR content; // 消息内容，MAC版最大：16384，即16KB
+    } RpcMessage_t;
 
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
 
     void EnableReceiveMsg();
-    [callback] int ReceiveMsg([ in ] RpcMessage_t *msg);
+    [callback] int ReceiveMsg([ in ] RpcMessage_t rpcMsg);
 };

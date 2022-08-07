@@ -25,7 +25,7 @@ void server_EnableReceiveMsg()
             // 中断式，兼顾及时性和CPU使用率
             WaitForSingleObject(g_hEvent, INFINITE); // 等待消息
             while (!g_MsgQueue.empty()) {
-                client_ReceiveMsg((RpcMessage_t *)&g_MsgQueue.front()); // 调用接收消息回调
+                client_ReceiveMsg(g_MsgQueue.front()); // 调用接收消息回调
                 g_MsgQueue.pop();
             }
             ResetEvent(g_hEvent);
@@ -34,7 +34,7 @@ void server_EnableReceiveMsg()
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("server_EnableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept
 }

@@ -58,7 +58,7 @@ int GetWeChatWinDLLPath(wchar_t *path)
         // 微信从（大约）3.7开始，增加了一层版本目录: [3.7.0.29]
         PathRemoveFileSpec(path);
         _wfinddata_t findData;
-        wstring dir = wstring(path) + L"\\[*.*";
+        wstring dir     = wstring(path) + L"\\[*.*";
         intptr_t handle = _wfindfirst(dir.c_str(), &findData);
         if (handle == -1) { // 检查是否成功
             return -1;
@@ -133,17 +133,16 @@ int OpenWeChat(DWORD *pid)
 {
     int ret                = -1;
     STARTUPINFO si         = { sizeof(si) };
+    WCHAR Path[MAX_PATH]   = { 0 };
     PROCESS_INFORMATION pi = { 0 };
 
-    WCHAR Path[MAX_PATH] = { 0 };
-    ret                  = GetWeChatPath(Path);
+    ret = GetWeChatPath(Path);
     if (ERROR_SUCCESS != ret) {
         return ret;
     }
 
     if (!CreateProcess(NULL, Path, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-        ret = GetLastError();
-        return ret;
+        return GetLastError();
     }
 
     CloseHandle(pi.hThread);
@@ -151,9 +150,7 @@ int OpenWeChat(DWORD *pid)
 
     *pid = pi.dwProcessId;
 
-    ret = ERROR_SUCCESS;
-
-    return ret;
+    return ERROR_SUCCESS;
 }
 
 int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size)
@@ -168,6 +165,30 @@ int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size)
     wmemcpy_s(buffer, strLength + 1, GET_WSTRING(address), strLength + 1);
 
     return strLength;
+}
+
+BSTR GetBstrByAddress(DWORD address) { return SysAllocStringLen(GET_WSTRING(address), GET_DWORD(address + 4)); }
+
+static wstring GetWstringFromBstr(BSTR p)
+{
+    wstring ret = L"";
+    if (p != nullptr) {
+        ret = wstring(p);
+        SysFreeString(p);
+    }
+    return ret;
+}
+
+void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg)
+{
+    wxMsg->self    = rpcMsg.self;
+    wxMsg->type    = rpcMsg.type;
+    wxMsg->source  = rpcMsg.source;
+    wxMsg->id      = GetWstringFromBstr(rpcMsg.id);
+    wxMsg->xml     = GetWstringFromBstr(rpcMsg.xml);
+    wxMsg->wxId    = GetWstringFromBstr(rpcMsg.wxId);
+    wxMsg->roomId  = GetWstringFromBstr(rpcMsg.roomId);
+    wxMsg->content = GetWstringFromBstr(rpcMsg.content);
 }
 
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address)

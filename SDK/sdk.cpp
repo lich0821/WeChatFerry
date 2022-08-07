@@ -15,8 +15,6 @@
 #include "sdk.h"
 #include "util.h"
 
-static HANDLE hEvent;
-static std::queue<RpcMessage_t> MsgQueue;
 static RPC_WSTR pszStringBinding = NULL;
 static std::function<int(WxMessage_t)> cbReceiveTextMsg;
 static const MsgTypesMap_t WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
@@ -121,37 +119,6 @@ int WxInitSDK()
     return ERROR_SUCCESS;
 }
 
-static unsigned int __stdcall waitForMsg(void *p)
-{
-    RpcMessage_t *rpcMsg;
-    while (true) {
-        // 中断式，兼顾及时性和CPU使用率
-        WaitForSingleObject(hEvent, INFINITE); // 等待消息
-        while (!MsgQueue.empty()) {
-            rpcMsg = (RpcMessage_t *)&MsgQueue.front();
-            WxMessage_t msg;
-            msg.id      = wstring(rpcMsg->id);
-            msg.self    = rpcMsg->self;
-            msg.type    = rpcMsg->type;
-            msg.source  = rpcMsg->source;
-            msg.xml     = wstring(rpcMsg->xml);
-            msg.wxId    = wstring(rpcMsg->wxId);
-            msg.roomId  = wstring(rpcMsg->roomId);
-            msg.content = wstring(rpcMsg->content);
-
-            try {
-                cbReceiveTextMsg(msg); // 调用接收消息回调
-            } catch (...) {
-                printf("callback error...\n");
-            }
-            MsgQueue.pop();
-        }
-        ResetEvent(hEvent);
-    }
-
-    return 0;
-}
-
 static unsigned int __stdcall innerWxSetTextMsgCb(void *p)
 {
     unsigned long ulCode = 0;
@@ -175,13 +142,6 @@ int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
     if (onMsg) {
         HANDLE msgThread;
         cbReceiveTextMsg = onMsg;
-        hEvent           = CreateEvent(NULL, TRUE, FALSE, NULL);
-        msgThread        = (HANDLE)_beginthreadex(NULL, 0, waitForMsg, NULL, 0, NULL);
-        if (msgThread == NULL) {
-            printf("Failed to create message listening thread.\n");
-            return -2;
-        }
-        CloseHandle(msgThread);
 
         msgThread = (HANDLE)_beginthreadex(NULL, 0, innerWxSetTextMsgCb, NULL, 0, NULL);
         if (msgThread == NULL) {
@@ -197,10 +157,17 @@ int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
     return -1;
 }
 
-int server_ReceiveMsg(RpcMessage_t *rpcMsg)
+int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
-    MsgQueue.push(*rpcMsg); // 发送消息
-    SetEvent(hEvent);       // 发送消息通知
+    WxMessage_t msg;
+    GetRpcMessage(&msg, rpcMsg);
+    try {
+        cbReceiveTextMsg(msg); // 调用接收消息回调
+    }
+    catch (...) {
+        printf("callback error...\n");
+    }
+
     return 0;
 }
 

@@ -1,4 +1,4 @@
-﻿#include "framework.h"
+#include "framework.h"
 
 #include "load_calls.h"
 #include "receive_msg.h"
@@ -14,30 +14,31 @@ MsgQueue_t g_MsgQueue;
 DWORD reg_buffer          = 0;
 DWORD recvMsgCallAddr     = 0;
 DWORD recvMsgJumpBackAddr = 0;
-RpcMessage_t *pMsg        = NULL; // Find a palce to free
+RpcMessage_t lMsg         = { 0 };
 
 void DispatchMsg(DWORD reg)
 {
-    DWORD *p = (DWORD *)reg; //消息结构基址
+    DWORD* p = (DWORD*)reg; //消息结构基址
 
-    memset(pMsg, 0, sizeof(RpcMessage_t));
+    memset(&lMsg, 0, sizeof(RpcMessage_t));
 
-    pMsg->type = GET_DWORD(*p + g_WxCalls.recvMsg.type);
-    pMsg->self = GET_DWORD(*p + g_WxCalls.recvMsg.isSelf);
+    lMsg.type = GET_DWORD(*p + g_WxCalls.recvMsg.type);
+    lMsg.self = GET_DWORD(*p + g_WxCalls.recvMsg.isSelf);
+    lMsg.id   = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgId);
+    lMsg.xml  = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgXml);
 
-    GetWstringByAddress(*p + g_WxCalls.recvMsg.msgId, pMsg->id, MSG_SIZE_MSG_ID);
-    GetWstringByAddress(*p + g_WxCalls.recvMsg.msgXml, pMsg->xml, MSG_SIZE_MSG_XML);
 
-    if (wcsstr(pMsg->xml, L"<membercount>") == NULL) {
+    if (wcsstr(lMsg.xml, L"<membercount>") == NULL) {
         // pMsg.roomId = {0};
-        GetWstringByAddress(*p + g_WxCalls.recvMsg.roomId, pMsg->wxId, MSG_SIZE_WXID);
-    } else {
-        pMsg->source = 1;
-        GetWstringByAddress(*p + g_WxCalls.recvMsg.roomId, pMsg->roomId, MSG_SIZE_ROOMID);
-        GetWstringByAddress(*p + g_WxCalls.recvMsg.wxId, pMsg->wxId, MSG_SIZE_WXID);
+        lMsg.wxId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
     }
-    GetWstringByAddress(*p + g_WxCalls.recvMsg.content, pMsg->content, MSG_SIZE_CONTENT);
-    g_MsgQueue.push(*pMsg); // 发送消息
+    else {
+        lMsg.source = 1;
+        lMsg.wxId   = GetBstrByAddress(*p + g_WxCalls.recvMsg.wxId);
+        lMsg.roomId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
+    }
+    lMsg.content = GetBstrByAddress(*p + g_WxCalls.recvMsg.content);
+    g_MsgQueue.push(lMsg);  // 发送消息
     SetEvent(g_hEvent);     // 发送消息通知
 }
 
@@ -63,7 +64,6 @@ void ListenMessage()
         return;
     }
 
-    pMsg                = new RpcMessage_t;
     DWORD hookAddress   = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
     recvMsgCallAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.call;
     recvMsgJumpBackAddr = hookAddress + 5;
