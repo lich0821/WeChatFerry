@@ -29,12 +29,25 @@ typedef struct SendImg {
     DWORD call3;
 } SendImg_t;
 
+typedef struct Contact {
+    DWORD base;
+    DWORD head;
+    DWORD wxId;
+    DWORD wxCode;
+    DWORD wxName;
+    DWORD wxGender;
+    DWORD wxCountry;
+    DWORD wxProvince;
+    DWORD wxCity;
+} Contact_t;
+
 typedef struct WxCalls {
     DWORD login;       // 登录状态
     UserInfoCall_t ui; // 用户信息
     DWORD sendTextMsg; // 发送消息
     RecvMsg_t recvMsg; // 接收消息
     SendImg_t sendImg; // 发送图片
+    Contact_t contact; // 获取联系人
 } WxCalls_t;
 
 typedef struct TextStruct {
