@@ -11,7 +11,6 @@
 #pragma comment(lib, "Rpcrt4.lib")
 
 #include "injector.h"
-#include "rpc_types.h"
 #include "sdk.h"
 #include "util.h"
 

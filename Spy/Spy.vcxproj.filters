@@ -27,9 +27,6 @@
     <ClInclude Include="monitor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\Rpc\rpc_types.h">
-      <Filter>Rpc</Filter>
-    </ClInclude>
     <ClInclude Include="rpc_server.h">
       <Filter>头文件</Filter>
     </ClInclude>

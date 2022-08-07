@@ -163,7 +163,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Rpc\rpc_types.h" />
     <ClInclude Include="..\Rpc\rpc_h.h" />
     <ClInclude Include="..\SDK\util.h" />
     <ClInclude Include="framework.h" />
