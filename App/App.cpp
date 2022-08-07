@@ -39,18 +39,19 @@ int main()
 
     _wsetlocale(LC_ALL, L"chs"); // 这是个大坑，不设置中文直接不见了。。。
 
-    // 获取消息类型
-    const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
-    for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
-        wprintf(L"%d: %s\n", it->first, it->second.c_str());
-    }
-
     wprintf(L"WxInitSDK: ");
     status = WxInitSDK();
     wcout << status << endl;
     wprintf(L"%d\n", status);
     if (status != 0) {
         return 0;
+    }
+
+    // 获取消息类型
+    wprintf(L"获取消息类型\n");
+    const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
+    for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
+        wprintf(L"%d: %s\n", it->first, it->second.c_str());
     }
 
     wprintf(L"Message: 接收通知中......\n");

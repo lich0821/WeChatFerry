@@ -5,12 +5,14 @@
 #include "rpc_server.h"
 #include "send_msg.h"
 #include "spy_types.h"
+#include "sdk.h"
 
-#include "../Rpc/rpc_h.h"
+#include "rpc_h.h"
 #pragma comment(lib, "Rpcrt4.lib")
 
 extern HANDLE g_hEvent;
 extern MsgQueue_t g_MsgQueue;
+extern const MsgTypesMap_t g_WxMsgTypes;
 
 int server_IsLogin() { return IsLogin(); }
 
@@ -49,6 +51,32 @@ int server_SendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_
 int server_SendImageMsg(const wchar_t *wxid, const wchar_t *path)
 {
     SendImageMessage(wxid, path);
+
+    return 0;
+}
+
+int server_GetMsgTypes(int *pNum, PPRpcIntBstrPair_t *msgTypes)
+{
+    *pNum = g_WxMsgTypes.size();
+    PPRpcIntBstrPair_t pp = (PPRpcIntBstrPair_t)midl_user_allocate(*pNum * sizeof(RpcIntBstrPair_t));
+    if (pp == NULL) {
+        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
+        return -2;
+    }
+    int index = 0;
+    for (auto it = g_WxMsgTypes.begin(); it != g_WxMsgTypes.end(); ++it) {
+        PRpcIntBstrPair_t p = (PRpcIntBstrPair_t)midl_user_allocate(sizeof(RpcIntBstrPair_t));
+        if (p == NULL) {
+            printf("server_GetMsgTypes midl_user_allocate Failed for p\n");
+            return -3;
+        }
+
+        p->key = it->first;
+        p->value = SysAllocString(it->second.c_str());
+        pp[index++] = p;
+    }
+
+    *msgTypes = pp;
 
     return 0;
 }

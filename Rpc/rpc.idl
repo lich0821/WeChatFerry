@@ -19,9 +19,17 @@ interface ISpy
         BSTR content; // 消息内容，MAC版最大：16384，即16KB
     } RpcMessage_t;
 
+    typedef struct RpcIntBstrPair {
+        int key;
+        BSTR value;
+    } RpcIntBstrPair_t;
+    typedef RpcIntBstrPair_t* PRpcIntBstrPair_t;
+    typedef RpcIntBstrPair_t** PPRpcIntBstrPair_t;
+
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
+    int GetMsgTypes([ out ] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair_t *msgTypes);
 
     void EnableReceiveMsg();
     [callback] int ReceiveMsg([ in ] RpcMessage_t rpcMsg);

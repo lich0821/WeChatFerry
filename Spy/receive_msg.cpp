@@ -1,4 +1,4 @@
-#include "framework.h"
+﻿#include "framework.h"
 
 #include "load_calls.h"
 #include "receive_msg.h"
@@ -15,6 +15,25 @@ DWORD reg_buffer          = 0;
 DWORD recvMsgCallAddr     = 0;
 DWORD recvMsgJumpBackAddr = 0;
 RpcMessage_t lMsg         = { 0 };
+
+extern const MsgTypesMap_t g_WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
+                                                          { 0x03, L"图片" },
+                                                          { 0x22, L"语音" },
+                                                          { 0x25, L"好友确认" },
+                                                          { 0x28, L"POSSIBLEFRIEND_MSG" },
+                                                          { 0x2A, L"名片" },
+                                                          { 0x2B, L"视频" },
+                                                          { 0x2F, L"石头剪刀布 | 表情图片" },
+                                                          { 0x30, L"位置" },
+                                                          { 0x31, L"共享实时位置、文件、转账、链接" },
+                                                          { 0x32, L"VOIPMSG" },
+                                                          { 0x33, L"微信初始化" },
+                                                          { 0x34, L"VOIPNOTIFY" },
+                                                          { 0x35, L"VOIPINVITE" },
+                                                          { 0x3E, L"小视频" },
+                                                          { 0x270F, L"SYSNOTICE" },
+                                                          { 0x2710, L"红包、系统消息" },
+                                                          { 0x2712, L"撤回消息" } };
 
 void DispatchMsg(DWORD reg)
 {

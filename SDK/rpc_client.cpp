@@ -113,6 +113,27 @@ int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path)
     return ret;
 }
 
+PPRpcIntBstrPair_t RpcGetMsgTypes(int *pNum)
+{
+    int ret = 0;
+    unsigned long ulCode = 0;
+    PPRpcIntBstrPair_t ppRpcMsgTypes = NULL;
+
+    RpcTryExcept{ ret = client_GetMsgTypes(pNum, &ppRpcMsgTypes); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcGetMsgTypes exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+    if (ret != 0) {
+        printf("GetMsgTypes Failed: %d\n", ret);
+        return NULL;
+    }
+
+    return ppRpcMsgTypes;
+}
+
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
     WxMessage_t msg;

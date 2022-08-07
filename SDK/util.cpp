@@ -169,14 +169,14 @@ int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size)
 
 BSTR GetBstrByAddress(DWORD address) { return SysAllocStringLen(GET_WSTRING(address), GET_DWORD(address + 4)); }
 
-static wstring GetWstringFromBstr(BSTR p)
+wstring GetWstringFromBstr(BSTR p)
 {
-    wstring ret = L"";
+    wstring ws = L"";
     if (p != nullptr) {
-        ret = wstring(p);
+        ws = wstring(p);
         SysFreeString(p);
     }
-    return ret;
+    return ws;
 }
 
 void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg)

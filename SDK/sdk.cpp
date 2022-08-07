@@ -13,24 +13,6 @@
 #include "util.h"
 
 std::function<int(WxMessage_t)> g_cbReceiveTextMsg;
-static const MsgTypesMap_t WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
-                                                        { 0x03, L"图片" },
-                                                        { 0x22, L"语音" },
-                                                        { 0x25, L"好友确认" },
-                                                        { 0x28, L"POSSIBLEFRIEND_MSG" },
-                                                        { 0x2A, L"名片" },
-                                                        { 0x2B, L"视频" },
-                                                        { 0x2F, L"石头剪刀布 | 表情图片" },
-                                                        { 0x30, L"位置" },
-                                                        { 0x31, L"共享实时位置、文件、转账、链接" },
-                                                        { 0x32, L"VOIPMSG" },
-                                                        { 0x33, L"微信初始化" },
-                                                        { 0x34, L"VOIPNOTIFY" },
-                                                        { 0x35, L"VOIPINVITE" },
-                                                        { 0x3E, L"小视频" },
-                                                        { 0x270F, L"SYSNOTICE" },
-                                                        { 0x2710, L"红包、系统消息" },
-                                                        { 0x2712, L"撤回消息" } };
 
 int WxInitSDK()
 {
@@ -187,4 +169,19 @@ ContactMap_t WxGetContacts()
     return mContact;
 }
 
-MsgTypesMap_t WxGetMsgTypes() { return WxMsgTypes; }
+MsgTypesMap_t WxGetMsgTypes()
+{
+    static MsgTypesMap_t WxMsgTypes;
+    if (WxMsgTypes.empty()) {
+        int size = 0;
+        PPRpcIntBstrPair_t pp = RpcGetMsgTypes(&size);
+        for (int i = 0; i < size; i++) {
+            WxMsgTypes.insert(make_pair(pp[i]->key, GetWstringFromBstr(pp[i]->value)));
+            midl_user_free(pp[i]);
+        }
+        midl_user_free(pp);
+    }
+
+    return WxMsgTypes;
+}
+

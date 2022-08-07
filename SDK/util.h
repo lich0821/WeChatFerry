@@ -23,4 +23,5 @@ int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size);
 BSTR GetBstrByAddress(DWORD address);
 void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg);
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);
+std::wstring GetWstringFromBstr(BSTR p);
 std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);
