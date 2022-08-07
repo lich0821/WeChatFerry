@@ -161,6 +161,7 @@
     <ClInclude Include="..\Rpc\rpc_h.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="injector.h" />
+    <ClInclude Include="rpc_client.h" />
     <ClInclude Include="sdk.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
@@ -169,6 +170,7 @@
     <ClCompile Include="..\Rpc\rpc_memory.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="injector.cpp" />
+    <ClCompile Include="rpc_client.cpp" />
     <ClCompile Include="sdk.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>

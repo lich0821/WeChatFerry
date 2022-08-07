@@ -7,15 +7,12 @@
 #include <tlhelp32.h>
 #include <vector>
 
-#include "../Rpc/rpc_h.h"
-#pragma comment(lib, "Rpcrt4.lib")
-
 #include "injector.h"
+#include "rpc_client.h"
 #include "sdk.h"
 #include "util.h"
 
-static RPC_WSTR pszStringBinding = NULL;
-static std::function<int(WxMessage_t)> cbReceiveTextMsg;
+std::function<int(WxMessage_t)> g_cbReceiveTextMsg;
 static const MsgTypesMap_t WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
                                                         { 0x03, L"图片" },
                                                         { 0x22, L"语音" },
@@ -35,56 +32,18 @@ static const MsgTypesMap_t WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
                                                         { 0x2710, L"红包、系统消息" },
                                                         { 0x2712, L"撤回消息" } };
 
-RPC_STATUS RpcConnectServer()
-{
-    RPC_STATUS status = 0;
-    // Creates a string binding handle.
-    status = RpcStringBindingCompose(NULL,                                             // UUID to bind to
-                                     reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
-                                     NULL,                                             // TCP/IP network address to use
-                                     reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"tmp_endpoint"), // TCP/IP port to use
-                                     NULL,               // Protocol dependent network options to use
-                                     &pszStringBinding); // String binding output
-
-    if (status)
-        return status;
-
-    /* Validates the format of the string binding handle and converts it to a binding handle.
-    pszStringBinding: The string binding to validate
-    hSpyBinding: Put the result in the implicit binding(defined in the IDL file)
-    */
-    status = RpcBindingFromStringBinding(pszStringBinding, &hSpyBinding);
-
-    return status;
-}
-
-RPC_STATUS RpcDisconnectServer()
-{
-    RPC_STATUS status;
-    // Free the memory allocated by a string
-    status = RpcStringFree(&pszStringBinding);
-    if (status)
-        return status;
-
-    // Releases binding handle resources and disconnects from the server
-    status = RpcBindingFree(&hSpyBinding);
-
-    return status;
-}
-
 int WxInitSDK()
 {
-    int loginFlag           = 0;
     unsigned long ulCode    = 0;
     DWORD status            = 0;
     DWORD pid               = 0;
     WCHAR DllPath[MAX_PATH] = { 0 };
 
-    GetModuleFileNameW(GetModuleHandleW(WECHATSDKDLL), DllPath, MAX_PATH);
-    PathRemoveFileSpecW(DllPath);
-    PathAppendW(DllPath, WECHATINJECTDLL);
+    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), DllPath, MAX_PATH);
+    PathRemoveFileSpec(DllPath);
+    PathAppend(DllPath, WECHATINJECTDLL);
 
-    if (!PathFileExistsW(DllPath)) {
+    if (!PathFileExists(DllPath)) {
         return ERROR_FILE_NOT_FOUND;
     }
 
@@ -99,50 +58,20 @@ int WxInitSDK()
 
     RpcConnectServer();
 
-    while (!loginFlag) {
-        RpcTryExcept
-        {
-            // 查询登录状态
-            loginFlag = client_IsLogin();
-        }
-        RpcExcept(1)
-        {
-            ulCode = RpcExceptionCode();
-            printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
-        }
-        RpcEndExcept
-
-            Sleep(1000);
+    while (!RpcIsLogin()) {
+        Sleep(1000);
     }
 
     return ERROR_SUCCESS;
-}
-
-static unsigned int __stdcall innerWxSetTextMsgCb(void *p)
-{
-    unsigned long ulCode = 0;
-    RpcTryExcept
-    {
-        // 建立RPC通道，让服务端能够调用客户端的回调函数。（该接口会被服务端阻塞直到异常退出）
-        client_EnableReceiveMsg();
-    }
-    RpcExcept(1)
-    {
-        ulCode = RpcExceptionCode();
-        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
-    }
-    RpcEndExcept
-
-        return 0;
 }
 
 int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
 {
     if (onMsg) {
         HANDLE msgThread;
-        cbReceiveTextMsg = onMsg;
+        g_cbReceiveTextMsg = onMsg;
 
-        msgThread = (HANDLE)_beginthreadex(NULL, 0, innerWxSetTextMsgCb, NULL, 0, NULL);
+        msgThread = (HANDLE)_beginthreadex(NULL, 0, RpcSetTextMsgCb, NULL, 0, NULL);
         if (msgThread == NULL) {
             printf("Failed to create innerWxRecvTextMsg.\n");
             return -2;
@@ -156,58 +85,12 @@ int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
     return -1;
 }
 
-int server_ReceiveMsg(RpcMessage_t rpcMsg)
-{
-    WxMessage_t msg;
-    GetRpcMessage(&msg, rpcMsg);
-    try {
-        cbReceiveTextMsg(msg); // 调用接收消息回调
-    }
-    catch (...) {
-        printf("callback error...\n");
-    }
-
-    return 0;
-}
-
-static int innerWxSendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg)
-{
-    int ret              = 0;
-    unsigned long ulCode = 0;
-
-    RpcTryExcept { ret = client_SendTextMsg(wxid, at_wxid, msg); }
-    RpcExcept(1)
-    {
-        ulCode = RpcExceptionCode();
-        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
-    }
-    RpcEndExcept
-
-        return ret;
-}
-
 int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg)
 {
-    return innerWxSendTextMsg(wxid.c_str(), at_wxid.c_str(), msg.c_str());
+    return RpcSendTextMsg(wxid.c_str(), at_wxid.c_str(), msg.c_str());
 }
 
-static int innerWxSendImageMsg(const wchar_t *wxid, const wchar_t *path)
-{
-    int ret              = 0;
-    unsigned long ulCode = 0;
-
-    RpcTryExcept { ret = client_SendImageMsg(wxid, path); }
-    RpcExcept(1)
-    {
-        ulCode = RpcExceptionCode();
-        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
-    }
-    RpcEndExcept
-
-        return ret;
-}
-
-int WxSendImageMsg(wstring wxid, wstring path) { return innerWxSendImageMsg(wxid.c_str(), path.c_str()); }
+int WxSendImageMsg(wstring wxid, wstring path) { return RpcSendImageMsg(wxid.c_str(), path.c_str()); }
 
 static int getAddrHandle(DWORD *addr, HANDLE *handle)
 {
