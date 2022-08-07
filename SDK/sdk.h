@@ -28,8 +28,14 @@ typedef struct WxContact {
     wstring wxGender;   // 性别
 } WxContact_t;
 
+typedef struct WxDbTable {
+    wstring table; // 表名
+    wstring sql;   // 建表 SQL
+} WxDbTable_t;
+
 typedef map<int, wstring> MsgTypesMap_t;
 typedef map<wstring, WxContact_t> ContactMap_t;
+typedef vector<WxDbTable_t> DbTableVector_t;
 
 int WxInitSDK();
 int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg);
@@ -38,3 +44,4 @@ int WxSendImageMsg(wstring wxid, wstring path);
 ContactMap_t WxGetContacts();
 MsgTypesMap_t WxGetMsgTypes();
 vector<wstring> WxGetDbNames();
+DbTableVector_t WxGetDbTables(wstring db);

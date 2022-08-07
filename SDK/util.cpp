@@ -187,6 +187,15 @@ wstring GetWstringFromBstr(BSTR p)
     return ws;
 }
 
+BSTR GetBstrFromString(const char *str)
+{
+    int wslen = MultiByteToWideChar(CP_ACP, 0, str, strlen(str), 0, 0);
+    BSTR bstr = SysAllocStringLen(0, wslen);
+    MultiByteToWideChar(CP_ACP, 0, str, strlen(str), bstr, wslen);
+
+    return bstr;
+}
+
 BSTR GetBstrFromWstring(wstring ws)
 {
     if (!ws.empty()) {

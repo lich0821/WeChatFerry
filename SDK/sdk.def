@@ -6,3 +6,4 @@
 	WxSendImageMsg
 	WxGetContacts
     WxGetDbNames
+    WxGetDbTables

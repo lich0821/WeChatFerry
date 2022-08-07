@@ -174,6 +174,27 @@ BSTR *RpcGetDbNames(int *pNum)
     return pBstr;
 }
 
+PPRpcTables RpcGetDbTables(const wchar_t *db, int *pNum)
+{
+    int ret                 = 0;
+    unsigned long ulCode    = 0;
+    PPRpcTables ppRpcTables = NULL;
+
+    RpcTryExcept { ret = client_GetDbTables(db, pNum, &ppRpcTables); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcGetDbTables exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+    if (ret != 0) {
+        printf("RpcGetDbTables Failed: %d\n", ret);
+        return NULL;
+    }
+
+    return ppRpcTables;
+}
+
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
     WxMessage_t msg;

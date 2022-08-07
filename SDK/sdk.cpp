@@ -187,3 +187,24 @@ std::vector<std::wstring> WxGetDbNames()
 
     return vDbs;
 }
+
+DbTableVector_t WxGetDbTables(wstring db)
+{
+    DbTableVector_t vTables;
+    int size       = 0;
+    PPRpcTables pp = RpcGetDbTables(db.c_str(), &size);
+    for (int i = 0; i < size; i++) {
+        WxDbTable_t tbl;
+        tbl.table = GetWstringFromBstr(pp[i]->table);
+        tbl.sql   = GetWstringFromBstr(pp[i]->sql);
+
+        vTables.push_back(tbl);
+        midl_user_free(pp[i]);
+    }
+
+    if (pp) {
+        midl_user_free(pp);
+    }
+
+    return vTables;
+}

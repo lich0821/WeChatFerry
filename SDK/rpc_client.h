@@ -12,3 +12,4 @@ int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path);
 PPRpcIntBstrPair RpcGetMsgTypes(int *pNum);
 PPRpcContact RpcGetContacts(int *pNum);
 BSTR *RpcGetDbNames(int *pNum);
+PPRpcTables RpcGetDbTables(const wchar_t *db, int *pNum);

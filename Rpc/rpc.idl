@@ -39,6 +39,13 @@ interface ISpy
     typedef RpcContact_t *PRpcContact;
     typedef RpcContact_t **PPRpcContact;
 
+    typedef struct RpcTables {
+        BSTR table; // 表名
+        BSTR sql;   // 建表 SQL
+    } RpcTables_t;
+    typedef RpcTables_t *PRpcTables;
+    typedef RpcTables_t **PPRpcTables;
+
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid,
                     [ in, string ] const wchar_t *msg);
@@ -46,6 +53,7 @@ interface ISpy
     int GetMsgTypes([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair *msgTypes);
     int GetContacts([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);
     int GetDbNames([out] int *pNum, [ out, size_is(, *pNum) ] BSTR **dbs);
+    int GetDbTables([ in, string ] const wchar_t *db, [out] int *pNum, [ out, size_is(, *pNum) ] PPRpcTables *tbls);
 
     void EnableReceiveMsg();
     [callback] int ReceiveMsg([in] RpcMessage_t rpcMsg);

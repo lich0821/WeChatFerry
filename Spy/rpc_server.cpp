@@ -139,6 +139,29 @@ int server_GetDbNames(int *pNum, BSTR **dbs)
     return 0;
 }
 
+int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
+{
+    vector<RpcTables_t> tables = GetDbTables(db);
+    *pNum                      = tables.size();
+    PPRpcTables pp             = (PPRpcTables)midl_user_allocate(*pNum * sizeof(RpcTables_t));
+    if (pp == NULL) {
+        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
+        return -2;
+    }
+
+    int index = 0;
+    for (auto it = tables.begin(); it != tables.end(); it++) {
+        PRpcTables p = (PRpcTables)midl_user_allocate(sizeof(RpcTables_t));
+        p->table     = it->table;
+        p->sql       = it->sql;
+        pp[index++]  = p;
+    }
+
+    *tbls = pp;
+
+    return 0;
+}
+
 RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
 {
     return RPC_S_OK; // Always allow anyone.

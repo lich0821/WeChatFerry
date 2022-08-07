@@ -13,7 +13,7 @@
 void printContacts(ContactMap_t contacts)
 {
     wprintf(L"contacts number: %ld\n", contacts.size());
-    for (auto it = contacts.begin(); it != contacts.end(); ++it) {
+    for (auto it = contacts.begin(); it != contacts.end(); it++) {
         wprintf(L"%s\t%s\t%s\t%s\t%s\t%s\t%s\r\n", it->second.wxId.c_str(), it->second.wxCode.c_str(),
                 it->second.wxName.c_str(), it->second.wxGender.c_str(), it->second.wxCountry.c_str(),
                 it->second.wxProvince.c_str(), it->second.wxCity.c_str());
@@ -23,8 +23,16 @@ void printContacts(ContactMap_t contacts)
 void printDbNames(vector<wstring> vDbs)
 {
     wprintf(L"db numbers: %ld\n", vDbs.size());
-    for (auto it = vDbs.begin(); it != vDbs.end(); ++it) {
+    for (auto it = vDbs.begin(); it != vDbs.end(); it++) {
         wprintf(L"%s\n", (*it).c_str());
+    }
+}
+
+void printDbTables(DbTableVector_t tables)
+{
+    wprintf(L"table numbers: %ld\n", tables.size());
+    for (auto it = tables.begin(); it != tables.end(); it++) {
+        wprintf(L"%s\n%s\n\n", (it->table).c_str(), (it->sql).c_str());
     }
 }
 
@@ -84,6 +92,11 @@ int main()
     // 测试获取数据库名
     auto vDbNames = WxGetDbNames();
     printDbNames(vDbNames);
+    Sleep(1000); // 等待1秒
+
+    // 测试获取数据库中的表
+    auto vDbTables = WxGetDbTables(L"ChatMsg.db");
+    printDbTables(vDbTables);
 
     while (1) {
         Sleep(10000); // 休眠，释放CPU
