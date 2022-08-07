@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
-#include "sdk.h"
 #include "rpc_h.h"
+#include "sdk.h"
 
 #define WECHAREXE       L"WeChat.exe"
 #define WECHATWINDLL    L"WeChatWin.dll"
@@ -24,4 +24,5 @@ BSTR GetBstrByAddress(DWORD address);
 void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg);
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);
 std::wstring GetWstringFromBstr(BSTR p);
+BSTR GetBstrFromWstring(std::wstring ws);
 std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);

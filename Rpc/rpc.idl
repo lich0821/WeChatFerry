@@ -19,31 +19,34 @@ interface ISpy
         BSTR content; // 消息内容，MAC版最大：16384，即16KB
     } RpcMessage_t;
 
+    // 模拟 map<int, wstring>
     typedef struct RpcIntBstrPair {
         int key;
         BSTR value;
     } RpcIntBstrPair_t;
-    typedef RpcIntBstrPair_t* PRpcIntBstrPair;
-    typedef RpcIntBstrPair_t** PPRpcIntBstrPair;
+    typedef RpcIntBstrPair_t *PRpcIntBstrPair;
+    typedef RpcIntBstrPair_t **PPRpcIntBstrPair;
 
     typedef struct RpcContact {
-        BSTR wxId;
-        BSTR wxCode;
-        BSTR wxName;
-        BSTR wxCountry;
-        BSTR wxProvince;
-        BSTR wxCity;
-        BSTR wxGender;
+        BSTR wxId;       // 微信ID
+        BSTR wxCode;     // 微信号
+        BSTR wxName;     // 微信昵称
+        BSTR wxCountry;  // 国家
+        BSTR wxProvince; // 省/州
+        BSTR wxCity;     // 城市
+        BSTR wxGender;   // 性别
     } RpcContact_t;
     typedef RpcContact_t *PRpcContact;
     typedef RpcContact_t **PPRpcContact;
 
     int IsLogin();
-    int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
+    int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid,
+                    [ in, string ] const wchar_t *msg);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
-    int GetMsgTypes([ out ] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair *msgTypes);
-    int GetContacts([ out ] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);
+    int GetMsgTypes([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair *msgTypes);
+    int GetContacts([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);
+    int GetDbNames([out] int *pNum, [ out, size_is(, *pNum) ] BSTR **dbs);
 
     void EnableReceiveMsg();
-    [callback] int ReceiveMsg([ in ] RpcMessage_t rpcMsg);
+    [callback] int ReceiveMsg([in] RpcMessage_t rpcMsg);
 };

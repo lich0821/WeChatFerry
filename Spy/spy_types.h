@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "framework.h"
 #include <queue>
@@ -41,6 +41,15 @@ typedef struct Contact {
     DWORD wxCity;
 } Contact_t;
 
+typedef struct Sql {
+    DWORD exec;
+    DWORD base;
+    DWORD start;
+    DWORD end;
+    DWORD slot;
+    DWORD name;
+} Sql_t;
+
 typedef struct WxCalls {
     DWORD login;       // 登录状态
     UserInfoCall_t ui; // 用户信息
@@ -48,6 +57,7 @@ typedef struct WxCalls {
     RecvMsg_t recvMsg; // 接收消息
     SendImg_t sendImg; // 发送图片
     Contact_t contact; // 获取联系人
+    Sql_t sql;         // 执行 SQL
 } WxCalls_t;
 
 typedef struct TextStruct {

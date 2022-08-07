@@ -187,6 +187,14 @@ wstring GetWstringFromBstr(BSTR p)
     return ws;
 }
 
+BSTR GetBstrFromWstring(wstring ws)
+{
+    if (!ws.empty()) {
+        return SysAllocStringLen(ws.data(), ws.size());
+    }
+    return NULL;
+}
+
 void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg)
 {
     wxMsg->self    = rpcMsg.self;

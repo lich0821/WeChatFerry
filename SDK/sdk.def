@@ -1,7 +1,8 @@
-EXPORTS
+﻿EXPORTS
 	WxInitSDK
 	WxSetTextMsgCb
 	WxSendTextMsg
 	WxGetMsgTypes
 	WxSendImageMsg
 	WxGetContacts
+    WxGetDbNames

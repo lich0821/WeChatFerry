@@ -171,3 +171,19 @@ ContactMap_t WxGetContacts()
 
     return mContact;
 }
+
+std::vector<std::wstring> WxGetDbNames()
+{
+    std::vector<std::wstring> vDbs;
+    int size    = 0;
+    BSTR *pBstr = RpcGetDbNames(&size);
+    for (int i = 0; i < size; i++) {
+        vDbs.push_back(GetWstringFromBstr(pBstr[i]));
+    }
+
+    if (pBstr) {
+        midl_user_free(pBstr);
+    }
+
+    return vDbs;
+}

@@ -1,6 +1,7 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
+#include "exec_sql.h"
 #include "get_contacts.h"
 #include "monitor.h"
 #include "rpc_h.h"
@@ -8,6 +9,9 @@
 #include "sdk.h"
 #include "send_msg.h"
 #include "spy_types.h"
+#include "util.h"
+
+using namespace std;
 
 extern HANDLE g_hEvent;
 extern MsgQueue_t g_MsgQueue;
@@ -82,7 +86,7 @@ int server_GetMsgTypes(int *pNum, PPRpcIntBstrPair *msgTypes)
 
 int server_GetContacts(int *pNum, PPRpcContact *contacts)
 {
-    std::vector<RpcContact_t> vContacts = GetContacts();
+    vector<RpcContact_t> vContacts = GetContacts();
 
     *pNum           = vContacts.size();
     PPRpcContact pp = (PPRpcContact)midl_user_allocate(*pNum * sizeof(RpcContact_t));
@@ -111,6 +115,26 @@ int server_GetContacts(int *pNum, PPRpcContact *contacts)
     }
 
     *contacts = pp;
+
+    return 0;
+}
+
+int server_GetDbNames(int *pNum, BSTR **dbs)
+{
+    vector<wstring> vDbs = GetDbNames();
+    *pNum                = vDbs.size();
+    BSTR *pp             = (BSTR *)midl_user_allocate(*pNum * sizeof(BSTR));
+    if (pp == NULL) {
+        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
+        return -2;
+    }
+
+    int index = 0;
+    for (auto it = vDbs.begin(); it != vDbs.end(); it++) {
+        pp[index++] = GetBstrFromWstring(*it);
+    }
+
+    *dbs = pp;
 
     return 0;
 }

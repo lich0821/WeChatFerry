@@ -48,6 +48,9 @@
     <ClInclude Include="get_contacts.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="exec_sql.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -78,6 +81,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="get_contacts.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="exec_sql.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

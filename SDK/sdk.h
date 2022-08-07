@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -18,13 +19,13 @@ typedef struct WxMessage {
 } WxMessage_t;
 
 typedef struct WxContact {
-    wstring wxId;
-    wstring wxCode;
-    wstring wxName;
-    wstring wxCountry;
-    wstring wxProvince;
-    wstring wxCity;
-    wstring wxGender;
+    wstring wxId;       // 微信ID
+    wstring wxCode;     // 微信号
+    wstring wxName;     // 微信昵称
+    wstring wxCountry;  // 国家
+    wstring wxProvince; // 省/州
+    wstring wxCity;     // 城市
+    wstring wxGender;   // 性别
 } WxContact_t;
 
 typedef map<int, wstring> MsgTypesMap_t;
@@ -36,3 +37,4 @@ int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg);
 int WxSendImageMsg(wstring wxid, wstring path);
 ContactMap_t WxGetContacts();
 MsgTypesMap_t WxGetMsgTypes();
+vector<wstring> WxGetDbNames();

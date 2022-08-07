@@ -20,6 +20,14 @@ void printContacts(ContactMap_t contacts)
     }
 }
 
+void printDbNames(vector<wstring> vDbs)
+{
+    wprintf(L"db numbers: %ld\n", vDbs.size());
+    for (auto it = vDbs.begin(); it != vDbs.end(); ++it) {
+        wprintf(L"%s\n", (*it).c_str());
+    }
+}
+
 int onTextMsg(WxMessage_t msg)
 {
     wprintf(L"%s msgType: %d, msgSource: %d, isSelf: %d\n", msg.id.c_str(), msg.type, msg.source, msg.self);
@@ -71,6 +79,11 @@ int main()
     // 测试获取联系人
     auto mContact = WxGetContacts();
     printContacts(mContact);
+    Sleep(1000); // 等待1秒
+
+    // 测试获取数据库名
+    auto vDbNames = WxGetDbNames();
+    printDbNames(vDbNames);
 
     while (1) {
         Sleep(10000); // 休眠，释放CPU

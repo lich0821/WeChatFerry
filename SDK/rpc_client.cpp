@@ -153,6 +153,27 @@ PPRpcContact RpcGetContacts(int *pNum)
     return ppRpcContacts;
 }
 
+BSTR *RpcGetDbNames(int *pNum)
+{
+    int ret              = 0;
+    unsigned long ulCode = 0;
+    BSTR *pBstr          = NULL;
+
+    RpcTryExcept { ret = client_GetDbNames(pNum, &pBstr); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcGetDbNames exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+    if (ret != 0) {
+        printf("RpcGetDbNames Failed: %d\n", ret);
+        return NULL;
+    }
+
+    return pBstr;
+}
+
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
     WxMessage_t msg;

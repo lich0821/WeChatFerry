@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "rpc_h.h"
 
@@ -11,3 +11,4 @@ int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *m
 int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path);
 PPRpcIntBstrPair RpcGetMsgTypes(int *pNum);
 PPRpcContact RpcGetContacts(int *pNum);
+BSTR *RpcGetDbNames(int *pNum);

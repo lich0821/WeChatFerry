@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <map>
 
 #include "load_calls.h"
@@ -13,7 +13,10 @@ WxCalls_t wxCalls = { 0x23631D0,                           // Login Status
                       { 0xBD780, 0x770120, 0x521640 }, // Send Image Message
                       /* Get Contacts:
                             Base,  head, wxId, Code, Name, Gender, Country, Province, City*/
-                      { 0x23638F4, 0x4C, 0x30, 0x44, 0x8C, 0x184, 0x1D0, 0x1E4, 0x1F8 } };
+                      { 0x23638F4, 0x4C, 0x30, 0x44, 0x8C, 0x184, 0x1D0, 0x1E4, 0x1F8 },
+                      /* Exec Sql:
+                            Exec,     base,   start,   end,   slot, name*/
+                      { 0x141A4D0, 0x2363934, 0x1428, 0x142C, 0x3C, 0x50 } };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)
 {

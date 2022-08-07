@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\Rpc\rpc_h.h" />
     <ClInclude Include="..\SDK\util.h" />
+    <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="get_contacts.h" />
     <ClInclude Include="load_calls.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\Rpc\rpc_s.c" />
     <ClCompile Include="..\SDK\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="get_contacts.cpp" />
     <ClCompile Include="load_calls.cpp" />
     <ClCompile Include="monitor.cpp" />
