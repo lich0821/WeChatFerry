@@ -12,25 +12,20 @@
 
 void printContacts(ContactMap_t contacts)
 {
-    wcout << L"contacts number: " << contacts.size() << endl;
+    wprintf(L"contacts number: %ld\n", contacts.size());
     for (auto it = contacts.begin(); it != contacts.end(); ++it) {
-        wcout << it->second.wxId << L"\t" << it->second.wxCode << L"\t" << it->second.wxName << L"\t"
-              << it->second.wxGender << L"\t" << it->second.wxCountry << L"\t" << it->second.wxProvince << L"\t"
-              << it->second.wxCity << endl;
+        wprintf(L"%s\t%s\t%s\t%s\t%s\t%s\t%s\r\n", it->second.wxId.c_str(), it->second.wxCode.c_str(),
+                it->second.wxName.c_str(), it->second.wxGender.c_str(), it->second.wxCountry.c_str(),
+                it->second.wxProvince.c_str(), it->second.wxCity.c_str());
     }
 }
 
 int onTextMsg(WxMessage_t msg)
 {
-    try {
-        wcout << msg.id << L" msgType: " << msg.type << L", msgSource: " << msg.source << L", isSelf: " << msg.self
-              << endl;
-        wcout << msg.wxId << L"[" << msg.roomId << L"]" << L" >> " << msg.content << endl;
-        wcout << L"msgSourceXml: " << msg.xml << endl;
-    } catch (...) {
-        wcout << "something wrong..." << endl;
-    }
-    wcout.flush();
+    wprintf(L"%s msgType: %d, msgSource: %d, isSelf: %d\n", msg.id.c_str(), msg.type, msg.source, msg.self);
+    wprintf(L"%s[%s] >> %s\n", msg.wxId.c_str(), msg.roomId.c_str(), msg.content.c_str());
+    wprintf(L"msgSourceXml: %s\n", msg.xml.c_str());
+
     return 0;
 }
 
@@ -42,37 +37,39 @@ int main()
     wstring content  = L"这里填写消息内容";
     wstring img_path = L"test.jpg";
 
-    _setmode(_fileno(stdout), _O_WTEXT); // 没有这个wcout遇到一些字符会导致console卡死，用了会导致脱离控制台
     _wsetlocale(LC_ALL, L"chs"); // 这是个大坑，不设置中文直接不见了。。。
 
     // 获取消息类型
     const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
     for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
-        wcout << it->first << L": " << it->second << endl;
+        wprintf(L"%d: %s\n", it->first, it->second.c_str());
     }
 
+    wprintf(L"WxInitSDK: ");
     status = WxInitSDK();
-    wcout << L"WxInitSDK: " << status << endl;
+    wcout << status << endl;
+    wprintf(L"%d\n", status);
     if (status != 0) {
         return 0;
     }
 
-    wcout << L"Message: 接收通知中......" << endl;
+    wprintf(L"Message: 接收通知中......\n");
     WxSetTextMsgCb(onTextMsg);
 
-    // 测试消息发送
-    wcout << L"测试消息发送" << endl;
+    // 测试发送消息
+    wprintf(L"测试发送消息\n");
     WxSendTextMsg(wxid, at_wxid, content);
 
-    // 发送照片
-    wcout << L"测试发送照片" << endl;
+    // 测试发送照片
+    wprintf(L"测试发送照片\n");
     WxSendImageMsg(wxid, img_path);
-#if 0
+
     Sleep(10000); // 等待10秒
-    // 测试联系人获取
+
+    // 测试获取联系人
     auto mContact = WxGetContacts();
     printContacts(mContact);
-#endif
+
     while (1) {
         Sleep(10000); // 休眠，释放CPU
     }

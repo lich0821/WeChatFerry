@@ -306,40 +306,21 @@ ContactMap_t WxGetContacts()
     if (getAddrHandle(&moduleBaseAddress, &hProcess) != 0) {
         return mContact;
     }
+    printf("WxGetContacts\n");
+    DWORD baseAddr = moduleBaseAddress + 0x23638F4;
+    DWORD tempAddr = GetMemoryIntByAddress(hProcess, baseAddr);
+    DWORD head     = GetMemoryIntByAddress(hProcess, tempAddr + 0x4C);
+    DWORD node     = GetMemoryIntByAddress(hProcess, head);
 
-    DWORD Address1 = moduleBaseAddress + 0x1DB9728;
-    DWORD Address2 = GetMemoryIntByAddress(hProcess, Address1);
-    DWORD Address3 = GetMemoryIntByAddress(hProcess, Address2 + 0x28 + 0xBC);
-
-    vector<DWORD> nodeAddressList;
-    nodeAddressList.push_back(Address3);
-
-    DWORD nodeAddress1 = GetMemoryIntByAddress(hProcess, Address3 + 0x0);
-    DWORD nodeAddress2 = GetMemoryIntByAddress(hProcess, Address3 + 0x4);
-    DWORD nodeAddress3 = GetMemoryIntByAddress(hProcess, Address3 + 0x8);
-    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress1) == nodeAddressList.end())
-        nodeAddressList.push_back(nodeAddress1);
-    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress2) == nodeAddressList.end())
-        nodeAddressList.push_back(nodeAddress2);
-    if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress3) == nodeAddressList.end())
-        nodeAddressList.push_back(nodeAddress3);
-
-    unsigned int index = 1;
-    while (index < nodeAddressList.size()) {
+    while (node != head) {
         WxContact_t contactItem;
-        DWORD nodeAddress     = nodeAddressList[index++];
-        DWORD checkNullResult = GetMemoryIntByAddress(hProcess, nodeAddress + 0xD);
-        if (checkNullResult == 0) {
-            index++;
-            continue;
-        }
-        contactItem.wxId       = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x38);
-        contactItem.wxCode     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x4C);
-        contactItem.wxName     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x94);
-        contactItem.wxCountry  = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x1D8);
-        contactItem.wxProvince = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x1EC);
-        contactItem.wxCity     = GetUnicodeInfoByAddress(hProcess, nodeAddress + 0x200);
-        DWORD gender           = GetMemoryIntByAddress(hProcess, nodeAddress + 0x18C);
+        contactItem.wxId       = GetUnicodeInfoByAddress(hProcess, node + 0x30);
+        contactItem.wxCode     = GetUnicodeInfoByAddress(hProcess, node + 0x44);
+        contactItem.wxName     = GetUnicodeInfoByAddress(hProcess, node + 0x8C);
+        contactItem.wxCountry  = GetUnicodeInfoByAddress(hProcess, node + 0x1D0);
+        contactItem.wxProvince = GetUnicodeInfoByAddress(hProcess, node + 0x1E4);
+        contactItem.wxCity     = GetUnicodeInfoByAddress(hProcess, node + 0x1F8);
+        DWORD gender           = GetMemoryIntByAddress(hProcess, node + 0x184);
 
         if (gender == 1)
             contactItem.wxGender = L"男";
@@ -349,16 +330,7 @@ ContactMap_t WxGetContacts()
             contactItem.wxGender = L"未知";
 
         mContact.insert(make_pair(contactItem.wxId, contactItem));
-
-        DWORD nodeAddress1 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x0);
-        DWORD nodeAddress2 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x4);
-        DWORD nodeAddress3 = GetMemoryIntByAddress(hProcess, nodeAddress + 0x8);
-        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress1) == nodeAddressList.end())
-            nodeAddressList.push_back(nodeAddress1);
-        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress2) == nodeAddressList.end())
-            nodeAddressList.push_back(nodeAddress2);
-        if (find(nodeAddressList.begin(), nodeAddressList.end(), nodeAddress3) == nodeAddressList.end())
-            nodeAddressList.push_back(nodeAddress3);
+        node = GetMemoryIntByAddress(hProcess, node);
     }
 
     CloseHandle(hProcess);
