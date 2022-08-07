@@ -45,6 +45,9 @@
     <ClInclude Include="spy_types.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="get_contacts.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -72,6 +75,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="send_msg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="get_contacts.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

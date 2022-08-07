@@ -167,12 +167,20 @@ int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size)
     return strLength;
 }
 
-BSTR GetBstrByAddress(DWORD address) { return SysAllocStringLen(GET_WSTRING(address), GET_DWORD(address + 4)); }
+BSTR GetBstrByAddress(DWORD address)
+{
+    wchar_t *p = GET_WSTRING(address);
+    if (p == NULL) {
+        return NULL;
+    }
+
+    return SysAllocStringLen(GET_WSTRING(address), GET_DWORD(address + 4));
+}
 
 wstring GetWstringFromBstr(BSTR p)
 {
     wstring ws = L"";
-    if (p != nullptr) {
+    if (p != NULL) {
         ws = wstring(p);
         SysFreeString(p);
     }

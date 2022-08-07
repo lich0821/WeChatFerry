@@ -9,4 +9,5 @@ unsigned int __stdcall RpcSetTextMsgCb(void *p);
 int RpcIsLogin();
 int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg);
 int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path);
-RpcIntBstrPair_t** RpcGetMsgTypes(int *pNum);
+PPRpcIntBstrPair RpcGetMsgTypes(int *pNum);
+PPRpcContact RpcGetContacts(int *pNum);

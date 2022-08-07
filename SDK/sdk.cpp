@@ -128,60 +128,46 @@ static int getAddrHandle(DWORD *addr, HANDLE *handle)
     return 0;
 }
 
-ContactMap_t WxGetContacts()
-{
-    ContactMap_t mContact;
-    DWORD moduleBaseAddress;
-    HANDLE hProcess;
-
-    if (getAddrHandle(&moduleBaseAddress, &hProcess) != 0) {
-        return mContact;
-    }
-    printf("WxGetContacts\n");
-    DWORD baseAddr = moduleBaseAddress + 0x23638F4;
-    DWORD tempAddr = GetMemoryIntByAddress(hProcess, baseAddr);
-    DWORD head     = GetMemoryIntByAddress(hProcess, tempAddr + 0x4C);
-    DWORD node     = GetMemoryIntByAddress(hProcess, head);
-
-    while (node != head) {
-        WxContact_t contactItem;
-        contactItem.wxId       = GetUnicodeInfoByAddress(hProcess, node + 0x30);
-        contactItem.wxCode     = GetUnicodeInfoByAddress(hProcess, node + 0x44);
-        contactItem.wxName     = GetUnicodeInfoByAddress(hProcess, node + 0x8C);
-        contactItem.wxCountry  = GetUnicodeInfoByAddress(hProcess, node + 0x1D0);
-        contactItem.wxProvince = GetUnicodeInfoByAddress(hProcess, node + 0x1E4);
-        contactItem.wxCity     = GetUnicodeInfoByAddress(hProcess, node + 0x1F8);
-        DWORD gender           = GetMemoryIntByAddress(hProcess, node + 0x184);
-
-        if (gender == 1)
-            contactItem.wxGender = L"男";
-        else if (gender == 2)
-            contactItem.wxGender = L"女";
-        else
-            contactItem.wxGender = L"未知";
-
-        mContact.insert(make_pair(contactItem.wxId, contactItem));
-        node = GetMemoryIntByAddress(hProcess, node);
-    }
-
-    CloseHandle(hProcess);
-
-    return mContact;
-}
-
 MsgTypesMap_t WxGetMsgTypes()
 {
     static MsgTypesMap_t WxMsgTypes;
     if (WxMsgTypes.empty()) {
-        int size = 0;
-        PPRpcIntBstrPair_t pp = RpcGetMsgTypes(&size);
+        int size            = 0;
+        PPRpcIntBstrPair pp = RpcGetMsgTypes(&size);
         for (int i = 0; i < size; i++) {
             WxMsgTypes.insert(make_pair(pp[i]->key, GetWstringFromBstr(pp[i]->value)));
             midl_user_free(pp[i]);
         }
-        midl_user_free(pp);
+        if (pp) {
+            midl_user_free(pp);
+        }
     }
 
     return WxMsgTypes;
 }
 
+ContactMap_t WxGetContacts()
+{
+    ContactMap_t mContact;
+    int size        = 0;
+    PPRpcContact pp = RpcGetContacts(&size);
+    for (int i = 0; i < size; i++) {
+        WxContact_t contact;
+        contact.wxId       = GetWstringFromBstr(pp[i]->wxId);
+        contact.wxCode     = GetWstringFromBstr(pp[i]->wxCode);
+        contact.wxName     = GetWstringFromBstr(pp[i]->wxName);
+        contact.wxCountry  = GetWstringFromBstr(pp[i]->wxCountry);
+        contact.wxProvince = GetWstringFromBstr(pp[i]->wxProvince);
+        contact.wxCity     = GetWstringFromBstr(pp[i]->wxCity);
+        contact.wxGender   = GetWstringFromBstr(pp[i]->wxGender);
+
+        mContact.insert(make_pair(contact.wxId, contact));
+        midl_user_free(pp[i]);
+    }
+
+    if (pp) {
+        midl_user_free(pp);
+    }
+
+    return mContact;
+}

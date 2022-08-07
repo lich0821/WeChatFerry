@@ -166,6 +166,7 @@
     <ClInclude Include="..\Rpc\rpc_h.h" />
     <ClInclude Include="..\SDK\util.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="get_contacts.h" />
     <ClInclude Include="load_calls.h" />
     <ClInclude Include="monitor.h" />
     <ClInclude Include="receive_msg.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="..\Rpc\rpc_s.c" />
     <ClCompile Include="..\SDK\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="get_contacts.cpp" />
     <ClCompile Include="load_calls.cpp" />
     <ClCompile Include="monitor.cpp" />
     <ClCompile Include="receive_msg.cpp" />

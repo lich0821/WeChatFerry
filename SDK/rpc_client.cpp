@@ -1,6 +1,6 @@
-﻿#include "sdk.h"
+﻿#include "rpc_client.h"
+#include "sdk.h"
 #include "util.h"
-#include "rpc_client.h"
 
 #pragma comment(lib, "Rpcrt4.lib")
 
@@ -113,13 +113,13 @@ int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path)
     return ret;
 }
 
-PPRpcIntBstrPair_t RpcGetMsgTypes(int *pNum)
+PPRpcIntBstrPair RpcGetMsgTypes(int *pNum)
 {
-    int ret = 0;
-    unsigned long ulCode = 0;
-    PPRpcIntBstrPair_t ppRpcMsgTypes = NULL;
+    int ret                        = 0;
+    unsigned long ulCode           = 0;
+    PPRpcIntBstrPair ppRpcMsgTypes = NULL;
 
-    RpcTryExcept{ ret = client_GetMsgTypes(pNum, &ppRpcMsgTypes); }
+    RpcTryExcept { ret = client_GetMsgTypes(pNum, &ppRpcMsgTypes); }
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
@@ -132,6 +132,27 @@ PPRpcIntBstrPair_t RpcGetMsgTypes(int *pNum)
     }
 
     return ppRpcMsgTypes;
+}
+
+PPRpcContact RpcGetContacts(int *pNum)
+{
+    int ret                    = 0;
+    unsigned long ulCode       = 0;
+    PPRpcContact ppRpcContacts = NULL;
+
+    RpcTryExcept { ret = client_GetContacts(pNum, &ppRpcContacts); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcGetContacts exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+    if (ret != 0) {
+        printf("GetContacts Failed: %d\n", ret);
+        return NULL;
+    }
+
+    return ppRpcContacts;
 }
 
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
