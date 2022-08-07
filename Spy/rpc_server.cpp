@@ -3,13 +3,11 @@
 
 #include "get_contacts.h"
 #include "monitor.h"
+#include "rpc_h.h"
 #include "rpc_server.h"
 #include "sdk.h"
 #include "send_msg.h"
 #include "spy_types.h"
-
-#include "rpc_h.h"
-#pragma comment(lib, "Rpcrt4.lib")
 
 extern HANDLE g_hEvent;
 extern MsgQueue_t g_MsgQueue;
@@ -129,8 +127,8 @@ int RpcStartServer(HMODULE hModule)
     // remote procedure calls.
     status = RpcServerUseProtseqEp(reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
                                    RPC_C_LISTEN_MAX_CALLS_DEFAULT,                   // Backlog queue length for TCP/IP.
-                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"tmp_endpoint"), // TCP/IP port to use
-                                   NULL                                                   // No security
+                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
+                                   NULL                                              // No security
     );
 
     if (status)

@@ -2,8 +2,6 @@
 #include "sdk.h"
 #include "util.h"
 
-#pragma comment(lib, "Rpcrt4.lib")
-
 static RPC_WSTR pszStringBinding = NULL;
 extern std::function<int(WxMessage_t)> g_cbReceiveTextMsg;
 
@@ -14,7 +12,7 @@ RPC_STATUS RpcConnectServer()
     status = RpcStringBindingCompose(NULL,                                             // UUID to bind to
                                      reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
                                      NULL,                                             // TCP/IP network address to use
-                                     reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"tmp_endpoint"), // TCP/IP port to use
+                                     reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
                                      NULL,               // Protocol dependent network options to use
                                      &pszStringBinding); // String binding output
 
