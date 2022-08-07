@@ -30,6 +30,9 @@
     <ClInclude Include="injector.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="rpc_client.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -48,6 +51,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="injector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc_client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

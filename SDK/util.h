@@ -1,6 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
+
+#include "sdk.h"
+#include "rpc_h.h"
 
 #define WECHAREXE       L"WeChat.exe"
 #define WECHATWINDLL    L"WeChatWin.dll"
@@ -17,5 +20,8 @@ int GetWeChatWinDLLPath(wchar_t *path);
 int GetWeChatVersion(wchar_t *version);
 bool GetFileVersion(const wchar_t *filePath, wchar_t *version);
 int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size);
+BSTR GetBstrByAddress(DWORD address);
+void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg);
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);
+std::wstring GetWstringFromBstr(BSTR p);
 std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);

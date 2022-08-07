@@ -3,7 +3,7 @@
 #include "framework.h"
 #include <queue>
 
-#include "rpc_types.h"
+#include "rpc_h.h"
 
 typedef struct UserInfoCall {
     DWORD wxid;
@@ -19,7 +19,7 @@ typedef struct RecvMsg {
     DWORD msgId;   // 消息ID地址
     DWORD msgXml;  // 消息xml内容地址
     DWORD roomId;  // 群聊时，为群ID；私聊时，为微信ID
-    DWORD wxId;    // 私聊时，为空；群群时，为发送者微信ID
+    DWORD wxId;    // 私聊时，为空；群聊时，为发送者微信ID
     DWORD content; // 消息内容地址
 } RecvMsg_t;
 
@@ -29,12 +29,25 @@ typedef struct SendImg {
     DWORD call3;
 } SendImg_t;
 
+typedef struct Contact {
+    DWORD base;
+    DWORD head;
+    DWORD wxId;
+    DWORD wxCode;
+    DWORD wxName;
+    DWORD wxGender;
+    DWORD wxCountry;
+    DWORD wxProvince;
+    DWORD wxCity;
+} Contact_t;
+
 typedef struct WxCalls {
     DWORD login;       // 登录状态
     UserInfoCall_t ui; // 用户信息
     DWORD sendTextMsg; // 发送消息
     RecvMsg_t recvMsg; // 接收消息
     SendImg_t sendImg; // 发送图片
+    Contact_t contact; // 获取联系人
 } WxCalls_t;
 
 typedef struct TextStruct {

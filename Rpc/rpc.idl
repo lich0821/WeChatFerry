@@ -1,4 +1,4 @@
-[
+﻿[
     uuid(ed838ecd-8a1e-4da7-bfda-9f2d12d07893),
     version(1.0),
     implicit_handle(handle_t hSpyBinding),
@@ -6,12 +6,44 @@
 
 interface ISpy
 {
-    import "rpc_types.h";
+    import "oaidl.idl";
+
+    typedef struct RpcMessage {
+        int self;     // 是否自己发的消息：0=否，1=是
+        int type;     // 消息类型
+        int source;   // 消息来源：0=好友消息，1=群消息
+        BSTR id;      // 消息ID
+        BSTR xml;     // 群其他消息
+        BSTR wxId;    // 发送人微信ID
+        BSTR roomId;  // 群ID
+        BSTR content; // 消息内容，MAC版最大：16384，即16KB
+    } RpcMessage_t;
+
+    typedef struct RpcIntBstrPair {
+        int key;
+        BSTR value;
+    } RpcIntBstrPair_t;
+    typedef RpcIntBstrPair_t* PRpcIntBstrPair;
+    typedef RpcIntBstrPair_t** PPRpcIntBstrPair;
+
+    typedef struct RpcContact {
+        BSTR wxId;
+        BSTR wxCode;
+        BSTR wxName;
+        BSTR wxCountry;
+        BSTR wxProvince;
+        BSTR wxCity;
+        BSTR wxGender;
+    } RpcContact_t;
+    typedef RpcContact_t *PRpcContact;
+    typedef RpcContact_t **PPRpcContact;
 
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid, [ in, string ] const wchar_t *msg);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
+    int GetMsgTypes([ out ] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair *msgTypes);
+    int GetContacts([ out ] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);
 
     void EnableReceiveMsg();
-    [callback] int ReceiveMsg([ in ] RpcMessage_t *msg);
+    [callback] int ReceiveMsg([ in ] RpcMessage_t rpcMsg);
 };

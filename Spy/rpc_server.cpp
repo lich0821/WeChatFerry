@@ -1,16 +1,17 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 
+#include "get_contacts.h"
 #include "monitor.h"
+#include "rpc_h.h"
 #include "rpc_server.h"
+#include "sdk.h"
 #include "send_msg.h"
 #include "spy_types.h"
 
-#include "../Rpc/rpc_h.h"
-#pragma comment(lib, "Rpcrt4.lib")
-
 extern HANDLE g_hEvent;
 extern MsgQueue_t g_MsgQueue;
+extern const MsgTypesMap_t g_WxMsgTypes;
 
 int server_IsLogin() { return IsLogin(); }
 
@@ -25,7 +26,7 @@ void server_EnableReceiveMsg()
             // 中断式，兼顾及时性和CPU使用率
             WaitForSingleObject(g_hEvent, INFINITE); // 等待消息
             while (!g_MsgQueue.empty()) {
-                client_ReceiveMsg((RpcMessage_t *)&g_MsgQueue.front()); // 调用接收消息回调
+                client_ReceiveMsg(g_MsgQueue.front()); // 调用接收消息回调
                 g_MsgQueue.pop();
             }
             ResetEvent(g_hEvent);
@@ -34,7 +35,7 @@ void server_EnableReceiveMsg()
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("Runtime reported exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("server_EnableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept
 }
@@ -53,6 +54,67 @@ int server_SendImageMsg(const wchar_t *wxid, const wchar_t *path)
     return 0;
 }
 
+int server_GetMsgTypes(int *pNum, PPRpcIntBstrPair *msgTypes)
+{
+    *pNum               = g_WxMsgTypes.size();
+    PPRpcIntBstrPair pp = (PPRpcIntBstrPair)midl_user_allocate(*pNum * sizeof(RpcIntBstrPair_t));
+    if (pp == NULL) {
+        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
+        return -2;
+    }
+    int index = 0;
+    for (auto it = g_WxMsgTypes.begin(); it != g_WxMsgTypes.end(); it++) {
+        PRpcIntBstrPair p = (PRpcIntBstrPair)midl_user_allocate(sizeof(RpcIntBstrPair_t));
+        if (p == NULL) {
+            printf("server_GetMsgTypes midl_user_allocate Failed for p\n");
+            return -3;
+        }
+
+        p->key      = it->first;
+        p->value    = SysAllocString(it->second.c_str());
+        pp[index++] = p;
+    }
+
+    *msgTypes = pp;
+
+    return 0;
+}
+
+int server_GetContacts(int *pNum, PPRpcContact *contacts)
+{
+    std::vector<RpcContact_t> vContacts = GetContacts();
+
+    *pNum           = vContacts.size();
+    PPRpcContact pp = (PPRpcContact)midl_user_allocate(*pNum * sizeof(RpcContact_t));
+    if (pp == NULL) {
+        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
+        return -2;
+    }
+
+    int index = 0;
+    for (auto it = vContacts.begin(); it != vContacts.end(); it++) {
+        PRpcContact p = (PRpcContact)midl_user_allocate(sizeof(RpcContact_t));
+        if (p == NULL) {
+            printf("server_GetMsgTypes midl_user_allocate Failed for p\n");
+            return -3;
+        }
+
+        p->wxId       = it->wxId;
+        p->wxCode     = it->wxCode;
+        p->wxName     = it->wxName;
+        p->wxCountry  = it->wxCountry;
+        p->wxProvince = it->wxProvince;
+        p->wxCity     = it->wxCity;
+        p->wxGender   = it->wxGender;
+
+        pp[index++] = p;
+    }
+
+    *contacts = pp;
+
+    return 0;
+}
+
 RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
 {
     return RPC_S_OK; // Always allow anyone.
@@ -65,8 +127,8 @@ int RpcStartServer(HMODULE hModule)
     // remote procedure calls.
     status = RpcServerUseProtseqEp(reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
                                    RPC_C_LISTEN_MAX_CALLS_DEFAULT,                   // Backlog queue length for TCP/IP.
-                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"tmp_endpoint"), // TCP/IP port to use
-                                   NULL                                                   // No security
+                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
+                                   NULL                                              // No security
     );
 
     if (status)

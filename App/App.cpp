@@ -39,12 +39,6 @@ int main()
 
     _wsetlocale(LC_ALL, L"chs"); // 这是个大坑，不设置中文直接不见了。。。
 
-    // 获取消息类型
-    const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
-    for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
-        wprintf(L"%d: %s\n", it->first, it->second.c_str());
-    }
-
     wprintf(L"WxInitSDK: ");
     status = WxInitSDK();
     wcout << status << endl;
@@ -53,18 +47,26 @@ int main()
         return 0;
     }
 
+    // 获取消息类型
+    wprintf(L"获取消息类型\n");
+    const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
+    for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
+        wprintf(L"%d: %s\n", it->first, it->second.c_str());
+    }
+
     wprintf(L"Message: 接收通知中......\n");
     WxSetTextMsgCb(onTextMsg);
+    Sleep(1000); // 等待1秒
 
     // 测试发送消息
     wprintf(L"测试发送消息\n");
     WxSendTextMsg(wxid, at_wxid, content);
+    Sleep(1000); // 等待1秒
 
     // 测试发送照片
     wprintf(L"测试发送照片\n");
     WxSendImageMsg(wxid, img_path);
-
-    Sleep(10000); // 等待10秒
+    Sleep(1000); // 等待1秒
 
     // 测试获取联系人
     auto mContact = WxGetContacts();
