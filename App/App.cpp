@@ -78,12 +78,12 @@ int main()
     wprintf(L"测试发送消息\n");
     WxSendTextMsg(wxid, at_wxid, content);
     Sleep(1000); // 等待1秒
-#if 0
+
     // 测试发送照片
     wprintf(L"测试发送照片\n");
     WxSendImageMsg(wxid, img_path);
     Sleep(1000); // 等待1秒
-
+#if 0
     // 测试获取联系人
     auto mContact = WxGetContacts();
     printContacts(mContact);
