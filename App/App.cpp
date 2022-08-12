@@ -88,7 +88,7 @@ int main()
     auto mContact = WxGetContacts();
     printContacts(mContact);
     Sleep(1000); // 等待1秒
-#if 0
+
     // 测试获取数据库名
     auto vDbNames = WxGetDbNames();
     printDbNames(vDbNames);
@@ -97,7 +97,7 @@ int main()
     // 测试获取数据库中的表
     auto vDbTables = WxGetDbTables(L"ChatMsg.db");
     printDbTables(vDbTables);
-#endif
+
     while (1) {
         Sleep(10000); // 休眠，释放CPU
     }
