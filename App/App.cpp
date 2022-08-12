@@ -61,7 +61,7 @@ int main()
     if (status != 0) {
         return 0;
     }
-#if 0
+
     // 获取消息类型
     wprintf(L"获取消息类型\n");
     const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
@@ -72,7 +72,7 @@ int main()
     wprintf(L"Message: 接收通知中......\n");
     WxSetTextMsgCb(onTextMsg);
     Sleep(1000); // 等待1秒
-
+#if 0
     // 测试发送消息
     wprintf(L"测试发送消息\n");
     WxSendTextMsg(wxid, at_wxid, content);

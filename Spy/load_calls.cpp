@@ -9,7 +9,7 @@ WxCalls_t wxCalls = { 0x2366538,                           // Login Status
                       0x521D30,                            // Send Message
                       /* Receive Message:
                             Hook,   call,   type, self,   id, msgXml, roomId, wxId, content */
-                      { 0x550F4C, 0xA94A50, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70 },
+                      { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70 },
                       { 0xBD780, 0x770120, 0x521640 }, // Send Image Message
                       /* Get Contacts:
                             Base,  head, wxId, Code, Name, Gender, Country, Province, City*/
