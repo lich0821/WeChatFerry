@@ -83,12 +83,12 @@ int main()
     wprintf(L"测试发送照片\n");
     WxSendImageMsg(wxid, img_path);
     Sleep(1000); // 等待1秒
-#if 0
+
     // 测试获取联系人
     auto mContact = WxGetContacts();
     printContacts(mContact);
     Sleep(1000); // 等待1秒
-
+#if 0
     // 测试获取数据库名
     auto vDbNames = WxGetDbNames();
     printDbNames(vDbNames);
