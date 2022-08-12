@@ -57,12 +57,11 @@ int main()
 
     wprintf(L"WxInitSDK: ");
     status = WxInitSDK();
-    wcout << status << endl;
     wprintf(L"%d\n", status);
     if (status != 0) {
         return 0;
     }
-
+#if 0
     // 获取消息类型
     wprintf(L"获取消息类型\n");
     const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();
@@ -97,7 +96,7 @@ int main()
     // 测试获取数据库中的表
     auto vDbTables = WxGetDbTables(L"ChatMsg.db");
     printDbTables(vDbTables);
-
+#endif
     while (1) {
         Sleep(10000); // 休眠，释放CPU
     }
