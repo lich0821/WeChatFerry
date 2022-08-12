@@ -68,16 +68,17 @@ int main()
     for (auto it = WxMsgTypes.begin(); it != WxMsgTypes.end(); ++it) {
         wprintf(L"%d: %s\n", it->first, it->second.c_str());
     }
+    Sleep(1000); // 等待1秒
 
     wprintf(L"Message: 接收通知中......\n");
     WxSetTextMsgCb(onTextMsg);
     Sleep(1000); // 等待1秒
-#if 0
+
     // 测试发送消息
     wprintf(L"测试发送消息\n");
     WxSendTextMsg(wxid, at_wxid, content);
     Sleep(1000); // 等待1秒
-
+#if 0
     // 测试发送照片
     wprintf(L"测试发送照片\n");
     WxSendImageMsg(wxid, img_path);
