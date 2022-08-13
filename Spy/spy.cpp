@@ -1,19 +1,12 @@
 ﻿#include "load_calls.h"
-#include "receive_msg.h"
 #include "rpc_server.h"
 #include "spy.h"
 #include "util.h"
 
 HANDLE g_hEvent          = NULL;
+BOOL g_rpcKeepAlive      = false;
 WxCalls_t g_WxCalls      = { 0 };
 DWORD g_WeChatWinDllAddr = 0;
-
-DWORD WINAPI Monitor(HMODULE hModule)
-{
-    ListenMessage();
-
-    return TRUE;
-}
 
 void InitSpy(HMODULE hModule)
 {
@@ -40,20 +33,8 @@ void InitSpy(HMODULE hModule)
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
     }
-
-    HANDLE mThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Monitor, hModule, NULL, 0);
-    if (mThread != 0) {
-        CloseHandle(mThread);
-    }
 }
 
 void DestroySpy() { RpcStopServer(); }
 
-int IsLogin(void)
-{
-    if (g_WeChatWinDllAddr == 0) {
-        return 0;
-    }
-
-    return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login);
-}
+int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }

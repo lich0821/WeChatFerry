@@ -3,6 +3,7 @@
 
 #include "exec_sql.h"
 #include "get_contacts.h"
+#include "receive_msg.h"
 #include "rpc_h.h"
 #include "rpc_server.h"
 #include "sdk.h"
@@ -13,21 +14,24 @@
 
 using namespace std;
 
-extern HANDLE g_hEvent;
-extern MsgQueue_t g_MsgQueue;
-extern const MsgTypesMap_t g_WxMsgTypes;
-extern int IsLogin(void);
+extern int IsLogin(void);                // Defined in spy.cpp
+extern HANDLE g_hEvent;                  // New message signal
+extern BOOL g_rpcKeepAlive;              // Keep RPC server thread running
+extern MsgQueue_t g_MsgQueue;            // Queue for message
+extern const MsgTypesMap_t g_WxMsgTypes; // Map of WeChat Message types
+
+static BOOL listenMsgFlag = false;
 
 int server_IsLogin() { return IsLogin(); }
 
 void server_EnableReceiveMsg()
 {
     unsigned long ulCode = 0;
-
+    ListenMessage();
     RpcTryExcept
     {
         // 调用客户端的回调函数
-        while (true) {
+        while (listenMsgFlag) {
             // 中断式，兼顾及时性和CPU使用率
             WaitForSingleObject(g_hEvent, INFINITE); // 等待消息
             while (!g_MsgQueue.empty()) {
@@ -153,9 +157,9 @@ int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
     int index = 0;
     for (auto it = tables.begin(); it != tables.end(); it++) {
         PRpcTables p = (PRpcTables)midl_user_allocate(sizeof(RpcTables_t));
-        p->table     = it->table;
-        p->sql       = it->sql;
-        pp[index++]  = p;
+        p->table    = it->table;
+        p->sql      = it->sql;
+        pp[index++] = p;
     }
 
     *tbls = pp;
@@ -192,8 +196,9 @@ int RpcStartServer(HMODULE hModule)
                                   (unsigned)-1,                   // Infinite max size of incoming data blocks.
                                   SecurityCallback);              // Naive security callback.
 
-    while (1) {
-        Sleep(10000); // 休眠，释放CPU
+    listenMsgFlag = true;
+    while (g_rpcKeepAlive) {
+        Sleep(1000); // 休眠，释放CPU
     }
 
     return 0;
@@ -202,7 +207,11 @@ int RpcStartServer(HMODULE hModule)
 int RpcStopServer(void)
 {
     RPC_STATUS status;
-    status = RpcMgmtStopServerListening(NULL);
+
+    UnListenMessage();
+
+    listenMsgFlag = false;
+    status        = RpcMgmtStopServerListening(NULL);
     if (status)
         return status;
 
