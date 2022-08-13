@@ -35,7 +35,7 @@ int WxInitSDK()
         return status;
     }
     Sleep(2000); // 等待微信打开
-    if (!InjectDll(WeChatPID, SpyDllPath)) {
+    if (InjectDll(WeChatPID, SpyDllPath)) {
         return -1;
     }
 
@@ -51,7 +51,7 @@ int WxInitSDK()
 int WxDestroySDK()
 {
     RpcDisconnectServer();
-    EnjectDll(WeChatPID, SpyDllPath);
+    EjectDll(WeChatPID, SpyDllPath);
 
     return ERROR_SUCCESS;
 }
