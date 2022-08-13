@@ -24,9 +24,6 @@
     <ClInclude Include="..\Rpc\rpc_h.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="monitor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="rpc_server.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -51,6 +48,9 @@
     <ClInclude Include="exec_sql.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="spy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -60,9 +60,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\Rpc\rpc_memory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="monitor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="rpc_server.cpp">
@@ -84,6 +81,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="exec_sql.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="spy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

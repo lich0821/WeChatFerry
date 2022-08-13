@@ -170,10 +170,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="get_contacts.h" />
     <ClInclude Include="load_calls.h" />
-    <ClInclude Include="monitor.h" />
     <ClInclude Include="receive_msg.h" />
     <ClInclude Include="rpc_server.h" />
     <ClInclude Include="send_msg.h" />
+    <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
   </ItemGroup>
   <ItemGroup>
@@ -184,10 +184,10 @@
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="get_contacts.cpp" />
     <ClCompile Include="load_calls.cpp" />
-    <ClCompile Include="monitor.cpp" />
     <ClCompile Include="receive_msg.cpp" />
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />
+    <ClCompile Include="spy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="..\Rpc\rpc.idl">

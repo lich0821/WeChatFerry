@@ -3,11 +3,11 @@
 
 #include "exec_sql.h"
 #include "get_contacts.h"
-#include "monitor.h"
 #include "rpc_h.h"
 #include "rpc_server.h"
 #include "sdk.h"
 #include "send_msg.h"
+#include "spy.h"
 #include "spy_types.h"
 #include "util.h"
 
@@ -16,6 +16,7 @@ using namespace std;
 extern HANDLE g_hEvent;
 extern MsgQueue_t g_MsgQueue;
 extern const MsgTypesMap_t g_WxMsgTypes;
+extern int IsLogin(void);
 
 int server_IsLogin() { return IsLogin(); }
 
