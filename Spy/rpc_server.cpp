@@ -157,6 +157,11 @@ int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
     int index = 0;
     for (auto it = tables.begin(); it != tables.end(); it++) {
         PRpcTables p = (PRpcTables)midl_user_allocate(sizeof(RpcTables_t));
+        if (p == NULL) {
+            printf("server_GetDbTables midl_user_allocate Failed for p\n");
+            return -3;
+        }
+
         p->table    = it->table;
         p->sql      = it->sql;
         pp[index++] = p;
