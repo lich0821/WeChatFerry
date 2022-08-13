@@ -35,6 +35,10 @@ void InitSpy(HMODULE hModule)
     }
 }
 
-void DestroySpy() { RpcStopServer(); }
+void DestroySpy()
+{
+    RpcStopServer();
+    FreeLibrary((HMODULE)g_WeChatWinDllAddr);
+}
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }

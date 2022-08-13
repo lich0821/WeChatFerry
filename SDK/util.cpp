@@ -2,6 +2,7 @@
 #include "framework.h"
 #include <string.h>
 #include <strsafe.h>
+#include <tlhelp32.h>
 #include <wchar.h>
 
 #include "util.h"
@@ -11,12 +12,7 @@
 
 using namespace std;
 
-int GetWeChatPath(wchar_t *path);
-int GetWeChatWinDLLPath(wchar_t *path);
-int GetWeChatVersion(wchar_t *version);
-bool GetFileVersion(const wchar_t *filePath, wchar_t *version);
-
-int GetWeChatPath(wchar_t *path)
+static int GetWeChatPath(wchar_t *path)
 {
     int ret   = -1;
     HKEY hKey = NULL;
@@ -45,7 +41,7 @@ __exit:
     return ERROR_SUCCESS;
 }
 
-int GetWeChatWinDLLPath(wchar_t *path)
+static int GetWeChatWinDLLPath(wchar_t *path)
 {
     int ret = GetWeChatPath(path);
     if (ret != ERROR_SUCCESS) {
@@ -71,21 +67,7 @@ int GetWeChatWinDLLPath(wchar_t *path)
     return ret;
 }
 
-int GetWeChatVersion(wchar_t *version)
-{
-    WCHAR Path[MAX_PATH] = { 0 };
-
-    int ret = GetWeChatWinDLLPath(Path);
-    if (ret != ERROR_SUCCESS) {
-        return ret;
-    }
-
-    ret = GetFileVersion(Path, version);
-
-    return ret;
-}
-
-bool GetFileVersion(const wchar_t *filePath, wchar_t *version)
+static bool GetFileVersion(const wchar_t *filePath, wchar_t *version)
 {
     if (wcslen(filePath) > 0 && PathFileExists(filePath)) {
         VS_FIXEDFILEINFO *pVerInfo = NULL;
@@ -129,8 +111,43 @@ bool GetFileVersion(const wchar_t *filePath, wchar_t *version)
     return false;
 }
 
+int GetWeChatVersion(wchar_t *version)
+{
+    WCHAR Path[MAX_PATH] = { 0 };
+
+    int ret = GetWeChatWinDLLPath(Path);
+    if (ret != ERROR_SUCCESS) {
+        return ret;
+    }
+
+    ret = GetFileVersion(Path, version);
+
+    return ret;
+}
+
+static DWORD GetWeChatPid()
+{
+    DWORD pid           = 0;
+    HANDLE hSnapshot    = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
+    while (Process32Next(hSnapshot, &pe32)) {
+        wstring strProcess = pe32.szExeFile;
+        if (strProcess == WECHAREXE) {
+            pid = pe32.th32ProcessID;
+            break;
+        }
+    }
+    CloseHandle(hSnapshot);
+    return pid;
+}
+
 int OpenWeChat(DWORD *pid)
 {
+    *pid = GetWeChatPid();
+    if (*pid) {
+        return ERROR_SUCCESS;
+    }
+
     int ret                = -1;
     STARTUPINFO si         = { sizeof(si) };
     WCHAR Path[MAX_PATH]   = { 0 };

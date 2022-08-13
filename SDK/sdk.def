@@ -1,5 +1,6 @@
 ﻿EXPORTS
 	WxInitSDK
+	WxDestroySDK
 	WxSetTextMsgCb
 	WxSendTextMsg
 	WxGetMsgTypes

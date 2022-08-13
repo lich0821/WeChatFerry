@@ -38,6 +38,7 @@ typedef map<wstring, WxContact_t> ContactMap_t;
 typedef vector<WxDbTable_t> DbTableVector_t;
 
 int WxInitSDK();
+int WxDestroySDK();
 int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg);
 int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg);
 int WxSendImageMsg(wstring wxid, wstring path);

@@ -14,27 +14,28 @@
 
 std::function<int(WxMessage_t)> g_cbReceiveTextMsg;
 
+static DWORD WeChatPID            = 0;
+static WCHAR SpyDllPath[MAX_PATH] = { 0 };
+
 int WxInitSDK()
 {
-    unsigned long ulCode    = 0;
-    DWORD status            = 0;
-    DWORD pid               = 0;
-    WCHAR DllPath[MAX_PATH] = { 0 };
+    DWORD status         = 0;
+    unsigned long ulCode = 0;
 
-    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), DllPath, MAX_PATH);
-    PathRemoveFileSpec(DllPath);
-    PathAppend(DllPath, WECHATINJECTDLL);
+    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), SpyDllPath, MAX_PATH);
+    PathRemoveFileSpec(SpyDllPath);
+    PathAppend(SpyDllPath, WECHATINJECTDLL);
 
-    if (!PathFileExists(DllPath)) {
+    if (!PathFileExists(SpyDllPath)) {
         return ERROR_FILE_NOT_FOUND;
     }
 
-    status = OpenWeChat(&pid);
+    status = OpenWeChat(&WeChatPID);
     if (status != 0) {
         return status;
     }
     Sleep(2000); // 等待微信打开
-    if (!InjectDll(pid, DllPath)) {
+    if (!InjectDll(WeChatPID, SpyDllPath)) {
         return -1;
     }
 
@@ -43,6 +44,14 @@ int WxInitSDK()
     while (!RpcIsLogin()) {
         Sleep(1000);
     }
+
+    return ERROR_SUCCESS;
+}
+
+int WxDestroySDK()
+{
+    RpcDisconnectServer();
+    EnjectDll(WeChatPID, SpyDllPath);
 
     return ERROR_SUCCESS;
 }
