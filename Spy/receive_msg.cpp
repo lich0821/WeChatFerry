@@ -11,10 +11,13 @@ extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
 MsgQueue_t g_MsgQueue;
-DWORD reg_buffer          = 0;
-DWORD recvMsgCallAddr     = 0;
-DWORD recvMsgJumpBackAddr = 0;
-RpcMessage_t lMsg         = { 0 };
+static BOOL isListened           = false;
+static DWORD reg_buffer          = 0;
+static DWORD recvMsgHookAddr     = 0;
+static DWORD recvMsgCallAddr     = 0;
+static DWORD recvMsgJumpBackAddr = 0;
+static CHAR recvMsgBackupCode[5] = { 0 };
+static RpcMessage_t lMsg         = { 0 };
 
 extern const MsgTypesMap_t g_WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
                                                           { 0x03, L"图片" },
@@ -35,9 +38,29 @@ extern const MsgTypesMap_t g_WxMsgTypes = MsgTypesMap_t { { 0x01, L"文字" },
                                                           { 0x2710, L"红包、系统消息" },
                                                           { 0x2712, L"撤回消息" } };
 
+void HookAddress(DWORD hookAddr, LPVOID funcAddr, CHAR recvMsgBackupCode[5])
+{
+    //组装跳转数据
+    BYTE jmpCode[5] = { 0 };
+    jmpCode[0]      = 0xE9;
+
+    //计算偏移
+    *(DWORD *)&jmpCode[1] = (DWORD)funcAddr - hookAddr - 5;
+
+    // 备份原来的代码
+    ReadProcessMemory(GetCurrentProcess(), (LPVOID)hookAddr, recvMsgBackupCode, 5, 0);
+    // 写入新的代码
+    WriteProcessMemory(GetCurrentProcess(), (LPVOID)hookAddr, jmpCode, 5, 0);
+}
+
+void UnHookAddress(DWORD hookAddr, CHAR restoreCode[5])
+{
+    WriteProcessMemory(GetCurrentProcess(), (LPVOID)hookAddr, restoreCode, 5, 0);
+}
+
 void DispatchMsg(DWORD reg)
 {
-    DWORD* p = (DWORD*)reg; //消息结构基址
+    DWORD *p = (DWORD *)reg; //消息结构基址
 
     memset(&lMsg, 0, sizeof(RpcMessage_t));
 
@@ -46,22 +69,20 @@ void DispatchMsg(DWORD reg)
     lMsg.id   = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgId);
     lMsg.xml  = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgXml);
 
-
     if (wcsstr(lMsg.xml, L"<membercount>") == NULL) {
         // pMsg.roomId = {0};
         lMsg.wxId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
-    }
-    else {
+    } else {
         lMsg.source = 1;
         lMsg.wxId   = GetBstrByAddress(*p + g_WxCalls.recvMsg.wxId);
         lMsg.roomId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
     }
     lMsg.content = GetBstrByAddress(*p + g_WxCalls.recvMsg.content);
-    g_MsgQueue.push(lMsg);  // 发送消息
-    SetEvent(g_hEvent);     // 发送消息通知
+    g_MsgQueue.push(lMsg); // 发送消息
+    SetEvent(g_hEvent);    // 发送消息通知
 }
 
-__declspec(naked) void RecieveMsgHook()
+__declspec(naked) void RecieveMsgFunc()
 {
     __asm {
         mov reg_buffer, edi //把值复制出来
@@ -79,19 +100,23 @@ __declspec(naked) void RecieveMsgHook()
 void ListenMessage()
 {
     // MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
-    if (g_WeChatWinDllAddr == 0) {
+    if (isListened || (g_WeChatWinDllAddr == 0)) {
         return;
     }
 
-    DWORD hookAddress   = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
+    recvMsgHookAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
     recvMsgCallAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.call;
-    recvMsgJumpBackAddr = hookAddress + 5;
+    recvMsgJumpBackAddr = recvMsgHookAddr + 5;
 
-    BYTE jmpCode[5] = { 0 };
-    jmpCode[0]      = 0xE9;
+    HookAddress(recvMsgHookAddr, RecieveMsgFunc, recvMsgBackupCode);
+    isListened = true;
+}
 
-    *(DWORD *)&jmpCode[1] = (DWORD)RecieveMsgHook - hookAddress - 5;
-
-    // 6FB6A350 E8 4B020000 call WeChatWi .6FB6A5A0;
-    WriteProcessMemory(GetCurrentProcess(), (LPVOID)hookAddress, jmpCode, 5, 0);
+void UnListenMessage()
+{
+    if (!isListened) {
+        return;
+    }
+    UnHookAddress(recvMsgHookAddr, recvMsgBackupCode);
+    isListened = false;
 }
