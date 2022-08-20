@@ -237,3 +237,28 @@ DbTableVector_t WxGetDbTables(wstring db)
 
     return vTables;
 }
+
+SqlRetVector_t WxExecDbQuery(wstring db, wstring sql)
+{
+    int row, col = 0;
+    PPPRpcSqlResult ppp = RpcExecDbQuery(db.c_str(), sql.c_str(), &row, &col);
+    vector<vector<WxSqlResult_t>> vvResults;
+    for (int r = 0; r < row; r++) {
+        vector<WxSqlResult_t> vResult;
+        for (int c = 0; c < col; c++) {
+            WxSqlResult_t result = { 0 };
+            result.type          = ppp[r][c]->type;
+            result.column        = GetWstringFromBstr(ppp[r][c]->column);
+            result.content       = GetBytesFromBstr(ppp[r][c]->content);
+            vResult.push_back(result);
+            midl_user_free(ppp[r][c]);
+        }
+        vvResults.push_back(vResult);
+        midl_user_free(ppp[r]);
+    }
+    if (ppp) {
+        midl_user_free(ppp);
+    }
+
+    return vvResults;
+}

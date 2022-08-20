@@ -33,9 +33,16 @@ typedef struct WxDbTable {
     wstring sql;   // 建表 SQL
 } WxDbTable_t;
 
+typedef struct WxSqlResult {
+    int type;
+    wstring column;
+    string content;
+} WxSqlResult_t;
+
 typedef map<int, wstring> MsgTypesMap_t;
 typedef map<wstring, WxContact_t> ContactMap_t;
 typedef vector<WxDbTable_t> DbTableVector_t;
+typedef vector<vector<WxSqlResult_t>> SqlRetVector_t;
 
 int WxInitSDK();
 int WxDestroySDK();
@@ -47,3 +54,4 @@ ContactMap_t WxGetContacts();
 MsgTypesMap_t WxGetMsgTypes();
 vector<wstring> WxGetDbNames();
 DbTableVector_t WxGetDbTables(wstring db);
+SqlRetVector_t WxExecDbQuery(wstring db, wstring sql);

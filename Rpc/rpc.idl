@@ -46,6 +46,15 @@ interface ISpy
     typedef RpcTables_t *PRpcTables;
     typedef RpcTables_t **PPRpcTables;
 
+    typedef struct RpcSqlResult {
+        int type;
+        BSTR column;
+        BSTR content;
+    } RpcSqlResult_t;
+    typedef RpcSqlResult_t *PRpcSqlResult;
+    typedef RpcSqlResult_t **PPRpcSqlResult;
+    typedef RpcSqlResult_t ***PPPRpcSqlResult;
+
     int IsLogin();
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *msg,
                     [ in, unique, string ] const wchar_t *atWxids);
@@ -54,6 +63,9 @@ interface ISpy
     int GetContacts([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);
     int GetDbNames([out] int *pNum, [ out, size_is(, *pNum) ] BSTR **dbs);
     int GetDbTables([ in, string ] const wchar_t *db, [out] int *pNum, [ out, size_is(, *pNum) ] PPRpcTables *tbls);
+    int ExecDbQuery([ in, string ] const wchar_t *db,
+                    [ in, string ] const wchar_t *sql, [out] int *pRow, [out] int *pCol,
+                    [ out, size_is(, *pRow, *pCol) ] PPPRpcSqlResult *ret);
 
     void EnableReceiveMsg();
     void DisableReceiveMsg();

@@ -22,6 +22,58 @@ extern const MsgTypesMap_t g_WxMsgTypes; // Map of WeChat Message types
 
 static BOOL listenMsgFlag = false;
 
+RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
+{
+    return RPC_S_OK; // Always allow anyone.
+}
+
+int RpcStartServer()
+{
+    RPC_STATUS status;
+    // Uses the protocol combined with the endpoint for receiving
+    // remote procedure calls.
+    status = RpcServerUseProtseqEp(reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
+                                   RPC_C_LISTEN_MAX_CALLS_DEFAULT,                   // Backlog queue length for TCP/IP.
+                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
+                                   NULL                                              // No security
+    );
+
+    if (status)
+        return status;
+
+    // Registers the interface and auto listen
+    // Equal to RpcServerRegisterIf + RpcServerListen
+    status = RpcServerRegisterIf2(server_ISpy_v1_0_s_ifspec, // Interface to register.
+                                  NULL,                      // Use the MIDL generated entry-point vector.
+                                  NULL,                      // Use the MIDL generated entry-point vector.
+                                  RPC_IF_ALLOW_LOCAL_ONLY | RPC_IF_AUTOLISTEN, // Forces use of security callback.
+                                  RPC_C_LISTEN_MAX_CALLS_DEFAULT, // Use default number of concurrent calls.
+                                  (unsigned)-1,                   // Infinite max size of incoming data blocks.
+                                  SecurityCallback);              // Naive security callback.
+
+    while (g_rpcKeepAlive) {
+        Sleep(1000); // 休眠，释放CPU
+    }
+
+    return 0;
+}
+
+int RpcStopServer()
+{
+    RPC_STATUS status;
+
+    UnListenMessage();
+
+    listenMsgFlag  = false;
+    g_rpcKeepAlive = false;
+    status         = RpcMgmtStopServerListening(NULL);
+    if (status)
+        return status;
+
+    status = RpcServerUnregisterIf(server_ISpy_v1_0_s_ifspec, NULL, 0);
+    return status;
+}
+
 int server_IsLogin() { return IsLogin(); }
 
 void server_EnableReceiveMsg()
@@ -179,54 +231,49 @@ int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
     return 0;
 }
 
-RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
+int server_ExecDbQuery(const wchar_t *db, const wchar_t *sql, int *pRow, int *pCol, PPPRpcSqlResult *ret)
 {
-    return RPC_S_OK; // Always allow anyone.
-}
-
-int RpcStartServer()
-{
-    RPC_STATUS status;
-    // Uses the protocol combined with the endpoint for receiving
-    // remote procedure calls.
-    status = RpcServerUseProtseqEp(reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
-                                   RPC_C_LISTEN_MAX_CALLS_DEFAULT,                   // Backlog queue length for TCP/IP.
-                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
-                                   NULL                                              // No security
-    );
-
-    if (status)
-        return status;
-
-    // Registers the interface and auto listen
-    // Equal to RpcServerRegisterIf + RpcServerListen
-    status = RpcServerRegisterIf2(server_ISpy_v1_0_s_ifspec, // Interface to register.
-                                  NULL,                      // Use the MIDL generated entry-point vector.
-                                  NULL,                      // Use the MIDL generated entry-point vector.
-                                  RPC_IF_ALLOW_LOCAL_ONLY | RPC_IF_AUTOLISTEN, // Forces use of security callback.
-                                  RPC_C_LISTEN_MAX_CALLS_DEFAULT, // Use default number of concurrent calls.
-                                  (unsigned)-1,                   // Infinite max size of incoming data blocks.
-                                  SecurityCallback);              // Naive security callback.
-
-    while (g_rpcKeepAlive) {
-        Sleep(1000); // 休眠，释放CPU
+    vector<vector<RpcSqlResult_t>> vvSqlResult = ExecDbQuery(db, sql);
+    if (vvSqlResult.empty()) {
+        *pRow = *pCol = 0;
+        ret           = NULL;
+        return -1;
+    }
+    *pRow               = vvSqlResult.size();
+    *pCol               = vvSqlResult[0].size();
+    PPPRpcSqlResult ppp = (PPPRpcSqlResult)midl_user_allocate(*pRow * sizeof(PPRpcSqlResult));
+    if (ppp == NULL) {
+        printf("server_ExecDbQuery midl_user_allocate Failed for ppp\n");
+        return -2;
     }
 
+    for (int r = 0; r < *pRow; r++) {
+        PPRpcSqlResult pp = (PPRpcSqlResult)midl_user_allocate(*pCol * sizeof(PRpcSqlResult));
+        if (pp == NULL) {
+            midl_user_free(ppp);
+            printf("server_ExecDbQuery midl_user_allocate Failed for pp\n");
+            return -2;
+        }
+
+        for (int c = 0; c < *pCol; c++) {
+            PRpcSqlResult p = (PRpcSqlResult)midl_user_allocate(sizeof(RpcSqlResult_t));
+            if (p == NULL) {
+                midl_user_free(pp);
+                printf("server_ExecDbQuery midl_user_allocate Failed for p\n");
+                return -2;
+            }
+
+            p->type    = vvSqlResult[r][c].type;
+            p->column  = vvSqlResult[r][c].column;
+            p->content = vvSqlResult[r][c].content;
+
+            pp[c] = p;
+        }
+
+        ppp[r] = pp;
+    }
+
+    *ret = ppp;
+
     return 0;
-}
-
-int RpcStopServer()
-{
-    RPC_STATUS status;
-
-    UnListenMessage();
-
-    listenMsgFlag  = false;
-    g_rpcKeepAlive = false;
-    status         = RpcMgmtStopServerListening(NULL);
-    if (status)
-        return status;
-
-    status = RpcServerUnregisterIf(server_ISpy_v1_0_s_ifspec, NULL, 0);
-    return status;
 }

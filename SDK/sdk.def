@@ -9,3 +9,4 @@
 	WxGetContacts
     WxGetDbNames
     WxGetDbTables
+    WxExecDbQuery

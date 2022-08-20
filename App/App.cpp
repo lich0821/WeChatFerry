@@ -10,6 +10,10 @@
 等效为在属性，链接，输入中添加该依赖
 */
 
+typedef map<int, wstring> sqlTypes_t;
+static sqlTypes_t sqlTypes
+    = sqlTypes_t { { 1, L"INTEGER" }, { 2, L"FLOAT" }, { 3, L"TEXT" }, { 4, L"BLOB" }, { 5, L"NULL" } };
+
 void printContacts(ContactMap_t contacts)
 {
     wprintf(L"contacts number: %ld\n", contacts.size());
@@ -36,6 +40,46 @@ void printDbTables(DbTableVector_t tables)
     }
 }
 
+void printDbResults(SqlRetVector_t vvResults)
+{
+    int rows = vvResults.size();
+    printf("vvResults.size: %d\n", rows);
+    rows = 0;
+    for (auto vv = vvResults.begin(); vv != vvResults.end(); vv++) {
+        printf("Row %d\n", rows++);
+        for (auto v = vv->begin(); v != vv->end(); v++) {
+            wprintf(L"%s[%s]: ", v->column.c_str(), sqlTypes[v->type].c_str());
+            switch (v->type) {
+                case 1: {
+                    printf("%d\n", stoi(v->content.c_str()));
+                    break;
+                }
+                case 2: {
+                    printf("%f\n", stof(v->content.c_str()));
+                    break;
+                }
+                case 3: {
+                    printf("%s\n", v->content.c_str());
+                    break;
+                }
+                case 4: {
+                    byte *p = (byte *)(v->content.c_str());
+                    for (unsigned int i = 0; i < v->content.size(); i++) {
+                        printf("%02X ", p[i]);
+                    }
+                    printf("\n");
+                    break;
+                }
+                default: {
+                    printf("\n");
+                    break;
+                }
+            }
+        }
+    }
+    printf("\n");
+}
+
 int onTextMsg(WxMessage_t msg)
 {
     wprintf(L"%s msgType: %d, msgSource: %d, isSelf: %d\n", msg.id.c_str(), msg.type, msg.source, msg.self);
@@ -53,7 +97,7 @@ int main()
     wstring content  = L"这里填写消息内容";
     wstring img_path = L"test.jpg";
 
-    _wsetlocale(LC_ALL, L"chs"); // 这是个大坑，不设置中文直接不见了。。。
+    setlocale(LC_ALL, "chs"); // 这是个大坑，不设置中文直接不见了。。。
 
     wprintf(L"WxInitSDK: ");
     status = WxInitSDK();
@@ -95,8 +139,13 @@ int main()
     Sleep(1000); // 等待1秒
 
     // 测试获取数据库中的表
-    auto vDbTables = WxGetDbTables(L"ChatMsg.db");
+    auto vDbTables = WxGetDbTables(L"MicroMsg.db");
     printDbTables(vDbTables);
+    Sleep(1000); // 等待1秒
+
+    // 测试执行 SQL
+    auto vvResults = WxExecDbQuery(L"MicroMsg.db", L"SELECT * FROM Contact LIMIT 1;");
+    printDbResults(vvResults);
 
     while (1) {
         Sleep(10000); // 休眠，释放CPU

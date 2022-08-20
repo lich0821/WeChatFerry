@@ -1,5 +1,7 @@
 ﻿#include "Shlwapi.h"
 #include "framework.h"
+#include <codecvt>
+#include <locale>
 #include <string.h>
 #include <strsafe.h>
 #include <tlhelp32.h>
@@ -11,6 +13,11 @@
 #pragma comment(lib, "Version.lib")
 
 using namespace std;
+
+static wstring_convert<codecvt_utf8<wchar_t>, wchar_t> S_WS_Converter;
+
+wstring String2Wstring(string s) { return S_WS_Converter.from_bytes(s); }
+string Wstring2String(wstring ws) { return S_WS_Converter.to_bytes(ws); }
 
 static int GetWeChatPath(wchar_t *path)
 {
@@ -219,6 +226,44 @@ BSTR GetBstrFromWstring(wstring ws)
         return SysAllocStringLen(ws.data(), ws.size());
     }
     return NULL;
+}
+
+BSTR GetBstrFromStringBuffer(const char *str, int length)
+{
+    int wslen = MultiByteToWideChar(CP_ACP, 0, str, length, 0, 0);
+    BSTR bstr = SysAllocStringLen(0, wslen);
+    MultiByteToWideChar(CP_ACP, 0, str, length, bstr, wslen);
+
+    return bstr;
+}
+
+BSTR GetBstrFromByteArray(const byte *b, int len)
+{
+    BSTR bstr = SysAllocStringLen(0, len);
+    if (bstr == NULL) {
+        return NULL;
+    }
+    memcpy((byte *)bstr, b, len);
+
+    return bstr;
+}
+
+string GetBytesFromBstr(BSTR bstr)
+{
+    string s = "";
+    if (bstr) {
+        int len   = SysStringByteLen(bstr) / 2;
+        char *tmp = new char[len];
+        char *p   = (char *)bstr;
+        for (int i = 0; i < len; i++) {
+            tmp[i] = p[i];
+        }
+        SysFreeString(bstr);
+        s = string(tmp, len);
+        delete[] tmp;
+    }
+
+    return s;
 }
 
 void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg)

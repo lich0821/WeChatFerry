@@ -212,6 +212,27 @@ PPRpcTables RpcGetDbTables(const wchar_t *db, int *pNum)
     return ppRpcTables;
 }
 
+PPPRpcSqlResult RpcExecDbQuery(const wchar_t *db, const wchar_t *sql, int *pRow, int *pCol)
+{
+    int ret                         = 0;
+    unsigned long ulCode            = 0;
+    PPPRpcSqlResult pppRpcSqlResult = NULL;
+
+    RpcTryExcept { ret = client_ExecDbQuery(db, sql, pRow, pCol, &pppRpcSqlResult); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcExecDbQuery exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+    if (ret != 0) {
+        printf("RpcExecDbQuery Failed: %d\n", ret);
+        return NULL;
+    }
+
+    return pppRpcSqlResult;
+}
+
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
     WxMessage_t msg;
