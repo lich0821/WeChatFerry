@@ -51,8 +51,7 @@ int WxInitSDK()
         status = RpcIsLogin();
         if (status == -1) {
             return status;
-        }
-        else if (status == 1) {
+        } else if (status == 1) {
             break;
         }
         Sleep(1000);
@@ -66,7 +65,7 @@ int WxDestroySDK()
     WxDisableRecvMsg();
     RpcDisconnectServer();
     // 关闭 RPC，但不卸载 DLL，方便下次使用。
-    //EjectDll(WeChatPID, SpyDllPath);
+    // EjectDll(WeChatPID, SpyDllPath);
 
     return ERROR_SUCCESS;
 }
@@ -76,6 +75,7 @@ int WxEnableRecvMsg(const std::function<int(WxMessage_t)> &onMsg)
     if (onMsg) {
         HANDLE msgThread;
         g_cbReceiveTextMsg = onMsg;
+
         msgThread = (HANDLE)CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RpcEnableReceiveMsg, NULL, 0, NULL);
         if (msgThread == NULL) {
             printf("Failed to create innerWxRecvTextMsg.\n");
@@ -96,9 +96,9 @@ int WxDisableRecvMsg()
     return -1;
 }
 
-int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg)
+int WxSendTextMsg(wstring wxid, wstring msg, wstring atWxids)
 {
-    return RpcSendTextMsg(wxid.c_str(), at_wxid.c_str(), msg.c_str());
+    return RpcSendTextMsg(wxid.c_str(), msg.c_str(), atWxids.c_str());
 }
 
 int WxSendImageMsg(wstring wxid, wstring path) { return RpcSendImageMsg(wxid.c_str(), path.c_str()); }

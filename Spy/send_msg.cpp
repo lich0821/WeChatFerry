@@ -1,5 +1,7 @@
-#include "framework.h"
+﻿#include "framework.h"
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include "spy_types.h"
 
@@ -10,41 +12,75 @@ extern DWORD g_WeChatWinDllAddr;
 
 using namespace std;
 
-void SendTextMessage(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg)
-{
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-    char buffer[0x5F0]     = { 0 };
-    TextStruct_t txtWxid   = { 0 };
-    TextStruct_t txtAtWxid = { 0 };
-    TextStruct_t txtMsg    = { 0 };
+typedef struct AtList {
+    DWORD start;
+    DWORD end1;
+    DWORD end2;
+} AtList_t;
 
-    wstring wsWxid   = wxid;
-    wstring wsAtWxid = at_wxid;
-    wstring wsMsg    = msg;
+void SendTextMessage(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
+{
+    char buffer[0x3B0]    = { 0 };
+    AtList_t atList       = { 0 };
+    TextStruct_t txtMsg   = { 0 };
+    TextStruct_t txtWxid  = { 0 };
+    TextStruct_t *tsArray = NULL;
+
+    wstring wsMsg  = msg;
+    wstring wsWxid = wxid;
 
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
-
-    txtWxid.text     = (wchar_t *)wsWxid.c_str();
-    txtWxid.size     = wsWxid.size();
-    txtWxid.capacity = wsWxid.capacity();
 
     txtMsg.text     = (wchar_t *)wsMsg.c_str();
     txtMsg.size     = wsMsg.size();
     txtMsg.capacity = wsMsg.capacity();
 
-    __asm {
-        lea edx, txtWxid
-        lea edi, txtAtWxid
-        lea ebx, txtMsg
-        push 0x01
-        push edi
-        push ebx
+    txtWxid.text     = (wchar_t *)wsWxid.c_str();
+    txtWxid.size     = wsWxid.size();
+    txtWxid.capacity = wsWxid.capacity();
+
+    wstring tmp = atWxids;
+    if (!tmp.empty()) {
+        int i = 0;
+        wstring wstr;
+        vector<wstring> vAtWxids;
+        wstringstream wss(tmp);
+        while (wss.good()) {
+            getline(wss, wstr, L',');
+            vAtWxids.push_back(wstr);
+        }
+        tsArray = new TextStruct_t[vAtWxids.size() + 1];
+        // memset(tsArray, 0, (vAtWxids.size() + 1) * sizeof(TextStruct_t));
+        for (auto it = vAtWxids.begin(); it != vAtWxids.end(); it++) {
+            tsArray[i].text     = (wchar_t *)it->c_str();
+            tsArray[i].size     = it->size();
+            tsArray[i].capacity = it->capacity();
+            i++;
+        }
+
+        atList.start = (DWORD)tsArray;
+        atList.end1  = (DWORD)&tsArray[i];
+        atList.end2  = (DWORD)&tsArray[i];
+    }
+
+    __asm
+    {
+        lea eax, atList;
+        push 0x01;
+        push eax;
+        lea edi, txtMsg;
+        push edi;
+        lea edx, txtWxid;
         lea ecx, buffer;
-        call sendCallAddress
-            add esp, 0xC
+        call sendCallAddress;
+        add esp, 0xC;
+    }
+
+    if (tsArray)
+    {
+        delete[] tsArray;
+        tsArray = NULL;
     }
 }
 
@@ -85,7 +121,7 @@ void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
         lea edi, imgPath
         push eax
         call sendCall2
-        mov ecx, dword ptr [tmpEAX]
+        mov ecx, dword ptr[tmpEAX]
         lea eax, imgWxid
         push edi
         push eax

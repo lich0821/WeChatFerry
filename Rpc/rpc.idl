@@ -47,8 +47,8 @@ interface ISpy
     typedef RpcTables_t **PPRpcTables;
 
     int IsLogin();
-    int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *at_wxid,
-                    [ in, string ] const wchar_t *msg);
+    int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *msg,
+                    [ in, unique, string ] const wchar_t *atWxids);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
     int GetMsgTypes([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcIntBstrPair *msgTypes);
     int GetContacts([out] int *pNum, [ out, size_is(, *pNum) ] PPRpcContact *contacts);

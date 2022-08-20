@@ -76,7 +76,7 @@ int main()
 
     // 测试发送消息
     wprintf(L"测试发送消息\n");
-    WxSendTextMsg(wxid, at_wxid, content);
+    WxSendTextMsg(wxid, content, at_wxid);
     Sleep(1000); // 等待1秒
 
     // 测试发送照片

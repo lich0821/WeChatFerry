@@ -56,9 +56,9 @@ void server_DisableReceiveMsg()
     listenMsgFlag = false;
 }
 
-int server_SendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg)
+int server_SendTextMsg(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
 {
-    SendTextMessage(wxid, at_wxid, msg);
+    SendTextMessage(wxid, msg, atWxids);
 
     return 0;
 }
@@ -221,9 +221,9 @@ int RpcStopServer()
 
     UnListenMessage();
 
-    listenMsgFlag = false;
+    listenMsgFlag  = false;
     g_rpcKeepAlive = false;
-    status        = RpcMgmtStopServerListening(NULL);
+    status         = RpcMgmtStopServerListening(NULL);
     if (status)
         return status;
 

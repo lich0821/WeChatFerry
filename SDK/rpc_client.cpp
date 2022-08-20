@@ -66,7 +66,7 @@ int RpcDisableReceiveMsg()
         // UnHook Message receiving
         client_DisableReceiveMsg();
     }
-        RpcExcept(1)
+    RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
         printf("RpcDisableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
@@ -96,12 +96,12 @@ int RpcIsLogin()
     return loginFlag;
 }
 
-int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg)
+int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
 {
     int ret              = 0;
     unsigned long ulCode = 0;
 
-    RpcTryExcept { ret = client_SendTextMsg(wxid, at_wxid, msg); }
+    RpcTryExcept { ret = client_SendTextMsg(wxid, msg, atWxids); }
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
