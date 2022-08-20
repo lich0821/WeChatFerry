@@ -125,7 +125,7 @@ int server_SendImageMsg(const wchar_t *wxid, const wchar_t *path)
 int server_GetMsgTypes(int *pNum, PPRpcIntBstrPair *msgTypes)
 {
     *pNum               = g_WxMsgTypes.size();
-    PPRpcIntBstrPair pp = (PPRpcIntBstrPair)midl_user_allocate(*pNum * sizeof(RpcIntBstrPair_t));
+    PPRpcIntBstrPair pp = (PPRpcIntBstrPair)midl_user_allocate(*pNum * sizeof(PRpcIntBstrPair));
     if (pp == NULL) {
         printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
         return -2;
@@ -153,7 +153,7 @@ int server_GetContacts(int *pNum, PPRpcContact *contacts)
     vector<RpcContact_t> vContacts = GetContacts();
 
     *pNum           = vContacts.size();
-    PPRpcContact pp = (PPRpcContact)midl_user_allocate(*pNum * sizeof(RpcContact_t));
+    PPRpcContact pp = (PPRpcContact)midl_user_allocate(*pNum * sizeof(PRpcContact));
     if (pp == NULL) {
         printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
         return -2;
@@ -207,7 +207,7 @@ int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
 {
     vector<RpcTables_t> tables = GetDbTables(db);
     *pNum                      = tables.size();
-    PPRpcTables pp             = (PPRpcTables)midl_user_allocate(*pNum * sizeof(RpcTables_t));
+    PPRpcTables pp             = (PPRpcTables)midl_user_allocate(*pNum * sizeof(PRpcTables));
     if (pp == NULL) {
         printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
         return -2;
