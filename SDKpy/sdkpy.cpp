@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-int WxEnableRecvMsgPy(const std::function<int(WxMessage_t)> &onMsg) { return WxEnableRecvMsg(onMsg); }
+int WxEnableRecvMsgPy(const std::function<int(WxMessage_t)>& onMsg) { return WxEnableRecvMsg(onMsg); }
 
 PYBIND11_MODULE(wcferry, m)
 {
@@ -31,13 +31,13 @@ PYBIND11_MODULE(wcferry, m)
         .def_readonly("wxCity", &WxContact::wxCity)
         .def_readonly("wxGender", &WxContact::wxGender);
 
-    m.def("WxInitSDK", &WxInitSDK);
-    m.def("WxEnableRecvMsg", &WxEnableRecvMsgPy);
-    m.def("WxDisableRecvMsg", &WxDisableRecvMsg);
-    m.def("WxSendTextMsg", &WxSendTextMsg);
-    m.def("WxSendImageMsg", &WxSendImageMsg);
-    m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference);
-    m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference);
+    m.def("WxInitSDK", &WxInitSDK, "Initiate SDK. Return 0 on success，else on failure.");
+    m.def("WxEnableRecvMsg", &WxEnableRecvMsgPy, "Enable message receiving and provide a callback", py::arg("onMsg"));
+    m.def("WxDisableRecvMsg", &WxDisableRecvMsg, "Disable message receiving.");
+    m.def("WxSendTextMsg", &WxSendTextMsg, "Send text message.", py::arg("wxid"), py::arg("msg"), py::arg("atWxids")=L"");
+    m.def("WxSendImageMsg", &WxSendImageMsg, "Send image message.", py::arg("wxid"), py::arg("path"));
+    m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference, "Get contact list.");
+    m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference, "Get message types.");
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;
