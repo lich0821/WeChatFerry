@@ -31,6 +31,10 @@ PYBIND11_MODULE(wcferry, m)
         .def_readonly("wxCity", &WxContact::wxCity)
         .def_readonly("wxGender", &WxContact::wxGender);
 
+    py::class_<WxDbTable>(m, "WxDbTable")
+        .def_readonly("table", &WxDbTable::table)
+        .def_readonly("sql", &WxDbTable::sql);
+
     m.def("WxInitSDK", &WxInitSDK, "Initiate SDK. Return 0 on success，else on failure.");
     m.def("WxEnableRecvMsg", &WxEnableRecvMsgPy, "Enable message receiving and provide a callback", py::arg("onMsg"));
     m.def("WxDisableRecvMsg", &WxDisableRecvMsg, "Disable message receiving.");
@@ -38,6 +42,8 @@ PYBIND11_MODULE(wcferry, m)
     m.def("WxSendImageMsg", &WxSendImageMsg, "Send image message.", py::arg("wxid"), py::arg("path"));
     m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference, "Get contact list.");
     m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference, "Get message types.");
+    m.def("WxGetDbNames", &WxGetDbNames, py::return_value_policy::reference, "Get DB names.");
+    m.def("WxGetDbTables", &WxGetDbTables, py::return_value_policy::reference, "Get DB tables.", py::arg("db"));
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

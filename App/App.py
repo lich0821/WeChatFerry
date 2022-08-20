@@ -6,10 +6,7 @@ import wcferry as sdk
 
 
 def main():
-    print(dir(sdk))                     # 查看SDK支持的方法和属性
-    help(sdk.WxEnableRecvMsg)           # 查看某方法的情况
-    help(sdk.WxMessage)                 # 查看消息结构
-    help(sdk.WxContact)                 # 查看通讯录结构
+    help(sdk)  # 查看SDK支持的方法和属性
 
     # 初始化SDK，如果成功，返回0；否则失败
     status = sdk.WxInitSDK()
@@ -29,11 +26,22 @@ def main():
 
     time.sleep(2)
     print("发送文本消息......")
-    sdk.WxSendTextMsg("filehelper", "", "message from WeChatFerry...")
+    sdk.WxSendTextMsg("filehelper", "message from WeChatFerry...")  # 往文件传输助手发消息
+    # sdk.WxSendTextMsg("xxxx@chatroom", "message from WeChatFerry...")  # 往群里发消息（需要改成正确的 ID，下同）
+    # sdk.WxSendTextMsg("xxxx@chatroom", "message from WeChatFerry... @ ", "wxid_xxxxxxxxxxxx") # 往群里发消息，@某人
+    # sdk.WxSendTextMsg("xxxx@chatroom", "message from WeChatFerry... @ ", "notify@all")  # 往群里发消息，@所有人
 
     time.sleep(2)
     print("发送图片消息......")
     sdk.WxSendImageMsg("filehelper", "test.jpg")
+
+    dbs = sdk.WxGetDbNames()
+    for db in dbs:
+        print(db)
+
+    tables = sdk.WxGetDbTables(dbs[0])
+    for t in tables:
+        print(f"{t.table}\n{t.sql}\n\n")
 
     # 接收消息。先定义消息处理回调
     def OnTextMsg(msg: sdk.WxMessage):
@@ -44,7 +52,7 @@ def main():
 
             return 0
 
-        msgType = WxMsgTypes.get(msg.type, '未知消息类型')
+        msgType = WxMsgTypes.get(msg.type, '未知类型')
         nickName = contacts.get(msg.wxId, {'wxName': 'NoBody'}).wxName
         if msg.source == 0:
             s += f"来自好友[{nickName}]的{msgType}消息："
