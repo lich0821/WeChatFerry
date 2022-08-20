@@ -39,7 +39,8 @@ typedef vector<WxDbTable_t> DbTableVector_t;
 
 int WxInitSDK();
 int WxDestroySDK();
-int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg);
+int WxEnableRecvMsg(const std::function<int(WxMessage_t)> &onMsg);
+int WxDisableRecvMsg();
 int WxSendTextMsg(wstring wxid, wstring at_wxid, wstring msg);
 int WxSendImageMsg(wstring wxid, wstring path);
 ContactMap_t WxGetContacts();

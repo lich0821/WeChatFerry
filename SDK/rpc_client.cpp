@@ -33,8 +33,6 @@ RPC_STATUS RpcDisconnectServer()
     RPC_STATUS status;
     // Free the memory allocated by a string
     status = RpcStringFree(&pszStringBinding);
-    if (status)
-        return status;
 
     // Releases binding handle resources and disconnects from the server
     status = RpcBindingFree(&hSpyBinding);
@@ -42,7 +40,7 @@ RPC_STATUS RpcDisconnectServer()
     return status;
 }
 
-unsigned int __stdcall RpcSetTextMsgCb(void *p)
+int RpcEnableReceiveMsg()
 {
     unsigned long ulCode = 0;
     RpcTryExcept
@@ -53,7 +51,25 @@ unsigned int __stdcall RpcSetTextMsgCb(void *p)
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("rpcWxSetTextMsgCb exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("RpcEnableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+
+    return 0;
+}
+
+int RpcDisableReceiveMsg()
+{
+    unsigned long ulCode = 0;
+    RpcTryExcept
+    {
+        // UnHook Message receiving
+        client_DisableReceiveMsg();
+    }
+        RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcDisableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept;
 
@@ -72,7 +88,8 @@ int RpcIsLogin()
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("rpcIsLogin exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("RpcIsLogin exception 0x%lx = %ld\n", ulCode, ulCode);
+        return -1;
     }
     RpcEndExcept;
 
@@ -88,7 +105,7 @@ int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *m
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("rpcWxSendTextMsg exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("RpcSendTextMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept;
 
@@ -104,7 +121,7 @@ int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path)
     RpcExcept(1)
     {
         ulCode = RpcExceptionCode();
-        printf("rpcWxSendImageMsg exception 0x%lx = %ld\n", ulCode, ulCode);
+        printf("RpcSendImageMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept;
 

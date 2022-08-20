@@ -2,5 +2,5 @@
 
 #include "framework.h"
 
-void InitSpy(HMODULE hModule);
-void DestroySpy();
+void InitSpy();
+void DestroySpy(HMODULE hModule);

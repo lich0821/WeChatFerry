@@ -7,7 +7,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     switch (ul_reason_for_call) {
         case DLL_PROCESS_ATTACH: {
             //MessageBox(NULL, L"InitSpy", L"DllMain", 0);
-            InitSpy(hModule);
+            InitSpy();
             break;
         }
         case DLL_THREAD_ATTACH:
@@ -15,7 +15,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             break;
         case DLL_PROCESS_DETACH: {
             //MessageBox(NULL, L"DestroySpy", L"DllMain", 0);
-            DestroySpy();
+            DestroySpy(hModule);
             break;
         }
     }

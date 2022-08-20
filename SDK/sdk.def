@@ -1,7 +1,8 @@
 ﻿EXPORTS
 	WxInitSDK
 	WxDestroySDK
-	WxSetTextMsgCb
+	WxEnableRecvMsg
+	WxDisableRecvMsg
 	WxSendTextMsg
 	WxGetMsgTypes
 	WxSendImageMsg

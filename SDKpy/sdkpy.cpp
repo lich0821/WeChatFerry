@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-int WxSetTextMsgCbPy(const std::function<int(WxMessage_t)> &onMsg) { return WxSetTextMsgCb(onMsg); }
+int WxEnableRecvMsgPy(const std::function<int(WxMessage_t)> &onMsg) { return WxEnableRecvMsg(onMsg); }
 
 PYBIND11_MODULE(wcferry, m)
 {
@@ -32,7 +32,8 @@ PYBIND11_MODULE(wcferry, m)
         .def_readonly("wxGender", &WxContact::wxGender);
 
     m.def("WxInitSDK", &WxInitSDK);
-    m.def("WxSetTextMsgCb", &WxSetTextMsgCbPy);
+    m.def("WxEnableRecvMsg", &WxEnableRecvMsgPy);
+    m.def("WxDisableRecvMsg", &WxDisableRecvMsg);
     m.def("WxSendTextMsg", &WxSendTextMsg);
     m.def("WxSendImageMsg", &WxSendImageMsg);
     m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference);

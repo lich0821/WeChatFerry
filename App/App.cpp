@@ -71,7 +71,7 @@ int main()
     Sleep(1000); // 等待1秒
 
     wprintf(L"Message: 接收通知中......\n");
-    WxSetTextMsgCb(onTextMsg);
+    WxEnableRecvMsg(onTextMsg);
     Sleep(1000); // 等待1秒
 
     // 测试发送消息

@@ -28,6 +28,7 @@ void server_EnableReceiveMsg()
 {
     unsigned long ulCode = 0;
     ListenMessage();
+    listenMsgFlag = true;
     RpcTryExcept
     {
         // 调用客户端的回调函数
@@ -47,6 +48,12 @@ void server_EnableReceiveMsg()
         printf("server_EnableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
     }
     RpcEndExcept
+}
+
+void server_DisableReceiveMsg()
+{
+    UnListenMessage();
+    listenMsgFlag = false;
 }
 
 int server_SendTextMsg(const wchar_t *wxid, const wchar_t *at_wxid, const wchar_t *msg)
@@ -177,7 +184,7 @@ RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBin
     return RPC_S_OK; // Always allow anyone.
 }
 
-int RpcStartServer(HMODULE hModule)
+int RpcStartServer()
 {
     RPC_STATUS status;
     // Uses the protocol combined with the endpoint for receiving
@@ -201,7 +208,6 @@ int RpcStartServer(HMODULE hModule)
                                   (unsigned)-1,                   // Infinite max size of incoming data blocks.
                                   SecurityCallback);              // Naive security callback.
 
-    listenMsgFlag = true;
     while (g_rpcKeepAlive) {
         Sleep(1000); // 休眠，释放CPU
     }
@@ -209,17 +215,18 @@ int RpcStartServer(HMODULE hModule)
     return 0;
 }
 
-int RpcStopServer(void)
+int RpcStopServer()
 {
     RPC_STATUS status;
 
     UnListenMessage();
 
     listenMsgFlag = false;
+    g_rpcKeepAlive = false;
     status        = RpcMgmtStopServerListening(NULL);
     if (status)
         return status;
 
-    status = RpcServerUnregisterIf(NULL, NULL, FALSE);
+    status = RpcServerUnregisterIf(server_ISpy_v1_0_s_ifspec, NULL, 0);
     return status;
 }

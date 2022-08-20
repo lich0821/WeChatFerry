@@ -56,5 +56,6 @@ interface ISpy
     int GetDbTables([ in, string ] const wchar_t *db, [out] int *pNum, [ out, size_is(, *pNum) ] PPRpcTables *tbls);
 
     void EnableReceiveMsg();
+    void DisableReceiveMsg();
     [callback] int ReceiveMsg([in] RpcMessage_t rpcMsg);
 };

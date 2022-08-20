@@ -7,11 +7,9 @@ import wcferry as sdk
 
 def main():
     print(dir(sdk))                     # 查看SDK支持的方法和属性
-    help(sdk.WxSetTextMsgCb)            # 查看某方法的情况
+    help(sdk.WxEnableRecvMsg)           # 查看某方法的情况
     help(sdk.WxMessage)                 # 查看消息结构
     help(sdk.WxContact)                 # 查看通讯录结构
-    WxMsgTypes = sdk.WxGetMsgTypes()    # 获取消息类型
-    print(WxMsgTypes)                   # 查看消息类型
 
     # 初始化SDK，如果成功，返回0；否则失败
     status = sdk.WxInitSDK()
@@ -20,6 +18,8 @@ def main():
         exit(-1)
 
     print("初始化成功")
+    WxMsgTypes = sdk.WxGetMsgTypes()    # 获取消息类型
+    print(WxMsgTypes)                   # 查看消息类型
 
     time.sleep(2)
     print("打印通讯录......")
@@ -61,7 +61,7 @@ def main():
         return 0
 
     print("Message: 接收通知中......")
-    sdk.WxSetTextMsgCb(OnTextMsg)  # 设置回调，接收消息
+    sdk.WxEnableRecvMsg(OnTextMsg)  # 设置回调，接收消息
     while True:
         time.sleep(1)
 

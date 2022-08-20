@@ -19,7 +19,7 @@ static WCHAR SpyDllPath[MAX_PATH] = { 0 };
 
 int WxInitSDK()
 {
-    DWORD status         = 0;
+    int status           = 0;
     unsigned long ulCode = 0;
 
     GetModuleFileName(GetModuleHandle(WECHATSDKDLL), SpyDllPath, MAX_PATH);
@@ -34,35 +34,49 @@ int WxInitSDK()
     if (status != 0) {
         return status;
     }
+
     Sleep(2000); // 等待微信打开
     if (InjectDll(WeChatPID, SpyDllPath)) {
         return -1;
     }
 
-    RpcConnectServer();
-
-    while (!RpcIsLogin()) {
-        Sleep(1000);
+    Sleep(1000); // 等待SPY就绪
+    status = RpcConnectServer();
+    if (status != 0) {
+        printf("RpcConnectServer: %d\n", status);
+        return -1;
     }
+
+    do {
+        status = RpcIsLogin();
+        if (status == -1) {
+            return status;
+        }
+        else if (status == 1) {
+            break;
+        }
+        Sleep(1000);
+    } while (1);
 
     return ERROR_SUCCESS;
 }
 
 int WxDestroySDK()
 {
+    WxDisableRecvMsg();
     RpcDisconnectServer();
-    EjectDll(WeChatPID, SpyDllPath);
+    // 关闭 RPC，但不卸载 DLL，方便下次使用。
+    //EjectDll(WeChatPID, SpyDllPath);
 
     return ERROR_SUCCESS;
 }
 
-int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
+int WxEnableRecvMsg(const std::function<int(WxMessage_t)> &onMsg)
 {
     if (onMsg) {
         HANDLE msgThread;
         g_cbReceiveTextMsg = onMsg;
-
-        msgThread = (HANDLE)_beginthreadex(NULL, 0, RpcSetTextMsgCb, NULL, 0, NULL);
+        msgThread = (HANDLE)CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RpcEnableReceiveMsg, NULL, 0, NULL);
         if (msgThread == NULL) {
             printf("Failed to create innerWxRecvTextMsg.\n");
             return -2;
@@ -73,6 +87,12 @@ int WxSetTextMsgCb(const std::function<int(WxMessage_t)> &onMsg)
     }
 
     printf("Empty Callback.\n");
+    return -1;
+}
+
+int WxDisableRecvMsg()
+{
+    RpcDisableReceiveMsg();
     return -1;
 }
 
