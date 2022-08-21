@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "framework.h"
 #include <functional>
 #include <map>
 #include <string>
@@ -55,3 +56,4 @@ MsgTypesMap_t WxGetMsgTypes();
 vector<wstring> WxGetDbNames();
 DbTableVector_t WxGetDbTables(wstring db);
 SqlRetVector_t WxExecDbQuery(wstring db, wstring sql);
+BOOL WxAcceptNewFriend(wstring v3, wstring v4);

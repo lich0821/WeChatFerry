@@ -15,3 +15,4 @@ PPRpcContact RpcGetContacts(int *pNum);
 BSTR *RpcGetDbNames(int *pNum);
 PPRpcTables RpcGetDbTables(const wchar_t *db, int *pNum);
 PPPRpcSqlResult RpcExecDbQuery(const wchar_t *db, const wchar_t *sql, int *row, int *col);
+BOOL AcceptNewFriend(const wchar_t *v3, const wchar_t *v4);

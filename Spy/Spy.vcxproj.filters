@@ -51,6 +51,9 @@
     <ClInclude Include="spy.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="accept_new_friend.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -84,6 +87,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="spy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="accept_new_friend.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

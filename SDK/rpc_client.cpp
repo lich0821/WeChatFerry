@@ -233,6 +233,22 @@ PPPRpcSqlResult RpcExecDbQuery(const wchar_t *db, const wchar_t *sql, int *pRow,
     return pppRpcSqlResult;
 }
 
+BOOL AcceptNewFriend(const wchar_t *v3, const wchar_t *v4)
+{
+    BOOL ret             = 0;
+    unsigned long ulCode = 0;
+
+    RpcTryExcept { ret = client_AcceptNewFriend(v3, v4); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("AcceptNewFriend exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+
+    return ret;
+}
+
 int server_ReceiveMsg(RpcMessage_t rpcMsg)
 {
     WxMessage_t msg;

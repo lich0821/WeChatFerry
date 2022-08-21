@@ -10,3 +10,4 @@
     WxGetDbNames
     WxGetDbTables
     WxExecDbQuery
+    WxAcceptNewFriend

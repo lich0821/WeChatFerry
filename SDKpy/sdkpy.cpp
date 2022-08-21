@@ -1,4 +1,4 @@
-﻿#include <pybind11/functional.h>
+#include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -81,6 +81,7 @@ PYBIND11_MODULE(wcferry, m)
     m.def("WxGetDbTables", &WxGetDbTables, py::return_value_policy::reference, "Get DB tables.", py::arg("db"));
     m.def("WxExecDbQuery", &WxExecDbQueryPy, py::return_value_policy::reference, "Get DB tables.", py::arg("db"),
           py::arg("sql"));
+    m.def("WxAcceptNewFriend", &WxAcceptNewFriend, "Accept new friend application.", py::arg("v3"), py::arg("v4"));
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

@@ -66,6 +66,7 @@ interface ISpy
     int ExecDbQuery([ in, string ] const wchar_t *db,
                     [ in, string ] const wchar_t *sql, [out] int *pRow, [out] int *pCol,
                     [ out, size_is(, *pRow, *pCol) ] PPPRpcSqlResult *ret);
+    BOOL AcceptNewFriend([in, string] const wchar_t *v3, [in, string] const wchar_t *v4);
 
     void EnableReceiveMsg();
     void DisableReceiveMsg();

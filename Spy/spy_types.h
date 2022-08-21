@@ -50,6 +50,12 @@ typedef struct Sql {
     DWORD name;
 } Sql_t;
 
+typedef struct NewFriend {
+    DWORD call1;
+    DWORD call2;
+    DWORD handle;
+} NewFriend_t;
+
 typedef struct WxCalls {
     DWORD login;       // 登录状态
     UserInfoCall_t ui; // 用户信息
@@ -58,6 +64,8 @@ typedef struct WxCalls {
     SendImg_t sendImg; // 发送图片
     Contact_t contact; // 获取联系人
     Sql_t sql;         // 执行 SQL
+    NewFriend_t anf;   // 通过好友申请
+
 } WxCalls_t;
 
 typedef struct TextStruct {

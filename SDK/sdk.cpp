@@ -262,3 +262,5 @@ SqlRetVector_t WxExecDbQuery(wstring db, wstring sql)
 
     return vvResults;
 }
+
+BOOL WxAcceptNewFriend(wstring v3, wstring v4) { return AcceptNewFriend(v3.c_str(), v4.c_str()); }

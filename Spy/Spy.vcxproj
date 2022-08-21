@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\Rpc\rpc_h.h" />
     <ClInclude Include="..\SDK\util.h" />
+    <ClInclude Include="accept_new_friend.h" />
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="get_contacts.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\Rpc\rpc_memory.cpp" />
     <ClCompile Include="..\Rpc\rpc_s.c" />
     <ClCompile Include="..\SDK\util.cpp" />
+    <ClCompile Include="accept_new_friend.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="get_contacts.cpp" />

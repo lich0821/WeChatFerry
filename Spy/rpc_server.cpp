@@ -1,6 +1,7 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
+#include "accept_new_friend.h"
 #include "exec_sql.h"
 #include "get_contacts.h"
 #include "receive_msg.h"
@@ -277,3 +278,5 @@ int server_ExecDbQuery(const wchar_t *db, const wchar_t *sql, int *pRow, int *pC
 
     return 0;
 }
+
+BOOL server_AcceptNewFriend(const wchar_t *v3, const wchar_t *v4) { return AcceptNewFriend(v3, v4); }
