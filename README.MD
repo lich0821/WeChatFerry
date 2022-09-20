@@ -3,7 +3,7 @@
 
 欢迎加群交流，后台回复 `WeChatFerry `：
 
-![碲矿](https://tequant-picture-bed.oss-cn-beijing.aliyuncs.com/images/碲矿.jpeg)
+![碲矿](碲矿.jpeg)
 
 ## 快速开始
 1. 使用 VS2019 编译。
