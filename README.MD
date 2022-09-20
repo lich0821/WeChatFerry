@@ -1,5 +1,8 @@
 # WeChatFerry
-传送信息往返微信的摆渡车。
+传送信息往返微信的摆渡车。更多介绍见：[微信机器人 DIY 从 0 到 1](https://mp.weixin.qq.com/s/c4ntj-7NTmbpSfF8df6dIw)。
+
+欢迎加群交流，后台回复 `WeChatFerry `：
+![碲矿](https://tequant-picture-bed.oss-cn-beijing.aliyuncs.com/images/碲矿.jpeg)
 
 ## 快速开始
 1. 使用 VS2019 编译。
