@@ -45,20 +45,25 @@ def main():
 
     # 接收消息。先定义消息处理回调
     def OnTextMsg(msg: sdk.WxMessage):
+        def getName(id):
+            contact = contacts.get(id)
+            if contact is None:
+                return id
+            return contact.wxName
+
         s = "收到"
         if msg.self == 1:  # 忽略自己发的消息
             s += f"来自自己的消息"
             print(f"\n{s}")
-
             return 0
 
         msgType = WxMsgTypes.get(msg.type, '未知类型')
-        nickName = contacts.get(msg.wxId, {'wxName': 'NoBody'}).wxName
-        if msg.source == 0:
-            s += f"来自好友[{nickName}]的{msgType}消息："
-        else:
-            groupName = contacts.get(msg.roomId, {'wxName': 'Unknown'}).wxName
+        nickName = getName(msg.wxId)
+        if msg.source == 1:
+            groupName = getName(msg.roomId)
             s += f"来自群[{groupName}]的[{nickName}]的{msgType}消息："
+        else:
+            s += f"来自[{nickName}]的{msgType}消息："
 
         s += f"\r\n{msg.content}"
         if msg.type != 0x01:
@@ -70,6 +75,7 @@ def main():
 
     print("Message: 接收通知中......")
     sdk.WxEnableRecvMsg(OnTextMsg)  # 设置回调，接收消息
+
     while True:
         time.sleep(1)
 

@@ -69,13 +69,13 @@ void DispatchMsg(DWORD reg)
     lMsg.id   = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgId);
     lMsg.xml  = GetBstrByAddress(*p + g_WxCalls.recvMsg.msgXml);
 
-    if (wcsstr(lMsg.xml, L"<membercount>") == NULL) {
-        // pMsg.roomId = {0};
-        lMsg.wxId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
-    } else {
+    // 群里的系统消息，xml 为空
+    if ((lMsg.xml == NULL) || (wcsstr(lMsg.xml, L"<membercount>") != NULL)) {
         lMsg.source = 1;
         lMsg.wxId   = GetBstrByAddress(*p + g_WxCalls.recvMsg.wxId);
         lMsg.roomId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
+    } else {
+        lMsg.wxId = GetBstrByAddress(*p + g_WxCalls.recvMsg.roomId);
     }
     lMsg.content = GetBstrByAddress(*p + g_WxCalls.recvMsg.content);
     g_MsgQueue.push(lMsg); // 发送消息
