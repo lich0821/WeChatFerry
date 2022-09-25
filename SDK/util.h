@@ -11,7 +11,7 @@
 #define WECHATINJECTDLL L"Spy.dll"
 
 #define GET_DWORD(addr)   ((DWORD) * (DWORD *)(addr))
-#define GET_STRING(addr)  ((CHAR *)(addr))
+#define GET_STRING(addr)  ((CHAR *)(*(DWORD *)(addr)))
 #define GET_WSTRING(addr) ((WCHAR *)(*(DWORD *)(addr)))
 
 int OpenWeChat(DWORD *pid);

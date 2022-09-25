@@ -16,6 +16,7 @@
 using namespace std;
 
 extern int IsLogin(void);                // Defined in spy.cpp
+extern wstring GetSelfWxid();            // Defined in spy.cpp
 extern HANDLE g_hEvent;                  // New message signal
 extern BOOL g_rpcKeepAlive;              // Keep RPC server thread running
 extern MsgQueue_t g_MsgQueue;            // Queue for message
@@ -76,6 +77,8 @@ int RpcStopServer()
 }
 
 int server_IsLogin() { return IsLogin(); }
+
+int server_GetSelfWxId(wchar_t wxid[20]) { return wcscpy_s(wxid, 20, GetSelfWxid().c_str()); }
 
 void server_EnableReceiveMsg()
 {

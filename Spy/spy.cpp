@@ -42,3 +42,5 @@ void DestroySpy(HMODULE hModule)
 }
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
+
+wstring GetSelfWxid() { return String2Wstring(GET_STRING(g_WeChatWinDllAddr + g_WxCalls.ui.wxid)); }

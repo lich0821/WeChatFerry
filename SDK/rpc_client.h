@@ -8,6 +8,7 @@ RPC_STATUS RpcDisconnectServer();
 int RpcEnableReceiveMsg();
 int RpcDisableReceiveMsg();
 int RpcIsLogin();
+int RpcGetSelfWxId(wchar_t wxid[20]);
 int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids);
 int RpcSendImageMsg(const wchar_t *wxid, const wchar_t *path);
 PPRpcIntBstrPair RpcGetMsgTypes(int *pNum);

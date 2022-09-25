@@ -1,4 +1,4 @@
-#include <pybind11/functional.h>
+﻿#include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -75,6 +75,7 @@ PYBIND11_MODULE(wcferry, m)
     m.def("WxSendTextMsg", &WxSendTextMsg, "Send text message.", py::arg("wxid"), py::arg("msg"),
           py::arg("atWxids") = L"");
     m.def("WxSendImageMsg", &WxSendImageMsg, "Send image message.", py::arg("wxid"), py::arg("path"));
+    m.def("WxGetSelfWxid", &WxGetSelfWxid, "Get Self Wxid.");
     m.def("WxGetContacts", &WxGetContacts, py::return_value_policy::reference, "Get contact list.");
     m.def("WxGetMsgTypes", &WxGetMsgTypes, py::return_value_policy::reference, "Get message types.");
     m.def("WxGetDbNames", &WxGetDbNames, py::return_value_policy::reference, "Get DB names.");

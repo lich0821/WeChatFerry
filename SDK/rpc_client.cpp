@@ -96,6 +96,21 @@ int RpcIsLogin()
     return loginFlag;
 }
 
+int RpcGetSelfWxId(wchar_t wxid[20])
+{
+    int ret              = -1;
+    unsigned long ulCode = 0;
+    RpcTryExcept { ret = client_GetSelfWxId(wxid); }
+    RpcExcept(1)
+    {
+        ulCode = RpcExceptionCode();
+        printf("RpcIsLogin exception 0x%lx = %ld\n", ulCode, ulCode);
+    }
+    RpcEndExcept;
+
+    return ret;
+}
+
 int RpcSendTextMsg(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
 {
     int ret              = 0;

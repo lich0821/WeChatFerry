@@ -157,6 +157,13 @@ static int getAddrHandle(DWORD *addr, HANDLE *handle)
     return 0;
 }
 
+wstring WxGetSelfWxid()
+{
+    wchar_t wxid[20] = { 0 };
+    RpcGetSelfWxId(wxid);
+    return wstring(wxid);
+}
+
 MsgTypesMap_t WxGetMsgTypes()
 {
     static MsgTypesMap_t WxMsgTypes;

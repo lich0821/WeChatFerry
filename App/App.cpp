@@ -106,6 +106,10 @@ int main()
         return 0;
     }
 
+    // 自己的 wxid
+    wstring selfWxid = WxGetSelfWxid();
+    wprintf(L"本号WXID：%s\n", selfWxid.c_str());
+
     // 获取消息类型
     wprintf(L"获取消息类型\n");
     const MsgTypesMap_t WxMsgTypes = WxGetMsgTypes();

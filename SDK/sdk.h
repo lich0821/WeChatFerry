@@ -51,6 +51,7 @@ int WxEnableRecvMsg(const std::function<int(WxMessage_t)> &onMsg);
 int WxDisableRecvMsg();
 int WxSendTextMsg(wstring wxid, wstring msg, wstring vAtWxids);
 int WxSendImageMsg(wstring wxid, wstring path);
+wstring WxGetSelfWxid();
 ContactMap_t WxGetContacts();
 MsgTypesMap_t WxGetMsgTypes();
 vector<wstring> WxGetDbNames();

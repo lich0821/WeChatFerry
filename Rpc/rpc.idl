@@ -56,6 +56,7 @@ interface ISpy
     typedef RpcSqlResult_t ***PPPRpcSqlResult;
 
     int IsLogin();
+    int GetSelfWxId([ out, string ] wchar_t wxid[20]);
     int SendTextMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *msg,
                     [ in, unique, string ] const wchar_t *atWxids);
     int SendImageMsg([ in, string ] const wchar_t *wxid, [ in, string ] const wchar_t *path);
