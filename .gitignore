@@ -7,7 +7,11 @@ Debug/
 Release/
 x64/
 
-# RPC generated files
-*_c.c
-*_s.c
-*_h.h
+# Generated files
+*.pb.h
+*.pb.cc
+build/
+
+*_pb2.py
+*_pb2_grpc.py
+__pycache__
