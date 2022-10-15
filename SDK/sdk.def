@@ -1,14 +1,3 @@
 ﻿EXPORTS
     WxInitSDK
     WxDestroySDK
-    WxEnableRecvMsg
-    WxDisableRecvMsg
-    WxSendTextMsg
-    WxGetSelfWxid
-    WxGetMsgTypes
-    WxSendImageMsg
-    WxGetContacts
-    WxGetDbNames
-    WxGetDbTables
-    WxExecDbQuery
-    WxAcceptNewFriend

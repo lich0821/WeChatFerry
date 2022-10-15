@@ -48,7 +48,7 @@ using namespace std;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-typedef map<wstring, DWORD> dbMap_t;
+typedef map<string, DWORD> dbMap_t;
 static dbMap_t dbMap;
 
 // 回调函数指针
@@ -72,16 +72,15 @@ typedef int(__cdecl *Sqlite3_finalize)(DWORD *);
 
 static int cbGetTables(void *ret, int argc, char **argv, char **azColName)
 {
-    vector<RpcTables_t> *p = (vector<RpcTables_t> *)ret;
-    RpcTables_t tbl        = { 0 };
+    wcf::DbTables* tbls = (wcf::DbTables*)ret;
     for (int i = 0; i < argc; i++) {
+        wcf::DbTable* tbl = tbls->add_tables();
         if (strcmp(azColName[i], "name") == 0) {
-            tbl.table = argv[i] ? GetBstrFromString(argv[i]) : NULL;
+            tbl->set_name(argv[i] ? argv[i] : "");
         } else if (strcmp(azColName[i], "sql") == 0) {
-            tbl.sql = argv[i] ? GetBstrFromString(argv[i]) : NULL;
+            tbl->set_sql(argv[i] ? argv[i] : "");
         }
     }
-    p->push_back(tbl);
     return 0;
 }
 
@@ -96,7 +95,7 @@ dbMap_t GetDbHandles()
     DWORD sqlHandleEndAddr   = *(DWORD *)(sqlHandleBaseAddr + g_WxCalls.sql.end);
     while (sqlHandleBeginAddr < sqlHandleEndAddr) {
         DWORD dwHandle = *(DWORD *)sqlHandleBeginAddr;
-        wstring dbName = wstring((wchar_t *)(*(DWORD *)(dwHandle + g_WxCalls.sql.name)));
+        string dbName = Wstring2String(wstring((wchar_t*)(*(DWORD*)(dwHandle + g_WxCalls.sql.name))));
         DWORD handle   = *(DWORD *)(dwHandle + g_WxCalls.sql.slot);
         if (handle) {
             dbMap[dbName] = handle;
@@ -107,77 +106,69 @@ dbMap_t GetDbHandles()
     return dbMap;
 }
 
-vector<wstring> GetDbNames()
+
+void GetDbNames(wcf::DbNames* names)
 {
-    vector<wstring> vDbs;
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
-    for (auto it = dbMap.begin(); it != dbMap.end(); it++) {
-        vDbs.push_back(it->first);
+
+    for (auto& [k, v] : dbMap) {
+        auto* name = names->add_names();
+        name->assign(k);
     }
-    return vDbs;
 }
 
-vector<RpcTables_t> GetDbTables(wstring db)
+void GetDbTables(const string db, wcf::DbTables* tables)
 {
-    vector<RpcTables_t> vTables;
-    const char *sql             = "select * from sqlite_master where type=\"table\";";
-    Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + g_WxCalls.sql.exec);
-
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
     auto it = dbMap.find(db);
-    if (it != dbMap.end()) {
-        p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, &vTables, 0);
+    if (it == dbMap.end()) {
+        return; // DB not found
     }
 
-    return vTables;
+    const char *sql             = "select * from sqlite_master where type=\"table\";";
+    Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + g_WxCalls.sql.exec);
+
+    p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, tables, 0);
 }
 
-vector<vector<RpcSqlResult_t>> ExecDbQuery(wstring db, wstring sql)
+void ExecDbQuery(const string db, const string sql, wcf::DbRows* rows)
 {
-    vector<vector<RpcSqlResult_t>> vvSqlResult;
-
-    Sqlite3_prepare func_prepare           = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
-    Sqlite3_step func_step                 = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
+    Sqlite3_prepare func_prepare = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
+    Sqlite3_step func_step = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
     Sqlite3_column_count func_column_count = (Sqlite3_column_count)(g_WeChatWinDllAddr + 0x13EACD0);
-    Sqlite3_column_name func_column_name   = (Sqlite3_column_name)(g_WeChatWinDllAddr + 0x13EB630);
-    Sqlite3_column_type func_column_type   = (Sqlite3_column_type)(g_WeChatWinDllAddr + 0x13EB470);
-    Sqlite3_column_blob func_column_blob   = (Sqlite3_column_blob)(g_WeChatWinDllAddr + 0x13EAD10);
+    Sqlite3_column_name func_column_name = (Sqlite3_column_name)(g_WeChatWinDllAddr + 0x13EB630);
+    Sqlite3_column_type func_column_type = (Sqlite3_column_type)(g_WeChatWinDllAddr + 0x13EB470);
+    Sqlite3_column_blob func_column_blob = (Sqlite3_column_blob)(g_WeChatWinDllAddr + 0x13EAD10);
     Sqlite3_column_bytes func_column_bytes = (Sqlite3_column_bytes)(g_WeChatWinDllAddr + 0x13EADD0);
-    Sqlite3_finalize func_finalize         = (Sqlite3_finalize)(g_WeChatWinDllAddr + 0x13E9730);
+    Sqlite3_finalize func_finalize = (Sqlite3_finalize)(g_WeChatWinDllAddr + 0x13E9730);
 
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
-    DWORD *stmt;
-    int rc = func_prepare(dbMap[db], Wstring2String(sql).c_str(), -1, &stmt, 0);
+    DWORD* stmt;
+    int rc = func_prepare(dbMap[db], sql.c_str(), -1, &stmt, 0);
     if (rc != SQLITE_OK) {
-        return vvSqlResult;
+        return;
     }
 
-    wchar_t buffer[128] = { 0 };
     while (func_step(stmt) == SQLITE_ROW) {
-        vector<RpcSqlResult_t> vResult;
+        wcf::DbRow* row = rows->add_rows();
         int col_count = func_column_count(stmt);
         for (int i = 0; i < col_count; i++) {
-            RpcSqlResult_t result = { 0 };
-            result.type           = func_column_type(stmt, i);
-            result.column         = GetBstrFromString(func_column_name(stmt, i));
-            int length            = func_column_bytes(stmt, i);
-            const void *blob      = func_column_blob(stmt, i);
-            if (length && (result.type != 5)) {
-                result.content = GetBstrFromByteArray((byte *)blob, length);
+            wcf::DbField* field = row->add_fields();
+            field->set_type(func_column_type(stmt, i));
+            field->set_column(func_column_name(stmt, i));
+            int length = func_column_bytes(stmt, i);
+            const void* blob = func_column_blob(stmt, i);
+            if (length && (field->type() != 5)) {
+                field->set_content(string((char *)blob, length));
             }
-
-            vResult.push_back(result);
         }
-        vvSqlResult.push_back(vResult);
     }
-
-    return vvSqlResult;
 }

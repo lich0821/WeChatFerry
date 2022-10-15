@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{707f2dcd-1001-42a7-b20e-b85b1bbab228}</ProjectGuid>
-    <RootNamespace>SDK</RootNamespace>
+    <ProjectGuid>{abfcb647-137f-478b-a73e-f0b1e3adc215}</ProjectGuid>
+    <RootNamespace>sdk</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -82,16 +82,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgTriplet>x86-windows-static</VcpkgTriplet>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;SDK_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions> /utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,8 +111,11 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;SDK_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,8 +124,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>sdk.def</ModuleDefinitionFile>
-      <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y $(OutDir)sdk.dll $(SolutionDir)python
+xcopy /y $(SolutionDir)TEQuant.jpeg $(SolutionDir)python
+xcopy /y $(SolutionDir)TEQuant.jpeg $(SolutionDir)Release</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -159,21 +171,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Rpc\rpc_h.h" />
+    <ClInclude Include="..\spy\log.h" />
+    <ClInclude Include="..\spy\util.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="injector.h" />
-    <ClInclude Include="rpc_client.h" />
     <ClInclude Include="sdk.h" />
-    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Rpc\rpc_c.c" />
-    <ClCompile Include="..\Rpc\rpc_memory.cpp" />
+    <ClCompile Include="..\spy\log.cpp" />
+    <ClCompile Include="..\spy\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="injector.cpp" />
-    <ClCompile Include="rpc_client.cpp" />
     <ClCompile Include="sdk.cpp" />
-    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sdk.def" />

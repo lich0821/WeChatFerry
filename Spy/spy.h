@@ -3,4 +3,5 @@
 #include "framework.h"
 
 void InitSpy();
-void DestroySpy(HMODULE hModule);
+void CleanupSpy();
+int IsLogin(void);

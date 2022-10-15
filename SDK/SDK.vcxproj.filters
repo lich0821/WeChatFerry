@@ -21,16 +21,13 @@
     <ClInclude Include="sdk.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\Rpc\rpc_h.h">
+    <ClInclude Include="..\spy\util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
+    <ClInclude Include="..\spy\log.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="injector.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="rpc_client.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,22 +35,16 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\spy\log.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\spy\util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="sdk.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Rpc\rpc_c.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Rpc\rpc_memory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="util.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="injector.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="rpc_client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

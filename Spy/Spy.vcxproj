@@ -21,9 +21,11 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4a0a22f7-0b1c-4565-a443-c43fac6c6396}</ProjectGuid>
-    <RootNamespace>Spy</RootNamespace>
+    <ProjectGuid>{4de80b82-5f6a-4c4c-9d16-1574308110fa}</ProjectGuid>
+    <RootNamespace>spy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,6 +77,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -82,26 +85,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;SPY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc;$(SolutionDir)SDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions> /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
-    <Midl>
-      <AdditionalOptions>/app_config /prefix client "client_" server "server_" </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -112,9 +113,13 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;SPY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc;$(SolutionDir)SDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions> /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)rpc;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <PrecompiledHeaderOutputFile />
+      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,12 +127,23 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
-    <Midl>
-      <AdditionalOptions>/prefix client "client_" server "server_" </AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Rpc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </Midl>
+    <PostBuildEvent>
+      <Command>xcopy /y $(OutDir)spy.dll $(SolutionDir)python</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy spy.dll</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)proto
+protoc -I=. --cpp_out=. wcf.proto
+protoc -I=. --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" wcf.proto</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>gRPC</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -142,6 +158,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,44 +178,43 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Rpc\rpc_h.h" />
-    <ClInclude Include="..\SDK\util.h" />
+    <ClInclude Include="..\proto\wcf.grpc.pb.h" />
+    <ClInclude Include="..\proto\wcf.pb.h" />
     <ClInclude Include="accept_new_friend.h" />
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="get_contacts.h" />
     <ClInclude Include="load_calls.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="receive_msg.h" />
     <ClInclude Include="rpc_server.h" />
     <ClInclude Include="send_msg.h" />
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Rpc\rpc_memory.cpp" />
-    <ClCompile Include="..\Rpc\rpc_s.c" />
-    <ClCompile Include="..\SDK\util.cpp" />
+    <ClCompile Include="..\proto\wcf.grpc.pb.cc" />
+    <ClCompile Include="..\proto\wcf.pb.cc" />
     <ClCompile Include="accept_new_friend.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="get_contacts.cpp" />
     <ClCompile Include="load_calls.cpp" />
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="receive_msg.cpp" />
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />
     <ClCompile Include="spy.cpp" />
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="..\Rpc\rpc.idl">
-      <OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Rpc</OutputDirectory>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/app_config /ms_ext /prefix client "client_" server "server_" </AdditionalOptions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Rpc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <OutputDirectory Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Rpc</OutputDirectory>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/app_config /ms_ext /prefix client "client_" server "server_" %(AdditionalOptions)</AdditionalOptions>
-    </Midl>
+    <None Include="..\proto\wcf.proto" />
+    <None Include="spy.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

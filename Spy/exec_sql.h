@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "rpc_h.h"
+#include "../proto/wcf.grpc.pb.h"
 
-std::vector<std::wstring> GetDbNames();
-std::vector<RpcTables_t> GetDbTables(std::wstring db);
-std::vector<std::vector<RpcSqlResult_t>> ExecDbQuery(std::wstring db, std::wstring sql);
+void GetDbNames(wcf::DbNames *names);
+void GetDbTables(const std::string db, wcf::DbTables *tables);
+void ExecDbQuery(const std::string db, const std::string sql, wcf::DbRows *rows);

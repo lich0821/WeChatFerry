@@ -1,60 +1,270 @@
-﻿#include <stdio.h>
-#include <stdlib.h>
+﻿#pragma warning(disable : 4251)
+
+#include <memory>
+#include <queue>
+#include <random>
+#include <sstream>
+#include <string>
+#include <thread>
+
+#include <grpc/grpc.h>
+#include <grpcpp/security/server_credentials.h>
+#include <grpcpp/server.h>
+#include <grpcpp/server_builder.h>
+#include <grpcpp/server_context.h>
+
+#include "../proto/wcf.grpc.pb.h"
 
 #include "accept_new_friend.h"
 #include "exec_sql.h"
 #include "get_contacts.h"
+#include "log.h"
 #include "receive_msg.h"
-#include "rpc_h.h"
 #include "rpc_server.h"
-#include "sdk.h"
 #include "send_msg.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "util.h"
 
+extern int IsLogin(void);         // Defined in spy.cpp
+extern std::string GetSelfWxid(); // Defined in spy.cpp
+
 using namespace std;
 
-extern int IsLogin(void);                // Defined in spy.cpp
-extern wstring GetSelfWxid();            // Defined in spy.cpp
-extern HANDLE g_hEvent;                  // New message signal
-extern BOOL g_rpcKeepAlive;              // Keep RPC server thread running
-extern MsgQueue_t g_MsgQueue;            // Queue for message
-extern const MsgTypesMap_t g_WxMsgTypes; // Map of WeChat Message types
+using grpc::CallbackServerContext;
+using grpc::Server;
+using grpc::ServerBuilder;
+using grpc::ServerUnaryReactor;
+using grpc::ServerWriteReactor;
+using grpc::Status;
 
-static BOOL listenMsgFlag = false;
+using wcf::Contacts;
+using wcf::DbField;
+using wcf::DbNames;
+using wcf::DbQuery;
+using wcf::DbRow;
+using wcf::DbRows;
+using wcf::DbTable;
+using wcf::DbTables;
+using wcf::Empty;
+using wcf::ImageMsg;
+using wcf::MsgTypes;
+using wcf::Response;
+using wcf::String;
+using wcf::TextMsg;
+using wcf::Verification;
+using wcf::Wcf;
+using wcf::WxMsg;
 
-RPC_STATUS CALLBACK SecurityCallback(RPC_IF_HANDLE /*hInterface*/, void * /*pBindingHandle*/)
+mutex gMutex;
+queue<WxMsg> gMsgQueue;
+condition_variable gCv;
+bool gIsListening;
+
+class WcfImpl final : public Wcf::CallbackService
 {
-    return RPC_S_OK; // Always allow anyone.
+public:
+    explicit WcfImpl() { }
+
+    ServerUnaryReactor *RpcIsLogin(CallbackServerContext *context, const Empty *empty, Response *rsp) override
+    {
+        int ret = IsLogin();
+        rsp->set_status(ret);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcGetSelfWxid(CallbackServerContext *context, const Empty *empty, String *rsp) override
+    {
+        string wxid = GetSelfWxid();
+        rsp->set_str(wxid);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+        return reactor;
+    }
+
+    ServerWriteReactor<WxMsg> *RpcEnableRecvMsg(CallbackServerContext *context, const Empty *empty) override
+    {
+        class Getter : public ServerWriteReactor<WxMsg>
+        {
+        public:
+            Getter()
+            {
+                LOG_INFO("Enable message listening.")
+                ListenMessage(); // gIsListening = true;
+                NextWrite();
+            }
+            void OnDone() override { delete this; }
+            void OnWriteDone(bool /*ok*/) override { NextWrite(); }
+
+        private:
+            void NextWrite()
+            {
+                unique_lock<std::mutex> lock(gMutex);
+                gCv.wait(lock, [&] { return !gMsgQueue.empty(); });
+                tmp_ = gMsgQueue.front();
+                gMsgQueue.pop();
+                lock.unlock();
+                if (gIsListening) {
+                    StartWrite(&tmp_);
+                } else {
+                    LOG_INFO("Disable message listening.")
+                    Finish(Status::OK); // 结束本次通信
+                }
+            }
+            WxMsg tmp_; // 如果将它放到 NextWrite 内部，StartWrite 调用时可能已经出了作用域
+        };
+
+        return new Getter();
+    }
+
+    ServerUnaryReactor *RpcDisableRecvMsg(CallbackServerContext *context, const Empty *empty, Response *rsp) override
+    {
+        if (gIsListening) {
+            UnListenMessage(); // gIsListening = false;
+            // 发送消息，触发 NextWrite 的 Finish
+            WxMsg wxMsg;
+            unique_lock<std::mutex> lock(gMutex);
+            gMsgQueue.push(wxMsg);
+            lock.unlock();
+            gCv.notify_all();
+        }
+
+        rsp->set_status(0);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcSendTextMsg(CallbackServerContext *context, const TextMsg *msg, Response *rsp) override
+    {
+        wstring wswxid = String2Wstring(msg->receiver());
+        wstring wsmsg = String2Wstring(msg->msg());
+        wstring wsatusers = String2Wstring(msg->aters());
+
+        SendTextMessage(wswxid.c_str(), wsmsg.c_str(), wsatusers.c_str());
+        rsp->set_status(0);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcSendImageMsg(CallbackServerContext *context, const ImageMsg *msg, Response *rsp) override
+    {
+        wstring wswxid = String2Wstring(msg->receiver());
+        wstring wspath = String2Wstring(msg->path());
+
+        SendImageMessage(wswxid.c_str(), wspath.c_str());
+        rsp->set_status(0);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcGetMsgTypes(CallbackServerContext *context, const Empty *empty, MsgTypes *rsp) override
+    {
+        GetMsgTypes(rsp);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcGetContacts(CallbackServerContext *context, const Empty *empty, Contacts *rsp) override
+    {
+        bool ret = GetContacts(rsp);
+        auto *reactor = context->DefaultReactor();
+        if (ret) {
+            reactor->Finish(Status::OK);
+        } else {
+            reactor->Finish(Status::CANCELLED);
+        }
+
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcGetDbNames(CallbackServerContext *context, const Empty *empty, DbNames *rsp) override
+    {
+        GetDbNames(rsp);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcGetDbTables(CallbackServerContext *context, const String *db, DbTables *rsp) override
+    {
+        GetDbTables(db->str(), rsp);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcExecDbQuery(CallbackServerContext *context, const DbQuery *query, DbRows *rsp) override
+    {
+        ExecDbQuery(query->db(), query->sql(), rsp);
+        auto *reactor = context->DefaultReactor();
+        reactor->Finish(Status::OK);
+
+        return reactor;
+    }
+
+    ServerUnaryReactor *RpcAcceptNewFriend(CallbackServerContext *context, const Verification *v,
+                                           Response *rsp) override
+    {
+        bool ret = AcceptNewFriend(String2Wstring(v->v3()), String2Wstring(v->v4()));
+        auto *reactor = context->DefaultReactor();
+        if (ret) {
+            rsp->set_status(0);
+            reactor->Finish(Status::OK);
+        } else {
+            LOG_ERROR("AcceptNewFriend failed.")
+            rsp->set_status(-1); // TODO: Unify error code
+            reactor->Finish(Status::CANCELLED);
+        }
+
+        return reactor;
+    }
+};
+
+static DWORD lThreadId = 0;
+static bool lIsRunning = false;
+static ServerBuilder lBuilder;
+
+static unique_ptr<Server> &GetServer()
+{
+    static unique_ptr<Server> server(lBuilder.BuildAndStart());
+
+    return server;
+}
+
+static int runServer()
+{
+    string server_address("localhost:10086");
+    WcfImpl service;
+
+    lBuilder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIME_MS, 2000);
+    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 3000);
+    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
+    lBuilder.RegisterService(&service);
+
+    unique_ptr<Server> &server = GetServer();
+    LOG_INFO("Server listening on {}", server_address);
+    LOG_DEBUG("server: {}", fmt::ptr(server));
+    lIsRunning = true;
+    server->Wait();
+
+    return 0;
 }
 
 int RpcStartServer()
 {
-    RPC_STATUS status;
-    // Uses the protocol combined with the endpoint for receiving
-    // remote procedure calls.
-    status = RpcServerUseProtseqEp(reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"ncalrpc"), // Use TCP/IP protocol
-                                   RPC_C_LISTEN_MAX_CALLS_DEFAULT,                   // Backlog queue length for TCP/IP.
-                                   reinterpret_cast<RPC_WSTR>((RPC_WSTR)L"wcferry"), // TCP/IP port to use
-                                   NULL                                              // No security
-    );
-
-    if (status)
-        return status;
-
-    // Registers the interface and auto listen
-    // Equal to RpcServerRegisterIf + RpcServerListen
-    status = RpcServerRegisterIf2(server_ISpy_v1_0_s_ifspec, // Interface to register.
-                                  NULL,                      // Use the MIDL generated entry-point vector.
-                                  NULL,                      // Use the MIDL generated entry-point vector.
-                                  RPC_IF_ALLOW_LOCAL_ONLY | RPC_IF_AUTOLISTEN, // Forces use of security callback.
-                                  RPC_C_LISTEN_MAX_CALLS_DEFAULT, // Use default number of concurrent calls.
-                                  (unsigned)-1,                   // Infinite max size of incoming data blocks.
-                                  SecurityCallback);              // Naive security callback.
-
-    while (g_rpcKeepAlive) {
-        Sleep(1000); // 休眠，释放CPU
+    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)runServer, NULL, NULL, &lThreadId);
+    if (rpcThread != 0) {
+        CloseHandle(rpcThread);
     }
 
     return 0;
@@ -62,224 +272,13 @@ int RpcStartServer()
 
 int RpcStopServer()
 {
-    RPC_STATUS status;
-
-    UnListenMessage();
-
-    listenMsgFlag  = false;
-    g_rpcKeepAlive = false;
-    status         = RpcMgmtStopServerListening(NULL);
-    if (status)
-        return status;
-
-    status = RpcServerUnregisterIf(server_ISpy_v1_0_s_ifspec, NULL, 0);
-    return status;
-}
-
-int server_IsLogin() { return IsLogin(); }
-
-int server_GetSelfWxId(wchar_t wxid[20]) { return wcscpy_s(wxid, 20, GetSelfWxid().c_str()); }
-
-void server_EnableReceiveMsg()
-{
-    unsigned long ulCode = 0;
-    ListenMessage();
-    listenMsgFlag = true;
-    RpcTryExcept
-    {
-        // 调用客户端的回调函数
-        while (listenMsgFlag) {
-            // 中断式，兼顾及时性和CPU使用率
-            WaitForSingleObject(g_hEvent, INFINITE); // 等待消息
-            while (!g_MsgQueue.empty()) {
-                client_ReceiveMsg(g_MsgQueue.front()); // 调用接收消息回调
-                g_MsgQueue.pop();
-            }
-            ResetEvent(g_hEvent);
-        }
+    if (lIsRunning) {
+        UnListenMessage();
+        unique_ptr<Server> &server = GetServer();
+        LOG_DEBUG("server: {}", fmt::ptr(server));
+        server->Shutdown();
+        LOG_INFO("Server stoped.");
     }
-    RpcExcept(1)
-    {
-        ulCode = RpcExceptionCode();
-        printf("server_EnableReceiveMsg exception 0x%lx = %ld\n", ulCode, ulCode);
-    }
-    RpcEndExcept
-}
-
-void server_DisableReceiveMsg()
-{
-    UnListenMessage();
-    listenMsgFlag = false;
-}
-
-int server_SendTextMsg(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
-{
-    SendTextMessage(wxid, msg, atWxids);
 
     return 0;
 }
-
-int server_SendImageMsg(const wchar_t *wxid, const wchar_t *path)
-{
-    SendImageMessage(wxid, path);
-
-    return 0;
-}
-
-int server_GetMsgTypes(int *pNum, PPRpcIntBstrPair *msgTypes)
-{
-    *pNum               = g_WxMsgTypes.size();
-    PPRpcIntBstrPair pp = (PPRpcIntBstrPair)midl_user_allocate(*pNum * sizeof(PRpcIntBstrPair));
-    if (pp == NULL) {
-        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
-        return -2;
-    }
-    int index = 0;
-    for (auto it = g_WxMsgTypes.begin(); it != g_WxMsgTypes.end(); it++) {
-        PRpcIntBstrPair p = (PRpcIntBstrPair)midl_user_allocate(sizeof(RpcIntBstrPair_t));
-        if (p == NULL) {
-            printf("server_GetMsgTypes midl_user_allocate Failed for p\n");
-            return -3;
-        }
-
-        p->key      = it->first;
-        p->value    = SysAllocString(it->second.c_str());
-        pp[index++] = p;
-    }
-
-    *msgTypes = pp;
-
-    return 0;
-}
-
-int server_GetContacts(int *pNum, PPRpcContact *contacts)
-{
-    vector<RpcContact_t> vContacts = GetContacts();
-
-    *pNum           = vContacts.size();
-    PPRpcContact pp = (PPRpcContact)midl_user_allocate(*pNum * sizeof(PRpcContact));
-    if (pp == NULL) {
-        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
-        return -2;
-    }
-
-    int index = 0;
-    for (auto it = vContacts.begin(); it != vContacts.end(); it++) {
-        PRpcContact p = (PRpcContact)midl_user_allocate(sizeof(RpcContact_t));
-        if (p == NULL) {
-            printf("server_GetMsgTypes midl_user_allocate Failed for p\n");
-            return -3;
-        }
-
-        p->wxId       = it->wxId;
-        p->wxCode     = it->wxCode;
-        p->wxName     = it->wxName;
-        p->wxCountry  = it->wxCountry;
-        p->wxProvince = it->wxProvince;
-        p->wxCity     = it->wxCity;
-        p->wxGender   = it->wxGender;
-
-        pp[index++] = p;
-    }
-
-    *contacts = pp;
-
-    return 0;
-}
-
-int server_GetDbNames(int *pNum, BSTR **dbs)
-{
-    vector<wstring> vDbs = GetDbNames();
-    *pNum                = vDbs.size();
-    BSTR *pp             = (BSTR *)midl_user_allocate(*pNum * sizeof(BSTR));
-    if (pp == NULL) {
-        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
-        return -2;
-    }
-
-    int index = 0;
-    for (auto it = vDbs.begin(); it != vDbs.end(); it++) {
-        pp[index++] = GetBstrFromWstring(*it);
-    }
-
-    *dbs = pp;
-
-    return 0;
-}
-
-int server_GetDbTables(const wchar_t *db, int *pNum, PPRpcTables *tbls)
-{
-    vector<RpcTables_t> tables = GetDbTables(db);
-    *pNum                      = tables.size();
-    PPRpcTables pp             = (PPRpcTables)midl_user_allocate(*pNum * sizeof(PRpcTables));
-    if (pp == NULL) {
-        printf("server_GetMsgTypes midl_user_allocate Failed for pp\n");
-        return -2;
-    }
-
-    int index = 0;
-    for (auto it = tables.begin(); it != tables.end(); it++) {
-        PRpcTables p = (PRpcTables)midl_user_allocate(sizeof(RpcTables_t));
-        if (p == NULL) {
-            printf("server_GetDbTables midl_user_allocate Failed for p\n");
-            return -3;
-        }
-
-        p->table    = it->table;
-        p->sql      = it->sql;
-        pp[index++] = p;
-    }
-
-    *tbls = pp;
-
-    return 0;
-}
-
-int server_ExecDbQuery(const wchar_t *db, const wchar_t *sql, int *pRow, int *pCol, PPPRpcSqlResult *ret)
-{
-    vector<vector<RpcSqlResult_t>> vvSqlResult = ExecDbQuery(db, sql);
-    if (vvSqlResult.empty()) {
-        *pRow = *pCol = 0;
-        ret           = NULL;
-        return -1;
-    }
-    *pRow               = vvSqlResult.size();
-    *pCol               = vvSqlResult[0].size();
-    PPPRpcSqlResult ppp = (PPPRpcSqlResult)midl_user_allocate(*pRow * sizeof(PPRpcSqlResult));
-    if (ppp == NULL) {
-        printf("server_ExecDbQuery midl_user_allocate Failed for ppp\n");
-        return -2;
-    }
-
-    for (int r = 0; r < *pRow; r++) {
-        PPRpcSqlResult pp = (PPRpcSqlResult)midl_user_allocate(*pCol * sizeof(PRpcSqlResult));
-        if (pp == NULL) {
-            midl_user_free(ppp);
-            printf("server_ExecDbQuery midl_user_allocate Failed for pp\n");
-            return -2;
-        }
-
-        for (int c = 0; c < *pCol; c++) {
-            PRpcSqlResult p = (PRpcSqlResult)midl_user_allocate(sizeof(RpcSqlResult_t));
-            if (p == NULL) {
-                midl_user_free(pp);
-                printf("server_ExecDbQuery midl_user_allocate Failed for p\n");
-                return -2;
-            }
-
-            p->type    = vvSqlResult[r][c].type;
-            p->column  = vvSqlResult[r][c].column;
-            p->content = vvSqlResult[r][c].content;
-
-            pp[c] = p;
-        }
-
-        ppp[r] = pp;
-    }
-
-    *ret = ppp;
-
-    return 0;
-}
-
-BOOL server_AcceptNewFriend(const wchar_t *v3, const wchar_t *v4) { return AcceptNewFriend(v3, v4); }

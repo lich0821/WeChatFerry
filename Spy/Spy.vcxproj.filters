@@ -13,24 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Rpc">
-      <UniqueIdentifier>{37eb8a5c-e792-4c10-a858-9abc84f79f80}</UniqueIdentifier>
+    <Filter Include="proto">
+      <UniqueIdentifier>{5da8b2ee-3201-441c-b42f-a420e9aad78b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\Rpc\rpc_h.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="rpc_server.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="load_calls.h">
+    <ClInclude Include="log.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\util.h">
+    <ClInclude Include="accept_new_friend.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="exec_sql.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="get_contacts.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="load_calls.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="receive_msg.h">
@@ -39,39 +45,42 @@
     <ClInclude Include="send_msg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="spy_types.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="get_contacts.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="exec_sql.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="spy.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="accept_new_friend.h">
+    <ClInclude Include="spy_types.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\proto\wcf.grpc.pb.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\proto\wcf.pb.h">
+      <Filter>proto</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Rpc\rpc_s.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Rpc\rpc_memory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="rpc_server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="load_calls.cpp">
+    <ClCompile Include="log.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDK\util.cpp">
+    <ClCompile Include="accept_new_friend.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="exec_sql.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="get_contacts.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="load_calls.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="receive_msg.cpp">
@@ -80,22 +89,25 @@
     <ClCompile Include="send_msg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="get_contacts.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="exec_sql.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="spy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="accept_new_friend.cpp">
+    <ClCompile Include="util.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\proto\wcf.grpc.pb.cc">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\proto\wcf.pb.cc">
+      <Filter>proto</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="..\Rpc\rpc.idl">
-      <Filter>Rpc</Filter>
-    </Midl>
+    <None Include="spy.def">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="..\proto\wcf.proto">
+      <Filter>proto</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <vector>
+#include "../proto/wcf.grpc.pb.h"
 
-#include "rpc_h.h"
-
-std::vector<RpcContact_t> GetContacts();
+bool GetContacts(wcf::Contacts *contacts);

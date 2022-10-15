@@ -2,5 +2,6 @@
 
 #include "framework.h"
 
-int InjectDll(DWORD pid, const WCHAR* dllPath);
-int EjectDll(DWORD pid, const WCHAR* dllPath);
+HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase);
+bool EjectDll(HANDLE process, HMODULE dllBase);
+bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, DWORD *ret);

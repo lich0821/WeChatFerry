@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "framework.h"
-#include <queue>
-
-#include "rpc_h.h"
+#include "../proto/wcf.grpc.pb.h"
 
 typedef struct UserInfoCall {
     DWORD wxid;
@@ -74,5 +72,3 @@ typedef struct TextStruct {
     DWORD capacity;
     char fill[8];
 } TextStruct_t;
-
-typedef std::queue<RpcMessage_t> MsgQueue_t;

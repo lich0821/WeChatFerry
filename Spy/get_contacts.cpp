@@ -5,35 +5,34 @@
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-std::vector<RpcContact_t> GetContacts()
+bool GetContacts(wcf::Contacts* contacts)
 {
     int gender = 0;
-    vector<RpcContact_t> vContacts;
     DWORD baseAddr = g_WeChatWinDllAddr + g_WxCalls.contact.base;
     DWORD tempAddr = GET_DWORD(baseAddr);
     DWORD head     = GET_DWORD(tempAddr + g_WxCalls.contact.head);
     DWORD node     = GET_DWORD(head);
 
     while (node != head) {
-        RpcContact_t rpcContact = { 0 };
-        rpcContact.wxId         = GetBstrByAddress(node + g_WxCalls.contact.wxId);
-        rpcContact.wxCode       = GetBstrByAddress(node + g_WxCalls.contact.wxCode);
-        rpcContact.wxName       = GetBstrByAddress(node + g_WxCalls.contact.wxName);
-        rpcContact.wxCountry    = GetBstrByAddress(node + g_WxCalls.contact.wxCountry);
-        rpcContact.wxProvince   = GetBstrByAddress(node + g_WxCalls.contact.wxProvince);
-        rpcContact.wxCity       = GetBstrByAddress(node + g_WxCalls.contact.wxCity);
+        wcf::Contact* cnt = contacts->add_contacts();
+        cnt->set_wxid(GetStringByAddress(node + g_WxCalls.contact.wxId));
+        cnt->set_code(GetStringByAddress(node + g_WxCalls.contact.wxCode));
+        cnt->set_name(GetStringByAddress(node + g_WxCalls.contact.wxName));
+        cnt->set_country(GetStringByAddress(node + g_WxCalls.contact.wxCountry));
+        cnt->set_province(GetStringByAddress(node + g_WxCalls.contact.wxProvince));
+        cnt->set_city(GetStringByAddress(node + g_WxCalls.contact.wxCity));
+        cnt->set_city(GetStringByAddress(node + g_WxCalls.contact.wxCity));
 
         gender = GET_DWORD(node + g_WxCalls.contact.wxGender);
         if (gender == 1)
-            rpcContact.wxGender = SysAllocString(L"男");
+            cnt->set_city("男");
         else if (gender == 2)
-            rpcContact.wxGender = SysAllocString(L"女");
+            cnt->set_city("女");
         else
-            rpcContact.wxGender = SysAllocString(L"未知");
+            cnt->set_city("未知");
 
-        vContacts.push_back(rpcContact);
         node = GET_DWORD(node);
     }
 
-    return vContacts;
+    return true;
 }

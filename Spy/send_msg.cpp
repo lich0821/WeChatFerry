@@ -4,10 +4,10 @@
 #include <vector>
 
 #include "spy_types.h"
+#include "send_msg.h"
 
 extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
-extern RpcMessage_t *g_pMsg;
 extern DWORD g_WeChatWinDllAddr;
 
 using namespace std;
