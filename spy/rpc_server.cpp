@@ -240,7 +240,7 @@ static unique_ptr<Server> &GetServer()
     return server;
 }
 
-static int runServer()
+static int RunServer()
 {
     string server_address("localhost:10086");
     WcfImpl service;
@@ -262,7 +262,7 @@ static int runServer()
 
 int RpcStartServer()
 {
-    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)runServer, NULL, NULL, &lThreadId);
+    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, NULL, NULL, &lThreadId);
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
     }
