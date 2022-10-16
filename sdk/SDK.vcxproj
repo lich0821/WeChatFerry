@@ -131,6 +131,7 @@ xcopy /y $(OutDir)sdk.dll $(OutDir)out\python\wcf
 xcopy /y $(SolutionDir)TEQuant.jpeg $(OutDir)out\cpp
 xcopy /y $(SolutionDir)TEQuant.jpeg $(OutDir)out\python
 xcopy /y $(SolutionDir)python\demo.py $(OutDir)out\python
+xcopy /y $(SolutionDir)python\README.MD $(OutDir)out\python
 xcopy /y $(SolutionDir)python\wcf\*.py $(OutDir)out\python\wcf</Command>
     </PostBuildEvent>
     <PostBuildEvent>
