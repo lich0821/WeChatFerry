@@ -135,7 +135,8 @@
 md out\cpp
 md out\python\wcf
 xcopy /y $(OutDir)spy.dll $(OutDir)out\cpp
-xcopy /y $(OutDir)spy.dll $(OutDir)out\python\wcf</Command>
+xcopy /y $(OutDir)spy.dll $(OutDir)out\python\wcf
+xcopy /y $(SolutionDir)proto\wcf.proto $(OutDir)out\python</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
