@@ -72,9 +72,9 @@ typedef int(__cdecl *Sqlite3_finalize)(DWORD *);
 
 static int cbGetTables(void *ret, int argc, char **argv, char **azColName)
 {
-    wcf::DbTables* tbls = (wcf::DbTables*)ret;
+    wcf::DbTables *tbls = (wcf::DbTables *)ret;
+    wcf::DbTable *tbl   = tbls->add_tables();
     for (int i = 0; i < argc; i++) {
-        wcf::DbTable* tbl = tbls->add_tables();
         if (strcmp(azColName[i], "name") == 0) {
             tbl->set_name(argv[i] ? argv[i] : "");
         } else if (strcmp(azColName[i], "sql") == 0) {
@@ -95,7 +95,7 @@ dbMap_t GetDbHandles()
     DWORD sqlHandleEndAddr   = *(DWORD *)(sqlHandleBaseAddr + g_WxCalls.sql.end);
     while (sqlHandleBeginAddr < sqlHandleEndAddr) {
         DWORD dwHandle = *(DWORD *)sqlHandleBeginAddr;
-        string dbName = Wstring2String(wstring((wchar_t*)(*(DWORD*)(dwHandle + g_WxCalls.sql.name))));
+        string dbName  = Wstring2String(wstring((wchar_t *)(*(DWORD *)(dwHandle + g_WxCalls.sql.name))));
         DWORD handle   = *(DWORD *)(dwHandle + g_WxCalls.sql.slot);
         if (handle) {
             dbMap[dbName] = handle;
@@ -106,20 +106,19 @@ dbMap_t GetDbHandles()
     return dbMap;
 }
 
-
-void GetDbNames(wcf::DbNames* names)
+void GetDbNames(wcf::DbNames *names)
 {
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
-    for (auto& [k, v] : dbMap) {
-        auto* name = names->add_names();
+    for (auto &[k, v] : dbMap) {
+        auto *name = names->add_names();
         name->assign(k);
     }
 }
 
-void GetDbTables(const string db, wcf::DbTables* tables)
+void GetDbTables(const string db, wcf::DbTables *tables)
 {
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
@@ -130,42 +129,42 @@ void GetDbTables(const string db, wcf::DbTables* tables)
         return; // DB not found
     }
 
-    const char *sql             = "select * from sqlite_master where type=\"table\";";
+    const char *sql             = "select name, sql from sqlite_master where type=\"table\";";
     Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + g_WxCalls.sql.exec);
 
     p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, tables, 0);
 }
 
-void ExecDbQuery(const string db, const string sql, wcf::DbRows* rows)
+void ExecDbQuery(const string db, const string sql, wcf::DbRows *rows)
 {
-    Sqlite3_prepare func_prepare = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
-    Sqlite3_step func_step = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
+    Sqlite3_prepare func_prepare           = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
+    Sqlite3_step func_step                 = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
     Sqlite3_column_count func_column_count = (Sqlite3_column_count)(g_WeChatWinDllAddr + 0x13EACD0);
-    Sqlite3_column_name func_column_name = (Sqlite3_column_name)(g_WeChatWinDllAddr + 0x13EB630);
-    Sqlite3_column_type func_column_type = (Sqlite3_column_type)(g_WeChatWinDllAddr + 0x13EB470);
-    Sqlite3_column_blob func_column_blob = (Sqlite3_column_blob)(g_WeChatWinDllAddr + 0x13EAD10);
+    Sqlite3_column_name func_column_name   = (Sqlite3_column_name)(g_WeChatWinDllAddr + 0x13EB630);
+    Sqlite3_column_type func_column_type   = (Sqlite3_column_type)(g_WeChatWinDllAddr + 0x13EB470);
+    Sqlite3_column_blob func_column_blob   = (Sqlite3_column_blob)(g_WeChatWinDllAddr + 0x13EAD10);
     Sqlite3_column_bytes func_column_bytes = (Sqlite3_column_bytes)(g_WeChatWinDllAddr + 0x13EADD0);
-    Sqlite3_finalize func_finalize = (Sqlite3_finalize)(g_WeChatWinDllAddr + 0x13E9730);
+    Sqlite3_finalize func_finalize         = (Sqlite3_finalize)(g_WeChatWinDllAddr + 0x13E9730);
 
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
-    DWORD* stmt;
+    DWORD *stmt;
     int rc = func_prepare(dbMap[db], sql.c_str(), -1, &stmt, 0);
     if (rc != SQLITE_OK) {
         return;
     }
 
     while (func_step(stmt) == SQLITE_ROW) {
-        wcf::DbRow* row = rows->add_rows();
-        int col_count = func_column_count(stmt);
+        wcf::DbRow *row = rows->add_rows();
+        int col_count   = func_column_count(stmt);
         for (int i = 0; i < col_count; i++) {
-            wcf::DbField* field = row->add_fields();
+            wcf::DbField *field = row->add_fields();
             field->set_type(func_column_type(stmt, i));
             field->set_column(func_column_name(stmt, i));
-            int length = func_column_bytes(stmt, i);
-            const void* blob = func_column_blob(stmt, i);
+            int length       = func_column_bytes(stmt, i);
+            const void *blob = func_column_blob(stmt, i);
             if (length && (field->type() != 5)) {
                 field->set_content(string((char *)blob, length));
             }
