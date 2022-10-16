@@ -59,6 +59,9 @@ C++ 示例应用，介绍如何使用 WeChatFerry。
 ### proto
 RPC 消息及接口定义。
 
+### python
+Python 客户端。
+
 ### sdk
 负责将 `spy` 注入微信进程，并启动 gRPC 服务端。
 
