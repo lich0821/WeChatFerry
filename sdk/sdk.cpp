@@ -8,9 +8,9 @@
 #include "sdk.h"
 #include "util.h"
 
-static DWORD wcPid = 0;
-static HANDLE wcProcess = NULL;
-static HMODULE spyBase = NULL;
+static DWORD wcPid                = 0;
+static HANDLE wcProcess           = NULL;
+static HMODULE spyBase            = NULL;
 static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
 int WxInitSDK()

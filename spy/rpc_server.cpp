@@ -139,8 +139,8 @@ public:
 
     ServerUnaryReactor *RpcSendTextMsg(CallbackServerContext *context, const TextMsg *msg, Response *rsp) override
     {
-        wstring wswxid = String2Wstring(msg->receiver());
-        wstring wsmsg = String2Wstring(msg->msg());
+        wstring wswxid    = String2Wstring(msg->receiver());
+        wstring wsmsg     = String2Wstring(msg->msg());
         wstring wsatusers = String2Wstring(msg->aters());
 
         SendTextMessage(wswxid.c_str(), wsmsg.c_str(), wsatusers.c_str());
@@ -173,7 +173,7 @@ public:
 
     ServerUnaryReactor *RpcGetContacts(CallbackServerContext *context, const Empty *empty, Contacts *rsp) override
     {
-        bool ret = GetContacts(rsp);
+        bool ret      = GetContacts(rsp);
         auto *reactor = context->DefaultReactor();
         if (ret) {
             reactor->Finish(Status::OK);
@@ -214,7 +214,7 @@ public:
     ServerUnaryReactor *RpcAcceptNewFriend(CallbackServerContext *context, const Verification *v,
                                            Response *rsp) override
     {
-        bool ret = AcceptNewFriend(String2Wstring(v->v3()), String2Wstring(v->v4()));
+        bool ret      = AcceptNewFriend(String2Wstring(v->v3()), String2Wstring(v->v4()));
         auto *reactor = context->DefaultReactor();
         if (ret) {
             rsp->set_status(0);

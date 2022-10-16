@@ -7,7 +7,7 @@
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-bool GetContacts(wcf::Contacts* contacts)
+bool GetContacts(wcf::Contacts *contacts)
 {
     DWORD baseAddr = g_WeChatWinDllAddr + g_WxCalls.contact.base;
     DWORD tempAddr = GET_DWORD(baseAddr);
@@ -15,7 +15,7 @@ bool GetContacts(wcf::Contacts* contacts)
     DWORD node     = GET_DWORD(head);
 
     while (node != head) {
-        wcf::Contact* cnt = contacts->add_contacts();
+        wcf::Contact *cnt = contacts->add_contacts();
         cnt->set_wxid(GetStringByAddress(node + g_WxCalls.contact.wxId));
         cnt->set_code(GetStringByAddress(node + g_WxCalls.contact.wxCode));
         cnt->set_name(GetStringByAddress(node + g_WxCalls.contact.wxName));

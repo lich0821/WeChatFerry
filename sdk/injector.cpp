@@ -62,7 +62,7 @@ static void *GetFuncAddr(LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName)
     }
 
     void *absAddr = GetProcAddress(hLoaded, funcName);
-    DWORD offset = (DWORD)absAddr - (DWORD)hLoaded;
+    DWORD offset  = (DWORD)absAddr - (DWORD)hLoaded;
 
     FreeLibrary(hLoaded);
 

@@ -4,4 +4,4 @@
 
 void ListenMessage();
 void UnListenMessage();
-void GetMsgTypes(wcf::MsgTypes* types);
+void GetMsgTypes(wcf::MsgTypes *types);

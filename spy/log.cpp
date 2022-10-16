@@ -5,8 +5,6 @@
 #define LOGGER_MAX_SIZE  1024 * 1024 * 10 // 10M
 #define LOGGER_MAX_FILES 10               // 10 files
 
-
-
 void InitLogger()
 {
     static std::shared_ptr<spdlog::logger> gLogger = nullptr;

@@ -21,9 +21,9 @@ extern condition_variable gCv;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-static DWORD reg_buffer = 0;
-static DWORD recvMsgHookAddr = 0;
-static DWORD recvMsgCallAddr = 0;
+static DWORD reg_buffer          = 0;
+static DWORD recvMsgHookAddr     = 0;
+static DWORD recvMsgCallAddr     = 0;
 static DWORD recvMsgJumpBackAddr = 0;
 static CHAR recvMsgBackupCode[5] = { 0 };
 
@@ -57,7 +57,7 @@ void HookAddress(DWORD hookAddr, LPVOID funcAddr, CHAR recvMsgBackupCode[5])
 {
     //组装跳转数据
     BYTE jmpCode[5] = { 0 };
-    jmpCode[0] = 0xE9;
+    jmpCode[0]      = 0xE9;
 
     //计算偏移
     *(DWORD *)&jmpCode[1] = (DWORD)funcAddr - hookAddr - 5;
@@ -113,7 +113,7 @@ __declspec(naked) void RecieveMsgFunc()
 
     __asm
     {
-        call recvMsgCallAddr    // 这个为被覆盖的call
+        call recvMsgCallAddr // 这个为被覆盖的call
         jmp recvMsgJumpBackAddr // 跳回被HOOK指令的下一条指令
     }
 }
@@ -125,8 +125,8 @@ void ListenMessage()
         return;
     }
 
-    recvMsgHookAddr = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
-    recvMsgCallAddr = g_WeChatWinDllAddr + g_WxCalls.recvMsg.call;
+    recvMsgHookAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
+    recvMsgCallAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.call;
     recvMsgJumpBackAddr = recvMsgHookAddr + 5;
 
     HookAddress(recvMsgHookAddr, RecieveMsgFunc, recvMsgBackupCode);

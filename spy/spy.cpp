@@ -4,7 +4,7 @@
 #include "rpc_server.h"
 #include "util.h"
 
-WxCalls_t g_WxCalls = { 0 };
+WxCalls_t g_WxCalls      = { 0 };
 DWORD g_WeChatWinDllAddr = 0;
 
 void InitSpy()

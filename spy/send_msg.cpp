@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "spy_types.h"
 #include "send_msg.h"
+#include "spy_types.h"
 
 extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
