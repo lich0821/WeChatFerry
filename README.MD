@@ -3,35 +3,75 @@
 
 欢迎加群交流，后台回复 `WeChatFerry `：
 
-![碲矿](碲矿.jpeg)
+![碲矿](TEQuant.jpeg)
 
 ## 快速开始
-1. 使用 VS2019 编译。
-2. 打开 `CMD`，运行 `App.exe`
+### 安装开发环境
+参见 [A gRPC Demo](https://github.com/lich0821/gRpcDemo/blob/wx/README.MD)。
+#### 安装 vcpkg
+* 安装，参考[Vcpkg: 总览](https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md)。
+```sh
+cd C:\Tools
+git clone https://github.com/microsoft/vcpkg
+.\vcpkg\bootstrap-vcpkg.bat
+```
+
+* 添加全局配置：
+环境变量增加 `vcpkg` 所在路径（本文为：`C:\Tools\vcpkg`）。
+
+#### 安装 gRPC 相关组件
+```sh
+vcpkg install grpc:x86-windows-static
+vcpkg install protobuf[zlib]:x86-windows-static
+vcpkg integrate install
+```
+
+#### 安装 VS2019
+
+### 生成编解码文件和接口文件
+```sh
+cd WeChatFerry/proto/
+protoc --cpp_out=. -I=. wcf.proto
+protoc --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" -I=. wcf.proto
+```
+
+执行 `tree .`，可见生成了四个文件：
+```txt
+.
+├── wcf.grpc.pb.cc
+├── wcf.grpc.pb.h
+├── wcf.pb.cc
+├── wcf.pb.h
+└── wcf.proto
+```
+
+### 编译
+使用 VS2019 打开工程，编译即可。
+
+### 运行
+双击 `Release` 里的 `cpp.exe`。如果出现中文乱码，则需要将编码改为 `UTF-8`。
 
 ## 项目结构
-### Spy
+
+### cpp
+C++ 示例应用，介绍如何使用 WeChatFerry。
+
+### proto
+RPC 消息及接口定义。
+
+### python
+Python 客户端。
+
+### sdk
+负责将 `spy` 注入微信进程，并启动 gRPC 服务端。
+
+### spy
 间谍模块，注入到微信中，通过 RPC 做消息转发工作。
 
-### SDK
-RPC 的客户端，封装接口，供其他方调用。
-
-### SDKpy
-用于生成 Python 接口。为编译该项目，需要做一些配置：
-1. 添加附加包含目录
-* Python 头：`C:\Program Files (x86)\Python37-32\Include`
-* Pybind11 头：`C:\Projs\.pyenv\pybind11\lib\site-packages\pybind11\include`
-*注*：
-    1. pybind11 可以通过 Python 安装（本工程安装到虚拟环境里了）：`pip install pybind11`
-    2. 然后通过命令查找：`python -m pybind11 --includes`
-
-2. 添加 Python 的库
-* `C:\Program Files (x86)\Python37-32\libs`
-
-### App
-示例应用，介绍如何调用 SDK。
-
 ## 版本更新
+### v3.7.0.30-gRPC（2022.10.15）
+将 RPC 框架切换为 gRPC！
+
 ### v3.7.0.30-8（2022.09.25）
 * 获取登录账号微信 ID
 
