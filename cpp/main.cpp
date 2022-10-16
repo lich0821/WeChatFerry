@@ -51,7 +51,7 @@ public:
     {
         cout << "~WcfClient()" << endl;
         this->DisableRecvMsg();
-        // WxDestroySDK();
+        WxDestroySDK();
     }
 
     int IsLogin()
@@ -135,7 +135,7 @@ public:
             {
                 unique_lock<mutex> l(mu_);
                 status_ = s;
-                done_ = true;
+                done_   = true;
                 cv_.notify_one();
             }
 
@@ -166,8 +166,6 @@ public:
             cout << "GetMessage rpc failed." << endl;
         }
     }
-
-    // void EnableRecvMsg(function<void(WxMsg &)> msg_handle_cb) { GetMessage(msg_handle_cb); }
 
     int DisableRecvMsg()
     {
@@ -437,24 +435,23 @@ int OnMsg(WxMsg msg)
          << ", " << msg.sender() << ", " << msg.roomid() << ", " << msg.content() << endl;
     return 0;
 }
-// volatile bool gKeepRunning = false;
-// void handler(int s)
-// {
-//     printf("Caught signal %d\n", s);
-//     // exit(1);
-//     gKeepRunning = false;
-// }
+
+volatile sig_atomic_t gStop;
+void handler(int s)
+{
+    cout << "Ctrl + C" << endl;
+    gStop = 1;
+}
 
 int main(int argc, char **argv)
 {
     int ret;
-    // signal(SIGINT, handler);
+
+    signal(SIGINT, handler);
 
     WcfClient &client = WcfClient::Instance("localhost:10086");
 
-    ret = client.IsLogin();
-    cout << "IsLogin: " << ret << endl;
-
+    cout << "IsLogin: " << client.IsLogin() << endl;
     cout << "Self Wxid: " << client.GetSelfWxid() << endl;
 
     ret = client.SendTextMsg("来自CPP的消息！", "filehelper", "");
@@ -474,8 +471,14 @@ int main(int argc, char **argv)
     cout << "GetContacts: " << cnts.contacts().size() << endl;
     vector<Contact> vcnts(cnts.contacts().begin(), cnts.contacts().end());
     for (auto &c : vcnts) {
+        string gender = "";
+        if (c.gender() == 1) {
+            gender = "男";
+        } else if (c.gender() == 2) {
+            gender = "女";
+        }
         cout << c.wxid() << "\t" << c.code() << "\t" << c.name() << "\t" << c.country() << "\t" << c.province() << "\t"
-             << c.city() << "\t" << c.gender() << endl;
+             << c.city() << "\t" << gender << endl;
     }
 
     DbNames db = client.GetDbNames();
@@ -506,16 +509,17 @@ int main(int argc, char **argv)
     // cout << "AcceptNewFriend: " << ret << endl;
 
     function<void(WxMsg &)> cb = OnMsg;
-    thread t1 = thread([&]() { client.EnableRecvMsg(cb); });
-    // client.EnableRecvMsg(cb);
+    thread t1                  = thread([&]() { client.EnableRecvMsg(cb); });
 
-    cout << "Block?..." << endl;
-    // gKeepRunning = true;
-    while (true) {
-        // cout << gKeepRunning << endl;
+    while (!gStop) {
         Sleep(1000);
     }
 
-    Sleep(1000);
-    cout << "Exit..." << endl;
+    cout << "Cleanup" << endl;
+    client.DisableRecvMsg();
+
+    system("pause");
+    client.~WcfClient();
+
+    return 0;
 }
