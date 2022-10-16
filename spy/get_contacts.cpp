@@ -1,4 +1,6 @@
-﻿#include "get_contacts.h"
+﻿#pragma execution_character_set("utf-8")
+
+#include "get_contacts.h"
 #include "load_calls.h"
 #include "util.h"
 
@@ -7,7 +9,6 @@ extern DWORD g_WeChatWinDllAddr;
 
 bool GetContacts(wcf::Contacts* contacts)
 {
-    int gender = 0;
     DWORD baseAddr = g_WeChatWinDllAddr + g_WxCalls.contact.base;
     DWORD tempAddr = GET_DWORD(baseAddr);
     DWORD head     = GET_DWORD(tempAddr + g_WxCalls.contact.head);
@@ -21,15 +22,7 @@ bool GetContacts(wcf::Contacts* contacts)
         cnt->set_country(GetStringByAddress(node + g_WxCalls.contact.wxCountry));
         cnt->set_province(GetStringByAddress(node + g_WxCalls.contact.wxProvince));
         cnt->set_city(GetStringByAddress(node + g_WxCalls.contact.wxCity));
-        cnt->set_city(GetStringByAddress(node + g_WxCalls.contact.wxCity));
-
-        gender = GET_DWORD(node + g_WxCalls.contact.wxGender);
-        if (gender == 1)
-            cnt->set_city("男");
-        else if (gender == 2)
-            cnt->set_city("女");
-        else
-            cnt->set_city("未知");
+        cnt->set_gender(GET_DWORD(node + g_WxCalls.contact.wxGender));
 
         node = GET_DWORD(node);
     }

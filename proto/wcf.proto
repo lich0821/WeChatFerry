@@ -54,7 +54,7 @@ message Contact {
   string country = 4;  // 国家
   string province = 5; // 省/州
   string city = 6;     // 城市
-  string gender = 7;   // 性别
+  int32 gender = 7;    // 性别
 }
 message Contacts { repeated Contact contacts = 1; }
 
