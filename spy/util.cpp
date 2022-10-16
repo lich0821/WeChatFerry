@@ -14,8 +14,6 @@
 
 using namespace std;
 
-//static wstring_convert<codecvt_utf8<wchar_t>, wchar_t> S_WS_Converter;
-
 wstring String2Wstring(string s)
 {
     if (s.empty())
@@ -25,6 +23,7 @@ wstring String2Wstring(string s)
     MultiByteToWideChar(CP_UTF8, 0, &s[0], (int)s.size(), &ws[0], size_needed);
     return ws;
 }
+
 string Wstring2String(wstring ws)
 {
     if (ws.empty())
@@ -212,94 +211,6 @@ string GetStringByAddress(DWORD address)
     DWORD strLength = GET_DWORD(address + 4);
     return Wstring2String(wstring(GET_WSTRING(address), strLength));
 }
-#if 0
-BSTR GetBstrByAddress(DWORD address)
-{
-    wchar_t *p = GET_WSTRING(address);
-    if (p == NULL) {
-        return NULL;
-    }
-
-    return SysAllocStringLen(GET_WSTRING(address), GET_DWORD(address + 4));
-}
-
-wstring GetWstringFromBstr(BSTR p)
-{
-    wstring ws = L"";
-    if (p != NULL) {
-        ws = wstring(p);
-        SysFreeString(p);
-    }
-    return ws;
-}
-
-BSTR GetBstrFromString(const char *str)
-{
-    int wslen = MultiByteToWideChar(CP_ACP, 0, str, strlen(str), 0, 0);
-    BSTR bstr = SysAllocStringLen(0, wslen);
-    MultiByteToWideChar(CP_ACP, 0, str, strlen(str), bstr, wslen);
-
-    return bstr;
-}
-
-BSTR GetBstrFromWstring(wstring ws)
-{
-    if (!ws.empty()) {
-        return SysAllocStringLen(ws.data(), ws.size());
-    }
-    return NULL;
-}
-
-BSTR GetBstrFromStringBuffer(const char *str, int length)
-{
-    int wslen = MultiByteToWideChar(CP_ACP, 0, str, length, 0, 0);
-    BSTR bstr = SysAllocStringLen(0, wslen);
-    MultiByteToWideChar(CP_ACP, 0, str, length, bstr, wslen);
-
-    return bstr;
-}
-
-BSTR GetBstrFromByteArray(const byte *b, int len)
-{
-    BSTR bstr = SysAllocStringLen(0, len);
-    if (bstr == NULL) {
-        return NULL;
-    }
-    memcpy((byte *)bstr, b, len);
-
-    return bstr;
-}
-
-string GetBytesFromBstr(BSTR bstr)
-{
-    string s = "";
-    if (bstr) {
-        int len   = SysStringByteLen(bstr) / 2;
-        char *tmp = new char[len];
-        char *p   = (char *)bstr;
-        for (int i = 0; i < len; i++) {
-            tmp[i] = p[i];
-        }
-        SysFreeString(bstr);
-        s = string(tmp, len);
-        delete[] tmp;
-    }
-
-    return s;
-}
-
-void GetRpcMessage(WxMessage_t *wxMsg, RpcMessage_t rpcMsg)
-{
-    wxMsg->self    = rpcMsg.self;
-    wxMsg->type    = rpcMsg.type;
-    wxMsg->source  = rpcMsg.source;
-    wxMsg->id      = GetWstringFromBstr(rpcMsg.id);
-    wxMsg->xml     = GetWstringFromBstr(rpcMsg.xml);
-    wxMsg->wxId    = GetWstringFromBstr(rpcMsg.wxId);
-    wxMsg->roomId  = GetWstringFromBstr(rpcMsg.roomId);
-    wxMsg->content = GetWstringFromBstr(rpcMsg.content);
-}
-#endif
 
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address)
 {
