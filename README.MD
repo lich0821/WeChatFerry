@@ -35,7 +35,7 @@ protoc --cpp_out=. -I=. wcf.proto
 protoc --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" -I=. wcf.proto
 ```
 
-执行 `tree .`，可见生成了两个 `*.grpc.pb.*` 文件：
+执行 `tree .`，可见生成了四个文件：
 ```txt
 .
 ├── wcf.grpc.pb.cc
