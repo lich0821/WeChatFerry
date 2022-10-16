@@ -131,7 +131,11 @@
       <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)spy.dll $(SolutionDir)python</Command>
+      <Command>cd $(OutDir)
+md out\cpp
+md out\python\wcf
+xcopy /y $(OutDir)spy.dll $(OutDir)out\cpp
+xcopy /y $(OutDir)spy.dll $(OutDir)out\python\wcf</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>

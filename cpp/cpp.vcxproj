@@ -118,6 +118,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(OutDir)sdk.lib;iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y $(OutDir)cpp.exe $(OutDir)out\cpp</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
