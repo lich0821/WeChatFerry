@@ -1,6 +1,7 @@
 ﻿syntax = "proto3";
 
 package wcf;
+option java_package = "com.iamteer.wcf";
 
 service Wcf {
   rpc RpcIsLogin(Empty) returns (Response) {}
