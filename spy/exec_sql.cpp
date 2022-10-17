@@ -1,4 +1,5 @@
-﻿#include <map>
+﻿#include <algorithm>
+#include <map>
 #include <string>
 
 #include "exec_sql.h"
@@ -78,7 +79,9 @@ static int cbGetTables(void *ret, int argc, char **argv, char **azColName)
         if (strcmp(azColName[i], "name") == 0) {
             tbl->set_name(argv[i] ? argv[i] : "");
         } else if (strcmp(azColName[i], "sql") == 0) {
-            tbl->set_sql(argv[i] ? argv[i] : "");
+            string sql(argv[i]);
+            sql.erase(std::remove(sql.begin(), sql.end(), '\t'), sql.end());
+            tbl->set_sql(sql.c_str());
         }
     }
     return 0;
