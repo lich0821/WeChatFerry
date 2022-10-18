@@ -133,8 +133,11 @@
     <PostBuildEvent>
       <Command>cd $(OutDir)
 md out\cpp
+md out\java\src\main\java
+md out\java\src\main\resources\win32-x86
 md out\python\wcf
 xcopy /y $(OutDir)spy.dll $(OutDir)out\cpp
+xcopy /y $(OutDir)spy.dll $(OutDir)out\java\src\main\resources\win32-x86
 xcopy /y $(OutDir)spy.dll $(OutDir)out\python\wcf
 xcopy /y $(SolutionDir)proto\wcf.proto $(OutDir)out\python</Command>
     </PostBuildEvent>
