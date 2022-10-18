@@ -6,6 +6,21 @@
 ![碲矿](TEQuant.jpeg)
 
 ## 快速开始
+下载[最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
+* C/C++
+* Java
+* Python
+
+### C/C++
+直接运行 `cpp.exe`，会拉起微信（如果还没启动的话），登录之后，会依次执行各功能，具体见 [main.cpp](cpp/main.cpp)。
+
+### Java
+使用惯用IDE，打开工程，编译运行。需要注意，使用32位的JDK，具体见内部 [README.MD](java/README.MD)。
+
+### Python
+参考内部 [README.MD](python/README.MD)，安装依赖包，启动运行。
+
+## 一起开发
 ### 安装开发环境
 参见 [A gRPC Demo](https://github.com/lich0821/gRpcDemo/blob/wx/README.MD)。
 #### 安装 vcpkg
