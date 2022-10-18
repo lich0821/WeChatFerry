@@ -52,9 +52,11 @@ protoc --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-w
 双击 `Release` 里的 `cpp.exe`。如果出现中文乱码，则需要将编码改为 `UTF-8`。
 
 ## 项目结构
-
 ### cpp
 C++ 示例应用，介绍如何使用 WeChatFerry。
+
+### java
+Java 客户端。
 
 ### proto
 RPC 消息及接口定义。
