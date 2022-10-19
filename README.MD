@@ -18,7 +18,13 @@
 使用惯用IDE，打开工程，编译运行。需要注意，使用32位的JDK，具体见内部 [README.MD](java/README.MD)。
 
 ### Python
-参考内部 [README.MD](python/README.MD)，安装依赖包，启动运行。
+* 安装
+```sh
+pip install wcferry
+```
+
+* 运行
+参考 [README.MD](python/README.MD)。
 
 ## 一起开发
 ### 安装开发环境
