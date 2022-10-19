@@ -13,12 +13,12 @@ from typing import List, Callable, Optional
 
 import grpc
 
-WCF_ROOT = os.path.dirname(os.path.abspath(__file__))
+WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2       # noqa
 import wcf_pb2_grpc  # noqa
 
-__version__ = "v3.7.0.30-11"
+__version__ = "v3.7.0.30.11"
 
 
 class Wcf():
