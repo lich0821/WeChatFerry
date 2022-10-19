@@ -1,5 +1,6 @@
 # WeChatFerry Python 客户端
 ⚠️ **只支持 Windows** ⚠️
+⚠️ **只支持 32 位 Python** ⚠️
 
 ## 快速开始
 ```sh
