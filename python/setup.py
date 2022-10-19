@@ -25,9 +25,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "setuptools>=47.1.0",
-        "grpcio>=1.49.1",
-        "grpcio-tools>=1.49.1",
+        "setuptools",
+        "grpcio",
+        "grpcio-tools",
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",
