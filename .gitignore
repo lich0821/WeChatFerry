@@ -18,6 +18,8 @@ logs/
 *_pb2.py
 *_pb2_grpc.py
 __pycache__
+python/dist/
+python/*.egg-info
 
 java/target/
 WcfGrpc.java
