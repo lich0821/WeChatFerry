@@ -9,7 +9,7 @@ import re
 import sys
 from threading import Thread
 from time import sleep
-from typing import Any, List, Callable, Optional
+from typing import List, Callable, Optional
 
 import grpc
 
@@ -17,6 +17,8 @@ WCF_ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2       # noqa
 import wcf_pb2_grpc  # noqa
+
+__version__ = "v3.7.0.30-11"
 
 
 class Wcf():
@@ -182,7 +184,7 @@ class Wcf():
         tables = []
         rsp = self._stub.RpcGetDbTables(wcf_pb2.String(str=db))
         for tbl in rsp.tables:
-            tables.append({"name": tbl.name, "sql": tbl.sql.replace("\t", "")})
+            tables.append({"name": tbl.name, "sql": tbl.sql})
         return tables
 
     def query_sql(self, db: str, sql: str) -> List[dict]:

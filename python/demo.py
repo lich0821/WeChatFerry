@@ -5,7 +5,7 @@ import logging
 import signal
 from time import sleep
 
-from wcf.client import Wcf
+from wcferry import Wcf
 
 
 def main():
