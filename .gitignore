@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.editorconfig
+!.github/
 
 # VS2019 build files
 Debug/
