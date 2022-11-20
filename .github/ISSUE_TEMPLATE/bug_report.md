@@ -12,7 +12,7 @@ assignees: ''
 - 什么问题？
 - 是否安装后第一次启动就出现？
 - 重启微信后能否解决？（使用任务管理器，杀掉微信进程）
-- 直接运行 [最新发布](https://github.com/lich0821/WeChatFerry/releases/tag/v3.7.0.30.11) 里的 `cpp.exe` 是否正常？
+- 直接运行 [最新发布](https://github.com/lich0821/WeChatFerry/releases/latest) 里的 `cpp.exe` 是否正常？
 
 **使用环境（请补全下列信息）:**
 - 操作系统：【如 Windows 7, Windows 10, Windows Server 2008 等】
