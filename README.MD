@@ -1,6 +1,10 @@
 # WeChatFerry
 传送信息往返微信的摆渡车。更多介绍见：[微信机器人 DIY 从 0 到 1](https://mp.weixin.qq.com/s/c4ntj-7NTmbpSfF8df6dIw)。
 
+![Demo](demo.gif)
+
+👉 [WeChatRobot](https://github.com/lich0821/WeChatRobot)，一个基于WeChatFerry的Python机器人框架。
+
 欢迎加群交流，后台回复 `WeChatFerry `：
 
 ![碲矿](TEQuant.jpeg)
