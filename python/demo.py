@@ -10,7 +10,8 @@ from wcferry import Wcf
 
 def main():
     logging.info("Start demo...")
-    wcf = Wcf()
+    wcf = Wcf()             # 默认连接本地服务
+    # wcf = Wcf("IP:10086") # 连接远端服务
 
     def handler(sig, frame):
         wcf.cleanup()

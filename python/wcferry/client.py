@@ -18,7 +18,7 @@ sys.path.insert(0, WCF_ROOT)
 import wcf_pb2       # noqa
 import wcf_pb2_grpc  # noqa
 
-__version__ = "v3.7.0.30.11"
+__version__ = "v3.7.0.30.12"
 
 
 class Wcf():
@@ -58,13 +58,17 @@ class Wcf():
             """是否文本消息"""
             return self.type == 1
 
-    def __init__(self, host_port: str = "localhost:10086") -> None:
+    def __init__(self, host_port: str = None) -> None:
+        self._local_host = False
+        self._is_running = False
         self._enable_recv_msg = False
         self.LOG = logging.getLogger("WCF")
-        self._sdk = ctypes.cdll.LoadLibrary(f"{WCF_ROOT}/sdk.dll")
-        if self._sdk.WxInitSDK() != 0:
-            self.LOG.error("初始化失败！")
-            return
+        if host_port is None:
+            self._local_host = True
+            host_port = "127.0.0.1:10086"
+            self._sdk = ctypes.cdll.LoadLibrary(f"{WCF_ROOT}/sdk.dll")
+            if self._sdk.WxInitSDK() != 0:
+                self.LOG.error("初始化失败！")
 
         self._channel = grpc.insecure_channel(host_port)
         self._stub = wcf_pb2_grpc.WcfStub(self._channel)
@@ -84,10 +88,11 @@ class Wcf():
 
         self.disable_recv_msg()
         self._channel.close()
-        self._sdk.WxDestroySDK()
-        handle = self._sdk._handle
-        del self._sdk
-        ctypes.windll.kernel32.FreeLibrary(handle)
+        if self._local_host:
+            self._sdk.WxDestroySDK()
+            handle = self._sdk._handle
+            del self._sdk
+            ctypes.windll.kernel32.FreeLibrary(handle)
         self._is_running = False
 
     def keep_running(self):
