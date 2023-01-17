@@ -207,3 +207,29 @@ class Wcf():
         """通过好友验证"""
         rsp = self._stub.RpcAcceptNewFriend(wcf_pb2.Verification(v3=v3, v4=v4))
         return rsp.status
+
+    def get_friends(self) -> List[dict]:
+        """获取好友列表"""
+        not_friends = {
+            "fmessage": "朋友推荐消息",
+            "medianote": "语音记事本",
+            "floatbottle": "漂流瓶",
+            "filehelper": "文件传输助手",
+            "newsapp": "新闻",
+        }
+        friends = []
+        rsp = self._stub.RpcGetContacts(wcf_pb2.Empty())
+        for cnt in rsp.contacts:
+            if (cnt.wxid.endswith("@chatroom")      # 群聊
+                or cnt.wxid.startswith("gh_")       # 公众号
+                or cnt.wxid in not_friends.keys()   # 其他杂号
+                ):
+                continue
+            gender = ""
+            if cnt.gender == 1:
+                gender = "男"
+            elif cnt.gender == 2:
+                gender = "女"
+            friends.append({"wxid": cnt.wxid, "code": cnt.code, "name": cnt.name,
+                            "country": cnt.country, "province": cnt.province, "city": cnt.city, "gender": gender})
+        return friends
