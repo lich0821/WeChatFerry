@@ -242,7 +242,7 @@ static unique_ptr<Server> &GetServer()
 
 static int RunServer()
 {
-    string server_address("localhost:10086");
+    string server_address("0.0.0.0:10086");
     WcfImpl service;
 
     lBuilder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
