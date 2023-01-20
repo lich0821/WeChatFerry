@@ -232,6 +232,7 @@ public:
 static DWORD lThreadId = 0;
 static bool lIsRunning = false;
 static ServerBuilder lBuilder;
+static WcfImpl lService;
 
 static unique_ptr<Server> &GetServer()
 {
@@ -243,14 +244,13 @@ static unique_ptr<Server> &GetServer()
 static int RunServer()
 {
     string server_address("0.0.0.0:10086");
-    WcfImpl service;
 
     lBuilder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIME_MS, 2000);
     lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 3000);
     lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
-    lBuilder.RegisterService(&service);
-
+    lBuilder.RegisterService(&lService);
+    
     unique_ptr<Server> &server = GetServer();
     LOG_INFO("Server listening on {}", server_address);
     LOG_DEBUG("server: {}", fmt::ptr(server));
@@ -262,6 +262,10 @@ static int RunServer()
 
 int RpcStartServer()
 {
+    if (lIsRunning) {
+        return 0;
+    }
+
     HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, NULL, NULL, &lThreadId);
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
@@ -273,11 +277,19 @@ int RpcStartServer()
 int RpcStopServer()
 {
     if (lIsRunning) {
-        UnListenMessage();
+        Empty empty;
+        Response rsp;
+        CallbackServerContext context;
+
         unique_ptr<Server> &server = GetServer();
         LOG_DEBUG("server: {}", fmt::ptr(server));
+        if (gIsListening) {
+            //UnListenMessage();  // Do it in RpcDisableRecvMsg
+            lService.RpcDisableRecvMsg(&context, &empty, &rsp);
+        }
         server->Shutdown();
         LOG_INFO("Server stoped.");
+        lIsRunning = false;
     }
 
     return 0;

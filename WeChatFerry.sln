@@ -15,6 +15,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdk", "sdk\sdk.vcxproj", "{
 		{4DE80B82-5F6A-4C4C-9D16-1574308110FA} = {4DE80B82-5F6A-4C4C-9D16-1574308110FA}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "launcher", "launcher\launcher.vcxproj", "{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ABFCB647-137F-478B-A73E-F0B1E3ADC215} = {ABFCB647-137F-478B-A73E-F0B1E3ADC215}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|x86 = Release|x86
@@ -26,6 +31,8 @@ Global
 		{2FC45612-A106-42D1-871F-1DE704095B2C}.Release|x86.Build.0 = Release|Win32
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x86.ActiveCfg = Release|Win32
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x86.Build.0 = Release|Win32
+		{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}.Release|x86.ActiveCfg = Release|Win32
+		{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
