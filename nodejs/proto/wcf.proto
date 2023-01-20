@@ -1,0 +1,88 @@
+﻿syntax = "proto3";
+
+package wcf;
+option java_package = "com.iamteer.wcf";
+
+service Wcf {
+  rpc RpcIsLogin(Empty) returns (Response) {}
+  rpc RpcGetSelfWxid(Empty) returns (String) {}
+  rpc RpcEnableRecvMsg(Empty) returns (stream WxMsg) {}
+  rpc RpcDisableRecvMsg(Empty) returns (Response) {}
+  rpc RpcSendTextMsg(TextMsg) returns (Response) {}
+  rpc RpcSendImageMsg(ImageMsg) returns (Response) {}
+  rpc RpcGetMsgTypes(Empty) returns (MsgTypes) {}
+  rpc RpcGetContacts(Empty) returns (Contacts) {}
+  rpc RpcGetDbNames(Empty) returns (DbNames) {}
+  rpc RpcGetDbTables(String) returns (DbTables) {}
+  rpc RpcExecDbQuery(DbQuery) returns (DbRows) {}
+  rpc RpcAcceptNewFriend(Verification) returns (Response) {}
+}
+
+message Empty {}
+
+message WxMsg {
+  bool is_self = 1;   // 是否自己发送的
+  bool is_group = 2;  // 是否群消息
+  int32 type = 3;     // 消息类型
+  string id = 4;      // 消息 id
+  string xml = 5;     // 消息 xml
+  string sender = 6;  // 消息发送者
+  string roomid = 7;  // 群 id（如果是群消息的话）
+  string content = 8; // 消息内容
+}
+
+message Response {
+  int32 status = 1; // 状态码
+}
+
+message TextMsg {
+  string msg = 1;      // 要发送的消息内容
+  string receiver = 2; // 消息接收人，当为群时可@
+  string aters = 3;    // 要@的人列表，逗号分隔
+}
+
+message ImageMsg {
+  string path = 1;     // 要发送的图片的路径
+  string receiver = 2; // 消息接收人
+}
+
+message MsgTypes { map<int32, string> types = 1; }
+
+message Contact {
+  string wxid = 1;     // 微信 id
+  string code = 2;     // 微信号
+  string name = 3;     // 微信昵称
+  string country = 4;  // 国家
+  string province = 5; // 省/州
+  string city = 6;     // 城市
+  int32 gender = 7;    // 性别
+}
+message Contacts { repeated Contact contacts = 1; }
+
+message DbNames { repeated string names = 1; }
+
+message String { string str = 1; }
+
+message DbTable {
+  string name = 1; // 表名
+  string sql = 2;  // 建表 SQL
+}
+message DbTables { repeated DbTable tables = 1; }
+
+message DbQuery {
+  string db = 1;  // 目标数据库
+  string sql = 2; // 查询 SQL
+}
+
+message DbField {
+  int32 type = 1;    // 字段类型
+  string column = 2; // 字段名称
+  bytes content = 3; // 字段内容
+}
+message DbRow { repeated DbField fields = 1; }
+message DbRows { repeated DbRow rows = 1; }
+
+message Verification {
+  string v3 = 1;
+  string v4 = 2;
+}
