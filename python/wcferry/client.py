@@ -18,7 +18,7 @@ sys.path.insert(0, WCF_ROOT)
 import wcf_pb2       # noqa
 import wcf_pb2_grpc  # noqa
 
-__version__ = "v3.7.0.30.12"
+__version__ = "3.7.0.30.12"
 
 
 class Wcf():
