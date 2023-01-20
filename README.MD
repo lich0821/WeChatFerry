@@ -13,6 +13,7 @@
 下载[最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
 * C/C++
 * Java
+* Node.js
 * Python
 
 ### C/C++
