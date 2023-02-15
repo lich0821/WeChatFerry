@@ -1,5 +1,5 @@
 ﻿#pragma execution_character_set("utf-8")
-
+#if 0
 #include "get_contacts.h"
 #include "load_calls.h"
 #include "util.h"
@@ -29,3 +29,4 @@ bool GetContacts(wcf::Contacts *contacts)
 
     return true;
 }
+#endif

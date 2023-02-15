@@ -44,7 +44,7 @@ int WxInitSDK()
         LOG_ERROR("Failed to InitSpy.");
         return -1;
     }
-
+#if 0
     do {
         if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "IsLogin", (DWORD *)&status)) {
             LOG_ERROR("Failed to check login status.");
@@ -52,7 +52,7 @@ int WxInitSDK()
         }
         Sleep(1000);
     } while (status == 0);
-
+#endif
     return 0;
 }
 

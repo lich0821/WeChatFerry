@@ -1,5 +1,5 @@
 ﻿#pragma execution_character_set("utf-8")
-
+#if 0
 #include <queue>
 
 #include "framework.h"
@@ -141,3 +141,4 @@ void UnListenMessage()
     UnHookAddress(recvMsgHookAddr, recvMsgBackupCode);
     gIsListening = false;
 }
+#endif

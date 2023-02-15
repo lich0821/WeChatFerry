@@ -1,7 +1,7 @@
 ﻿#include <algorithm>
 #include <map>
 #include <string>
-
+#if 0
 #include "exec_sql.h"
 #include "load_calls.h"
 #include "util.h"
@@ -174,3 +174,4 @@ void ExecDbQuery(const string db, const string sql, wcf::DbRows *rows)
         }
     }
 }
+#endif

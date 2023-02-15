@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "framework.h"
-#include "../proto/wcf.grpc.pb.h"
 
 typedef struct UserInfoCall {
     DWORD wxid;

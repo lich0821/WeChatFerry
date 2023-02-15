@@ -7,7 +7,7 @@ RPC Client
 #include <memory>
 #include <signal.h>
 #include <thread>
-
+#if 0
 #include <grpcpp/grpcpp.h>
 
 #include "../proto/wcf.grpc.pb.h"
@@ -523,3 +523,5 @@ int main(int argc, char **argv)
 
     return 0;
 }
+#endif
+int main() { return 0; }

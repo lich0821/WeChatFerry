@@ -7,13 +7,13 @@
 #include <string>
 #include <thread>
 
-#include <grpc/grpc.h>
-#include <grpcpp/security/server_credentials.h>
-#include <grpcpp/server.h>
-#include <grpcpp/server_builder.h>
-#include <grpcpp/server_context.h>
+#include <nng/nng.h>
+#include <nng/protocol/pair1/pair.h>
+#include <nng/supplemental/util/platform.h>
+#include <pb_decode.h>
+#include <pb_encode.h>
 
-#include "../proto/wcf.grpc.pb.h"
+#include "wcf.pb.h"
 
 #include "accept_new_friend.h"
 #include "exec_sql.h"
@@ -31,233 +31,143 @@ extern std::string GetSelfWxid(); // Defined in spy.cpp
 
 using namespace std;
 
-using grpc::CallbackServerContext;
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerUnaryReactor;
-using grpc::ServerWriteReactor;
-using grpc::Status;
-
-using wcf::Contacts;
-using wcf::DbField;
-using wcf::DbNames;
-using wcf::DbQuery;
-using wcf::DbRow;
-using wcf::DbRows;
-using wcf::DbTable;
-using wcf::DbTables;
-using wcf::Empty;
-using wcf::ImageMsg;
-using wcf::MsgTypes;
-using wcf::Response;
-using wcf::String;
-using wcf::TextMsg;
-using wcf::Verification;
-using wcf::Wcf;
-using wcf::WxMsg;
-
 mutex gMutex;
 queue<WxMsg> gMsgQueue;
 condition_variable gCv;
 bool gIsListening;
 
-class WcfImpl final : public Wcf::CallbackService
-{
-public:
-    explicit WcfImpl() { }
-
-    ServerUnaryReactor *RpcIsLogin(CallbackServerContext *context, const Empty *empty, Response *rsp) override
-    {
-        int ret = IsLogin();
-        rsp->set_status(ret);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcGetSelfWxid(CallbackServerContext *context, const Empty *empty, String *rsp) override
-    {
-        string wxid = GetSelfWxid();
-        rsp->set_str(wxid);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-        return reactor;
-    }
-
-    ServerWriteReactor<WxMsg> *RpcEnableRecvMsg(CallbackServerContext *context, const Empty *empty) override
-    {
-        class Getter : public ServerWriteReactor<WxMsg>
-        {
-        public:
-            Getter()
-            {
-                LOG_INFO("Enable message listening.")
-                ListenMessage(); // gIsListening = true;
-                NextWrite();
-            }
-            void OnDone() override { delete this; }
-            void OnWriteDone(bool /*ok*/) override { NextWrite(); }
-
-        private:
-            void NextWrite()
-            {
-                unique_lock<std::mutex> lock(gMutex);
-                gCv.wait(lock, [&] { return !gMsgQueue.empty(); });
-                tmp_ = gMsgQueue.front();
-                gMsgQueue.pop();
-                lock.unlock();
-                if (gIsListening) {
-                    StartWrite(&tmp_);
-                } else {
-                    LOG_INFO("Disable message listening.")
-                    Finish(Status::OK); // 结束本次通信
-                }
-            }
-            WxMsg tmp_; // 如果将它放到 NextWrite 内部，StartWrite 调用时可能已经出了作用域
-        };
-
-        return new Getter();
-    }
-
-    ServerUnaryReactor *RpcDisableRecvMsg(CallbackServerContext *context, const Empty *empty, Response *rsp) override
-    {
-        if (gIsListening) {
-            UnListenMessage(); // gIsListening = false;
-            // 发送消息，触发 NextWrite 的 Finish
-            WxMsg wxMsg;
-            unique_lock<std::mutex> lock(gMutex);
-            gMsgQueue.push(wxMsg);
-            lock.unlock();
-            gCv.notify_all();
-        }
-
-        rsp->set_status(0);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcSendTextMsg(CallbackServerContext *context, const TextMsg *msg, Response *rsp) override
-    {
-        wstring wswxid    = String2Wstring(msg->receiver());
-        wstring wsmsg     = String2Wstring(msg->msg());
-        wstring wsatusers = String2Wstring(msg->aters());
-
-        SendTextMessage(wswxid.c_str(), wsmsg.c_str(), wsatusers.c_str());
-        rsp->set_status(0);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcSendImageMsg(CallbackServerContext *context, const ImageMsg *msg, Response *rsp) override
-    {
-        wstring wswxid = String2Wstring(msg->receiver());
-        wstring wspath = String2Wstring(msg->path());
-
-        SendImageMessage(wswxid.c_str(), wspath.c_str());
-        rsp->set_status(0);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcGetMsgTypes(CallbackServerContext *context, const Empty *empty, MsgTypes *rsp) override
-    {
-        GetMsgTypes(rsp);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcGetContacts(CallbackServerContext *context, const Empty *empty, Contacts *rsp) override
-    {
-        bool ret      = GetContacts(rsp);
-        auto *reactor = context->DefaultReactor();
-        if (ret) {
-            reactor->Finish(Status::OK);
-        } else {
-            reactor->Finish(Status::CANCELLED);
-        }
-
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcGetDbNames(CallbackServerContext *context, const Empty *empty, DbNames *rsp) override
-    {
-        GetDbNames(rsp);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcGetDbTables(CallbackServerContext *context, const String *db, DbTables *rsp) override
-    {
-        GetDbTables(db->str(), rsp);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcExecDbQuery(CallbackServerContext *context, const DbQuery *query, DbRows *rsp) override
-    {
-        ExecDbQuery(query->db(), query->sql(), rsp);
-        auto *reactor = context->DefaultReactor();
-        reactor->Finish(Status::OK);
-
-        return reactor;
-    }
-
-    ServerUnaryReactor *RpcAcceptNewFriend(CallbackServerContext *context, const Verification *v,
-                                           Response *rsp) override
-    {
-        bool ret      = AcceptNewFriend(String2Wstring(v->v3()), String2Wstring(v->v4()));
-        auto *reactor = context->DefaultReactor();
-        if (ret) {
-            rsp->set_status(0);
-            reactor->Finish(Status::OK);
-        } else {
-            LOG_ERROR("AcceptNewFriend failed.")
-            rsp->set_status(-1); // TODO: Unify error code
-            reactor->Finish(Status::CANCELLED);
-        }
-
-        return reactor;
-    }
-};
-
 static DWORD lThreadId = 0;
 static bool lIsRunning = false;
-static ServerBuilder lBuilder;
-static WcfImpl lService;
+static nng_socket sock;
+static uint8_t gBuffer[1024 * 1024] = { 0 };
 
-static unique_ptr<Server> &GetServer()
+static void LogBuffer(uint8_t *buffer, size_t len)
 {
-    static unique_ptr<Server> server(lBuilder.BuildAndStart());
+    int j          = 0;
+    char buf[1024] = { 0 };
+    j              = sprintf_s(buf, 1024, "Encoded message: ");
+    for (size_t i = 0; i < len; i++) {
+        j += sprintf_s(buf + j, 1024, "%02X ", buffer[i]);
+    }
+    LOG_INFO(buf);
+}
 
-    return server;
+bool func_is_login(uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_IS_LOGIN;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = IsLogin();
+    if (!pb_get_encoded_size(len, Response_fields, &rsp)) {
+        return false;
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        return false;
+    }
+
+    return true;
+}
+
+bool func_get_self_wxid(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_IS_LOGIN;
+    rsp.which_msg = Response_str_tag;
+    rsp.msg.str   = (char *)GetSelfWxid().c_str();
+    if (!pb_get_encoded_size(len, Response_fields, &rsp)) {
+        return false;
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        return false;
+    }
+
+    return true;
+}
+
+static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
+{
+    bool ret            = false;
+    Request req         = Request_init_default;
+    pb_istream_t stream = pb_istream_from_buffer(in, in_len);
+    if (!pb_decode(&stream, Request_fields, &req)) {
+        LOG_ERROR("Decoding failed: {}", PB_GET_ERROR(&stream));
+        pb_release(Request_fields, &req);
+        return false;
+    }
+
+    LOG_INFO("Func: {}", (uint8_t)req.func);
+    switch (req.func) {
+        case Functions_FUNC_IS_LOGIN: {
+            LOG_INFO("[Functions_FUNC_IS_LOGIN]");
+            ret = func_is_login(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_SELF_WXID: {
+            LOG_INFO("[Functions_FUNC_GET_SELF_WXID]");
+            ret = func_get_self_wxid(out, out_len);
+            break;
+        }
+        default: {
+            LOG_ERROR("[UNKNOW FUNCTION]");
+            break;
+        }
+    }
+    pb_release(Request_fields, &req);
+    return ret;
 }
 
 static int RunServer()
 {
-    string server_address("0.0.0.0:10086");
+    int rv    = 0;
+    char *url = (char *)"tcp://0.0.0.0:10086";
+    if ((rv = nng_pair1_open(&sock)) != 0) {
+        LOG_ERROR("nng_pair0_open error {}", rv);
+        return rv;
+    }
 
-    lBuilder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIME_MS, 2000);
-    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, 3000);
-    lBuilder.AddChannelArgument(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, 1);
-    lBuilder.RegisterService(&lService);
-    
-    unique_ptr<Server> &server = GetServer();
-    LOG_INFO("Server listening on {}", server_address);
-    LOG_DEBUG("server: {}", fmt::ptr(server));
+    if ((rv = nng_listen(sock, url, NULL, 0)) != 0) {
+        LOG_ERROR("nng_listen error {}", rv);
+        return rv;
+    }
+
+    LOG_INFO("Server listening on {}", url);
+    if ((rv = nng_setopt_ms(sock, NNG_OPT_SENDTIMEO, 1000)) != 0) {
+        LOG_ERROR("nng_recv: {}", rv);
+        return rv;
+    }
+
     lIsRunning = true;
-    server->Wait();
+    while (lIsRunning) {
+        uint8_t *in = NULL;
+        size_t in_len, out_len;
+        if ((rv = nng_recv(sock, &in, &in_len, NNG_FLAG_ALLOC)) != 0) {
+            LOG_ERROR("nng_recv: {}", rv);
+            break;
+        }
+        LogBuffer(in, in_len);
+        if (dispatcher(in, in_len, gBuffer, &out_len)) {
+            LogBuffer(gBuffer, out_len);
+            rv = nng_send(sock, gBuffer, out_len, 0);
+            if (rv != 0) {
+                LOG_ERROR("nng_send: {}", rv);
+            }
 
-    return 0;
+        } else {
+            // Error
+            LOG_ERROR("Dispatcher failed...");
+            rv = nng_send(sock, gBuffer, 0, 0);
+            break;
+        }
+        nng_free(in, in_len);
+    }
+    LOG_INFO("Leave RunServer");
+    return rv;
 }
 
 int RpcStartServer()
@@ -277,20 +187,10 @@ int RpcStartServer()
 int RpcStopServer()
 {
     if (lIsRunning) {
-        Empty empty;
-        Response rsp;
-        CallbackServerContext context;
-
-        unique_ptr<Server> &server = GetServer();
-        LOG_DEBUG("server: {}", fmt::ptr(server));
-        if (gIsListening) {
-            //UnListenMessage();  // Do it in RpcDisableRecvMsg
-            lService.RpcDisableRecvMsg(&context, &empty, &rsp);
-        }
-        server->Shutdown();
+        nng_close(sock);
+        // UnListenMessage();  // Do it in RpcDisableRecvMsg
         LOG_INFO("Server stoped.");
         lIsRunning = false;
     }
-
     return 0;
 }

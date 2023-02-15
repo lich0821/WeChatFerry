@@ -115,9 +115,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -145,12 +145,12 @@ xcopy /y $(OutDir)spy.dll $(SolutionDir)python\wcferry</Command>
       <Message>Copy spy.dll</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>cd $(SolutionDir)proto
-protoc -I=. --cpp_out=. wcf.proto
-protoc -I=. --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" wcf.proto</Command>
+      <Command>cd $(SolutionDir)rpc\proto
+C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>gRPC</Message>
+      <Message>Generating PB files</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -190,8 +190,11 @@ protoc -I=. --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\proto\wcf.grpc.pb.h" />
-    <ClInclude Include="..\proto\wcf.pb.h" />
+    <ClInclude Include="..\rpc\nanopb\pb.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_common.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_decode.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_encode.h" />
+    <ClInclude Include="..\rpc\proto\wcf.pb.h" />
     <ClInclude Include="accept_new_friend.h" />
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
@@ -206,8 +209,10 @@ protoc -I=. --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\proto\wcf.grpc.pb.cc" />
-    <ClCompile Include="..\proto\wcf.pb.cc" />
+    <ClCompile Include="..\rpc\nanopb\pb_common.c" />
+    <ClCompile Include="..\rpc\nanopb\pb_decode.c" />
+    <ClCompile Include="..\rpc\nanopb\pb_encode.c" />
+    <ClCompile Include="..\rpc\proto\wcf.pb.c" />
     <ClCompile Include="accept_new_friend.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
@@ -221,7 +226,7 @@ protoc -I=. --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\proto\wcf.proto" />
+    <None Include="..\rpc\proto\wcf.proto" />
     <None Include="spy.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

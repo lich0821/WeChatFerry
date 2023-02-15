@@ -13,35 +13,50 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="proto">
-      <UniqueIdentifier>{0b2f5211-3264-4e9b-8f6d-9f2b51780156}</UniqueIdentifier>
+    <Filter Include="nnrpc">
+      <UniqueIdentifier>{985fabc8-364a-4c12-ac0a-b9386288565a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\proto\wcf.grpc.pb.h">
-      <Filter>proto</Filter>
-    </ClInclude>
-    <ClInclude Include="..\proto\wcf.pb.h">
-      <Filter>proto</Filter>
-    </ClInclude>
     <ClInclude Include="..\sdk\sdk.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\nanopb\pb.h">
+      <Filter>nnrpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\nanopb\pb_common.h">
+      <Filter>nnrpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\nanopb\pb_decode.h">
+      <Filter>nnrpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\nanopb\pb_encode.h">
+      <Filter>nnrpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rpc\proto\wcf.pb.h">
+      <Filter>nnrpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\proto\wcf.grpc.pb.cc">
-      <Filter>proto</Filter>
+    <ClCompile Include="..\rpc\nanopb\pb_common.c">
+      <Filter>nnrpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\proto\wcf.pb.cc">
-      <Filter>proto</Filter>
+    <ClCompile Include="..\rpc\nanopb\pb_decode.c">
+      <Filter>nnrpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rpc\nanopb\pb_encode.c">
+      <Filter>nnrpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rpc\proto\wcf.pb.c">
+      <Filter>nnrpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\proto\wcf.proto">
-      <Filter>proto</Filter>
+    <None Include="..\rpc\proto\wcf.proto">
+      <Filter>nnrpc</Filter>
     </None>
   </ItemGroup>
 </Project>

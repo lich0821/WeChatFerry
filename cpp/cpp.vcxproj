@@ -154,17 +154,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\proto\wcf.grpc.pb.h" />
-    <ClInclude Include="..\proto\wcf.pb.h" />
+    <ClInclude Include="..\rpc\nanopb\pb.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_common.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_decode.h" />
+    <ClInclude Include="..\rpc\nanopb\pb_encode.h" />
+    <ClInclude Include="..\rpc\proto\wcf.pb.h" />
     <ClInclude Include="..\sdk\sdk.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\proto\wcf.grpc.pb.cc" />
-    <ClCompile Include="..\proto\wcf.pb.cc" />
+    <ClCompile Include="..\rpc\nanopb\pb_common.c" />
+    <ClCompile Include="..\rpc\nanopb\pb_decode.c" />
+    <ClCompile Include="..\rpc\nanopb\pb_encode.c" />
+    <ClCompile Include="..\rpc\proto\wcf.pb.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\proto\wcf.proto" />
+    <None Include="..\rpc\proto\wcf.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
