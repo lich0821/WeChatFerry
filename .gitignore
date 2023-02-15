@@ -10,6 +10,7 @@ x64/
 
 # Generated files
 *.pb.h
+*.pb.c
 *.pb.cc
 sdk.dll
 spy.dll
