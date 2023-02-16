@@ -96,6 +96,26 @@ bool func_get_msg_types(uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_get_contacts(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_CONTACTS;
+    rsp.which_msg = Response_contacts_tag;
+
+    vector<RpcContact_t> contacts    = GetContacts();
+    rsp.msg.types.types.funcs.encode = encode_contacts;
+    rsp.msg.types.types.arg          = &contacts;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -122,6 +142,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_GET_MSG_TYPES: {
             LOG_INFO("[Functions_FUNC_GET_MSG_TYPES]");
             ret = func_get_msg_types(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_CONTACTS: {
+            LOG_INFO("[Functions_FUNC_GET_CONTACTS]");
+            ret = func_get_contacts(out, out_len);
             break;
         }
         default: {

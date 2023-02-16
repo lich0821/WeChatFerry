@@ -72,6 +72,9 @@
     <ClInclude Include="..\rpc\pb_util.h">
       <Filter>nnrpc</Filter>
     </ClInclude>
+    <ClInclude Include="..\rpc\pb_types.h">
+      <Filter>nnrpc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

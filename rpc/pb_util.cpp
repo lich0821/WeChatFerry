@@ -61,3 +61,42 @@ bool encode_types(pb_ostream_t *stream, const pb_field_t *field, void *const *ar
 
     return true;
 }
+
+bool encode_contacts(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
+{
+    vector<RpcContact_t> *v = (vector<RpcContact_t> *)*arg;
+    RpcContact message      = RpcContact_init_default;
+
+    LOG_INFO("encode_contacts[{}]", v->size());
+    for (auto it = v->begin(); it != v->end(); it++) {
+        message.wxid.funcs.encode = &encode_string;
+        message.wxid.arg          = (void *)(*it).wxid.c_str();
+
+        message.code.funcs.encode = &encode_string;
+        message.code.arg          = (void *)(*it).code.c_str();
+
+        message.name.funcs.encode = &encode_string;
+        message.name.arg          = (void *)(*it).name.c_str();
+
+        message.country.funcs.encode = &encode_string;
+        message.country.arg          = (void *)(*it).country.c_str();
+
+        message.province.funcs.encode = &encode_string;
+        message.province.arg          = (void *)(*it).province.c_str();
+
+        message.city.funcs.encode = &encode_string;
+        message.city.arg          = (void *)(*it).city.c_str();
+
+        message.gender = (*it).gender;
+
+        if (!pb_encode_tag_for_field(stream, field)) {
+            return false;
+        }
+
+        if (!pb_encode_submessage(stream, RpcContact_fields, &message)) {
+            return false;
+        }
+    }
+
+    return true;
+}
