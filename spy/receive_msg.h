@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-#include <map>
-#include <string>
+#include "pb_types.h"
 
 typedef std::map<int, std::string> MsgTypes_t;
 

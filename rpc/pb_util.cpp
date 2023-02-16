@@ -1,13 +1,10 @@
-﻿#include <map>
-
+﻿#include "pb_util.h"
 #include "log.h"
-#include "pb_util.h"
+#include "pb_types.h"
 #include "wcf.pb.h"
 
 #define BUF_SIZE (1024 * 1024)
 static char buf[BUF_SIZE] = { 0 };
-
-typedef std::map<int, std::string> MsgTypes_t;
 
 void log_buffer(uint8_t *buffer, size_t len)
 {
