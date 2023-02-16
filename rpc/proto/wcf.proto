@@ -55,14 +55,14 @@ message Response
     Functions func = 1;
     oneof msg
     {
-        int32 status      = 2;
-        string str        = 3;
-        WxMsg wxmsg       = 4;
-        MsgTypes types    = 5;
+        int32 status         = 2;
+        string str           = 3;
+        WxMsg wxmsg          = 4;
+        MsgTypes types       = 5;
         RpcContacts contacts = 6;
-        DbNames dbs       = 7;
-        DbTables tables   = 8;
-        DbRows rows       = 9;
+        DbNames dbs          = 7;
+        DbTables tables      = 8;
+        DbRows rows          = 9;
     };
 }
 

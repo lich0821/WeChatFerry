@@ -10,8 +10,6 @@
 #include <nng/nng.h>
 #include <nng/protocol/pair1/pair.h>
 #include <nng/supplemental/util/platform.h>
-#include <pb_decode.h>
-#include <pb_encode.h>
 
 #include "wcf.pb.h"
 
@@ -19,12 +17,15 @@
 #include "exec_sql.h"
 #include "get_contacts.h"
 #include "log.h"
+#include "pb_util.h"
 #include "receive_msg.h"
 #include "rpc_server.h"
 #include "send_msg.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "util.h"
+
+#define G_BUF_SIZE (1024 * 1024)
 
 extern int IsLogin(void);         // Defined in spy.cpp
 extern std::string GetSelfWxid(); // Defined in spy.cpp
@@ -39,18 +40,7 @@ bool gIsListening;
 static DWORD lThreadId = 0;
 static bool lIsRunning = false;
 static nng_socket sock;
-static uint8_t gBuffer[1024 * 1024] = { 0 };
-
-static void LogBuffer(uint8_t *buffer, size_t len)
-{
-    int j          = 0;
-    char buf[1024] = { 0 };
-    j              = sprintf_s(buf, 1024, "Encoded message: ");
-    for (size_t i = 0; i < len; i++) {
-        j += sprintf_s(buf + j, 1024, "%02X ", buffer[i]);
-    }
-    LOG_INFO(buf);
-}
+static uint8_t gBuffer[G_BUF_SIZE] = { 0 };
 
 bool func_is_login(uint8_t *out, size_t *len)
 {
@@ -58,15 +48,13 @@ bool func_is_login(uint8_t *out, size_t *len)
     rsp.func       = Functions_FUNC_IS_LOGIN;
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = IsLogin();
-    if (!pb_get_encoded_size(len, Response_fields, &rsp)) {
-        return false;
-    }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
         printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
         return false;
     }
+    *len = stream.bytes_written;
 
     return true;
 }
@@ -77,15 +65,33 @@ bool func_get_self_wxid(uint8_t *out, size_t *len)
     rsp.func      = Functions_FUNC_IS_LOGIN;
     rsp.which_msg = Response_str_tag;
     rsp.msg.str   = (char *)GetSelfWxid().c_str();
-    if (!pb_get_encoded_size(len, Response_fields, &rsp)) {
-        return false;
-    }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
         printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
         return false;
     }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_get_msg_types(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_MSG_TYPES;
+    rsp.which_msg = Response_types_tag;
+
+    MsgTypes_t types                 = GetMsgTypes();
+    rsp.msg.types.types.funcs.encode = encode_types;
+    rsp.msg.types.types.arg          = &types;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
 
     return true;
 }
@@ -111,6 +117,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_GET_SELF_WXID: {
             LOG_INFO("[Functions_FUNC_GET_SELF_WXID]");
             ret = func_get_self_wxid(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_MSG_TYPES: {
+            LOG_INFO("[Functions_FUNC_GET_MSG_TYPES]");
+            ret = func_get_msg_types(out, out_len);
             break;
         }
         default: {
@@ -145,14 +156,15 @@ static int RunServer()
     lIsRunning = true;
     while (lIsRunning) {
         uint8_t *in = NULL;
-        size_t in_len, out_len;
+        size_t in_len, out_len = G_BUF_SIZE;
         if ((rv = nng_recv(sock, &in, &in_len, NNG_FLAG_ALLOC)) != 0) {
             LOG_ERROR("nng_recv: {}", rv);
             break;
         }
-        LogBuffer(in, in_len);
+
+        log_buffer(in, in_len);
         if (dispatcher(in, in_len, gBuffer, &out_len)) {
-            LogBuffer(gBuffer, out_len);
+            log_buffer(gBuffer, out_len);
             rv = nng_send(sock, gBuffer, out_len, 0);
             if (rv != 0) {
                 LOG_ERROR("nng_send: {}", rv);

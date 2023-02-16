@@ -1,4 +1,31 @@
 ﻿#pragma execution_character_set("utf-8")
+
+#include "receive_msg.h"
+
+MsgTypes_t GetMsgTypes()
+{
+    const std::map<int32_t, std::string> m = { { 0x01, "文字" },
+                                               { 0x03, "图片" },
+                                               { 0x22, "语音" },
+                                               { 0x25, "好友确认" },
+                                               { 0x28, "POSSIBLEFRIEND_MSG" },
+                                               { 0x2A, "名片" },
+                                               { 0x2B, "视频" },
+                                               { 0x2F, "石头剪刀布 | 表情图片" },
+                                               { 0x30, "位置" },
+                                               { 0x31, "共享实时位置、文件、转账、链接" },
+                                               { 0x32, "VOIPMSG" },
+                                               { 0x33, "微信初始化" },
+                                               { 0x34, "VOIPNOTIFY" },
+                                               { 0x35, "VOIPINVITE" },
+                                               { 0x3E, "小视频" },
+                                               { 0x270F, "SYSNOTICE" },
+                                               { 0x2710, "红包、系统消息" },
+                                               { 0x2712, "撤回消息" } };
+
+    return m;
+}
+
 #if 0
 #include <queue>
 
@@ -55,11 +82,11 @@ void GetMsgTypes(MsgTypes *types)
 
 void HookAddress(DWORD hookAddr, LPVOID funcAddr, CHAR recvMsgBackupCode[5])
 {
-    //组装跳转数据
+    // 组装跳转数据
     BYTE jmpCode[5] = { 0 };
     jmpCode[0]      = 0xE9;
 
-    //计算偏移
+    // 计算偏移
     *(DWORD *)&jmpCode[1] = (DWORD)funcAddr - hookAddr - 5;
 
     // 备份原来的代码
@@ -76,7 +103,7 @@ void UnHookAddress(DWORD hookAddr, CHAR restoreCode[5])
 void DispatchMsg(DWORD reg)
 {
     WxMsg wxMsg;
-    DWORD *p = (DWORD *)reg; //消息结构基址
+    DWORD *p = (DWORD *)reg; // 消息结构基址
 
     wxMsg.set_type(GET_DWORD(*p + g_WxCalls.recvMsg.type));
     wxMsg.set_is_self(GET_DWORD(*p + g_WxCalls.recvMsg.isSelf));
@@ -106,7 +133,7 @@ void DispatchMsg(DWORD reg)
 __declspec(naked) void RecieveMsgFunc()
 {
     __asm {
-        mov reg_buffer, edi //把值复制出来
+        mov reg_buffer, edi // 把值复制出来
     }
 
     DispatchMsg(reg_buffer);

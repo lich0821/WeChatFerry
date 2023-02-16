@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -194,6 +194,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClInclude Include="..\rpc\nanopb\pb_common.h" />
     <ClInclude Include="..\rpc\nanopb\pb_decode.h" />
     <ClInclude Include="..\rpc\nanopb\pb_encode.h" />
+    <ClInclude Include="..\rpc\pb_util.h" />
     <ClInclude Include="..\rpc\proto\wcf.pb.h" />
     <ClInclude Include="accept_new_friend.h" />
     <ClInclude Include="exec_sql.h" />
@@ -212,6 +213,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClCompile Include="..\rpc\nanopb\pb_common.c" />
     <ClCompile Include="..\rpc\nanopb\pb_decode.c" />
     <ClCompile Include="..\rpc\nanopb\pb_encode.c" />
+    <ClCompile Include="..\rpc\pb_util.cpp" />
     <ClCompile Include="..\rpc\proto\wcf.pb.c" />
     <ClCompile Include="accept_new_friend.cpp" />
     <ClCompile Include="dllmain.cpp" />

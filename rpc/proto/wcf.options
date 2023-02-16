@@ -1,6 +1,5 @@
 # Generate all fields as pointers.
 * mangle_names:M_STRIP_PACKAGE
 * fallback_type:FT_POINTER
-MsgTypes.types  max_count:10
-MsgTypes.TypesEntry.value max_size:16
-# MsgTypes.* max_size:16
+MsgTypes* fallback_type:FT_CALLBACK
+RpcContact* fallback_type:FT_CALLBACK
