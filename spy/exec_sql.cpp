@@ -1,12 +1,8 @@
-﻿#include <algorithm>
-#include <map>
-#include <string>
-#if 0
+﻿#include <iterator>
+
 #include "exec_sql.h"
 #include "load_calls.h"
 #include "util.h"
-
-using namespace std;
 
 #define SQLITE_OK         0   /* Successful result */
 #define SQLITE_ERROR      1   /* Generic error */
@@ -71,22 +67,6 @@ typedef const void *(__cdecl *Sqlite3_column_blob)(DWORD *, int);
 typedef int(__cdecl *Sqlite3_column_bytes)(DWORD *, int);
 typedef int(__cdecl *Sqlite3_finalize)(DWORD *);
 
-static int cbGetTables(void *ret, int argc, char **argv, char **azColName)
-{
-    wcf::DbTables *tbls = (wcf::DbTables *)ret;
-    wcf::DbTable *tbl   = tbls->add_tables();
-    for (int i = 0; i < argc; i++) {
-        if (strcmp(azColName[i], "name") == 0) {
-            tbl->set_name(argv[i] ? argv[i] : "");
-        } else if (strcmp(azColName[i], "sql") == 0) {
-            string sql(argv[i]);
-            sql.erase(std::remove(sql.begin(), sql.end(), '\t'), sql.end());
-            tbl->set_sql(sql.c_str());
-        }
-    }
-    return 0;
-}
-
 dbMap_t GetDbHandles()
 {
     if (!dbMap.empty())
@@ -109,37 +89,60 @@ dbMap_t GetDbHandles()
     return dbMap;
 }
 
-void GetDbNames(wcf::DbNames *names)
+DbNames_t GetDbNames()
 {
+    DbNames_t names;
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
     for (auto &[k, v] : dbMap) {
-        auto *name = names->add_names();
-        name->assign(k);
+        names.push_back(k);
     }
+
+    return names;
 }
 
-void GetDbTables(const string db, wcf::DbTables *tables)
+static int cbGetTables(void *ret, int argc, char **argv, char **azColName)
 {
+    DbTables_t *tbls = (DbTables_t *)ret;
+    DbTable_t tbl;
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(azColName[i], "name") == 0) {
+            tbl.name = argv[i] ? argv[i] : "";
+        } else if (strcmp(azColName[i], "sql") == 0) {
+            string sql(argv[i]);
+            sql.erase(std::remove(sql.begin(), sql.end(), '\t'), sql.end());
+            tbl.sql = sql.c_str();
+        }
+    }
+    tbls->push_back(tbl);
+    return 0;
+}
+
+DbTables_t GetDbTables(const string db)
+{
+    DbTables_t tables;
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
     }
 
     auto it = dbMap.find(db);
     if (it == dbMap.end()) {
-        return; // DB not found
+        return tables; // DB not found
     }
 
     const char *sql             = "select name, sql from sqlite_master where type=\"table\";";
     Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + g_WxCalls.sql.exec);
 
-    p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, tables, 0);
+    p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, (void *)&tables, 0);
+
+    return tables;
 }
 
-void ExecDbQuery(const string db, const string sql, wcf::DbRows *rows)
+DbRows_t ExecDbQuery(const string db, const string sql)
 {
+    DbRows_t rows;
     Sqlite3_prepare func_prepare           = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
     Sqlite3_step func_step                 = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
     Sqlite3_column_count func_column_count = (Sqlite3_column_count)(g_WeChatWinDllAddr + 0x13EACD0);
@@ -156,22 +159,26 @@ void ExecDbQuery(const string db, const string sql, wcf::DbRows *rows)
     DWORD *stmt;
     int rc = func_prepare(dbMap[db], sql.c_str(), -1, &stmt, 0);
     if (rc != SQLITE_OK) {
-        return;
+        return rows;
     }
 
     while (func_step(stmt) == SQLITE_ROW) {
-        wcf::DbRow *row = rows->add_rows();
-        int col_count   = func_column_count(stmt);
+        DbRow_t row;
+        int col_count = func_column_count(stmt);
         for (int i = 0; i < col_count; i++) {
-            wcf::DbField *field = row->add_fields();
-            field->set_type(func_column_type(stmt, i));
-            field->set_column(func_column_name(stmt, i));
+            DbField_t field;
+            field.type   = func_column_type(stmt, i);
+            field.column = func_column_name(stmt, i);
+
             int length       = func_column_bytes(stmt, i);
             const void *blob = func_column_blob(stmt, i);
-            if (length && (field->type() != 5)) {
-                field->set_content(string((char *)blob, length));
+            if (length && (field.type != 5)) {
+                field.content.reserve(length);
+                copy((uint8_t *)blob, (uint8_t *)blob + length, back_inserter(field.content));
             }
+            row.push_back(field);
         }
+        rows.push_back(row);
     }
+    return rows;
 }
-#endif

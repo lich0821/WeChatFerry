@@ -25,7 +25,7 @@
 #include "spy_types.h"
 #include "util.h"
 
-#define G_BUF_SIZE (1024 * 1024)
+#define G_BUF_SIZE (16 * 1024 * 1024)
 
 extern int IsLogin(void);         // Defined in spy.cpp
 extern std::string GetSelfWxid(); // Defined in spy.cpp
@@ -51,7 +51,7 @@ bool func_is_login(uint8_t *out, size_t *len)
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
-        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
         return false;
     }
     *len = stream.bytes_written;
@@ -68,7 +68,7 @@ bool func_get_self_wxid(uint8_t *out, size_t *len)
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
-        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
         return false;
     }
     *len = stream.bytes_written;
@@ -88,7 +88,7 @@ bool func_get_msg_types(uint8_t *out, size_t *len)
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
-        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
         return false;
     }
     *len = stream.bytes_written;
@@ -102,13 +102,73 @@ bool func_get_contacts(uint8_t *out, size_t *len)
     rsp.func      = Functions_FUNC_GET_CONTACTS;
     rsp.which_msg = Response_contacts_tag;
 
-    vector<RpcContact_t> contacts    = GetContacts();
-    rsp.msg.types.types.funcs.encode = encode_contacts;
-    rsp.msg.types.types.arg          = &contacts;
+    vector<RpcContact_t> contacts          = GetContacts();
+    rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
+    rsp.msg.contacts.contacts.arg          = &contacts;
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
-        printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_get_db_names(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_DB_NAMES;
+    rsp.which_msg = Response_dbs_tag;
+
+    DbNames_t dbnames              = GetDbNames();
+    rsp.msg.dbs.names.funcs.encode = encode_dbnames;
+    rsp.msg.dbs.names.arg          = &dbnames;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_DB_TABLES;
+    rsp.which_msg = Response_tables_tag;
+
+    DbTables_t tables                  = GetDbTables(db);
+    rsp.msg.tables.tables.funcs.encode = encode_tables;
+    rsp.msg.tables.tables.arg          = &tables;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_DB_TABLES;
+    rsp.which_msg = Response_rows_tag;
+
+    DbRows_t rows                  = ExecDbQuery(db, sql);
+    rsp.msg.rows.rows.arg          = &rows;
+    rsp.msg.rows.rows.funcs.encode = encode_rows;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
         return false;
     }
     *len = stream.bytes_written;
@@ -147,6 +207,21 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_GET_CONTACTS: {
             LOG_INFO("[Functions_FUNC_GET_CONTACTS]");
             ret = func_get_contacts(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_DB_NAMES: {
+            LOG_INFO("[Functions_FUNC_GET_DB_NAMES]");
+            ret = func_get_db_names(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_DB_TABLES: {
+            LOG_INFO("[Functions_FUNC_GET_DB_TABLES]");
+            ret = func_get_db_tables(req.msg.str, out, out_len);
+            break;
+        }
+        case Functions_FUNC_EXEC_DB_QUERY: {
+            LOG_INFO("[Functions_FUNC_EXEC_DB_QUERY]");
+            ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
         default: {
@@ -189,7 +264,8 @@ static int RunServer()
 
         log_buffer(in, in_len);
         if (dispatcher(in, in_len, gBuffer, &out_len)) {
-            log_buffer(gBuffer, out_len);
+            LOG_INFO("Send data length {}", out_len);
+            // log_buffer(gBuffer, out_len);
             rv = nng_send(sock, gBuffer, out_len, 0);
             if (rv != 0) {
                 LOG_ERROR("nng_send: {}", rv);
@@ -199,7 +275,7 @@ static int RunServer()
             // Error
             LOG_ERROR("Dispatcher failed...");
             rv = nng_send(sock, gBuffer, 0, 0);
-            break;
+            // break;
         }
         nng_free(in, in_len);
     }

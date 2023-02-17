@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -16,3 +17,19 @@ typedef struct {
     string province;
     string city;
 } RpcContact_t;
+
+typedef vector<string> DbNames_t;
+
+typedef struct {
+    string name;
+    string sql;
+} DbTable_t;
+typedef vector<DbTable_t> DbTables_t;
+
+typedef struct {
+    int32_t type;
+    string column;
+    vector<uint8_t> content;
+} DbField_t;
+typedef vector<DbField_t> DbRow_t;
+typedef vector<DbRow_t> DbRows_t;

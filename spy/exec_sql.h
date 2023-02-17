@@ -1,11 +1,7 @@
 ﻿#pragma once
-#if 0
-#include <string>
-#include <vector>
 
-#include "../proto/wcf.grpc.pb.h"
+#include "pb_types.h"
 
-void GetDbNames(wcf::DbNames *names);
-void GetDbTables(const std::string db, wcf::DbTables *tables);
-void ExecDbQuery(const std::string db, const std::string sql, wcf::DbRows *rows);
-#endif
+DbNames_t GetDbNames();
+DbTables_t GetDbTables(const string db);
+DbRows_t ExecDbQuery(const string db, const string sql);
