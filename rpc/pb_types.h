@@ -33,3 +33,14 @@ typedef struct {
 } DbField_t;
 typedef vector<DbField_t> DbRow_t;
 typedef vector<DbRow_t> DbRows_t;
+
+typedef struct {
+    bool is_self;
+    bool is_group;
+    int32_t type;
+    string id;
+    string xml;
+    string sender;
+    string roomid;
+    string content;
+} WxMsg_t;
