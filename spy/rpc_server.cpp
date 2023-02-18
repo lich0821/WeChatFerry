@@ -170,7 +170,7 @@ bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
         string receiver(txt.receiver);
         string aters(txt.aters ? txt.aters : "");
 
-        SendTextMessage(String2Wstring(receiver), String2Wstring(msg), String2Wstring(aters));
+        SendTextMessage(receiver, msg, aters);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -193,7 +193,7 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
     if ((path == NULL) || (receiver == NULL)) {
         rsp.msg.status = -1;
     } else {
-        SendImageMessage(String2Wstring(receiver), String2Wstring(path));
+        SendImageMessage(receiver, path);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);

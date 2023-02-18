@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "framework.h"
+#include <string>
 
 using namespace std;
 
-void SendTextMessage(wstring wxid, wstring msg, wstring atWxids);
-void SendImageMessage(wstring wxid, wstring path);
+void SendTextMessage(string wxid, string msg, string atWxids);
+void SendImageMessage(string wxid, string path);
