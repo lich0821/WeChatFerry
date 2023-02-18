@@ -1,5 +1,4 @@
-﻿#include "framework.h"
-#include <sstream>
+﻿#include <sstream>
 #include <string>
 #include <vector>
 
@@ -10,15 +9,13 @@ extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-using namespace std;
-
 typedef struct AtList {
     DWORD start;
     DWORD end1;
     DWORD end2;
 } AtList_t;
 
-void SendTextMessage(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atWxids)
+void SendTextMessage(wstring wxid, wstring msg, wstring atWxids)
 {
     char buffer[0x3B0]    = { 0 };
     AtList_t atList       = { 0 };
@@ -26,19 +23,16 @@ void SendTextMessage(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atW
     TextStruct_t txtWxid  = { 0 };
     TextStruct_t *tsArray = NULL;
 
-    wstring wsMsg  = msg;
-    wstring wsWxid = wxid;
-
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
 
-    txtMsg.text     = (wchar_t *)wsMsg.c_str();
-    txtMsg.size     = wsMsg.size();
-    txtMsg.capacity = wsMsg.capacity();
+    txtMsg.text     = (wchar_t *)msg.c_str();
+    txtMsg.size     = msg.size();
+    txtMsg.capacity = msg.capacity();
 
-    txtWxid.text     = (wchar_t *)wsWxid.c_str();
-    txtWxid.size     = wsWxid.size();
-    txtWxid.capacity = wsWxid.capacity();
+    txtWxid.text     = (wchar_t *)wxid.c_str();
+    txtWxid.size     = wxid.size();
+    txtWxid.capacity = wxid.capacity();
 
     wstring tmp = atWxids;
     if (!tmp.empty()) {
@@ -84,7 +78,7 @@ void SendTextMessage(const wchar_t *wxid, const wchar_t *msg, const wchar_t *atW
     }
 }
 
-void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
+void SendImageMessage(wstring wxid, wstring path)
 {
     if (g_WeChatWinDllAddr == 0) {
         return;
@@ -95,16 +89,13 @@ void SendImageMessage(const wchar_t *wxid, const wchar_t *path)
     TextStruct_t imgWxid = { 0 };
     TextStruct_t imgPath = { 0 };
 
-    wstring wsWxid = wxid;
-    wstring wsPath = path;
+    imgWxid.text     = (wchar_t *)wxid.c_str();
+    imgWxid.size     = wxid.size();
+    imgWxid.capacity = wxid.capacity();
 
-    imgWxid.text     = (wchar_t *)wsWxid.c_str();
-    imgWxid.size     = wsWxid.size();
-    imgWxid.capacity = wsWxid.capacity();
-
-    imgPath.text     = (wchar_t *)wsPath.c_str();
-    imgPath.size     = wsPath.size();
-    imgPath.capacity = wsPath.capacity();
+    imgPath.text     = (wchar_t *)path.c_str();
+    imgPath.size     = path.size();
+    imgPath.capacity = path.capacity();
 
     // 发送图片Call地址 = 微信基址 + 偏移
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;

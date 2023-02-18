@@ -156,6 +156,56 @@ bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_SEND_TXT;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    if ((txt.msg == NULL) || (txt.receiver == NULL)) {
+        rsp.msg.status = -1; // Empty message or empty receiver
+    } else {
+        string msg(txt.msg);
+        string receiver(txt.receiver);
+        string aters(txt.aters ? txt.aters : "");
+
+        SendTextMessage(String2Wstring(receiver), String2Wstring(msg), String2Wstring(aters));
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_SEND_IMG;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    if ((path == NULL) || (receiver == NULL)) {
+        rsp.msg.status = -1;
+    } else {
+        SendImageMessage(String2Wstring(receiver), String2Wstring(path));
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -217,6 +267,16 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_GET_DB_TABLES: {
             LOG_INFO("[Functions_FUNC_GET_DB_TABLES]");
             ret = func_get_db_tables(req.msg.str, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_TXT: {
+            LOG_INFO("[Functions_FUNC_SEND_TXT]");
+            ret = func_send_txt(req.msg.txt, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_IMG: {
+            LOG_INFO("[Functions_FUNC_SEND_IMG]");
+            ret = func_send_img(req.msg.img.path, req.msg.txt.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_EXEC_DB_QUERY: {
