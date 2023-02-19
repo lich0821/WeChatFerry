@@ -27,6 +27,8 @@
 #include "util.h"
 
 #define G_BUF_SIZE (16 * 1024 * 1024)
+#define CMD_URL    "tcp://0.0.0.0:10086"
+#define MSG_URL    "tcp://0.0.0.0:10087"
 
 extern int IsLogin(void);    // Defined in spy.cpp
 extern string GetSelfWxid(); // Defined in spy.cpp
@@ -206,14 +208,32 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 
 static void PushMessage()
 {
-    static uint8_t buffer[1024] = { 0 };
+    static nng_socket msg_sock;
+    static uint8_t buffer[G_BUF_SIZE] = { 0 };
 
     int rv;
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_ENABLE_RECV_TXT;
     rsp.which_msg = Response_wxmsg_tag;
 
-    pb_ostream_t stream = pb_ostream_from_buffer(buffer, 1024);
+    pb_ostream_t stream = pb_ostream_from_buffer(buffer, G_BUF_SIZE);
+
+    char *url = (char *)MSG_URL;
+    if ((rv = nng_pair1_open(&msg_sock)) != 0) {
+        LOG_ERROR("nng_pair0_open error {}", rv);
+        return;
+    }
+
+    if ((rv = nng_listen(msg_sock, url, NULL, 0)) != 0) {
+        LOG_ERROR("nng_listen error {}", rv);
+        return;
+    }
+
+    LOG_INFO("Server listening on {}", url);
+    if ((rv = nng_setopt_ms(msg_sock, NNG_OPT_SENDTIMEO, 2000)) != 0) {
+        LOG_ERROR("nng_setopt_ms: {}", rv);
+        return;
+    }
 
     while (gIsListening) {
         // 中断式，兼顾及时性和CPU使用率
@@ -226,7 +246,7 @@ static void PushMessage()
         }
 
         while (!gMsgQueue.empty()) {
-            auto wxmgs = gMsgQueue.front();
+            auto wxmgs             = gMsgQueue.front();
             rsp.msg.wxmsg.is_self  = wxmgs.is_self;
             rsp.msg.wxmsg.is_group = wxmgs.is_group;
             rsp.msg.wxmsg.type     = wxmgs.type;
@@ -241,13 +261,15 @@ static void PushMessage()
                 LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
                 continue;
             }
-            rv = nng_send(sock, buffer, stream.bytes_written, 0);
+
+            rv = nng_send(msg_sock, buffer, stream.bytes_written, 0);
             if (rv != 0) {
                 LOG_ERROR("nng_send: {}", rv);
             }
         }
         ResetEvent(g_hEvent);
     }
+    nng_close(msg_sock);
 }
 
 bool func_enable_recv_txt(uint8_t *out, size_t *len)
@@ -263,7 +285,7 @@ bool func_enable_recv_txt(uint8_t *out, size_t *len)
                            NULL   // unnamed
     );
     if (g_hEvent == NULL) {
-        LOG_ERROR("CreateMutex error: {}", GetLastError());
+        LOG_ERROR("CreateEvent error: {}", GetLastError());
         return false;
     }
 
@@ -403,7 +425,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
 static int RunServer()
 {
     int rv    = 0;
-    char *url = (char *)"tcp://0.0.0.0:10086";
+    char *url = (char *)CMD_URL;
     if ((rv = nng_pair1_open(&sock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", rv);
         return rv;
@@ -416,7 +438,7 @@ static int RunServer()
 
     LOG_INFO("Server listening on {}", url);
     if ((rv = nng_setopt_ms(sock, NNG_OPT_SENDTIMEO, 1000)) != 0) {
-        LOG_ERROR("nng_recv: {}", rv);
+        LOG_ERROR("nng_setopt_ms: {}", rv);
         return rv;
     }
 
