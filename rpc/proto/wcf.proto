@@ -10,7 +10,7 @@ service Wcf {
   rpc RpcEnableRecvMsg(Empty) returns (stream WxMsg) {}
   rpc RpcDisableRecvMsg(Empty) returns (Response) {}
   rpc RpcSendTextMsg(TextMsg) returns (Response) {}
-  rpc RpcSendImageMsg(ImageMsg) returns (Response) {}
+  rpc RpcSendPathMsg(PathMsg) returns (Response) {}
   rpc RpcGetMsgTypes(Empty) returns (MsgTypes) {}
   rpc RpcGetContacts(Empty) returns (Contacts) {}
   rpc RpcGetDbNames(Empty) returns (DbNames) {}
@@ -44,7 +44,7 @@ message Request
         Empty empty    = 2;
         string str     = 3;
         TextMsg txt    = 4;
-        ImageMsg img   = 5;
+        PathMsg file   = 5;
         DbQuery query  = 6;
         Verification v = 7;
     }
@@ -87,7 +87,7 @@ message TextMsg
     string aters    = 3; // 要@的人列表，逗号分隔
 }
 
-message ImageMsg
+message PathMsg
 {
     string path     = 1; // 要发送的图片的路径
     string receiver = 2; // 消息接收人

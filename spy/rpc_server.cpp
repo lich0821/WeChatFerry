@@ -395,7 +395,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_SEND_IMG: {
             LOG_INFO("[Functions_FUNC_SEND_IMG]");
-            ret = func_send_img(req.msg.img.path, req.msg.txt.receiver, out, out_len);
+            ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_ENABLE_RECV_TXT: {
