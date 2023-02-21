@@ -1,5 +1,9 @@
-﻿#include "accept_new_friend.h"
+﻿#include "framework.h"
+
+#include "accept_new_friend.h"
 #include "load_calls.h"
+#include "util.h"
+#include "log.h"
 
 typedef struct NewFriendParam {
     DWORD handle;
@@ -12,9 +16,9 @@ typedef struct NewFriendParam {
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-BOOL AcceptNewFriend(std::wstring v3, std::wstring v4)
+int AcceptNewFriend(std::string v3, std::string v4)
 {
-    BOOL isSucceeded = false;
+    int isSucceeded = false;
 
     DWORD acceptNewFriendCall1  = g_WeChatWinDllAddr + g_WxCalls.anf.call1;
     DWORD acceptNewFriendCall2  = g_WeChatWinDllAddr + g_WxCalls.anf.call2;
@@ -30,6 +34,10 @@ BOOL AcceptNewFriend(std::wstring v3, std::wstring v4)
     param.statusEnd2         = (DWORD)&status[8];
     NewFriendParam_t *pParam = &param;
 
+    LOG_INFO("v3: {}\nv4: {}", v3, v4);
+    const wchar_t *wsV3 = String2Wstring(v3).c_str();
+    const wchar_t *wsV4 = String2Wstring(v4).c_str();
+
     __asm {
         pushad;
         pushfd;
@@ -37,14 +45,14 @@ BOOL AcceptNewFriend(std::wstring v3, std::wstring v4)
         push 0x6;
         sub esp, 0x14;
         mov ecx, esp;
-        lea eax, v4;
+        lea eax, wsV4;
         push eax;
         call acceptNewFriendCall1;
         sub esp, 0x8;
         push 0x0;
         lea eax, buffer;
         push eax;
-        lea eax, v3;
+        lea eax, wsV3;
         push eax;
         mov ecx, pParam;
         call acceptNewFriendCall2;
