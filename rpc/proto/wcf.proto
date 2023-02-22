@@ -30,6 +30,7 @@ enum Functions {
     FUNC_GET_DB_TABLES    = 0x14;
     FUNC_SEND_TXT         = 0x20;
     FUNC_SEND_IMG         = 0x21;
+    FUNC_SEND_FILE        = 0x22;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;

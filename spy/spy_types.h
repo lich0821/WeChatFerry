@@ -20,11 +20,11 @@ typedef struct RecvMsg {
     DWORD content; // 消息内容地址
 } RecvMsg_t;
 
-typedef struct SendImg {
+typedef struct Sendfile {
     DWORD call1;
     DWORD call2;
     DWORD call3;
-} SendImg_t;
+} Sendfile_t;
 
 typedef struct Contact {
     DWORD base;
@@ -54,14 +54,15 @@ typedef struct NewFriend {
 } NewFriend_t;
 
 typedef struct WxCalls {
-    DWORD login;       // 登录状态
-    UserInfoCall_t ui; // 用户信息
-    DWORD sendTextMsg; // 发送消息
-    RecvMsg_t recvMsg; // 接收消息
-    SendImg_t sendImg; // 发送图片
-    Contact_t contact; // 获取联系人
-    Sql_t sql;         // 执行 SQL
-    NewFriend_t anf;   // 通过好友申请
+    DWORD login;         // 登录状态
+    UserInfoCall_t ui;   // 用户信息
+    DWORD sendTextMsg;   // 发送消息
+    RecvMsg_t recvMsg;   // 接收消息
+    Sendfile_t sendImg;  // 发送图片
+    Sendfile_t sendFile; // 发送文件
+    Contact_t contact;   // 获取联系人
+    Sql_t sql;           // 执行 SQL
+    NewFriend_t anf;     // 通过好友申请
 
 } WxCalls_t;
 

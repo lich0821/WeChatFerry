@@ -129,3 +129,70 @@ void SendImageMessage(string wxid, string path)
         popad
     }
 }
+
+void SendFileMessage(string wxid, string path)
+{
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+    DWORD tmpEAX            = 0;
+    char buffer[0x3B0]      = { 0 };
+    TextStruct_t fileWxid   = { 0 };
+    TextStruct_t filePath   = { 0 };
+    TextStruct_t nullbuffer = { 0 };
+
+    wstring wsWxid = String2Wstring(wxid);
+    wstring wspath = String2Wstring(path);
+
+    fileWxid.text     = (wchar_t *)wsWxid.c_str();
+    fileWxid.size     = wsWxid.size();
+    fileWxid.capacity = wsWxid.capacity();
+
+    filePath.text     = (wchar_t *)wspath.c_str();
+    filePath.size     = wspath.size();
+    filePath.capacity = wspath.capacity();
+
+    // 发送文件Call地址 = 微信基址 + 偏移
+    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
+    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
+    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
+
+    int isSuccess = 0;
+    __asm {
+		pushad;
+		pushfd;
+		call sendCall1;
+		sub esp, 0x14;
+		mov tmpEAX, eax;
+		lea eax, nullbuffer;
+		mov ecx, esp;
+		push eax;
+		call sendCall2;
+		push 0x00DBE200;
+		sub esp, 0x14;
+		mov edi, esp;
+		mov dword ptr ds : [edi] , 0x0;
+		mov dword ptr ds : [edi + 0x4] , 0x0;
+		mov dword ptr ds : [edi + 0x8] , 0x0;
+		mov dword ptr ds : [edi + 0xC] , 0x0;
+		mov dword ptr ds : [edi + 0x10] , 0x0;
+		sub esp, 0x14;
+		lea eax, filePath;
+		mov ecx, esp;
+		push eax;
+		call sendCall2;
+		sub esp, 0x14;
+		lea eax, fileWxid;
+		mov ecx, esp;
+		push eax;
+		call sendCall2;
+		mov ecx, dword ptr [tmpEAX];
+		lea eax, buffer;
+		push eax;
+		call sendCall3;
+		mov al,byte ptr [eax + 0x38];
+		movzx eax,al;
+		popfd;
+		popad;
+    }
+}
