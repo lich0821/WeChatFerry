@@ -157,7 +157,6 @@ void SendFileMessage(string wxid, string path)
     DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
     DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
 
-    int isSuccess = 0;
     __asm {
 		pushad;
 		pushfd;
