@@ -1,7 +1,13 @@
 ﻿#pragma once
 
 #ifdef ENABLE_DEBUG_LOG
+#include <stdint.h>
+
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+void log_buffer(uint8_t *buffer, size_t len);
+#define LOG_BUFFER(buf, len) log_buffer((buf), (len))
+#else
+#define LOG_BUFFER(...) (void)0
 #endif
 
 #include "spdlog/sinks/rotating_file_sink.h"

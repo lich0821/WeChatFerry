@@ -229,7 +229,7 @@ static void PushMessage()
         return;
     }
 
-    LOG_INFO("Server listening on {}", url);
+    LOG_DEBUG("Server listening on {}", url);
     if ((rv = nng_setopt_ms(msg_sock, NNG_OPT_SENDTIMEO, 2000)) != 0) {
         LOG_ERROR("nng_setopt_ms: {}", rv);
         return;
@@ -241,7 +241,7 @@ static void PushMessage()
         if (rv == WAIT_TIMEOUT) {
             continue;
         } else if (rv != WAIT_OBJECT_0) {
-            LOG_INFO("WaitForSingleObject ERRIR[{}]: {}", rv, GetLastError());
+            LOG_ERROR("WaitForSingleObject ERROR[{}]: {}", rv, GetLastError());
             continue;
         }
 
@@ -383,65 +383,65 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         return false;
     }
 
-    LOG_INFO("Func: {}", (uint8_t)req.func);
+    LOG_DEBUG("Func: {}", (uint8_t)req.func);
     switch (req.func) {
         case Functions_FUNC_IS_LOGIN: {
-            LOG_INFO("[Functions_FUNC_IS_LOGIN]");
+            LOG_DEBUG("[Functions_FUNC_IS_LOGIN]");
             ret = func_is_login(out, out_len);
             break;
         }
         case Functions_FUNC_GET_SELF_WXID: {
-            LOG_INFO("[Functions_FUNC_GET_SELF_WXID]");
+            LOG_DEBUG("[Functions_FUNC_GET_SELF_WXID]");
             ret = func_get_self_wxid(out, out_len);
             break;
         }
         case Functions_FUNC_GET_MSG_TYPES: {
-            LOG_INFO("[Functions_FUNC_GET_MSG_TYPES]");
+            LOG_DEBUG("[Functions_FUNC_GET_MSG_TYPES]");
             ret = func_get_msg_types(out, out_len);
             break;
         }
         case Functions_FUNC_GET_CONTACTS: {
-            LOG_INFO("[Functions_FUNC_GET_CONTACTS]");
+            LOG_DEBUG("[Functions_FUNC_GET_CONTACTS]");
             ret = func_get_contacts(out, out_len);
             break;
         }
         case Functions_FUNC_GET_DB_NAMES: {
-            LOG_INFO("[Functions_FUNC_GET_DB_NAMES]");
+            LOG_DEBUG("[Functions_FUNC_GET_DB_NAMES]");
             ret = func_get_db_names(out, out_len);
             break;
         }
         case Functions_FUNC_GET_DB_TABLES: {
-            LOG_INFO("[Functions_FUNC_GET_DB_TABLES]");
+            LOG_DEBUG("[Functions_FUNC_GET_DB_TABLES]");
             ret = func_get_db_tables(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_TXT: {
-            LOG_INFO("[Functions_FUNC_SEND_TXT]");
+            LOG_DEBUG("[Functions_FUNC_SEND_TXT]");
             ret = func_send_txt(req.msg.txt, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_IMG: {
-            LOG_INFO("[Functions_FUNC_SEND_IMG]");
+            LOG_DEBUG("[Functions_FUNC_SEND_IMG]");
             ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_ENABLE_RECV_TXT: {
-            LOG_INFO("[Functions_FUNC_ENABLE_RECV_TXT]");
+            LOG_DEBUG("[Functions_FUNC_ENABLE_RECV_TXT]");
             ret = func_enable_recv_txt(out, out_len);
             break;
         }
         case Functions_FUNC_DISABLE_RECV_TXT: {
-            LOG_INFO("[Functions_FUNC_DISABLE_RECV_TXT]");
+            LOG_DEBUG("[Functions_FUNC_DISABLE_RECV_TXT]");
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
         case Functions_FUNC_EXEC_DB_QUERY: {
-            LOG_INFO("[Functions_FUNC_EXEC_DB_QUERY]");
+            LOG_DEBUG("[Functions_FUNC_EXEC_DB_QUERY]");
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
         case Functions_FUNC_ACCEPT_FRIEND: {
-            LOG_INFO("[Functions_FUNC_ACCEPT_FRIEND]");
+            LOG_DEBUG("[Functions_FUNC_ACCEPT_FRIEND]");
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, out, out_len);
             break;
         }
@@ -483,10 +483,10 @@ static int RunServer()
             break;
         }
 
-        log_buffer(in, in_len);
+        LOG_BUFFER(in, in_len);
         if (dispatcher(in, in_len, gBuffer, &out_len)) {
-            LOG_INFO("Send data length {}", out_len);
-            // log_buffer(gBuffer, out_len);
+            LOG_DEBUG("Send data length {}", out_len);
+            // LOG_BUFFER(gBuffer, out_len);
             rv = nng_send(sock, gBuffer, out_len, 0);
             if (rv != 0) {
                 LOG_ERROR("nng_send: {}", rv);
@@ -500,7 +500,7 @@ static int RunServer()
         }
         nng_free(in, in_len);
     }
-    LOG_INFO("Leave RunServer");
+    LOG_DEBUG("Leave RunServer");
     return rv;
 }
 

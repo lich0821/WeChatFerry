@@ -34,7 +34,7 @@ int AcceptNewFriend(std::string v3, std::string v4)
     param.statusEnd2         = (DWORD)&status[8];
     NewFriendParam_t *pParam = &param;
 
-    LOG_INFO("v3: {}\nv4: {}", v3, v4);
+    LOG_DEBUG("v3: {}\nv4: {}", v3, v4);
     const wchar_t *wsV3 = String2Wstring(v3).c_str();
     const wchar_t *wsV4 = String2Wstring(v4).c_str();
 

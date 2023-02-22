@@ -3,21 +3,6 @@
 #include "pb_types.h"
 #include "wcf.pb.h"
 
-#define BUF_SIZE (1024 * 1024)
-static char buf[BUF_SIZE] = { 0 };
-
-void log_buffer(uint8_t *buffer, size_t len)
-{
-    size_t j = sprintf_s(buf, BUF_SIZE, "Encoded message[%ld]: ", len);
-    for (size_t i = 0; i < len; i++) {
-        j += sprintf_s(buf + j, BUF_SIZE, "%02X ", buffer[i]);
-        if (j > BUF_SIZE - 3) {
-            break;
-        }
-    }
-    LOG_INFO(buf);
-}
-
 bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
 {
     const char *str = (const char *)*arg;
@@ -83,7 +68,7 @@ bool encode_contacts(pb_ostream_t *stream, const pb_field_t *field, void *const 
     vector<RpcContact_t> *v = (vector<RpcContact_t> *)*arg;
     RpcContact message      = RpcContact_init_default;
 
-    LOG_INFO("encode_contacts[{}]", v->size());
+    LOG_DEBUG("encode_contacts[{}]", v->size());
     for (auto it = v->begin(); it != v->end(); it++) {
         message.wxid.funcs.encode = &encode_string;
         message.wxid.arg          = (void *)(*it).wxid.c_str();
