@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
+
+#ifdef ENABLE_DEBUG_LOG
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#endif
 
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
-
-extern std::shared_ptr<spdlog::logger> gLogger;
 
 #define LOG_DEBUG(...) SPDLOG_DEBUG(__VA_ARGS__);
 #define LOG_INFO(...)  SPDLOG_INFO(__VA_ARGS__);

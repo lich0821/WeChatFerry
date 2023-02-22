@@ -7,6 +7,9 @@
 
 void InitLogger()
 {
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
+    spdlog::set_level(spdlog::level::debug);
+#endif
     static std::shared_ptr<spdlog::logger> gLogger = nullptr;
     if (gLogger != nullptr) {
         return;
@@ -18,4 +21,6 @@ void InitLogger()
     spdlog::set_default_logger(gLogger);
     gLogger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%s::%#::%!] %v");
     gLogger->flush_on(spdlog::level::info);
+
+    LOG_DEBUG("InitLogger with debug level");
 }
