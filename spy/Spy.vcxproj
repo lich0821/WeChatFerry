@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -163,9 +163,8 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
       <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>cd $(SolutionDir)
-md Out
-xcopy /y $(OutDir)$(TargetFileName) Out</Command>
+      <Command>md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>

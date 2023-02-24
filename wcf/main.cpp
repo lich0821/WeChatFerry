@@ -1,14 +1,18 @@
 ﻿#include <stdio.h>
 #include <string.h>
 
+#include "framework.h"
+
+#include "log.h"
 #include "sdk.h"
 
-void help() { printf("Usage: sdk.exe start|stop [debug]"); }
+void help() { LOG_INFO("Usage: wcf.exe start|stop [debug]\n"); }
 
 int main(int argc, char *argv[])
 {
     int ret    = -1;
     bool debug = false;
+
     if ((argc < 2) || (argc > 3)) {
         help();
     } else if (argc == 3) {

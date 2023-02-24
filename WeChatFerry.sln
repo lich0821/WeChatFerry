@@ -15,22 +15,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "launcher", "launcher\launch
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215} = {ABFCB647-137F-478B-A73E-F0B1E3ADC215}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wcf", "wcf\wcf.vcxproj", "{02747CE0-AD9F-4812-B019-FCF9867F7514}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4DE80B82-5F6A-4C4C-9D16-1574308110FA} = {4DE80B82-5F6A-4C4C-9D16-1574308110FA}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4DE80B82-5F6A-4C4C-9D16-1574308110FA}.Debug|x86.ActiveCfg = Debug|Win32
-		{4DE80B82-5F6A-4C4C-9D16-1574308110FA}.Debug|x86.Build.0 = Debug|Win32
 		{4DE80B82-5F6A-4C4C-9D16-1574308110FA}.Release|x86.ActiveCfg = Release|Win32
 		{4DE80B82-5F6A-4C4C-9D16-1574308110FA}.Release|x86.Build.0 = Release|Win32
-		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Debug|x86.ActiveCfg = Debug|x64
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x86.ActiveCfg = Release|Win32
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x86.Build.0 = Release|Win32
-		{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}.Debug|x86.ActiveCfg = Debug|x64
 		{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}.Release|x86.ActiveCfg = Release|Win32
 		{B11ADC6F-20DA-4DEF-A8A0-60374427D4C6}.Release|x86.Build.0 = Release|Win32
+		{02747CE0-AD9F-4812-B019-FCF9867F7514}.Release|x86.ActiveCfg = Release|Win32
+		{02747CE0-AD9F-4812-B019-FCF9867F7514}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

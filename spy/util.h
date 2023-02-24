@@ -12,6 +12,7 @@
 #define GET_STRING(addr)  ((CHAR *)(*(DWORD *)(addr)))
 #define GET_WSTRING(addr) ((WCHAR *)(*(DWORD *)(addr)))
 
+DWORD GetWeChatPid();
 int OpenWeChat(DWORD *pid);
 int GetWeChatVersion(wchar_t *version);
 int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size);

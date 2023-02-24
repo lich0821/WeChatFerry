@@ -126,7 +126,7 @@
       <ModuleDefinitionFile>sdk.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)sdk.dll $(SolutionDir)Out</Command>
+      <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>

@@ -147,7 +147,7 @@ int GetWeChatVersion(wchar_t *version)
     return ret;
 }
 
-static DWORD GetWeChatPid()
+DWORD GetWeChatPid()
 {
     DWORD pid           = 0;
     HANDLE hSnapshot    = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
