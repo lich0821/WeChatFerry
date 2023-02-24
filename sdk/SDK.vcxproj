@@ -126,15 +126,8 @@
       <ModuleDefinitionFile>sdk.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)sdk.dll $(OutDir)out\cpp
-xcopy /y $(OutDir)sdk.dll $(OutDir)out\launcher
-xcopy /y $(OutDir)sdk.dll $(OutDir)out\java\src\main\resources\win32-x86
-xcopy /y $(OutDir)sdk.dll $(SolutionDir)python\wcferry
-xcopy /y $(SolutionDir)TEQuant.jpeg $(OutDir)out\cpp
-xcopy /y $(SolutionDir)TEQuant.jpeg $(OutDir)out\java
-xcopy /y /S $(SolutionDir)java\src\main\java $(OutDir)out\java\src\main\java
-xcopy /y $(SolutionDir)java\pom.xml $(OutDir)out\java
-xcopy /y $(SolutionDir)java\README.MD $(OutDir)out\java</Command>
+      <Command>xcopy /y $(OutDir)sdk.dll $(OutDir)out\launcher
+xcopy /y $(OutDir)sdk.dll $(SolutionDir)python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>
