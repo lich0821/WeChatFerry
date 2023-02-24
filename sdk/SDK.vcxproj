@@ -126,8 +126,7 @@
       <ModuleDefinitionFile>sdk.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)sdk.dll $(OutDir)out\launcher
-xcopy /y $(OutDir)sdk.dll $(SolutionDir)python\wcferry</Command>
+      <Command>xcopy /y $(OutDir)sdk.dll $(SolutionDir)Out</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>

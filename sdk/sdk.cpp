@@ -1,4 +1,4 @@
-#include "Shlwapi.h"
+﻿#include "Shlwapi.h"
 #include "framework.h"
 #include <process.h>
 #include <tlhelp32.h>
@@ -13,17 +13,21 @@ static HANDLE wcProcess           = NULL;
 static HMODULE spyBase            = NULL;
 static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
-int WxInitSDK()
+int WxInitSDK(bool debug)
 {
     int status = 0;
     InitLogger();
     LOG_INFO("WxInitSDK.");
     GetModuleFileName(GetModuleHandle(WECHATSDKDLL), spyDllPath, MAX_PATH);
     PathRemoveFileSpec(spyDllPath);
-    PathAppend(spyDllPath, WECHATINJECTDLL);
+    if (debug) {
+        PathAppend(spyDllPath, WECHATINJECTDLL_DEBUG);
+    } else {
+        PathAppend(spyDllPath, WECHATINJECTDLL);
+    }
 
     if (!PathFileExists(spyDllPath)) {
-        LOG_ERROR("DLL does not exists.");
+        LOG_ERROR("DLL does not exists: {}.", Wstring2String(spyDllPath));
         return ERROR_FILE_NOT_FOUND;
     }
 

@@ -107,7 +107,7 @@ namespace launcher {
     private: System::Void Start_Click(System::Object^ sender, System::EventArgs^ e) {
         this->Start->Enabled = false;
         this->Stop->Enabled = true;
-        WxInitSDK();
+        WxInitSDK(true);
     }
     private: System::Void Stop_Click(System::Object^ sender, System::EventArgs^ e) {
         this->Stop->Enabled = false;

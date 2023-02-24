@@ -85,7 +85,7 @@
       <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)launcher.exe $(OutDir)out\launcher</Command>
+      <Command>xcopy /y $(OutDir)launcher.exe $(SolutionDir)Out</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>

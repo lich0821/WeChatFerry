@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
-int WxInitSDK();
+int WxInitSDK(bool debug);
 int WxDestroySDK();
