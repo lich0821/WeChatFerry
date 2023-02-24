@@ -163,7 +163,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
       <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>md $(SolutionDir)Out
+      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
     </PostBuildEvent>
     <PostBuildEvent>
