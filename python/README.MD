@@ -68,8 +68,8 @@ pip install grpcio-tools pynng
 
 ### 重新生成 PB 文件
 ```sh
-cd python
-python -m grpc_tools.protoc --python_out=. --proto_path=..\rpc\proto\ wcf.proto
+cd python\wcferry
+python -m grpc_tools.protoc --python_out=. --proto_path=..\..\rpc\proto\ wcf.proto
 ```
 
 ### 参考项目 [README](../README.MD)
