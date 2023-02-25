@@ -13,8 +13,8 @@ Out/
 *.pb.h
 *.pb.c
 *.pb.cc
-sdk.dll
-spy.dll
+*.dll
+*.exe
 build/
 logs/
 
