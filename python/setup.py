@@ -26,8 +26,8 @@ setup(
     include_package_data=True,
     install_requires=[
         "setuptools",
-        "grpcio",
         "grpcio-tools",
+        "pynng"
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",

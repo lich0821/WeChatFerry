@@ -1,6 +1,5 @@
 # WeChatFerry Python 客户端
 ⚠️ **只支持 Windows** ⚠️
-⚠️ **只支持 32 位 Python** ⚠️
 
 ## 快速开始
 ```sh
@@ -12,48 +11,44 @@ pip install wcferry
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import signal
-from time import sleep
+import logging
 
 from wcferry import Wcf
 
 
 def main():
-    wcf = Wcf()
+    LOG = logging.getLogger("Demo")
+    LOG.info("Start demo...")
+    wcf = Wcf(debug=True)             # 默认连接本地服务
+    # wcf = Wcf("tcp://127.0.0.1:10086") # 连接远端服务
 
-    def handler(sig, frame):
-        wcf.cleanup()  # 退出前清理环境
-        exit(0)
+    LOG.info(f"Is Login: {True if wcf.is_login() else False}")
+    LOG.info(f"SelfWxid: {wcf.get_self_wxid()}")
 
-    signal.signal(signal.SIGINT, handler)
-    sleep(1)  # Slow down
-    print(f"Is Login: {True if wcf.is_login() else False}")
-    print(f"SelfWxid: {wcf.get_self_wxid()}")
-
-    sleep(1)
-    wcf.enable_recv_msg(print)
-    # wcf.disable_recv_msg()  # 当需要停止接收消息的时候，随时调用
+    wcf.enable_recv_msg(LOG.info)
+    # wcf.disable_recv_msg() # Call anytime when you don't want to receive messages
 
     ret = wcf.send_text("Hello world.", "filehelper")
-    print(f"send_text: {ret}")
+    LOG.info(f"send_text: {ret}")
 
     ret = wcf.send_image("TEQuant.jpeg", "filehelper")
-    print(f"send_image: {ret}")
+    LOG.info(f"send_image: {ret}")
 
-    print(f"Message types:\n{wcf.get_msg_types()}")
-    print(f"Contacts:\n{wcf.get_contacts()}")
+    LOG.info(f"Message types:\n{wcf.get_msg_types()}")
+    LOG.info(f"Contacts:\n{wcf.get_contacts()}")
 
-    print(f"DBs:\n{wcf.get_dbs()}")
-    print(f"Tables:\n{wcf.get_tables('db')}")
-    print(f"Results:\n{wcf.query_sql('MicroMsg.db', 'SELECT * FROM Contact LIMIT 1;')}")
+    LOG.info(f"DBs:\n{wcf.get_dbs()}")
+    LOG.info(f"Tables:\n{wcf.get_tables('db')}")
+    LOG.info(f"Results:\n{wcf.query_sql('MicroMsg.db', 'SELECT * FROM Contact LIMIT 1;')}")
 
-    # wcf.accept_new_friend("v3", "v4")  # 需要真正的 V3、V4 信息
+    # wcf.accept_new_friend("v3", "v4") # 需要真正的 V3、V4 信息
 
-    # 阻塞程序，让程序一直运行
+    # Keep running to receive messages
     wcf.keep_running()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
     main()
 
 ```
@@ -68,13 +63,13 @@ source .env/Scripts/activate
 # 升级 pip
 pip install --upgrade pip
 # 安装依赖包
-pip install grpcio grpcio-tools
+pip install grpcio-tools pynng
 ```
 
-### 重新生成 gRPC 文件
+### 重新生成 PB 文件
 ```sh
-cd wcf
-python -m grpc_tools.protoc --python_out=. --grpc_python_out=. -I=../ wcf.proto
+cd python
+python -m grpc_tools.protoc --python_out=. --proto_path=..\rpc\proto\ wcf.proto
 ```
 
 ### 参考项目 [README](../README.MD)

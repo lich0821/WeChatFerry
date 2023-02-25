@@ -1,2 +1,2 @@
 include wcferry/*.dll
-exclude demo.py
+include wcferry/*.exe
