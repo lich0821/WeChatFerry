@@ -118,7 +118,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
+      <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>

@@ -120,9 +120,9 @@
       <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>cd $(SolutionDir)
-md Out
-xcopy /y $(OutDir)$(TargetFileName) Out</Command>
+      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
@@ -164,7 +164,8 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     </Link>
     <PostBuildEvent>
       <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
