@@ -266,17 +266,17 @@ static void PushMessage()
         unique_lock<mutex> lock(gMutex);
         if (gCV.wait_for(lock, chrono::milliseconds(1000), []() { return !gMsgQueue.empty(); })) {
             while (!gMsgQueue.empty()) {
-                auto wxmgs             = gMsgQueue.front();
-                rsp.msg.wxmsg.is_self  = wxmgs.is_self;
-                rsp.msg.wxmsg.is_group = wxmgs.is_group;
-                rsp.msg.wxmsg.type     = wxmgs.type;
-                rsp.msg.wxmsg.id       = (char *)wxmgs.id.c_str();
-                rsp.msg.wxmsg.xml      = (char *)wxmgs.xml.c_str();
-                rsp.msg.wxmsg.sender   = (char *)wxmgs.sender.c_str();
-                rsp.msg.wxmsg.roomid   = (char *)wxmgs.roomid.c_str();
-                rsp.msg.wxmsg.content  = (char *)wxmgs.content.c_str();
+                auto wxmsg             = gMsgQueue.front();
+                rsp.msg.wxmsg.is_self  = wxmsg.is_self;
+                rsp.msg.wxmsg.is_group = wxmsg.is_group;
+                rsp.msg.wxmsg.type     = wxmsg.type;
+                rsp.msg.wxmsg.id       = (char *)wxmsg.id.c_str();
+                rsp.msg.wxmsg.xml      = (char *)wxmsg.xml.c_str();
+                rsp.msg.wxmsg.sender   = (char *)wxmsg.sender.c_str();
+                rsp.msg.wxmsg.roomid   = (char *)wxmsg.roomid.c_str();
+                rsp.msg.wxmsg.content  = (char *)wxmsg.content.c_str();
                 gMsgQueue.pop();
-                LOG_DEBUG("Recv msg: {}", wxmgs.content);
+                LOG_DEBUG("Recv msg: {}", wxmsg.content);
                 if (!pb_encode(&stream, Response_fields, &rsp)) {
                     LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
                     continue;
