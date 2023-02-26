@@ -1,6 +1,8 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "framework.h"
+#include <condition_variable>
+#include <mutex>
 #include <queue>
 
 #include "load_calls.h"
@@ -9,7 +11,8 @@
 
 // Defined in rpc_server.cpp
 extern bool gIsListening;
-extern HANDLE g_hEvent;
+extern mutex gMutex;
+extern condition_variable gCV;
 extern queue<WxMsg_t> gMsgQueue;
 
 // Defined in spy.cpp
@@ -87,11 +90,12 @@ void DispatchMsg(DWORD reg)
     }
     wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
 
-    // 推送到队列
-    gMsgQueue.push(wxMsg);
+    {
+        unique_lock<mutex> lock(gMutex);
+        gMsgQueue.push(wxMsg); // 推送到队列
+    }
 
-    // 通知各方消息就绪
-    SetEvent(g_hEvent);
+    gCV.notify_all(); // 通知各方消息就绪
 }
 
 __declspec(naked) void RecieveMsgFunc()
