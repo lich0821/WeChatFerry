@@ -286,6 +286,7 @@ static void PushMessage()
                 if (rv != 0) {
                     LOG_ERROR("nng_send: {}", rv);
                 }
+                LOG_DEBUG("Send data length {}", stream.bytes_written);
             }
         }
     }
