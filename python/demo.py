@@ -6,7 +6,7 @@ from threading import Thread
 
 from wcferry import Wcf
 
-
+logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
 LOG = logging.getLogger("Demo")
 
 
@@ -32,7 +32,7 @@ def main():
     # 允许接收消息
     # wcf.enable_recv_msg(LOG.info) # deprecated
 
-     # 允许接收消息
+    # 允许接收消息
     wcf.enable_receiving_msg()
     Thread(target=process_msg, name="GetMessage", args=(wcf,), daemon=True).start()
 
@@ -58,5 +58,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
     main()
