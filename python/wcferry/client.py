@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import sys
+from queue import Queue
 from threading import Thread
 from time import sleep
 from typing import Callable, List, Optional
@@ -88,6 +89,7 @@ class Wcf():
 
         self._is_running = True
         self.contacts = []
+        self.msgQ = Queue()
         self._SQL_TYPES = {1: int, 2: float, 3: lambda x: x.decode("utf-8"), 4: bytes, 5: lambda x: None}
         self.self_wxid = self.get_self_wxid()
 
@@ -123,6 +125,9 @@ class Wcf():
         rsp = wcf_pb2.Response()
         rsp.ParseFromString(self.cmd_socket.recv_msg().bytes)
         return rsp
+
+    def is_receiving_msg(self) -> bool:
+        return self._is_receiving_msg
 
     def is_login(self) -> bool:
         """是否已经登录"""
@@ -222,9 +227,45 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def get_msg(self, block=True) -> WxMsg:
+        return self.msgQ.get(block, timeout=1)
+
+    def enable_receiving_msg(self) -> bool:
+        """允许接收消息"""
+        def listening_msg():
+            rsp = wcf_pb2.Response()
+            self.msg_socket.dial(self.msg_url, block=True)
+            while self._is_receiving_msg:
+                try:
+                    rsp.ParseFromString(self.msg_socket.recv_msg().bytes)
+                except Exception as e:
+                    pass
+                else:
+                    self.msgQ.put(self.WxMsg(rsp.wxmsg))
+
+            # 退出前关闭通信通道
+            self.msg_socket.close()
+
+        if self._is_receiving_msg:
+            return True
+
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_ENABLE_RECV_TXT  # FUNC_ENABLE_RECV_TXT
+        rsp = self._send_request(req)
+        if rsp.status != 0:
+            return False
+
+        self._is_receiving_msg = True
+        # 阻塞，把控制权交给用户
+        # self._rpc_get_message(callback)
+
+        # 不阻塞，启动一个新的线程来接收消息
+        Thread(target=listening_msg, name="GetMessage", daemon=True).start()
+
+        return True
+
     def enable_recv_msg(self, callback: Callable[[WxMsg], None] = None) -> bool:
         """设置接收消息回调"""
-        # TODO: 加队列，消息推送有超时，需要先缓存下来
         def listening_msg():
             rsp = wcf_pb2.Response()
             self.msg_socket.dial(self.msg_url, block=True)
@@ -238,6 +279,7 @@ class Wcf():
             # 退出前关闭通信通道
             self.msg_socket.close()
 
+        self.LOG.warning("将会移除，请用 enable_receiving_msg 和 get_msg")
         if self._is_receiving_msg:
             return True
 
@@ -252,7 +294,7 @@ class Wcf():
 
         self._is_receiving_msg = True
         # 阻塞，把控制权交给用户
-        # self._rpc_get_message(callback)
+        # listening_msg()
 
         # 不阻塞，启动一个新的线程来接收消息
         Thread(target=listening_msg, name="GetMessage", daemon=True).start()
