@@ -10,19 +10,11 @@ extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-typedef struct AtList {
-    DWORD start;
-    DWORD end1;
-    DWORD end2;
-} AtList_t;
-
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    char buffer[0x3B0]    = { 0 };
-    AtList_t atList       = { 0 };
-    TextStruct_t txtMsg   = { 0 };
-    TextStruct_t txtWxid  = { 0 };
-    TextStruct_t *tsArray = NULL;
+    char buffer[0x3B0] = { 0 };
+    WxString_t txtMsg  = { 0 };
+    WxString_t txtWxid = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
@@ -38,7 +30,7 @@ void SendTextMessage(string wxid, string msg, string atWxids)
     txtWxid.size     = wsWxid.size();
     txtWxid.capacity = wsWxid.capacity();
 
-    vector<TextStruct_t> vTxtAtWxids;
+    vector<WxString_t> vTxtAtWxids;
     if (!atWxids.empty()) {
         vector<wstring> vAtWxids;
         wstringstream wss(String2Wstring(atWxids));
@@ -46,10 +38,10 @@ void SendTextMessage(string wxid, string msg, string atWxids)
             wstring wstr;
             getline(wss, wstr, L',');
             vAtWxids.push_back(wstr);
-            TextStruct_t txtAtWxid = { 0 };
-            txtAtWxid.text         = (wchar_t *)vAtWxids.back().c_str();
-            txtAtWxid.size         = vAtWxids.back().size();
-            txtAtWxid.capacity     = vAtWxids.back().capacity();
+            WxString_t txtAtWxid = { 0 };
+            txtAtWxid.text       = (wchar_t *)vAtWxids.back().c_str();
+            txtAtWxid.size       = vAtWxids.back().size();
+            txtAtWxid.capacity   = vAtWxids.back().capacity();
             vTxtAtWxids.push_back(txtAtWxid);
         }
     }
@@ -73,11 +65,11 @@ void SendImageMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    DWORD tmpEAX         = 0;
-    char buf1[0x48]      = { 0 };
-    char buf2[0x3B0]     = { 0 };
-    TextStruct_t imgWxid = { 0 };
-    TextStruct_t imgPath = { 0 };
+    DWORD tmpEAX       = 0;
+    char buf1[0x48]    = { 0 };
+    char buf2[0x3B0]   = { 0 };
+    WxString_t imgWxid = { 0 };
+    WxString_t imgPath = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wspath = String2Wstring(path);
@@ -121,11 +113,11 @@ void SendFileMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    DWORD tmpEAX            = 0;
-    char buffer[0x3B0]      = { 0 };
-    TextStruct_t fileWxid   = { 0 };
-    TextStruct_t filePath   = { 0 };
-    TextStruct_t nullbuffer = { 0 };
+    DWORD tmpEAX          = 0;
+    char buffer[0x3B0]    = { 0 };
+    WxString_t fileWxid   = { 0 };
+    WxString_t filePath   = { 0 };
+    WxString_t nullbuffer = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wspath = String2Wstring(path);

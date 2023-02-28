@@ -11,12 +11,6 @@ using namespace std;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-typedef struct MemberList {
-    DWORD start;
-    DWORD end1;
-    DWORD end2;
-} MemberList_t;
-
 int AddChatroomMember(string roomid, string wxids)
 {
     if (roomid.empty() || wxids.empty()) {
@@ -29,23 +23,23 @@ int AddChatroomMember(string roomid, string wxids)
     DWORD addRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
     DWORD addRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
 
-    TextStruct_t txtRoomid = { 0 };
-    wstring wsRoomid       = String2Wstring(roomid);
-    txtRoomid.text         = (wchar_t *)wsRoomid.c_str();
-    txtRoomid.size         = wsRoomid.size();
-    txtRoomid.capacity     = wsRoomid.capacity();
+    WxString_t txtRoomid = { 0 };
+    wstring wsRoomid     = String2Wstring(roomid);
+    txtRoomid.text       = (wchar_t *)wsRoomid.c_str();
+    txtRoomid.size       = wsRoomid.size();
+    txtRoomid.capacity   = wsRoomid.capacity();
 
     vector<wstring> vMembers;
-    vector<TextStruct_t> vTxtMembers;
+    vector<WxString_t> vTxtMembers;
     wstringstream wss(String2Wstring(wxids));
     while (wss.good()) {
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
-        TextStruct_t txtMember = { 0 };
-        txtMember.text         = (wchar_t *)vMembers.back().c_str();
-        txtMember.size         = vMembers.back().size();
-        txtMember.capacity     = vMembers.back().capacity();
+        WxString_t txtMember = { 0 };
+        txtMember.text       = (wchar_t *)vMembers.back().c_str();
+        txtMember.size       = vMembers.back().size();
+        txtMember.capacity   = vMembers.back().capacity();
         vTxtMembers.push_back(txtMember);
     }
 

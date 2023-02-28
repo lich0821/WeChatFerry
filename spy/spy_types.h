@@ -72,9 +72,9 @@ typedef struct WxCalls {
     RoomMember_t arm;    // 添加群成员
 } WxCalls_t;
 
-typedef struct TextStruct {
+typedef struct WxString {
     wchar_t *text;
     DWORD size;
     DWORD capacity;
     char fill[8];
-} TextStruct_t;
+} WxString_t;
