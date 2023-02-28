@@ -61,7 +61,12 @@ def main():
     LOG.info(f"Tables:\n{wcf.get_tables('db')}")
     LOG.info(f"Results:\n{wcf.query_sql('MicroMsg.db', 'SELECT * FROM Contact LIMIT 1;')}")
 
-    # wcf.accept_new_friend("v3", "v4") # 需要真正的 V3、V4 信息
+    # 需要真正的 V3、V4 信息
+    # wcf.accept_new_friend("v3", "v4")
+
+    # 填写正确的群 ID 和成员 wxid
+    # ret = wcf.add_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
+    # LOG.info(f"add_chatroom_members: {ret}")
 
     # 一直运行
     wcf.keep_running()
