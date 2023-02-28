@@ -9,12 +9,13 @@
 extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
+extern string GetSelfWxid(); // Defined in spy.cpp
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
     char buffer[0x3B0] = { 0 };
-    WxString_t txtMsg  = { 0 };
-    WxString_t txtWxid = { 0 };
+    WxString_t wxMsg  = { 0 };
+    WxString_t wxWxid = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
@@ -22,13 +23,13 @@ void SendTextMessage(string wxid, string msg, string atWxids)
     wstring wsWxid = String2Wstring(wxid);
     wstring wsMsg  = String2Wstring(msg);
 
-    txtMsg.text     = (wchar_t *)wsMsg.c_str();
-    txtMsg.size     = wsMsg.size();
-    txtMsg.capacity = wsMsg.capacity();
+    wxMsg.text     = (wchar_t *)wsMsg.c_str();
+    wxMsg.size     = wsMsg.size();
+    wxMsg.capacity = wsMsg.capacity();
 
-    txtWxid.text     = (wchar_t *)wsWxid.c_str();
-    txtWxid.size     = wsWxid.size();
-    txtWxid.capacity = wsWxid.capacity();
+    wxWxid.text     = (wchar_t *)wsWxid.c_str();
+    wxWxid.size     = wsWxid.size();
+    wxWxid.capacity = wsWxid.capacity();
 
     vector<WxString_t> vTxtAtWxids;
     if (!atWxids.empty()) {
@@ -51,9 +52,9 @@ void SendTextMessage(string wxid, string msg, string atWxids)
         lea eax, vTxtAtWxids;
         push 0x01;
         push eax;
-        lea edi, txtMsg;
+        lea edi, wxMsg;
         push edi;
-        lea edx, txtWxid;
+        lea edx, wxWxid;
         lea ecx, buffer;
         call sendCallAddress;
         add esp, 0xC;
@@ -169,6 +170,85 @@ void SendFileMessage(string wxid, string path)
 		call sendCall3;
 		mov al,byte ptr [eax + 0x38];
 		movzx eax,al;
+		popfd;
+		popad;
+    }
+}
+
+void SendXmlMessage(string receiver, string xml, string path, int type)
+{
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+
+    // 发送消息Call地址 = 微信基址 + 偏移
+    DWORD sendXmlCall1 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call1;
+    DWORD sendXmlCall2 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call2;
+    DWORD sendXmlCall3 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call3;
+    DWORD sendXmlCall4 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call4;
+    DWORD sendXmlParam = g_WeChatWinDllAddr + g_WxCalls.sendXml.param;
+
+    char buffer[0xFF0]    = { 0 };
+    char nullBuf[0x1C]    = { 0 };
+    WxString_t wxReceiver = { 0 };
+    WxString_t wxXml      = { 0 };
+    WxString_t wxPath     = { 0 };
+    WxString_t wxNull     = { 0 };
+    WxString_t wxSender   = { 0 };
+
+    wstring wsSender   = String2Wstring(GetSelfWxid());
+    wstring wsReceiver = String2Wstring(receiver);
+    wstring wsXml      = String2Wstring(xml);
+
+    wxReceiver.text     = (wchar_t *)wsReceiver.c_str();
+    wxReceiver.size     = wsReceiver.size();
+    wxReceiver.capacity = wsReceiver.capacity();
+
+    wxXml.text     = (wchar_t *)wsXml.c_str();
+    wxXml.size     = wsXml.size();
+    wxXml.capacity = wsXml.capacity();
+
+    wxSender.text     = (wchar_t *)wsSender.c_str();
+    wxSender.size     = wsSender.size();
+    wxSender.capacity = wsSender.capacity();
+
+    if (!path.empty()) {
+        wstring wsPath  = String2Wstring(path);
+        wxPath.text     = (wchar_t *)wsPath.c_str();
+        wxPath.size     = wsPath.size();
+        wxPath.capacity = wsPath.capacity();
+    }
+
+    DWORD sendtype = type;
+    __asm {
+		pushad;
+		pushfd;
+		lea ecx, buffer;
+		call sendXmlCall1;
+		mov eax, [sendtype];
+		push eax;
+		lea eax, nullBuf;
+		lea edx, wxSender;
+		push eax;
+		lea eax, wxPath;
+		push eax;
+		lea eax, wxXml;
+		push eax;
+		lea edi, wxReceiver;
+		push edi;
+		lea ecx, buffer;
+		call sendXmlCall2;
+		add esp, 0x14;
+		lea eax, wxNull;
+		push eax;
+		lea ecx, buffer;
+		call sendXmlCall3;
+		mov dl, 0x0;
+		lea ecx, buffer;
+		push sendXmlParam;
+		push sendXmlParam;
+		call sendXmlCall4;
+		add esp, 0x8;
 		popfd;
 		popad;
     }

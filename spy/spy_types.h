@@ -59,6 +59,14 @@ typedef struct RoomMember {
     DWORD call3;
 } RoomMember_t;
 
+typedef struct Xml {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+    DWORD call4;
+    DWORD param;
+} Xml_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -66,6 +74,7 @@ typedef struct WxCalls {
     RecvMsg_t recvMsg;   // 接收消息
     Sendfile_t sendImg;  // 发送图片
     Sendfile_t sendFile; // 发送文件
+    Xml_t sendXml;       // 发送XML
     Contact_t contact;   // 获取联系人
     Sql_t sql;           // 执行 SQL
     NewFriend_t anf;     // 通过好友申请

@@ -227,6 +227,18 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def send_xml(self, receiver: str, xml: str, type: int, path: str = None) -> int:
+        """发送文件"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SEND_XML  # FUNC_SEND_XML
+        req.xml.receiver = receiver
+        req.xml.content = xml
+        req.xml.type = type
+        if path:
+            req.xml.path = path
+        rsp = self._send_request(req)
+        return rsp.status
+
     def get_msg(self, block=True) -> WxMsg:
         return self.msgQ.get(block, timeout=1)
 
@@ -351,8 +363,8 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt.wxid.endswith("@chatroom")      # 群聊
-                    or cnt.wxid.startswith("gh_")       # 公众号
-                    or cnt.wxid in not_friends.keys()   # 其他杂号
+                or cnt.wxid.startswith("gh_")       # 公众号
+                or cnt.wxid in not_friends.keys()   # 其他杂号
                 ):
                 continue
             friends.append(cnt)

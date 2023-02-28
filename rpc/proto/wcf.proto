@@ -31,6 +31,7 @@ enum Functions {
     FUNC_SEND_TXT         = 0x20;
     FUNC_SEND_IMG         = 0x21;
     FUNC_SEND_FILE        = 0x22;
+    FUNC_SEND_XML         = 0x23;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
@@ -50,6 +51,7 @@ message Request
         DbQuery query  = 6;
         Verification v = 7;
         AddMembers m   = 8;
+        XmlMsg xml     = 9;
     }
 }
 
@@ -94,6 +96,14 @@ message PathMsg
 {
     string path     = 1; // 要发送的图片的路径
     string receiver = 2; // 消息接收人
+}
+
+message XmlMsg
+{
+    string receiver = 1; // 消息接收人
+    string content  = 2; // xml 内容
+    string path     = 3; // 图片路径
+    int32 type      = 4; // 消息类型
 }
 
 message MsgTypes { map<int32, string> types = 1; }

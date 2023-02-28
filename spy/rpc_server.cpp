@@ -234,6 +234,33 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_SEND_XML;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    if ((xml.content == NULL) || (xml.receiver == NULL)) {
+        rsp.msg.status = -1;
+    } else {
+        string receiver(xml.receiver);
+        string content(xml.content);
+        string path(xml.path ? xml.path : "");
+        uint32_t type = (uint32_t)xml.type;
+        SendXmlMessage(receiver, content, path, type);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static void PushMessage()
 {
     static nng_socket msg_sock;
@@ -417,7 +444,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         return false;
     }
 
-    LOG_DEBUG("Func: {}", (uint8_t)req.func);
+    LOG_DEBUG("Func: {:#x} Data: {}", (uint8_t)req.func, in_len);
     switch (req.func) {
         case Functions_FUNC_IS_LOGIN: {
             LOG_DEBUG("[Functions_FUNC_IS_LOGIN]");
@@ -462,6 +489,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_SEND_FILE: {
             LOG_DEBUG("[Functions_FUNC_SEND_FILE]");
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_XML: {
+            LOG_DEBUG("[Functions_FUNC_SEND_XML]");
+            ret = func_send_xml(req.msg.xml, out, out_len);
             break;
         }
         case Functions_FUNC_ENABLE_RECV_TXT: {
@@ -527,7 +559,7 @@ static int RunServer()
             break;
         }
 
-        LOG_BUFFER(in, in_len);
+        // LOG_BUFFER(in, in_len);
         if (dispatcher(in, in_len, gBuffer, &out_len)) {
             LOG_DEBUG("Send data length {}", out_len);
             // LOG_BUFFER(gBuffer, out_len);
