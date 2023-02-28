@@ -331,7 +331,7 @@ class Wcf():
         return result
 
     def accept_new_friend(self, v3: str, v4: str) -> int:
-        """发送文件"""
+        """添加好友"""
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ACCEPT_FRIEND  # FUNC_ACCEPT_FRIEND
         req.v.v3 = v3
