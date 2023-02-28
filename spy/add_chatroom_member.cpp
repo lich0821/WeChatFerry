@@ -19,6 +19,11 @@ typedef struct MemberList {
 
 int AddChatroomMember(string roomid, string wxids)
 {
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
     int rv                   = 0;
     DWORD addRoomMemberCall1 = g_WeChatWinDllAddr + g_WxCalls.arm.call1;
     DWORD addRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
@@ -32,18 +37,16 @@ int AddChatroomMember(string roomid, string wxids)
 
     vector<wstring> vMembers;
     vector<TextStruct_t> vTxtMembers;
-    if (!wxids.empty()) {
-        wstringstream wss(String2Wstring(wxids));
-        while (wss.good()) {
-            wstring wstr;
-            getline(wss, wstr, L',');
-            vMembers.push_back(wstr);
-            TextStruct_t txtMember = { 0 };
-            txtMember.text         = (wchar_t *)vMembers.back().c_str();
-            txtMember.size         = vMembers.back().size();
-            txtMember.capacity     = vMembers.back().capacity();
-            vTxtMembers.push_back(txtMember);
-        }
+    wstringstream wss(String2Wstring(wxids));
+    while (wss.good()) {
+        wstring wstr;
+        getline(wss, wstr, L',');
+        vMembers.push_back(wstr);
+        TextStruct_t txtMember = { 0 };
+        txtMember.text         = (wchar_t *)vMembers.back().c_str();
+        txtMember.size         = vMembers.back().size();
+        txtMember.capacity     = vMembers.back().capacity();
+        vTxtMembers.push_back(txtMember);
     }
 
     LOG_DEBUG("Adding {} members[{}] to {}", vTxtMembers.size(), wxids.c_str(), roomid.c_str());
