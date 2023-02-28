@@ -35,6 +35,7 @@ enum Functions {
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
     FUNC_ACCEPT_FRIEND    = 0x51;
+    FUNC_ADD_ROOM_MEMBERS = 0x52;
 }
 
 message Request
@@ -48,6 +49,7 @@ message Request
         PathMsg file   = 5;
         DbQuery query  = 6;
         Verification v = 7;
+        AddMembers m   = 8;
     }
 }
 
@@ -136,4 +138,10 @@ message Verification
 {
     string v3 = 1;
     string v4 = 2;
+}
+
+message AddMembers
+{
+    string roomid = 1; // 要加的群ID
+    string wxids  = 2; // 要加群的人列表，逗号分隔
 }

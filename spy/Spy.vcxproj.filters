@@ -75,6 +75,9 @@
     <ClInclude Include="..\rpc\pb_types.h">
       <Filter>nnrpc</Filter>
     </ClInclude>
+    <ClInclude Include="add_chatroom_member.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="..\rpc\pb_util.cpp">
       <Filter>nnrpc</Filter>
+    </ClCompile>
+    <ClCompile Include="add_chatroom_member.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

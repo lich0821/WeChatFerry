@@ -75,6 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_debug</TargetName>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -224,6 +225,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClInclude Include="..\rpc\pb_util.h" />
     <ClInclude Include="..\rpc\proto\wcf.pb.h" />
     <ClInclude Include="accept_new_friend.h" />
+    <ClInclude Include="add_chatroom_member.h" />
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="get_contacts.h" />
@@ -243,6 +245,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClCompile Include="..\rpc\pb_util.cpp" />
     <ClCompile Include="..\rpc\proto\wcf.pb.c" />
     <ClCompile Include="accept_new_friend.cpp" />
+    <ClCompile Include="add_chatroom_member.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="get_contacts.cpp" />

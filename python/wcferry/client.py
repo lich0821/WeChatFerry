@@ -70,7 +70,7 @@ class Wcf():
             cmd = f"{WCF_ROOT}/wcf.exe start {'debug' if debug else ''}"
             if os.system(cmd) != 0:
                 self.LOG.error("初始化失败！")
-                return
+                exit(-1)
 
         # 连接 RPC
         self.cmd_socket = pynng.Pair1()  # Client --> Server，发送消息
@@ -358,3 +358,12 @@ class Wcf():
             friends.append(cnt)
 
         return friends
+
+    def add_chatroom_members(self, roomid: str, wxids: str) -> int:
+        """添加群成员"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_ADD_ROOM_MEMBERS  # FUNC_ADD_ROOM_MEMBERS
+        req.m.roomid = roomid
+        req.m.wxids = wxids
+        rsp = self._send_request(req)
+        return rsp.status

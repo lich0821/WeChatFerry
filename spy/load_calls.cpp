@@ -19,7 +19,8 @@ WxCalls_t wxCalls = {
     /* Exec Sql:
           Exec,     base,   start,   end,   slot, name*/
     { 0x141BDF0, 0x2366934, 0x1428, 0x142C, 0x3C, 0x50 },
-    { 0x771980, 0x2AE8D0, 0x1EE40E0 } // Accept New Friend application
+    { 0x771980, 0x2AE8D0, 0x1EE40E0 }, // Accept New Friend application
+    { 0xE29F0, 0x771980, 0x43D8D0 }    // Add chatroom members
 };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)
