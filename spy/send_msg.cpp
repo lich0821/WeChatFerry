@@ -38,33 +38,25 @@ void SendTextMessage(string wxid, string msg, string atWxids)
     txtWxid.size     = wsWxid.size();
     txtWxid.capacity = wsWxid.capacity();
 
+    vector<TextStruct_t> vTxtAtWxids;
     if (!atWxids.empty()) {
-        int i       = 0;
-        wstring tmp = String2Wstring(atWxids);
-        wstring wstr;
         vector<wstring> vAtWxids;
-        wstringstream wss(tmp);
+        wstringstream wss(String2Wstring(atWxids));
         while (wss.good()) {
+            wstring wstr;
             getline(wss, wstr, L',');
             vAtWxids.push_back(wstr);
+            TextStruct_t txtAtWxid = { 0 };
+            txtAtWxid.text         = (wchar_t *)vAtWxids.back().c_str();
+            txtAtWxid.size         = vAtWxids.back().size();
+            txtAtWxid.capacity     = vAtWxids.back().capacity();
+            vTxtAtWxids.push_back(txtAtWxid);
         }
-        tsArray = new TextStruct_t[vAtWxids.size() + 1];
-        // memset(tsArray, 0, (vAtWxids.size() + 1) * sizeof(TextStruct_t));
-        for (auto it = vAtWxids.begin(); it != vAtWxids.end(); it++) {
-            tsArray[i].text     = (wchar_t *)it->c_str();
-            tsArray[i].size     = it->size();
-            tsArray[i].capacity = it->capacity();
-            i++;
-        }
-
-        atList.start = (DWORD)tsArray;
-        atList.end1  = (DWORD)&tsArray[i];
-        atList.end2  = (DWORD)&tsArray[i];
     }
 
     __asm
     {
-        lea eax, atList;
+        lea eax, vTxtAtWxids;
         push 0x01;
         push eax;
         lea edi, txtMsg;
@@ -73,12 +65,6 @@ void SendTextMessage(string wxid, string msg, string atWxids)
         lea ecx, buffer;
         call sendCallAddress;
         add esp, 0xC;
-    }
-
-    if (tsArray)
-    {
-        delete[] tsArray;
-        tsArray = NULL;
     }
 }
 
