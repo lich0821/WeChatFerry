@@ -1,5 +1,23 @@
 # WeChatFerry
-传送信息往返微信的摆渡车。更多介绍见：[微信机器人 DIY 从 0 到 1](https://mp.weixin.qq.com/s/c4ntj-7NTmbpSfF8df6dIw)。
+一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/s/CGLfSaNDy8MyuyPWGjGJ7w)。
+
+目前实现的功能：
+* 检查登录状态
+* 获取登录账号的 wxid
+* 获取消息类型
+* 获取所有联系人
+* 获取所有好友
+* 获取数据库
+* 获取某数据库下的表
+* 发送文本消息（可 @）
+* 发送图片
+* 发送文件
+* 发送 XML
+* 允许接收消息
+* 停止接收消息
+* 执行 SQL 查询
+* 接受好友申请
+* 添加群成员
 
 ![Demo](demo.gif)
 
@@ -11,16 +29,13 @@
 
 ## 快速开始
 下载[最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
-* C/C++
-* Java
-* Node.js
 * Python
 
-### C/C++
-直接运行 `cpp.exe`，会拉起微信（如果还没启动的话），登录之后，会依次执行各功能，具体见 [main.cpp](cpp/main.cpp)。
-
-### Java
-使用惯用IDE，打开工程，编译运行。需要注意，使用32位的JDK，具体见内部 [README.MD](java/README.MD)。
+> [gRPC 分支](https://github.com/lich0821/WeChatFerry/tree/grpc) 支持更多客户端：
+> * C/C++
+> * Java
+> * Node.js
+> * Python
 
 ### Python
 * 安装
@@ -29,6 +44,7 @@ pip install wcferry
 ```
 
 * 运行
+
 参考 [README.MD](python/README.MD)。
 
 ## 一起开发
@@ -47,68 +63,70 @@ git clone https://github.com/microsoft/vcpkg
 
 #### 安装 gRPC 相关组件
 ```sh
-vcpkg install grpc:x86-windows-static
 vcpkg install protobuf[zlib]:x86-windows-static
+vcpkg install spdlog:x86-windows-static
+vcpkg install nng:x86-windows-static
 vcpkg integrate install
 ```
 
 #### 安装 VS2019
 
-### 生成编解码文件和接口文件
-```sh
-cd WeChatFerry/proto/
-protoc --cpp_out=. -I=. wcf.proto
-protoc --grpc_out=. --plugin=protoc-gen-grpc="C:\Tools\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" -I=. wcf.proto
-```
-
-执行 `tree .`，可见生成了四个文件：
-```txt
-.
-├── wcf.grpc.pb.cc
-├── wcf.grpc.pb.h
-├── wcf.pb.cc
-├── wcf.pb.h
-└── wcf.proto
-```
-
 ### 编译
 使用 VS2019 打开工程，编译即可。
 
 ### 运行
-双击 `Release` 里的 `cpp.exe`。如果出现中文乱码，则需要将编码改为 `UTF-8`。
+双击 `Release` 里的 `launcher.exe`，`启动`。
 
 ## 项目结构
-### cpp
-C++ 示例应用，介绍如何使用 WeChatFerry。
-
-### java
-Java 客户端。
+```sh
+WeChatFerry
+├── LICENSE           # LICENSE
+├── README.MD         # 说明
+├── TEQuant.jpeg      # 二维码，测试用图
+├── WeChatFerry.sln   # VS2019 工程文件
+├── demo.gif          # 示例图
+├── launcher          # 图形版启动器
+├── python            # Python 客户端
+├── rpc               # RPC 模块
+├── sdk               # 注入及启动模块
+├── spy               # 核心功能实现模块
+└── wcf               # 命令行版启动器
+```
 
 ### launcher
-启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。监听的地址为 `0.0.0.0:10086`。后续考虑把注入功能从各个客户端中去掉，以解除对 32 位版本的限制。
-
-### nodejs
-Node.js 客户端（群友贡献），内含一个简单游戏及股票查询逻辑。
-
-### proto
-RPC 消息及接口定义。
+图形启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。
 
 ### python
 Python 客户端。
 
+### rpc
+RPC 的通信部分和序列化 / 反序列化部分。
+
 ### sdk
-负责将 `spy` 注入微信进程，并启动 gRPC 服务端。
+负责将 `spy` 注入微信进程，并启动 RPC 服务。
 
 ### spy
 间谍模块，注入到微信中，通过 RPC 做消息转发工作。
 
+### wcf
+跟 `launcher` 类似，命令行版启动器。
+
 ## 版本更新
-### v3.7.0.30.12
+### v3.7.0.30.15（2023.03.01）
+* 发送 xml
+
+### v3.7.0.30.14（2023.02.28）
+* 添加群成员
+
+### v3.7.0.30.13（2023.02.27）
+去除 gRPC 框架，自定义更轻量的 RPC 轮子 `nnprc`。
+
+### v3.7.0.30.12（2023.01.20）
 * 更新 Python 客户端
 * 修改监听地址为 `0.0.0.0:10086`
 * 增加 `Launcher`，直接注入 `spy`
 
-### v3.7.0.30.11
+### v3.7.0.30.11（2022.10.19）
 更新 Python 客户端。
 
 ### v3.7.0.30-gRPC-2（2022.10.18）
