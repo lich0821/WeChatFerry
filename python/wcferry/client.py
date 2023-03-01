@@ -19,7 +19,7 @@ WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2  # noqa
 
-__version__ = "3.7.0.30.14"
+__version__ = "3.7.0.30.15"
 
 
 class Wcf():
@@ -150,7 +150,7 @@ class Wcf():
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_MSG_TYPES  # FUNC_GET_MSG_TYPES
         rsp = self._send_request(req)
-        types = json_format.MessageToDict(rsp.types)["types"]
+        types = json_format.MessageToDict(rsp.types).get("types", {})
         types = {int(k): v for k, v in types.items()}
 
         return dict(sorted(dict(types).items()))
@@ -160,7 +160,7 @@ class Wcf():
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_CONTACTS  # FUNC_GET_CONTACTS
         rsp = self._send_request(req)
-        contacts = json_format.MessageToDict(rsp.contacts)["contacts"]
+        contacts = json_format.MessageToDict(rsp.contacts).get("contacts", [])
 
         for cnt in contacts:
             gender = cnt.get("gender", "")
@@ -184,7 +184,7 @@ class Wcf():
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_DB_NAMES  # FUNC_GET_DB_NAMES
         rsp = self._send_request(req)
-        dbs = json_format.MessageToDict(rsp.dbs)["names"]
+        dbs = json_format.MessageToDict(rsp.dbs).get("names", [])
 
         return dbs
 
@@ -333,7 +333,7 @@ class Wcf():
         req.query.db = db
         req.query.sql = sql
         rsp = self._send_request(req)
-        rows = json_format.MessageToDict(rsp.rows)["rows"]
+        rows = json_format.MessageToDict(rsp.rows).get("rows", [])
         for r in rows:
             row = {}
             for f in r["fields"]:
