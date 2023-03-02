@@ -22,6 +22,25 @@ import wcf_pb2  # noqa
 __version__ = "3.7.0.30.15.1"
 
 
+def _retry():
+    def decorator(func):
+        """ Retry the function """
+        def wrapper(*args, **kwargs):
+            try:
+                ret = func(*args, **kwargs)
+            except Exception as _:
+                try:
+                    ret = func(*args, **kwargs)
+                except Exception as e:
+                    func_name = re.findall(r"func: (.*?)\n", str(args[1]))[-1]
+                    logging.getLogger("WCF").error(f"Call {func_name} failed: {e}")
+                    ret = None
+
+            return ret
+        return wrapper
+    return decorator
+
+
 class Wcf():
     """WeChatFerry, a tool to play WeChat."""
     class WxMsg():
@@ -119,6 +138,7 @@ class Wcf():
         except Exception as e:
             self.cleanup()
 
+    @_retry()
     def _send_request(self, req: wcf_pb2.Request) -> wcf_pb2.Response:
         data = req.SerializeToString()
         self.cmd_socket.send(data)
