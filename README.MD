@@ -28,8 +28,8 @@
 ![碲矿](TEQuant.jpeg)
 
 ## 快速开始
-下载[最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
-* Python
+下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
+* Python [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry)
 
 > [gRPC 分支](https://github.com/lich0821/WeChatFerry/tree/grpc) 支持更多客户端：
 > * C/C++
