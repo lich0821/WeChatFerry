@@ -19,7 +19,7 @@ WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2  # noqa
 
-__version__ = "3.7.0.30.16"
+__version__ = "3.7.0.30.17"
 
 
 def _retry():
@@ -57,7 +57,7 @@ class Wcf():
             self.content = msg.content
 
         def __str__(self) -> str:
-            s = f"{self.sender}[{self.roomid}]\t{self.id}-{self.type}-{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
+            s = f"{self.sender}[{self.roomid}] {self.id}-{self.type}-{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
             s += self.content
             return s
 
@@ -83,6 +83,7 @@ class Wcf():
         self._is_running = False
         self._is_receiving_msg = False
         self.LOG = logging.getLogger("WCF")
+        self.LOG.info(f"wcferry version: {__version__}")
         if host_port is None:
             self._local_host = True
             host_port = "tcp://127.0.0.1:10086"
@@ -311,7 +312,6 @@ class Wcf():
             # 退出前关闭通信通道
             self.msg_socket.close()
 
-        self.LOG.warning("将会移除，请用 enable_receiving_msg 和 get_msg")
         if self._is_receiving_msg:
             return True
 
