@@ -66,10 +66,11 @@ bool func_is_login(uint8_t *out, size_t *len)
 
 bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
+    string wxid = GetSelfWxid();
     Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_IS_LOGIN;
+    rsp.func      = Functions_FUNC_GET_SELF_WXID;
     rsp.which_msg = Response_str_tag;
-    rsp.msg.str   = (char *)GetSelfWxid().c_str();
+    rsp.msg.str   = (char *)wxid.c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
