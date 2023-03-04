@@ -275,18 +275,18 @@ static void PushMessage()
 
     char *url = (char *)MSG_URL;
     if ((rv = nng_pair1_open(&msg_sock)) != 0) {
-        LOG_ERROR("nng_pair0_open error {}", rv);
+        LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return;
     }
 
     if ((rv = nng_listen(msg_sock, url, NULL, 0)) != 0) {
-        LOG_ERROR("nng_listen error {}", rv);
+        LOG_ERROR("nng_listen error {}", nng_strerror(rv));
         return;
     }
 
-    LOG_DEBUG("Server listening on {}", url);
+    LOG_INFO("MSG Server listening on {}", url);
     if ((rv = nng_setopt_ms(msg_sock, NNG_OPT_SENDTIMEO, 2000)) != 0) {
-        LOG_ERROR("nng_setopt_ms: {}", rv);
+        LOG_ERROR("nng_setopt_ms: {}", nng_strerror(rv));
         return;
     }
 
@@ -312,7 +312,7 @@ static void PushMessage()
 
                 rv = nng_send(msg_sock, buffer, stream.bytes_written, 0);
                 if (rv != 0) {
-                    LOG_ERROR("nng_send: {}", rv);
+                    LOG_ERROR("nng_send: {}", nng_strerror(rv));
                 }
                 LOG_DEBUG("Send data length {}", stream.bytes_written);
             }
@@ -535,18 +535,18 @@ static int RunServer()
     int rv    = 0;
     char *url = (char *)CMD_URL;
     if ((rv = nng_pair1_open(&sock)) != 0) {
-        LOG_ERROR("nng_pair0_open error {}", rv);
+        LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return rv;
     }
 
     if ((rv = nng_listen(sock, url, NULL, 0)) != 0) {
-        LOG_ERROR("nng_listen error {}", rv);
+        LOG_ERROR("nng_listen error {}", nng_strerror(rv));
         return rv;
     }
 
-    LOG_INFO("Server listening on {}", url);
+    LOG_INFO("CMD Server listening on {}", url);
     if ((rv = nng_setopt_ms(sock, NNG_OPT_SENDTIMEO, 1000)) != 0) {
-        LOG_ERROR("nng_setopt_ms: {}", rv);
+        LOG_ERROR("nng_setopt_ms error: {}", nng_strerror(rv));
         return rv;
     }
 
@@ -555,7 +555,7 @@ static int RunServer()
         uint8_t *in = NULL;
         size_t in_len, out_len = G_BUF_SIZE;
         if ((rv = nng_recv(sock, &in, &in_len, NNG_FLAG_ALLOC)) != 0) {
-            LOG_ERROR("nng_recv: {}", rv);
+            LOG_ERROR("nng_recv error: {}", nng_strerror(rv));
             break;
         }
 
@@ -565,13 +565,16 @@ static int RunServer()
             // LOG_BUFFER(gBuffer, out_len);
             rv = nng_send(sock, gBuffer, out_len, 0);
             if (rv != 0) {
-                LOG_ERROR("nng_send: {}", rv);
+                LOG_ERROR("nng_send: {}", nng_strerror(rv));
             }
 
         } else {
             // Error
             LOG_ERROR("Dispatcher failed...");
             rv = nng_send(sock, gBuffer, 0, 0);
+            if (rv != 0) {
+                LOG_ERROR("nng_send: {}", nng_strerror(rv));
+            }
             // break;
         }
         nng_free(in, in_len);
