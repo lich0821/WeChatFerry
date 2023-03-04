@@ -34,7 +34,7 @@ def _retry():
                 except Exception as e:
                     func_name = re.findall(r"func: (.*?)\n", str(args[1]))[-1]
                     logging.getLogger("WCF").error(f"Call {func_name} failed: {e}")
-                    ret = None
+                    ret = wcf_pb2.Response()
 
             return ret
         return wrapper
