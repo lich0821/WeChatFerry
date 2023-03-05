@@ -2,8 +2,8 @@
 
 #include "accept_new_friend.h"
 #include "load_calls.h"
-#include "util.h"
 #include "log.h"
+#include "util.h"
 
 typedef struct NewFriendParam {
     DWORD handle;
@@ -18,7 +18,7 @@ extern DWORD g_WeChatWinDllAddr;
 
 int AcceptNewFriend(std::string v3, std::string v4)
 {
-    int isSucceeded = false;
+    int isSucceeded = 0;
 
     DWORD acceptNewFriendCall1  = g_WeChatWinDllAddr + g_WxCalls.anf.call1;
     DWORD acceptNewFriendCall2  = g_WeChatWinDllAddr + g_WxCalls.anf.call2;
@@ -35,8 +35,18 @@ int AcceptNewFriend(std::string v3, std::string v4)
     NewFriendParam_t *pParam = &param;
 
     LOG_DEBUG("v3: {}\nv4: {}", v3, v4);
-    const wchar_t *wsV3 = String2Wstring(v3).c_str();
-    const wchar_t *wsV4 = String2Wstring(v4).c_str();
+    WxString_t wxV3   = { 0 };
+    WxString_t wxV4   = { 0 };
+    std::wstring wsV3 = String2Wstring(v3);
+    std::wstring wsV4 = String2Wstring(v4);
+
+    wxV3.text     = (wchar_t *)wsV3.c_str();
+    wxV3.size     = wsV3.size();
+    wxV3.capacity = wsV3.capacity();
+
+    wxV4.text     = (wchar_t *)wsV4.c_str();
+    wxV4.size     = wsV4.size();
+    wxV4.capacity = wsV4.capacity();
 
     __asm {
         pushad;
@@ -45,14 +55,14 @@ int AcceptNewFriend(std::string v3, std::string v4)
         push 0x6;
         sub esp, 0x14;
         mov ecx, esp;
-        lea eax, wsV4;
+        lea eax, wxV4;
         push eax;
         call acceptNewFriendCall1;
         sub esp, 0x8;
         push 0x0;
         lea eax, buffer;
         push eax;
-        lea eax, wsV3;
+        lea eax, wxV3;
         push eax;
         mov ecx, pParam;
         call acceptNewFriendCall2;
@@ -61,5 +71,5 @@ int AcceptNewFriend(std::string v3, std::string v4)
         popad;
     }
 
-    return isSucceeded;
+    return isSucceeded; // 成功返回 1
 }
