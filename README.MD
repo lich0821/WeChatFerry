@@ -61,7 +61,7 @@ git clone https://github.com/microsoft/vcpkg
 * 添加全局配置：
 环境变量增加 `vcpkg` 所在路径（本文为：`C:\Tools\vcpkg`）。
 
-#### 安装 gRPC 相关组件
+#### 安装相关组件
 ```sh
 vcpkg install protobuf[zlib]:x86-windows-static
 vcpkg install spdlog:x86-windows-static
