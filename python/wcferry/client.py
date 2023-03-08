@@ -19,7 +19,7 @@ WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2  # noqa
 
-__version__ = "3.7.0.30.19"
+__version__ = "3.7.0.30.19.1"
 
 
 def _retry():
@@ -57,7 +57,8 @@ class Wcf():
             self.content = msg.content
 
         def __str__(self) -> str:
-            s = f"{self.sender}[{self.roomid}] {self.id}-{self.type}-{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
+            s = f"{'自己发的:' if self._is_self else ''}"
+            s += f"{self.sender}[{self.roomid}]:{self.id}:{self.type}:{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
             s += self.content
             return s
 
