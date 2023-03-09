@@ -383,9 +383,9 @@ class Wcf():
         }
         friends = []
         for cnt in self.get_contacts():
-            if (cnt.wxid.endswith("@chatroom")      # 群聊
-                or cnt.wxid.startswith("gh_")       # 公众号
-                or cnt.wxid in not_friends.keys()   # 其他杂号
+            if (cnt["wxid"].endswith("@chatroom")      # 群聊
+                or cnt["wxid"].startswith("gh_")       # 公众号
+                or cnt["wxid"] in not_friends.keys()   # 其他杂号
                 ):
                 continue
             friends.append(cnt)
