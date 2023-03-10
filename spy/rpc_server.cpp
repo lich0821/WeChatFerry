@@ -28,14 +28,14 @@
 #include "send_msg.h"
 #include "spy.h"
 #include "spy_types.h"
+#include "user_info.h"
 #include "util.h"
 
 #define G_BUF_SIZE (16 * 1024 * 1024)
 #define CMD_URL    "tcp://0.0.0.0:10086"
 #define MSG_URL    "tcp://0.0.0.0:10087"
 
-extern int IsLogin(void);    // Defined in spy.cpp
-extern string GetSelfWxid(); // Defined in spy.cpp
+extern int IsLogin(void); // Defined in spy.cpp
 
 bool gIsListening;
 mutex gMutex;
