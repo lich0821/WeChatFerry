@@ -32,6 +32,7 @@ enum Functions {
     FUNC_SEND_IMG         = 0x21;
     FUNC_SEND_FILE        = 0x22;
     FUNC_SEND_XML         = 0x23;
+    FUNC_SEND_EMOTION     = 0x24;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;

@@ -14,8 +14,8 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
     char buffer[0x3B0] = { 0 };
-    WxString_t wxMsg  = { 0 };
-    WxString_t wxWxid = { 0 };
+    WxString_t wxMsg   = { 0 };
+    WxString_t wxWxid  = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
@@ -251,5 +251,71 @@ void SendXmlMessage(string receiver, string xml, string path, int type)
 		add esp, 0x8;
 		popfd;
 		popad;
+    }
+}
+
+void SendEmotionMessage(string wxid, string path)
+{
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+
+    char buffer[0x1C]    = { 0 };
+    WxString_t emoWxid    = { 0 };
+    WxString_t emoPath    = { 0 };
+    WxString_t nullbuffer = { 0 };
+
+    wstring wsWxid = String2Wstring(wxid);
+    wstring wspath = String2Wstring(path);
+
+    emoWxid.text     = (wchar_t *)wsWxid.c_str();
+    emoWxid.size     = wsWxid.size();
+    emoWxid.capacity = wsWxid.capacity();
+
+    emoPath.text     = (wchar_t *)wspath.c_str();
+    emoPath.size     = wspath.size();
+    emoPath.capacity = wspath.capacity();
+
+    // 发送文件Call地址 = 微信基址 + 偏移
+    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call1;
+    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call2;
+    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call3;
+
+    __asm {
+        pushad;
+        pushfd;
+        mov ebx, dword ptr[sendCall3];
+        lea eax, buffer;
+        push eax;
+        push 0x0;
+        sub esp, 0x14;
+        mov esi, esp;
+        mov dword ptr [esi], 0x0;
+        mov dword ptr [esi+0x4], 0x0;
+        mov dword ptr [esi+0x8], 0x0;
+        mov dword ptr [esi+0xC], 0x0;
+        mov dword ptr [esi+0x10], 0x0;
+        push 0x2;
+        lea eax, emoWxid;
+        sub esp, 0x14;
+        mov ecx, esp;
+        push eax;
+        call sendCall1;
+        sub esp, 0x14;
+        mov esi, esp;
+        mov dword ptr [esi], 0x0;
+        mov dword ptr [esi+0x4], 0x0;
+        mov dword ptr [esi+0x8], 0x0;
+        mov dword ptr [esi+0xC], 0x0;
+        mov dword ptr [esi+0x10], 0x0;
+        sub esp, 0x14;
+        mov ecx, esp;
+        lea eax, emoPath;
+        push eax;
+        call sendCall1;
+        mov ecx, ebx;
+        call sendCall2;
+        popfd;
+        popad;
     }
 }

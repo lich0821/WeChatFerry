@@ -75,6 +75,7 @@ typedef struct WxCalls {
     Sendfile_t sendImg;  // 发送图片
     Sendfile_t sendFile; // 发送文件
     Xml_t sendXml;       // 发送XML
+    Sendfile_t sendEmo;  // 发送表情
     Contact_t contact;   // 获取联系人
     Sql_t sql;           // 执行 SQL
     NewFriend_t anf;     // 通过好友申请

@@ -262,6 +262,29 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_SEND_EMOTION;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    if ((path == NULL) || (receiver == NULL)) {
+        rsp.msg.status = -1;
+    } else {
+        SendEmotionMessage(receiver, path);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static void PushMessage()
 {
     static nng_socket msg_sock;
@@ -496,6 +519,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_SEND_XML: {
             LOG_DEBUG("[Functions_FUNC_SEND_XML]");
             ret = func_send_xml(req.msg.xml, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_EMOTION: {
+            LOG_DEBUG("[Functions_FUNC_SEND_EMOTION]");
+            ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_ENABLE_RECV_TXT: {

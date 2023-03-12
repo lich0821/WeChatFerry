@@ -261,6 +261,15 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def send_emotion(self, path: str, receiver: str) -> int:
+        """发送表情"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SEND_EMOTION  # FUNC_SEND_EMOTION
+        req.file.path = path
+        req.file.receiver = receiver
+        rsp = self._send_request(req)
+        return rsp.status
+
     def get_msg(self, block=True) -> WxMsg:
         return self.msgQ.get(block, timeout=1)
 
@@ -384,9 +393,9 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom")      # 群聊
-                or cnt["wxid"].startswith("gh_")       # 公众号
-                or cnt["wxid"] in not_friends.keys()   # 其他杂号
-                ):
+                    or cnt["wxid"].startswith("gh_")       # 公众号
+                    or cnt["wxid"] in not_friends.keys()   # 其他杂号
+                    ):
                 continue
             friends.append(cnt)
 
