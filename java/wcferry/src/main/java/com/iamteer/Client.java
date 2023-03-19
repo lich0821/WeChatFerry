@@ -5,6 +5,8 @@ import com.iamteer.Wcf.Request;
 import com.iamteer.Wcf.Response;
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import java.util.Arrays;
 public class Client {
     private final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
     private Socket socket = null;
+    private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public Client(String hostPort) {
         connectRPC(hostPort);
@@ -21,11 +24,12 @@ public class Client {
         try {
             socket = new Pair1Socket();
             socket.dial(url);
+            logger.info("请点击登录微信");
             while (!isLogin()) { // 直到登录成功
                 waitMs(1000);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("连接 RPC 失败: ", e);
             System.exit(-1);
         }
     }
@@ -55,7 +59,7 @@ public class Client {
             long size = socket.receive(ret, true);
             return Response.parseFrom(Arrays.copyOfRange(ret.array(), 0, (int) size));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("命令调用失败: ", e);
             return null;
         }
     }
