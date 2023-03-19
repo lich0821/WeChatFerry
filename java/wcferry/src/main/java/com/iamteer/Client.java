@@ -12,9 +12,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class Client {
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
     private final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
     private Socket socket = null;
-    private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public Client(String hostPort) {
         connectRPC(hostPort);
@@ -41,6 +41,16 @@ public class Client {
             return rsp.getStatus() == 1;
         }
         return false;
+    }
+
+    public String getSelfWxid() {
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getStr();
+        }
+
+        return "";
     }
 
     public void waitMs(int ms) {

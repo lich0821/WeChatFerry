@@ -11,5 +11,6 @@ public class Main {
         Client client = new Client(url);
 
         logger.info("isLogin: {}", client.isLogin());
+        logger.info("wxid: {}", client.getSelfWxid());
     }
 }
