@@ -115,6 +115,27 @@ public class Client {
 
         return tables;
     }
+/**
+ * @Description  发送文本消息
+ * @param msg: 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
+ * @param receiver: 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx），群聊为 roomid（xxxxxxxxxx@chatroom）
+ * @param aters: 群聊时要 @ 的人（私聊时为空字符串），多个用逗号分隔。@所有人 用 notify@all（必须是群主或者管理员才有权限）
+ * @return int
+ * @author Changhua
+ * @example sendText("Hello @某人1 @某人2", "xxxxxxxx@chatroom", "wxid_xxxxxxxxxxxxx1,wxid_xxxxxxxxxxxxx2");
+**/
+    public int sendText(String msg, String receiver, String aters) {
+        Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
+        logger.debug(bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+
+        return ret;
+    }
 
     public void waitMs(int ms) {
         try {

@@ -28,5 +28,9 @@ public class Main {
         // 获取数据库下的表
         String db = "MicroMsg.db";
         logger.info("tables in {}: {}", db, client.getDbTables(db));
+
+        // 发送文本消息，aters 是要 @ 的 wxid，多个用逗号分隔；消息里@的数量要与aters里的数量对应
+        client.sendText("Hello", "filehelper", "");
+        // client.sendText("Hello @某人1 @某人2", "xxxxxxxx@chatroom", "wxid_xxxxxxxxxxxxx1,wxid_xxxxxxxxxxxxx2");
     }
 }
