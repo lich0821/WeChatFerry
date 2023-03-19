@@ -101,7 +101,6 @@ public class Client {
 
     public void printContacts(List<RpcContact> contacts) {
         for (RpcContact c : contacts) {
-            // logger.info(c.getWxid());
             int value = c.getGender();
             String gender;
             if (value == 1) {
