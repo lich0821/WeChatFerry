@@ -1,6 +1,7 @@
 package com.iamteer;
 
 import com.iamteer.Wcf.DbNames;
+import com.iamteer.Wcf.DbTable;
 import com.iamteer.Wcf.Functions;
 import com.iamteer.Wcf.Request;
 import com.iamteer.Wcf.Response;
@@ -102,6 +103,19 @@ public class Client {
         return Wcf.DbNames.newBuilder().build().getNamesList();
     }
 
+    public Map<String, String> getDbTables(String db) {
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
+        Response rsp = sendCmd(req);
+        Map<String, String> tables = new HashMap<>();
+        if (rsp != null) {
+            for (DbTable tbl : rsp.getTables().getTablesList()) {
+                tables.put(tbl.getName(), tbl.getSql());
+            }
+        }
+
+        return tables;
+    }
+
     public void waitMs(int ms) {
         try {
             Thread.sleep(ms);
@@ -125,5 +139,13 @@ public class Client {
             logger.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(),
                     c.getProvince(), c.getCity(), gender);
         }
+    }
+
+    public String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }
