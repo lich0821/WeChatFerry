@@ -12,5 +12,6 @@ public class Main {
 
         logger.info("isLogin: {}", client.isLogin());
         logger.info("wxid: {}", client.getSelfWxid());
+        logger.info("message types: {}", client.getMsgTypes());
     }
 }

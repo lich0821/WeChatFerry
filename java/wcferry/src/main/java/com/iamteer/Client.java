@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -51,6 +53,18 @@ public class Client {
         }
 
         return "";
+    }
+
+    public Map<Integer, String> getMsgTypes() {
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
+        Response rsp = sendCmd(req);
+        Map<Integer, String> types = new HashMap<>();
+
+        if (rsp != null) {
+            return rsp.getTypes().getTypesMap();
+        }
+
+        return Wcf.MsgTypes.newBuilder().build().getTypesMap();
     }
 
     public void waitMs(int ms) {
