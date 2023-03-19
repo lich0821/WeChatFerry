@@ -1,5 +1,6 @@
 package com.iamteer;
 
+import com.iamteer.Wcf.DbNames;
 import com.iamteer.Wcf.Functions;
 import com.iamteer.Wcf.Request;
 import com.iamteer.Wcf.Response;
@@ -89,6 +90,16 @@ public class Client {
         }
 
         return Wcf.RpcContacts.newBuilder().build().getContactsList();
+    }
+
+    public List<String> getDbNames() {
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getDbs().getNamesList();
+        }
+
+        return Wcf.DbNames.newBuilder().build().getNamesList();
     }
 
     public void waitMs(int ms) {

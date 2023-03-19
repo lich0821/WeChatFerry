@@ -14,5 +14,6 @@ public class Main {
         logger.info("wxid: {}", client.getSelfWxid());
         logger.info("message types: {}", client.getMsgTypes());
         client.printContacts(client.getContacts());
+        logger.info("dbs: {}", client.getDbNames());
     }
 }
