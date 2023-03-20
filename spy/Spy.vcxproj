@@ -110,6 +110,7 @@
       <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +124,9 @@
     <PostBuildEvent>
       <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -236,6 +240,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClInclude Include="send_msg.h" />
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
+    <ClInclude Include="user_info.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +260,7 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />
     <ClCompile Include="spy.cpp" />
+    <ClCompile Include="user_info.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>

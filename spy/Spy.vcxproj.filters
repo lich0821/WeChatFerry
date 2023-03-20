@@ -78,6 +78,9 @@
     <ClInclude Include="add_chatroom_member.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="user_info.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -129,6 +132,9 @@
       <Filter>nnrpc</Filter>
     </ClCompile>
     <ClCompile Include="add_chatroom_member.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="user_info.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
