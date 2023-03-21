@@ -35,5 +35,8 @@ public class Main {
 
         // 发送图片消息，图片必须要存在
         client.sendImage("C:\\Projs\\WeChatFerry\\TEQuant.jpeg", "filehelper");
+
+        // 发送文件消息，文件必须要存在
+        client.sendFile("C:\\Projs\\WeChatFerry\\README.MD", "filehelper");
     }
 }
