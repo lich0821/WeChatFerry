@@ -131,7 +131,20 @@ public class Client {
     public int sendText(String msg, String receiver, String aters) {
         Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
-        logger.debug("{}", bytesToHex(req.toByteArray()));
+        logger.debug("sendText: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+
+        return ret;
+    }
+
+    public int sendImage(String path, String receiver) {
+        Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
+        logger.debug("sendImage: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {

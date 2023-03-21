@@ -32,5 +32,8 @@ public class Main {
         // 发送文本消息，aters 是要 @ 的 wxid，多个用逗号分隔；消息里@的数量要与aters里的数量对应
         client.sendText("Hello", "filehelper", "");
         // client.sendText("Hello @某人1 @某人2", "xxxxxxxx@chatroom", "wxid_xxxxxxxxxxxxx1,wxid_xxxxxxxxxxxxx2");
+
+        // 发送图片消息，图片必须要存在
+        client.sendImage("C:\\Projs\\WeChatFerry\\TEQuant.jpeg", "filehelper");
     }
 }
