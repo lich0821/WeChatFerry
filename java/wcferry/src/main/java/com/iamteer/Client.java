@@ -181,6 +181,19 @@ public class Client {
         return ret;
     }
 
+    public int sendEmotion(String path, String receiver) {
+        Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
+        logger.debug("sendEmotion: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+
+        return ret;
+    }
+
     public void waitMs(int ms) {
         try {
             Thread.sleep(ms);
