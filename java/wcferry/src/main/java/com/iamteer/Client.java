@@ -167,6 +167,20 @@ public class Client {
         return ret;
     }
 
+    public int sendXml(String receiver, String xml, String path, int type) {
+        Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type)
+                .build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
+        logger.debug("sendXml: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+
+        return ret;
+    }
+
     public void waitMs(int ms) {
         try {
             Thread.sleep(ms);
