@@ -7,12 +7,16 @@ public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        final String url = "tcp://192.168.1.104:10086";
-        Client client = new Client(url);
+        // 连接远程 RPC
+        // final String url = "tcp://192.168.1.104:10086";
+        // Client client = new Client(url);
+
+        // 本地启动 RPC
+        Client client = new Client(true);
 
         // 是否已登录
         logger.info("isLogin: {}", client.isLogin());
-
+/*
         // 登录账号 wxid
         logger.info("wxid: {}", client.getSelfWxid());
 
@@ -53,6 +57,6 @@ public class Main {
         thread.start();
         // client.diableRecvMsg(); // 需要停止时调用
 
-        client.keepRunning();
+        client.keepRunning();*/
     }
 }

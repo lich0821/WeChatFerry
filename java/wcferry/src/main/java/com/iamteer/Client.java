@@ -6,6 +6,7 @@ import io.sisu.nng.pair.Pair1Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,17 +22,38 @@ public class Client {
     private Socket msgSocket = null;
     private String cmdUrl = "tcp://127.0.0.1:10086";
     private boolean isReceivingMsg = false;
+    private boolean isLocalHostPort = false;
     private BlockingQueue<WxMsg> msgQ;
+    private String wcfPath;
 
     public Client(String hostPort) {
         cmdUrl = hostPort;
-        connectRPC(hostPort);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                logger.info("关闭...");
-                diableRecvMsg();
+        connectRPC(cmdUrl);
+    }
+
+    public Client(boolean debug) {
+        try {
+            URL url = this.getClass().getResource("/win32-x86-64/wcf.exe");
+            wcfPath = url.getFile();
+            String[] cmd = new String[3];
+            cmd[0] = wcfPath;
+            cmd[1] = "start";
+            if (debug) {
+                cmd[2] = "debug";
+            } else {
+                cmd[2] = "";
             }
-        });
+            int status = Runtime.getRuntime().exec(cmd).waitFor();
+            if (status != 0) {
+                logger.error("启动 RPC 失败: {}", status);
+                System.exit(-1);
+            }
+            isLocalHostPort = true;
+            connectRPC(cmdUrl);
+        } catch (Exception e) {
+            logger.error("初始化失败: {}", e);
+            System.exit(-1);
+        }
     }
 
     private void connectRPC(String url) {
@@ -46,6 +68,26 @@ public class Client {
             logger.error("连接 RPC 失败: ", e);
             System.exit(-1);
         }
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                logger.info("关闭...");
+                diableRecvMsg();
+                if (isLocalHostPort) {
+                    try {
+                        String[] cmd = new String[2];
+                        cmd[0] = wcfPath;
+                        cmd[1] = "stop";
+                        Process process = Runtime.getRuntime().exec(cmd);
+                        int status = process.waitFor();
+                        if (status != 0) {
+                            System.err.println("停止机器人失败: " + status);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     private Response sendCmd(Request req) {
@@ -175,8 +217,7 @@ public class Client {
     }
 
     public int sendXml(String receiver, String xml, String path, int type) {
-        Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type)
-            .build();
+        Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
         logger.debug("sendXml: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
@@ -301,14 +342,12 @@ public class Client {
                 gender = "未知";
             }
 
-            logger.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(),
-                c.getProvince(), c.getCity(), gender);
+            logger.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(), c.getProvince(), c.getCity(), gender);
         }
     }
 
     public void printWxMsg(WxMsg msg) {
-        logger.info("{}[{}]:{}:{}:{}\n{}", msg.getSender(), msg.getRoomid(), msg.getId(), msg.getType(),
-            msg.getXml().replace("\n", "").replace("\t", ""), msg.getContent());
+        logger.info("{}[{}]:{}:{}:{}\n{}", msg.getSender(), msg.getRoomid(), msg.getId(), msg.getType(), msg.getXml().replace("\n", "").replace("\t", ""), msg.getContent());
     }
 
     public String bytesToHex(byte[] bytes) {
