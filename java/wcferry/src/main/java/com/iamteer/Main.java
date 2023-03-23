@@ -44,5 +44,15 @@ public class Main {
 
         // 发送表情消息，gif 必须要存在
         client.sendEmotion("C:\\Projs\\WeChatFerry\\emo.gif", "filehelper");
+
+        // 接收消息，并调用 printWxMsg 处理
+        client.enableRecvMsg(100);
+        Thread thread = new Thread(new Runnable() {
+            public void run(){while(client.getIsReceivingMsg()){client.printWxMsg(client.getMsg());}}
+        });
+        thread.start();
+        // client.diableRecvMsg(); // 需要停止时调用
+
+        client.keepRunning();
     }
 }
