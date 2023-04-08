@@ -1,4 +1,3 @@
 ﻿EXPORTS
     InitSpy
     CleanupSpy
-    IsLogin
