@@ -6,5 +6,5 @@
 #define SPY_API __declspec(dllimport)
 #endif
 
-int RpcStartServer();
+int RpcStartServer(const char *url);
 int RpcStopServer();

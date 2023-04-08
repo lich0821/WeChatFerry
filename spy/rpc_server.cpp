@@ -560,21 +560,20 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     return ret;
 }
 
-static int RunServer()
+static int RunServer(LPVOID url)
 {
-    int rv    = 0;
-    char *url = (char *)CMD_URL;
+    int rv = 0;
     if ((rv = nng_pair1_open(&sock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return rv;
     }
 
-    if ((rv = nng_listen(sock, url, NULL, 0)) != 0) {
+    if ((rv = nng_listen(sock, (char *)url, NULL, 0)) != 0) {
         LOG_ERROR("nng_listen error {}", nng_strerror(rv));
         return rv;
     }
 
-    LOG_INFO("CMD Server listening on {}", url);
+    LOG_INFO("CMD Server listening on {}", (char *)url);
     if ((rv = nng_setopt_ms(sock, NNG_OPT_SENDTIMEO, 1000)) != 0) {
         LOG_ERROR("nng_setopt_ms error: {}", nng_strerror(rv));
         return rv;
@@ -613,13 +612,13 @@ static int RunServer()
     return rv;
 }
 
-int RpcStartServer()
+int RpcStartServer(const char *url)
 {
     if (lIsRunning) {
         return 0;
     }
 
-    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, NULL, NULL, &lThreadId);
+    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, (LPVOID)url, NULL, &lThreadId);
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
     }

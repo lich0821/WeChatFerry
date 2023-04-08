@@ -69,14 +69,14 @@ static void *GetFuncAddr(LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName)
     return (void *)((DWORD)dllBase + offset);
 }
 
-bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, DWORD *ret)
+bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPVOID parameter, DWORD *ret)
 {
     void *pFunc = GetFuncAddr(dllPath, dllBase, funcName);
     if (pFunc == NULL) {
         return false;
     }
 
-    HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, NULL, 0, NULL);
+    HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, parameter, 0, NULL);
     if (hThread == NULL) {
         return false;
     }

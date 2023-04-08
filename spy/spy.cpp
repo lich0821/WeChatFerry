@@ -7,7 +7,7 @@
 WxCalls_t g_WxCalls      = { 0 };
 DWORD g_WeChatWinDllAddr = 0;
 
-void InitSpy()
+void InitSpy(const char *url)
 {
     wchar_t version[16] = { 0 };
     InitLogger();
@@ -24,10 +24,11 @@ void InitSpy()
     LOG_DEBUG("WeChat version: {}", Wstring2String(version).c_str());
     if (LoadCalls(version, &g_WxCalls) != 0) { // 加载微信版本对应的Call地址
         LOG_ERROR("不支持当前版本");
+        MessageBox(NULL, L"不支持当前版本", L"错误", 0);
         return;
     }
 
-    RpcStartServer();
+    RpcStartServer(url);
 }
 
 void CleanupSpy()
