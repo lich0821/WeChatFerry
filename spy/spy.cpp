@@ -7,7 +7,7 @@
 WxCalls_t g_WxCalls      = { 0 };
 DWORD g_WeChatWinDllAddr = 0;
 
-void InitSpy(const char *url)
+void InitSpy(int port)
 {
     wchar_t version[16] = { 0 };
     InitLogger();
@@ -28,13 +28,9 @@ void InitSpy(const char *url)
         return;
     }
 
-    RpcStartServer(url);
+    RpcStartServer(port);
 }
 
-void CleanupSpy()
-{
-    RpcStopServer();
-    // FreeLibraryAndExitThread(hModule, 0);
-}
+void CleanupSpy() { RpcStopServer(); }
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }

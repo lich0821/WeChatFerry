@@ -1,4 +1,4 @@
 ﻿#pragma once
 
-int WxInitSDK(bool debug, const char *url);
+int WxInitSDK(bool debug, int port);
 int WxDestroySDK();

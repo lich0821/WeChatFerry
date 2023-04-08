@@ -2,6 +2,5 @@
 
 #include "framework.h"
 
-void InitSpy();
+void InitSpy(int port);
 void CleanupSpy();
-int IsLogin(void);

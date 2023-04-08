@@ -34,12 +34,8 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
     return 0;
 }
 
-int WxInitSDK(bool debug, const char *url)
+int WxInitSDK(bool debug, int port)
 {
-    if (url == NULL) {
-        return -1;
-    }
-
     int status  = 0;
     DWORD wcPid = 0;
 
@@ -60,15 +56,8 @@ int WxInitSDK(bool debug, const char *url)
         LOG_ERROR("Failed to Inject DLL into WeChat.");
         return -1;
     }
-    size_t urlLen  = strlen(url) + 1;
-    LPVOID urlAddr = VirtualAllocEx(wcProcess, NULL, urlLen, MEM_COMMIT, PAGE_READWRITE);
-    if (urlAddr == NULL) {
-        LOG_ERROR("Failed to Alloc Memory.");
-        return NULL;
-    }
-    WriteProcessMemory(wcProcess, urlAddr, url, urlLen, NULL);
 
-    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "InitSpy", urlAddr, NULL)) {
+    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)port, NULL)) {
         LOG_ERROR("Failed to InitSpy.");
         return -1;
     }

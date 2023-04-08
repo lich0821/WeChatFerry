@@ -107,7 +107,8 @@ namespace launcher {
     private: System::Void Start_Click(System::Object^ sender, System::EventArgs^ e) {
         this->Start->Enabled = false;
         this->Stop->Enabled = true;
-        WxInitSDK(true, "tcp://0.0.0.0:10086");
+        int port = 10086;
+        WxInitSDK(true, port);
     }
     private: System::Void Stop_Click(System::Object^ sender, System::EventArgs^ e) {
         this->Stop->Enabled = false;

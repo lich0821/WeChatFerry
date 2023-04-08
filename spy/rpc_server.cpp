@@ -31,9 +31,9 @@
 #include "user_info.h"
 #include "util.h"
 
+#define URL_SIZE   20
+#define BASE_URL   "tcp://0.0.0.0"
 #define G_BUF_SIZE (16 * 1024 * 1024)
-#define CMD_URL    "tcp://0.0.0.0:10086"
-#define MSG_URL    "tcp://0.0.0.0:10087"
 
 extern int IsLogin(void); // Defined in spy.cpp
 
@@ -42,6 +42,7 @@ mutex gMutex;
 condition_variable gCV;
 queue<WxMsg_t> gMsgQueue;
 
+static int lport       = 0;
 static DWORD lThreadId = 0;
 static bool lIsRunning = false;
 static nng_socket sock;
@@ -297,7 +298,9 @@ static void PushMessage()
 
     pb_ostream_t stream = pb_ostream_from_buffer(buffer, G_BUF_SIZE);
 
-    char *url = (char *)MSG_URL;
+    char url[URL_SIZE + 1] = { 0 };
+    sprintf_s(url, URL_SIZE, "%s:%d", BASE_URL, lport + 1);
+    LOG_ERROR("URL: {}", url);
     if ((rv = nng_pair1_open(&msg_sock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return;
@@ -560,9 +563,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     return ret;
 }
 
-static int RunServer(LPVOID url)
+static int RunServer()
 {
-    int rv = 0;
+    int rv                 = 0;
+    char url[URL_SIZE + 1] = { 0 };
+    sprintf_s(url, URL_SIZE, "%s:%d", BASE_URL, lport);
     if ((rv = nng_pair1_open(&sock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return rv;
@@ -612,13 +617,15 @@ static int RunServer(LPVOID url)
     return rv;
 }
 
-int RpcStartServer(const char *url)
+int RpcStartServer(int port)
 {
     if (lIsRunning) {
         return 0;
     }
 
-    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, (LPVOID)url, NULL, &lThreadId);
+    lport = port;
+
+    HANDLE rpcThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RunServer, NULL, NULL, &lThreadId);
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
     }
