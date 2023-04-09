@@ -1,12 +1,35 @@
 # WeChatFerry Python 客户端
 ⚠️ **只支持 Windows** ⚠️
 
+🤖示例机器人框架：[WeChatRobot](https://github.com/lich0821/WeChatRobot)。
+
 ## 快速开始
 ```sh
 pip install --upgrade wcferry
 ```
 
-参考 Demo：
+### 接口清单
+* 检查登录状态：`is_login`
+* 获取登录账号的 wxid：`get_self_wxid`
+* 获取消息类型：`get_msg_types`
+* 获取所有联系人：`get_contacts`
+* 获取所有好友：`get_friends`
+* 获取数据库：`get_dbs`
+* 获取某数据库下的表：`get_tables`
+* 发送文本消息（可 @）：`send_text`
+* 发送图片：`send_image`
+* 发送文件：`send_file`
+* 发送 XML：`send_xml`
+* 发送表情：`send_emotion`
+* 允许接收消息：`enable_receiving_msg` 和 `enable_recv_msg（旧接口）`
+* 停止接收消息：`disable_recv_msg`
+* 执行 SQL 查询：`query_sql`
+* 接受好友申请：`accept_new_friend`
+* 添加群成员：`add_chatroom_members`
+
+详情查看 [client.py](wcferry/client.py)。
+
+### Demo：
 ```py
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -111,5 +134,3 @@ python -m grpc_tools.protoc --python_out=. --proto_path=..\..\rpc\proto\ wcf.pro
 # GitBash
 python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.proto
 ```
-
-### 参考项目 [README](../README.MD)
