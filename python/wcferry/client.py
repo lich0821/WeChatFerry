@@ -26,7 +26,7 @@ def _retry():
     def decorator(func):
         """ Retry the function """
         def wrapper(*args, **kwargs):
-            def logerror():
+            def logerror(e):
                 func_name = re.findall(r"func: (.*?)\n", str(args[1]))[-1]
                 logging.getLogger("WCF").error(f"Call {func_name} failed: {e}")
 
@@ -36,10 +36,10 @@ def _retry():
                 try:
                     ret = func(*args, **kwargs)
                 except Exception as e:
-                    logerror()
+                    logerror(e)
                     ret = wcf_pb2.Response()
-            else:  # 其他异常，退出
-                logerror()
+            except Exception as e:  # 其他异常，退出
+                logerror(e)
                 sys.exit(-1)
 
             return ret
@@ -85,37 +85,40 @@ class Wcf():
             """是否文本消息"""
             return self.type == 1
 
-    def __init__(self, host_port: str = None, debug: bool = False) -> None:
+    def __init__(self, host: str = None, port: int = 10086, debug: bool = True) -> None:
         self._local_host = False
         self._is_running = False
         self._is_receiving_msg = False
         self.LOG = logging.getLogger("WCF")
         self.LOG.info(f"wcferry version: {__version__}")
-        if host_port is None:
+        self.port = port
+        self.host = host
+        if host is None:
             self._local_host = True
-            host_port = "tcp://127.0.0.1:10086"
-            self.host, self.port = host_port.rsplit(":", 1)
-            self.port = int(self.port)
+            self.host = "127.0.0.1"
             cmd = f"{WCF_ROOT}/wcf.exe start {self.port} {'debug' if debug else ''}"
             if os.system(cmd) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
-        else:
-            self.host, self.port = host_port.rsplit(":", 1)
-            self.port = int(self.port)
+
+        self.cmd_url = f"tcp://{self.host}:{self.port}"
 
         # 连接 RPC
         self.cmd_socket = pynng.Pair1()  # Client --> Server，发送消息
         self.cmd_socket.send_timeout = 2000  # 发送 2 秒超时
         self.cmd_socket.recv_timeout = 2000  # 接收 2 秒超时
-        self.cmd_socket.dial(host_port, block=False)
+        try:
+            self.cmd_socket.dial(self.cmd_url, block=True)
+        except Exception as e:
+            self.LOG.error(f"连接失败: {e}")
+            os._exit(-2)
 
         self.msg_socket = pynng.Pair1()  # Server --> Client，接收消息
         self.msg_socket.send_timeout = 2000  # 发送 2 秒超时
         self.msg_socket.recv_timeout = 2000  # 接收 2 秒超时
-        self.msg_url = host_port.replace(str(self.port), str(self.port + 1))
+        self.msg_url = self.cmd_url.replace(str(self.port), str(self.port + 1))
 
-        atexit.register(self.cleanup)  # 退出的时候停止消息接收，防止内存泄露
+        atexit.register(self.cleanup)  # 退出的时候停止消息接收，防止资源占用
         while not self.is_login():     # 等待微信登录成功
             sleep(1)
 
@@ -404,8 +407,8 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom")      # 群聊
-                or cnt["wxid"].startswith("gh_")       # 公众号
-                or cnt["wxid"] in not_friends.keys()   # 其他杂号
+                    or cnt["wxid"].startswith("gh_")       # 公众号
+                    or cnt["wxid"] in not_friends.keys()   # 其他杂号
                 ):
                 continue
             friends.append(cnt)
