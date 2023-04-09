@@ -24,7 +24,7 @@
 
 ![Demo](demo.gif)
 
-欢迎加群交流，后台回复 ** `WeChatFerry` **（*注意大小写*）：
+欢迎加群交流，后台回复 **`WeChatFerry`**（*注意大小写*）：
 
 ![碲矿](TEQuant.jpeg)
 
