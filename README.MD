@@ -1,6 +1,8 @@
 # WeChatFerry
 一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/s/CGLfSaNDy8MyuyPWGjGJ7w)。
 
+👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
+
 目前实现的功能：
 * 检查登录状态
 * 获取登录账号的 wxid
@@ -13,6 +15,7 @@
 * 发送图片
 * 发送文件
 * 发送 XML
+* 发送表情
 * 允许接收消息
 * 停止接收消息
 * 执行 SQL 查询
@@ -21,15 +24,14 @@
 
 ![Demo](demo.gif)
 
-👉 [WeChatRobot](https://github.com/lich0821/WeChatRobot)，一个基于WeChatFerry的Python机器人框架。
-
-欢迎加群交流，后台回复 `WeChatFerry `：
+欢迎加群交流，后台回复 ** `WeChatFerry` **（*注意大小写*）：
 
 ![碲矿](TEQuant.jpeg)
 
 ## 快速开始
 下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
 * Python [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry)
+* Java [README](java/README.MD)
 
 > [gRPC 分支](https://github.com/lich0821/WeChatFerry/tree/grpc) 支持更多客户端：
 > * C/C++
@@ -43,13 +45,13 @@
 pip install --upgrade wcferry
 ```
 
-* 运行
+* 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
-参考 [README.MD](python/README.MD)。
+### Java
+参考 [README.MD](java/README.MD)
 
 ## 一起开发
 ### 安装开发环境
-参见 [A gRPC Demo](https://github.com/lich0821/gRpcDemo/blob/wx/README.MD)。
 #### 安装 vcpkg
 * 安装，参考[Vcpkg: 总览](https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md)。
 ```sh
@@ -94,7 +96,7 @@ WeChatFerry
 ```
 
 ### launcher
-图形启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。
+图形启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。默认监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。
 
 ### python
 Python 客户端。
@@ -112,6 +114,9 @@ RPC 的通信部分和序列化 / 反序列化部分。
 跟 `launcher` 类似，命令行版启动器。
 
 ## 版本更新
+### v3.7.0.30.22（2023.04.09）
+将监听端口调整为可配置。
+
 ### v3.7.0.30.21（2023.03.15）
 * 发送表情
 

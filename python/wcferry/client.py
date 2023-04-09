@@ -19,7 +19,7 @@ WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2  # noqa
 
-__version__ = "3.7.0.30.21"
+__version__ = "3.7.0.30.22"
 
 
 def _retry():
