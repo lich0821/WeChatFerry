@@ -8,18 +8,18 @@ public class Main {
 
     public static void main(String[] args) {
         // 连接远程 RPC
-        // final String url = "tcp://192.168.1.104:10086";
-        // Client client = new Client(url);
+        // Client client = new Client("127.0.0.1", 10086);
 
         // 本地启动 RPC
-        Client client = new Client(true);
+        Client client = new Client(true); // 默认 10086 端口
+        // Client client = new Client(10088,true); // 也可以指定端口
 
         // 是否已登录
         logger.info("isLogin: {}", client.isLogin());
-/*
+
         // 登录账号 wxid
         logger.info("wxid: {}", client.getSelfWxid());
-
+/*
         // 消息类型
         logger.info("message types: {}", client.getMsgTypes());
 

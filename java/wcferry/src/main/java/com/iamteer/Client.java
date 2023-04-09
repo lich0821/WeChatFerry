@@ -20,28 +20,40 @@ public class Client {
     private final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
     private Socket cmdSocket = null;
     private Socket msgSocket = null;
-    private String cmdUrl = "tcp://127.0.0.1:10086";
+    private String host = "127.0.0.1";
+    private int port = 10086;
     private boolean isReceivingMsg = false;
     private boolean isLocalHostPort = false;
     private BlockingQueue<WxMsg> msgQ;
     private String wcfPath;
 
-    public Client(String hostPort) {
-        cmdUrl = hostPort;
+    public Client(String host, int port) {
+        this.host = host;
+        this.port = port;
+        String cmdUrl = "tcp://" + host + ":" + port;
         connectRPC(cmdUrl);
     }
 
+    public Client(int port, boolean debug) {
+        initClient(this.host, port, debug);
+    }
+
     public Client(boolean debug) {
+        initClient(this.host, this.port, debug);
+    }
+
+    private void initClient(String host, int port, boolean debug) {
         try {
             URL url = this.getClass().getResource("/win32-x86-64/wcf.exe");
             wcfPath = url.getFile();
-            String[] cmd = new String[3];
+            String[] cmd = new String[4];
             cmd[0] = wcfPath;
             cmd[1] = "start";
+            cmd[2] = Integer.toString(port);
             if (debug) {
-                cmd[2] = "debug";
+                cmd[3] = "debug";
             } else {
-                cmd[2] = "";
+                cmd[3] = "";
             }
             int status = Runtime.getRuntime().exec(cmd).waitFor();
             if (status != 0) {
@@ -49,6 +61,7 @@ public class Client {
                 System.exit(-1);
             }
             isLocalHostPort = true;
+            String cmdUrl = "tcp://" + host + ":" + port;
             connectRPC(cmdUrl);
         } catch (Exception e) {
             logger.error("初始化失败: {}", e);
@@ -296,7 +309,7 @@ public class Client {
 
         isReceivingMsg = true;
         msgQ = new ArrayBlockingQueue<WxMsg>(qSize);
-        String msgUrl = cmdUrl.replace("10086", "10087");
+        String msgUrl = "tcp://" + this.host + ":" + (this.port + 1);
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 listenMsg(msgUrl);
