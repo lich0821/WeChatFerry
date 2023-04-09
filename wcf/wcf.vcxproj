@@ -119,7 +119,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)java\wcferry\src\main\resources\win32-x86-64</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>

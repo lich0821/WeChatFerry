@@ -127,7 +127,8 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)java\wcferry\src\main\resources\win32-x86-64</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
@@ -170,7 +171,8 @@ C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
     <PostBuildEvent>
       <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry</Command>
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)python\wcferry
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)java\wcferry\src\main\resources\win32-x86-64</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
