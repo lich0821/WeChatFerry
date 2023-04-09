@@ -26,15 +26,21 @@ def _retry():
     def decorator(func):
         """ Retry the function """
         def wrapper(*args, **kwargs):
+            def logerror():
+                func_name = re.findall(r"func: (.*?)\n", str(args[1]))[-1]
+                logging.getLogger("WCF").error(f"Call {func_name} failed: {e}")
+
             try:
                 ret = func(*args, **kwargs)
-            except Exception as _:
+            except pynng.Timeout as _:  # 如果超时，重试
                 try:
                     ret = func(*args, **kwargs)
                 except Exception as e:
-                    func_name = re.findall(r"func: (.*?)\n", str(args[1]))[-1]
-                    logging.getLogger("WCF").error(f"Call {func_name} failed: {e}")
+                    logerror()
                     ret = wcf_pb2.Response()
+            else:  # 其他异常，退出
+                logerror()
+                sys.exit(-1)
 
             return ret
         return wrapper
@@ -88,10 +94,15 @@ class Wcf():
         if host_port is None:
             self._local_host = True
             host_port = "tcp://127.0.0.1:10086"
-            cmd = f"{WCF_ROOT}/wcf.exe start {'debug' if debug else ''}"
+            self.host, self.port = host_port.rsplit(":", 1)
+            self.port = int(self.port)
+            cmd = f"{WCF_ROOT}/wcf.exe start {self.port} {'debug' if debug else ''}"
             if os.system(cmd) != 0:
                 self.LOG.error("初始化失败！")
-                exit(-1)
+                os._exit(-1)
+        else:
+            self.host, self.port = host_port.rsplit(":", 1)
+            self.port = int(self.port)
 
         # 连接 RPC
         self.cmd_socket = pynng.Pair1()  # Client --> Server，发送消息
@@ -102,7 +113,7 @@ class Wcf():
         self.msg_socket = pynng.Pair1()  # Server --> Client，接收消息
         self.msg_socket.send_timeout = 2000  # 发送 2 秒超时
         self.msg_socket.recv_timeout = 2000  # 接收 2 秒超时
-        self.msg_url = host_port.replace("10086", "10087")
+        self.msg_url = host_port.replace(str(self.port), str(self.port + 1))
 
         atexit.register(self.cleanup)  # 退出的时候停止消息接收，防止内存泄露
         while not self.is_login():     # 等待微信登录成功
@@ -393,9 +404,9 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom")      # 群聊
-                    or cnt["wxid"].startswith("gh_")       # 公众号
-                    or cnt["wxid"] in not_friends.keys()   # 其他杂号
-                    ):
+                or cnt["wxid"].startswith("gh_")       # 公众号
+                or cnt["wxid"] in not_friends.keys()   # 其他杂号
+                ):
                 continue
             friends.append(cnt)
 
