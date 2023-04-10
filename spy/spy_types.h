@@ -6,6 +6,7 @@ typedef struct UserInfoCall {
     DWORD wxid;
     DWORD nickName;
     DWORD mobile;
+    DWORD home;
 } UserInfoCall_t;
 
 typedef struct RecvMsg {

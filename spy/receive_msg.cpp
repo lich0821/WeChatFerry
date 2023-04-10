@@ -7,6 +7,7 @@
 
 #include "load_calls.h"
 #include "receive_msg.h"
+#include "user_info.h"
 #include "util.h"
 
 // Defined in rpc_server.cpp
@@ -90,6 +91,9 @@ void DispatchMsg(DWORD reg)
     }
     wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
     wxMsg.extra   = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
+    if (!wxMsg.extra.empty()) {
+        wxMsg.extra = GetHomePath() + "\\" + wxMsg.extra;
+    }
 
     {
         unique_lock<mutex> lock(gMutex);

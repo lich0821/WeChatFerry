@@ -2,4 +2,7 @@
 
 #include <string>
 
-std::string GetSelfWxid();
+using namespace std;
+
+string GetHomePath();
+string GetSelfWxid();

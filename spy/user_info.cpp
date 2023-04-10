@@ -6,7 +6,9 @@
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-std::string GetSelfWxid()
+string GetHomePath() { return GET_STRING(g_WeChatWinDllAddr + g_WxCalls.ui.home); }
+
+string GetSelfWxid()
 {
     DWORD wxidType = 0;
     try {
