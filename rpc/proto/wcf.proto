@@ -84,6 +84,7 @@ message WxMsg
     string sender  = 6; // 消息发送者
     string roomid  = 7; // 群 id（如果是群消息的话）
     string content = 8; // 消息内容
+    string extra_data = 9; // 附加内容
 }
 
 message TextMsg
