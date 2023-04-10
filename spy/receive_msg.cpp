@@ -89,6 +89,7 @@ void DispatchMsg(DWORD reg)
         wxMsg.sender   = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
     }
     wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
+    wxMsg.extra   = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
 
     {
         unique_lock<mutex> lock(gMutex);

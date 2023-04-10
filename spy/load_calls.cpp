@@ -9,7 +9,7 @@ WxCalls_t wxCalls = {
     { 0x236607C, 0x23660F4, 0x2366128 }, // User Info: wxid, nickname, mobile
     0x521D30,                            // Send Message
     /* Receive Message:
-          Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, extra_data */
+          Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, extra */
     { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70, 0x1AC },
     { 0xBD780, 0x771980, 0x521640 },                      // Send Image Message
     { 0xC3B70, 0x771980, 0x3ED8C0 },                      // Send File Message
