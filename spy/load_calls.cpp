@@ -5,12 +5,12 @@
 
 #define SUPPORT_VERSION L"3.7.0.30"
 WxCalls_t wxCalls = {
-    0x2366538,                           // Login Status
+    0x2366538,                                      // Login Status
     { 0x236607C, 0x23660F4, 0x2366128, 0x2386F7C }, // User Info: wxid, nickname, mobile, home
-    0x521D30,                            // Send Message
+    0x521D30,                                       // Send Message
     /* Receive Message:
           Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, thumb, extra */
-    { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70, 0x198, 0x1AC},
+    { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70, 0x198, 0x1AC },
     { 0xBD780, 0x771980, 0x521640 },                      // Send Image Message
     { 0xC3B70, 0x771980, 0x3ED8C0 },                      // Send File Message
     { 0xB8A70, 0x3ED5E0, 0x107F00, 0x3ED7B0, 0x2386FE4 }, // Send xml Message

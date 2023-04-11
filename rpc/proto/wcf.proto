@@ -59,15 +59,15 @@ message Empty { }
 
 message WxMsg
 {
-    bool is_self   = 1; // 是否自己发送的
-    bool is_group  = 2; // 是否群消息
-    int32 type     = 3; // 消息类型
-    string id      = 4; // 消息 id
-    string xml     = 5; // 消息 xml
-    string sender  = 6; // 消息发送者
-    string roomid  = 7; // 群 id（如果是群消息的话）
-    string content = 8; // 消息内容
-    string thumb   = 9; // 缩略图
+    bool is_self   = 1;  // 是否自己发送的
+    bool is_group  = 2;  // 是否群消息
+    int32 type     = 3;  // 消息类型
+    string id      = 4;  // 消息 id
+    string xml     = 5;  // 消息 xml
+    string sender  = 6;  // 消息发送者
+    string roomid  = 7;  // 群 id（如果是群消息的话）
+    string content = 8;  // 消息内容
+    string thumb   = 9;  // 缩略图
     string extra   = 10; // 附加内容
 }
 

@@ -96,7 +96,7 @@ void DispatchMsg(DWORD reg)
         wxMsg.thumb = GetHomePath() + "\\WeChat Files\\" + wxMsg.thumb;
     }
 
-    wxMsg.extra   = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
+    wxMsg.extra = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
     if (!wxMsg.extra.empty()) {
         wxMsg.extra = GetHomePath() + "\\WeChat Files\\" + wxMsg.extra;
     }
