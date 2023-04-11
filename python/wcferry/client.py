@@ -238,6 +238,15 @@ class Wcf():
 
         return tables
 
+    def get_user_info(self) -> dict:
+        """获取个人信息"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_GET_USER_INFO  # FUNC_GET_USER_INFO
+        rsp = self._send_request(req)
+        ui = json_format.MessageToDict(rsp.ui)
+
+        return ui
+
     def send_text(self, msg: str, receiver: str, aters: Optional[str] = "") -> int:
         """发送文本消息"""
         req = wcf_pb2.Request()

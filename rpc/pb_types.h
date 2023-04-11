@@ -46,3 +46,10 @@ typedef struct {
     string thumb;
     string extra;
 } WxMsg_t;
+
+typedef struct {
+    string wxid;
+    string name;
+    string mobile;
+    string home;
+} UserInfo_t;

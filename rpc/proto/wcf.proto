@@ -11,6 +11,7 @@ enum Functions {
     FUNC_GET_CONTACTS     = 0x12;
     FUNC_GET_DB_NAMES     = 0x13;
     FUNC_GET_DB_TABLES    = 0x14;
+    FUNC_GET_USER_INFO    = 0x15;
     FUNC_SEND_TXT         = 0x20;
     FUNC_SEND_IMG         = 0x21;
     FUNC_SEND_FILE        = 0x22;
@@ -44,14 +45,15 @@ message Response
     Functions func = 1;
     oneof msg
     {
-        int32 status         = 2;
-        string str           = 3;
-        WxMsg wxmsg          = 4;
-        MsgTypes types       = 5;
-        RpcContacts contacts = 6;
-        DbNames dbs          = 7;
-        DbTables tables      = 8;
-        DbRows rows          = 9;
+        int32 status         = 2;  // Int 状态，通用
+        string str           = 3;  // 字符串
+        WxMsg wxmsg          = 4;  // 微信消息
+        MsgTypes types       = 5;  // 消息类型
+        RpcContacts contacts = 6;  // 联系人
+        DbNames dbs          = 7;  // 数据库列表
+        DbTables tables      = 8;  // 表列表
+        DbRows rows          = 9;  // 行列表
+        UserInfo ui          = 10; // 个人信息
     };
 }
 
@@ -140,4 +142,12 @@ message AddMembers
 {
     string roomid = 1; // 要加的群ID
     string wxids  = 2; // 要加群的人列表，逗号分隔
+}
+
+message UserInfo
+{
+    string wxid   = 1; // 微信ID
+    string name   = 2; // 昵称
+    string mobile = 3; // 手机号
+    string home   = 4; // 文件/图片等父路径
 }

@@ -25,3 +25,15 @@ string GetSelfWxid()
         return "empty_wxid";
     }
 }
+
+UserInfo_t GetUserInfo()
+{
+    UserInfo_t ui;
+
+    ui.wxid   = GetSelfWxid();
+    ui.name   = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
+    ui.mobile = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.mobile);
+    ui.home   = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.ui.home);
+
+    return ui;
+}
