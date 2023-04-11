@@ -90,9 +90,15 @@ void DispatchMsg(DWORD reg)
         wxMsg.sender   = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
     }
     wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
+
+    wxMsg.thumb = GetStringByAddress(*p + g_WxCalls.recvMsg.thumb);
+    if (!wxMsg.thumb.empty()) {
+        wxMsg.thumb = GetHomePath() + "\\WeChat Files\\" + wxMsg.thumb;
+    }
+
     wxMsg.extra   = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
     if (!wxMsg.extra.empty()) {
-        wxMsg.extra = GetHomePath() + "\\" + wxMsg.extra;
+        wxMsg.extra = GetHomePath() + "\\WeChat Files\\" + wxMsg.extra;
     }
 
     {

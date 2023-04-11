@@ -61,12 +61,14 @@ class Wcf():
             self.sender = msg.sender
             self.roomid = msg.roomid
             self.content = msg.content
+            self.thumb = msg.thumb
             self.extra = msg.extra
 
         def __str__(self) -> str:
             s = f"{'自己发的:' if self._is_self else ''}"
             s += f"{self.sender}[{self.roomid}]:{self.id}:{self.type}:{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
             s += self.content
+            s += f"\n{self.thumb}" if self.thumb else ""
             s += f"\n{self.extra}" if self.extra else ""
             return s
 
