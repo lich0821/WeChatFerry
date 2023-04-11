@@ -43,5 +43,5 @@ typedef struct {
     string sender;
     string roomid;
     string content;
-    string extra_data;
+    string extra;
 } WxMsg_t;

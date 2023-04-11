@@ -6,6 +6,7 @@ typedef struct UserInfoCall {
     DWORD wxid;
     DWORD nickName;
     DWORD mobile;
+    DWORD home;
 } UserInfoCall_t;
 
 typedef struct RecvMsg {
@@ -18,7 +19,7 @@ typedef struct RecvMsg {
     DWORD roomId;  // 群聊时，为群ID；私聊时，为微信ID
     DWORD wxId;    // 私聊时，为空；群聊时，为发送者微信ID
     DWORD content; // 消息内容地址
-    DWORD extra_data; // 附加数据
+    DWORD extra;   // 附加数据
 } RecvMsg_t;
 
 typedef struct Sendfile {

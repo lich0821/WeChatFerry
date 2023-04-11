@@ -330,6 +330,7 @@ static void PushMessage()
                 rsp.msg.wxmsg.sender   = (char *)wxmsg.sender.c_str();
                 rsp.msg.wxmsg.roomid   = (char *)wxmsg.roomid.c_str();
                 rsp.msg.wxmsg.content  = (char *)wxmsg.content.c_str();
+                rsp.msg.wxmsg.extra    = (char *)wxmsg.extra.c_str();
                 gMsgQueue.pop();
                 LOG_DEBUG("Recv msg: {}", wxmsg.content);
                 pb_ostream_t stream = pb_ostream_from_buffer(buffer, G_BUF_SIZE);
