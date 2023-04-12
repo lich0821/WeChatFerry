@@ -16,6 +16,7 @@ pip install --upgrade wcferry
 * 获取所有好友：`get_friends`
 * 获取数据库：`get_dbs`
 * 获取某数据库下的表：`get_tables`
+* 获取用户信息：`get_user_info`
 * 发送文本消息（可 @）：`send_text`
 * 发送图片：`send_image`
 * 发送文件：`send_file`
@@ -26,6 +27,7 @@ pip install --upgrade wcferry
 * 执行 SQL 查询：`query_sql`
 * 接受好友申请：`accept_new_friend`
 * 添加群成员：`add_chatroom_members`
+* 解密图片：`decrypt_image`
 
 详情查看 [client.py](wcferry/client.py)。
 
