@@ -436,3 +436,19 @@ class Wcf():
         req.m.wxids = wxids
         rsp = self._send_request(req)
         return rsp.status
+
+    def decrypt_image(self, src: str, dst: str) -> bool:
+        """解密图片:
+        Args:
+            src (str): 加密的图片路径
+            dst (str): 解密的图片路径
+
+        Returns:
+            bool: 是否成功
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_DECRYPT_IMAGE  # FUNC_DECRYPT_IMAGE
+        req.dec.src = src
+        req.dec.dst = dst
+        rsp = self._send_request(req)
+        return rsp.status == 1
