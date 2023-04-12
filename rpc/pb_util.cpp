@@ -76,6 +76,9 @@ bool encode_contacts(pb_ostream_t *stream, const pb_field_t *field, void *const 
         message.code.funcs.encode = &encode_string;
         message.code.arg          = (void *)(*it).code.c_str();
 
+        message.remark.funcs.encode = &encode_string;
+        message.remark.arg          = (void *)(*it).remark.c_str();
+
         message.name.funcs.encode = &encode_string;
         message.name.arg          = (void *)(*it).name.c_str();
 

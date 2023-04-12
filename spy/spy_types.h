@@ -34,6 +34,7 @@ typedef struct Contact {
     DWORD head;
     DWORD wxId;
     DWORD wxCode;
+    DWORD wxRemark;
     DWORD wxName;
     DWORD wxGender;
     DWORD wxCountry;

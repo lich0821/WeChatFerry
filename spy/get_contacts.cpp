@@ -19,6 +19,7 @@ vector<RpcContact_t> GetContacts()
         RpcContact_t cnt;
         cnt.wxid     = GetStringByAddress(node + g_WxCalls.contact.wxId);
         cnt.code     = GetStringByAddress(node + g_WxCalls.contact.wxCode);
+        cnt.remark   = GetStringByAddress(node + g_WxCalls.contact.wxRemark);
         cnt.name     = GetStringByAddress(node + g_WxCalls.contact.wxName);
         cnt.country  = GetStringByAddress(node + g_WxCalls.contact.wxCountry);
         cnt.province = GetStringByAddress(node + g_WxCalls.contact.wxProvince);

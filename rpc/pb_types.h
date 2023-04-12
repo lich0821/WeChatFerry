@@ -12,6 +12,7 @@ typedef struct {
     int32_t gender;
     string wxid;
     string code;
+    string remark;
     string name;
     string country;
     string province;

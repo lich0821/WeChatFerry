@@ -102,11 +102,12 @@ message RpcContact
 {
     string wxid     = 1; // 微信 id
     string code     = 2; // 微信号
-    string name     = 3; // 微信昵称
-    string country  = 4; // 国家
-    string province = 5; // 省/州
-    string city     = 6; // 城市
-    int32 gender    = 7; // 性别
+    string remark   = 3; // 备注
+    string name     = 4; // 微信昵称
+    string country  = 5; // 国家
+    string province = 6; // 省/州
+    string city     = 7; // 城市
+    int32 gender    = 8; // 性别
 }
 message RpcContacts { repeated RpcContact contacts = 1; }
 
