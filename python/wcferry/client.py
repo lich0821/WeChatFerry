@@ -211,6 +211,7 @@ class Wcf():
             contact = {
                 "wxid": cnt.get("wxid", ""),
                 "code": cnt.get("code", ""),
+                "remark": cnt.get("remark", ""),
                 "name": cnt.get("name", ""),
                 "country": cnt.get("country", ""),
                 "province": cnt.get("province", ""),
