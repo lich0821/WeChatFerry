@@ -100,7 +100,7 @@ class Wcf():
         if host is None:
             self._local_host = True
             self.host = "127.0.0.1"
-            cmd = f"{WCF_ROOT}/wcf.exe start {self.port} {'debug' if debug else ''}"
+            cmd = fr'"{WCF_ROOT}\wcf.exe" start {self.port} {"debug" if debug else ""}'
             if os.system(cmd) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
@@ -144,7 +144,7 @@ class Wcf():
         self.cmd_socket.close()
 
         if self._local_host:
-            cmd = f"{WCF_ROOT}/wcf.exe stop"
+            cmd = fr'"{WCF_ROOT}\wcf.exe" stop'
             if os.system(cmd) != 0:
                 self.LOG.error("退出失败！")
                 return
