@@ -11,7 +11,7 @@ extern DWORD g_WeChatWinDllAddr;
 int ReceiveTransfer(string wxid, string transferid)
 {
     int rv                  = 0;
-    DWORD addRoomMemberCall = g_WeChatWinDllAddr + g_WxCalls.tf;
+    DWORD recvTransferCall = g_WeChatWinDllAddr + g_WxCalls.tf;
 
     WxString_t wxWxid = { 0 };
     wstring wsWxid    = String2Wstring(wxid);
@@ -25,7 +25,7 @@ int ReceiveTransfer(string wxid, string transferid)
     wxTid.size       = wsTid.size();
     wxTid.capacity   = wsTid.capacity();
 
-    LOG_DEBUG("Receiving transfer, from: {}, transferid{}", wxid, transferid);
+    LOG_DEBUG("Receiving transfer, from: {}, transferid: {}", wxid, transferid);
     __asm {
 
     }
