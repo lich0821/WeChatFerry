@@ -22,6 +22,7 @@ enum Functions {
     FUNC_EXEC_DB_QUERY    = 0x50;
     FUNC_ACCEPT_FRIEND    = 0x51;
     FUNC_ADD_ROOM_MEMBERS = 0x52;
+    FUNC_RECV_TRANSFER    = 0x53;
     FUNC_DECRYPT_IMAGE    = 0x60;
 }
 
@@ -39,6 +40,7 @@ message Request
         AddMembers m   = 8;
         XmlMsg xml     = 9;
         DecPath dec    = 10;
+        Transfer tf    = 11;
     }
 }
 
@@ -157,6 +159,12 @@ message UserInfo
 
 message DecPath
 {
-    string src   = 1; // 源路径
-    string dst   = 2; // 目标路径
+    string src = 1; // 源路径
+    string dst = 2; // 目标路径
+}
+
+message Transfer
+{
+    string wxid = 1; // 转账人
+    string tid  = 2; // 转账id transferid
 }

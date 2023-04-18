@@ -84,6 +84,7 @@ typedef struct WxCalls {
     Sql_t sql;           // 执行 SQL
     NewFriend_t anf;     // 通过好友申请
     RoomMember_t arm;    // 添加群成员
+    DWORD tf;            // 接收转账
 } WxCalls_t;
 
 typedef struct WxString {
