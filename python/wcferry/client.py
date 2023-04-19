@@ -439,7 +439,14 @@ class Wcf():
         return rsp.status
 
     def receive_transfer(self, wxid: str, transferid: str) -> int:
-        """接收转账"""
+        """接收转账
+        Args:
+            wxid (str): 转账消息里的发送人 wxid
+            transferid (str): 转账消息里的 transferid
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_RECV_TRANSFER  # FUNC_RECV_TRANSFER
         req.tf.wxid = wxid
