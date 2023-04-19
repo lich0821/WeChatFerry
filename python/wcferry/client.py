@@ -19,7 +19,7 @@ WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, WCF_ROOT)
 import wcf_pb2  # noqa
 
-__version__ = "3.7.0.30.23"
+__version__ = "3.7.0.30.24"
 
 
 def _retry():
@@ -435,6 +435,15 @@ class Wcf():
         req.func = wcf_pb2.FUNC_ADD_ROOM_MEMBERS  # FUNC_ADD_ROOM_MEMBERS
         req.m.roomid = roomid
         req.m.wxids = wxids
+        rsp = self._send_request(req)
+        return rsp.status
+
+    def receive_transfer(self, wxid: str, transferid: str) -> int:
+        """接收转账"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_RECV_TRANSFER  # FUNC_RECV_TRANSFER
+        req.tf.wxid = wxid
+        req.tf.tid = transferid
         rsp = self._send_request(req)
         return rsp.status
 

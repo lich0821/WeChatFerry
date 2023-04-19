@@ -31,6 +31,7 @@
 #include "spy_types.h"
 #include "user_info.h"
 #include "util.h"
+#include "receive_transfer.h"
 
 #define URL_SIZE   20
 #define BASE_URL   "tcp://0.0.0.0"
@@ -486,6 +487,28 @@ bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_receive_transfer(char *wxid, char *transferid, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_RECV_TRANSFER;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    rsp.msg.status = ReceiveTransfer(wxid, transferid);
+    if (rsp.msg.status != 1) {
+        LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -604,6 +627,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
             LOG_DEBUG("[Functions_FUNC_ADD_ROOM_MEMBERS]");
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
+            break;
+        }
+        case Functions_FUNC_RECV_TRANSFER: {
+            LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
+            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tid, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {
