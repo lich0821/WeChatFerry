@@ -71,6 +71,11 @@ typedef struct Xml {
     DWORD param;
 } Xml_t;
 
+typedef struct TF {
+    DWORD call1;
+    DWORD call2;
+} TF_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -84,7 +89,7 @@ typedef struct WxCalls {
     Sql_t sql;           // 执行 SQL
     NewFriend_t anf;     // 通过好友申请
     RoomMember_t arm;    // 添加群成员
-    DWORD tf;            // 接收转账
+    TF_t tf;             // 接收转账
 } WxCalls_t;
 
 typedef struct WxString {

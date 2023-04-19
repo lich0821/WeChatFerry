@@ -23,7 +23,7 @@ WxCalls_t wxCalls = {
     { 0x141BDF0, 0x2366934, 0x1428, 0x142C, 0x3C, 0x50 },
     { 0x771980, 0x2AE8D0, 0x1EE40E0 }, // Accept New Friend application
     { 0xE29F0, 0x771980, 0x43D8D0 },   // Add chatroom members
-    { 0xCD2A90 }                       // Receive transfer
+    { 0x771980, 0xCD2A90 }             // Receive transfer
 };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)
