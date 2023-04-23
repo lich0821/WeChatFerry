@@ -116,6 +116,11 @@ public class Client {
         }
     }
 
+    /**
+     * 当前微信客户端是否登录微信号
+     *
+     * @return
+     */
     public boolean isLogin() {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_IS_LOGIN_VALUE).build();
         Response rsp = sendCmd(req);
@@ -125,6 +130,11 @@ public class Client {
         return false;
     }
 
+    /**
+     * 获得微信客户端登录的微信ID
+     *
+     * @return
+     */
     public String getSelfWxid() {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
         Response rsp = sendCmd(req);
@@ -135,6 +145,11 @@ public class Client {
         return "";
     }
 
+    /**
+     * 获取所有消息类型
+     *
+     * @return
+     */
     public Map<Integer, String> getMsgTypes() {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
         Response rsp = sendCmd(req);
@@ -145,6 +160,16 @@ public class Client {
         return Wcf.MsgTypes.newBuilder().build().getTypesMap();
     }
 
+    /**
+     * 获取所有联系人
+     * "fmessage": "朋友推荐消息",
+     * "medianote": "语音记事本",
+     * "floatbottle": "漂流瓶",
+     * "filehelper": "文件传输助手",
+     * "newsapp": "新闻",
+     *
+     * @return
+     */
     public List<RpcContact> getContacts() {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_CONTACTS_VALUE).build();
         Response rsp = sendCmd(req);
@@ -155,6 +180,28 @@ public class Client {
         return Wcf.RpcContacts.newBuilder().build().getContactsList();
     }
 
+    /**
+     * 获取sql执行结果
+     *
+     * @param db  数据库名
+     * @param sql 执行的sql语句
+     * @return
+     */
+    public List<DbRow> querySql(String db, String sql) {
+        DbQuery dbQuery = DbQuery.newBuilder().setSql(sql).setDb(db).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_EXEC_DB_QUERY_VALUE).setQuery(dbQuery).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getRows().getRowsList();
+        }
+        return null;
+    }
+
+    /**
+     * 获取所有数据库名
+     *
+     * @return
+     */
     public List<String> getDbNames() {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
         Response rsp = sendCmd(req);
@@ -165,6 +212,12 @@ public class Client {
         return Wcf.DbNames.newBuilder().build().getNamesList();
     }
 
+    /**
+     * 获取指定数据库中的所有表
+     *
+     * @param db
+     * @return
+     */
     public Map<String, String> getDbTables(String db) {
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
         Response rsp = sendCmd(req);
@@ -203,6 +256,13 @@ public class Client {
         return ret;
     }
 
+    /**
+     * 发送图片消息
+     *
+     * @param path     图片地址
+     * @param receiver 接收者微信id
+     * @return 发送结果状态码
+     */
     public int sendImage(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
@@ -216,6 +276,13 @@ public class Client {
         return ret;
     }
 
+    /**
+     * 发送文件消息
+     *
+     * @param path     文件地址
+     * @param receiver 接收者微信id
+     * @return 发送结果状态码
+     */
     public int sendFile(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
@@ -229,6 +296,15 @@ public class Client {
         return ret;
     }
 
+    /**
+     * 发送Xml消息
+     *
+     * @param receiver 接收者微信id
+     * @param xml      xml内容
+     * @param path
+     * @param type
+     * @return 发送结果状态码
+     */
     public int sendXml(String receiver, String xml, String path, int type) {
         Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
@@ -242,6 +318,13 @@ public class Client {
         return ret;
     }
 
+    /**
+     * 发送表情消息
+     *
+     * @param path     表情路径
+     * @param receiver 消息接收者
+     * @return 发送结果状态码
+     */
     public int sendEmotion(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
@@ -255,6 +338,92 @@ public class Client {
         return ret;
     }
 
+    /**
+     * 接收好友请求
+     *
+     * @param v3 xml.attrib["encryptusername"]
+     * @param v4 xml.attrib["ticket"]
+     * @return 结果状态码
+     */
+    public int acceptNewFriend(String v3, String v4) {
+        int ret = -1;
+        Verification verification = Verification.newBuilder().setV3(v3).setV4(v4).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 添加群成员为微信好友
+     *
+     * @param roomID 群ID
+     * @param wxIds  要加群的人列表，逗号分隔
+     * @return 1 为成功，其他失败
+     */
+    public int addChatroomMembers(String roomID, String wxIds) {
+        int ret = -1;
+        AddMembers addMembers = AddMembers.newBuilder().setRoomid(roomID).setWxids(wxIds).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(addMembers).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 接收转账
+     *
+     * @param transferid 转账消息里的 transferid
+     * @param wxId       转账消息里的发送人
+     * @return 1 为成功，其他失败
+     */
+    public int receiveTransfer(String transferid, String wxId) {
+        int ret = -1;
+        Transfer build = Transfer.newBuilder().setTid(transferid).setWxid(wxId).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_RECV_TRANSFER_VALUE).setTf(build).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 解密图片
+     *
+     * @param srcPath 加密的图片路径
+     * @param dstPath 解密的图片路径
+     * @return 是否成功
+     */
+    public boolean decryptImage(String srcPath, String dstPath) {
+        int ret = -1;
+        DecPath build = DecPath.newBuilder().setSrc(srcPath).setDst(dstPath).build();
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret == 1;
+    }
+
+    /**
+     * 获取个人信息
+     *
+     * @return 个人信息
+     */
+    public UserInfo getUserInfo() {
+        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_USER_INFO_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getUi();
+        }
+        return null;
+    }
+
     public boolean getIsReceivingMsg() {
         return isReceivingMsg;
     }
@@ -266,6 +435,22 @@ public class Client {
             // TODO: handle exception
             return null;
         }
+    }
+
+    /**
+     * 判断是否是艾特自己的消息
+     *
+     * @param wxMsgXml
+     * @param wxMsgContent
+     * @return
+     */
+    public boolean isAtMeMsg(String wxMsgXml, String wxMsgContent) {
+        String format = String.format("<atuserlist><![CDATA[%s]]></atuserlist>", getSelfWxid());
+        boolean isAtAll = wxMsgContent.startsWith("@所有人") || wxMsgContent.startsWith("@all");
+        if (wxMsgXml.contains(format) && !isAtAll) {
+            return true;
+        }
+        return false;
     }
 
     private void listenMsg(String url) {
