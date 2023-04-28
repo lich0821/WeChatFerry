@@ -3,7 +3,8 @@
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
 
-目前实现的功能：
+<details><summary>点击查看功能清单</summary>
+
 * 检查登录状态
 * 获取登录账号的 wxid
 * 获取消息类型
@@ -23,25 +24,29 @@
 * 接受好友申请
 * 添加群成员
 * 解密图片
+</details>
+
+<details><summary>点击查看支持的客户端</summary>
+
+* Java
+* Python
+* Rust
+</details>
 
 ![Demo](demo.gif)
 
-欢迎加群交流，后台回复 **`WeChatFerry`**（*注意大小写*）：
+欢迎加群交流，后台回复 `WeChatFerry`：
 
 ![碲矿](TEQuant.jpeg)
 
 ## 快速开始
-下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，目前支持：
-* Python [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry)
-* Java [README](java/README.MD)
+下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端。
 
-> [gRPC 分支](https://github.com/lich0821/WeChatFerry/tree/grpc) 支持更多客户端：
-> * C/C++
-> * Java
-> * Node.js
-> * Python
+### Java
+参考 [README.MD](java/README.MD)
 
 ### Python
+[![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry)
 * 安装
 ```sh
 pip install --upgrade wcferry
@@ -49,8 +54,8 @@ pip install --upgrade wcferry
 
 * 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
-### Java
-参考 [README.MD](java/README.MD)
+### Rust
+参考 [README.MD](rust/README.MD)
 
 ## 一起开发
 ### 安装开发环境
@@ -84,20 +89,27 @@ vcpkg integrate install
 ## 项目结构
 ```sh
 WeChatFerry
-├── LICENSE           # LICENSE
-├── README.MD         # 说明
-├── TEQuant.jpeg      # 二维码，测试用图
-├── WeChatFerry.sln   # VS2019 工程文件
-├── demo.gif          # 示例图
+├── java              # Java 客户端
 ├── launcher          # 图形版启动器
 ├── python            # Python 客户端
 ├── rpc               # RPC 模块
+├── rust              # Rust 客户端
 ├── sdk               # 注入及启动模块
 ├── spy               # 核心功能实现模块
-└── wcf               # 命令行版启动器
+├── wcf               # 命令行版启动器
+├── demo.gif          # 示例图
+├── LICENSE           # LICENSE
+├── README.MD         # 说明
+├── TEQuant.jpeg      # 二维码，测试用图
+└── WeChatFerry.sln   # VS2019 工程文件
 ```
 
+### python
+Java 客户端。
+
 ### launcher
+> ⚠️ 不要与客户端同时使用！
+
 图形启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。默认监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。
 
 ### python
@@ -106,6 +118,9 @@ Python 客户端。
 ### rpc
 RPC 的通信部分和序列化 / 反序列化部分。
 
+### rust
+Rust 客户端。
+
 ### sdk
 负责将 `spy` 注入微信进程，并启动 RPC 服务。
 
@@ -113,9 +128,11 @@ RPC 的通信部分和序列化 / 反序列化部分。
 间谍模块，注入到微信中，通过 RPC 做消息转发工作。
 
 ### wcf
-跟 `launcher` 类似，命令行版启动器。
+跟 `launcher` 类似，命令行版启动器，一般不需要显式运行，各客户端自动调用。
 
 ## 版本更新
+<details><summary>点击查看</summary>
+
 ### v3.7.0.30.24 (2023.04.19)
 实现了一个功能。
 
@@ -220,3 +237,5 @@ RPC 的通信部分和序列化 / 反序列化部分。
 * 登录状态判断
 * 接收文本消息
 * 发送文本消息
+
+</details>
