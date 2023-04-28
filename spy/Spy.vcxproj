@@ -135,8 +135,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)java\wcferry\src\main\resource
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)rpc\proto
-C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
-</Command>
+$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
@@ -179,8 +178,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)java\wcferry\src\main\resource
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)rpc\proto
-C:\Tools\nanopb\protoc --nanopb_out=. wcf.proto
-</Command>
+$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>

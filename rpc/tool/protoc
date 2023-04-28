@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# This file acts as a drop-in replacement of binary protoc.exe.
+# It will use either Python-based protoc from grpcio-tools package,
+# or if it is not available, protoc.exe from path if found.
+
+import sys
+import os
+import os.path
+
+# Depending on how this script is run, we may or may not have PEP366 package name
+# available for relative imports.
+if not __package__:
+    from proto._utils import invoke_protoc
+else:
+    from .proto._utils import invoke_protoc
+
+if __name__ == '__main__':
+    # Get path of the directory where this script is stored.
+    if getattr(sys, 'frozen', False):
+        mypath = os.path.dirname(sys.executable) # For pyInstaller
+    else:
+        mypath = os.path.dirname(__file__)
+
+    # Avoid recursive calls to self
+    env_paths = os.environ["PATH"].split(os.pathsep)
+    if mypath in env_paths:
+        env_paths.remove(mypath)
+        os.environ["PATH"] = os.pathsep.join(env_paths)
+
+    # Add argument for finding the nanopb generator when using --nanopb_out=
+    # argument to protoc.
+    if os.path.isfile(os.path.join(mypath, "protoc-gen-nanopb.exe")):
+        protoc_gen_nanopb = os.path.join(mypath, "protoc-gen-nanopb.exe")
+    elif os.name == 'nt':
+        protoc_gen_nanopb = os.path.join(mypath, "protoc-gen-nanopb.bat")
+    else:
+        protoc_gen_nanopb = os.path.join(mypath, "protoc-gen-nanopb")
+
+    args = sys.argv[1:]
+
+    if os.path.isfile(protoc_gen_nanopb):
+         args = ['--plugin=protoc-gen-nanopb=%s' % protoc_gen_nanopb] + args
+
+    status = invoke_protoc(['protoc'] + args)
+    sys.exit(status)
