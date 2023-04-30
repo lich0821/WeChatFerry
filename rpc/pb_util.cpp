@@ -109,19 +109,14 @@ bool encode_contacts(pb_ostream_t *stream, const pb_field_t *field, void *const 
 
 bool encode_dbnames(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
 {
-    vector<string> *v = (vector<string> *)*arg;
-    DbNames message   = DbNames_init_default;
-
+    DbNames_t *v = (DbNames_t *)*arg;
     for (auto it = v->begin(); it != v->end(); it++) {
-        message.names.funcs.encode = &encode_string;
-        message.names.arg          = (void *)(*it).c_str();
-
         if (!pb_encode_tag_for_field(stream, field)) {
             LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(stream));
             return false;
         }
 
-        if (!pb_encode_submessage(stream, DbNames_fields, &message)) {
+        if (!pb_encode_string(stream, (uint8_t *)(*it).c_str(), (*it).size())) {
             LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(stream));
             return false;
         }
