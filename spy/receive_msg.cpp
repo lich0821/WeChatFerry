@@ -80,18 +80,26 @@ void DispatchMsg(DWORD reg)
     wxMsg.id      = GetStringByAddress(*p + g_WxCalls.recvMsg.msgId);
     wxMsg.xml     = GetStringByAddress(*p + g_WxCalls.recvMsg.msgXml);
 
-    // 群里的系统消息，xml 为空；或者包含 <membercount>
-    if ((wxMsg.xml.empty()) || (wxMsg.xml.find("<membercount>") != string::npos)) {
+    string roomid = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
+    if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
         wxMsg.is_group = true;
-        wxMsg.sender   = GetStringByAddress(*p + g_WxCalls.recvMsg.wxId);
-        wxMsg.roomid   = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
+        wxMsg.roomid   = roomid;
+        if (wxMsg.is_self) {
+            wxMsg.sender = GetSelfWxid();
+        } else {
+            wxMsg.sender = GetStringByAddress(*p + g_WxCalls.recvMsg.wxId);
+        }
     } else {
         wxMsg.is_group = false;
-        wxMsg.sender   = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
+        if (wxMsg.is_self) {
+            wxMsg.sender = GetSelfWxid();
+        } else {
+            wxMsg.sender = roomid;
+        }
     }
-    wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
 
-    wxMsg.thumb = GetStringByAddress(*p + g_WxCalls.recvMsg.thumb);
+    wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
+    wxMsg.thumb   = GetStringByAddress(*p + g_WxCalls.recvMsg.thumb);
     if (!wxMsg.thumb.empty()) {
         wxMsg.thumb = GetHomePath() + "\\WeChat Files\\" + wxMsg.thumb;
     }
