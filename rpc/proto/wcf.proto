@@ -139,8 +139,9 @@ message DbRows { repeated DbRow rows = 1; }
 
 message Verification
 {
-    string v3 = 1;
-    string v4 = 2;
+    string v3   = 1; // 加密的用户名
+    string v4   = 2; // Ticket
+    int32 scene = 3; // 添加方式：17 名片，30 扫码
 }
 
 message AddMembers

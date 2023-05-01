@@ -16,7 +16,7 @@ typedef struct NewFriendParam {
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
-int AcceptNewFriend(std::string v3, std::string v4)
+int AcceptNewFriend(std::string v3, std::string v4, int scene)
 {
     int isSucceeded = 0;
 
@@ -30,8 +30,8 @@ int AcceptNewFriend(std::string v3, std::string v4)
 
     param.handle             = acceptNewFriendHandle;
     param.status             = status;
-    param.statusEnd1         = (DWORD)&status[8];
-    param.statusEnd2         = (DWORD)&status[8];
+    param.statusEnd1         = (DWORD)status + 0x20;
+    param.statusEnd2         = (DWORD)status + 0x20;
     NewFriendParam_t *pParam = &param;
 
     LOG_DEBUG("v3: {}\nv4: {}", v3, v4);
@@ -52,7 +52,8 @@ int AcceptNewFriend(std::string v3, std::string v4)
         pushad;
         pushfd;
         push 0x0;
-        push 0x6;
+        mov eax, scene;
+        push eax;
         sub esp, 0x14;
         mov ecx, esp;
         lea eax, wxV4;

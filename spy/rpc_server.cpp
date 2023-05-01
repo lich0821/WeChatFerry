@@ -25,13 +25,13 @@
 #include "pb_types.h"
 #include "pb_util.h"
 #include "receive_msg.h"
+#include "receive_transfer.h"
 #include "rpc_server.h"
 #include "send_msg.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "user_info.h"
 #include "util.h"
-#include "receive_transfer.h"
 
 #define URL_SIZE   20
 #define BASE_URL   "tcp://0.0.0.0"
@@ -438,7 +438,7 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
     return true;
 }
 
-bool func_accept_friend(char *v3, char *v4, uint8_t *out, size_t *len)
+bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
     rsp.func       = Functions_FUNC_SEND_IMG;
@@ -449,7 +449,7 @@ bool func_accept_friend(char *v3, char *v4, uint8_t *out, size_t *len)
         rsp.msg.status = -1;
         LOG_ERROR("Empty V3 or V4.");
     } else {
-        rsp.msg.status = AcceptNewFriend(v3, v4);
+        rsp.msg.status = AcceptNewFriend(v3, v4, scene);
         if (rsp.msg.status != 1) {
             LOG_ERROR("AcceptNewFriend failed: {}", rsp.msg.status);
         }
@@ -621,7 +621,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_ACCEPT_FRIEND: {
             LOG_DEBUG("[Functions_FUNC_ACCEPT_FRIEND]");
-            ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, out, out_len);
+            ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
         }
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
