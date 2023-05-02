@@ -400,12 +400,21 @@ class Wcf():
             result.append(row)
         return result
 
-    def accept_new_friend(self, v3: str, v4: str) -> int:
-        """添加好友"""
+    def accept_new_friend(self, v3: str, v4: str, scene: int = 30) -> int:
+        """通过好友申请
+        Args:
+            v3 (str): 加密用户名 (好友申请消息里 v3 开头的字符串)
+            v4 (str): Ticket (好友申请消息里 v4 开头的字符串)
+            scene: 申请方式 (好友申请消息里的 scene); 为了兼容旧接口，默认为扫码添加 (30)
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ACCEPT_FRIEND  # FUNC_ACCEPT_FRIEND
         req.v.v3 = v3
         req.v.v4 = v4
+        req.v.scene = scene
         rsp = self._send_request(req)
         return rsp.status
 
