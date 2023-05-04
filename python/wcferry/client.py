@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+__version__ = "3.7.0.30.24"
+
 import atexit
 import base64
 import logging
@@ -15,11 +17,8 @@ from typing import Callable, List, Optional
 import pynng
 from google.protobuf import json_format
 
-WCF_ROOT = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, WCF_ROOT)
-import wcf_pb2  # noqa
-
-__version__ = "3.7.0.30.24"
+from wcferry import wcf_pb2
+from wcferry.wxmsg import WxMsg
 
 
 def _retry():
@@ -48,51 +47,13 @@ def _retry():
 
 
 class Wcf():
-    """WeChatFerry, a tool to play WeChat."""
-    class WxMsg():
-        """微信消息"""
-
-        def __init__(self, msg: wcf_pb2.WxMsg) -> None:
-            self._is_self = msg.is_self
-            self._is_group = msg.is_group
-            self.type = msg.type
-            self.id = msg.id
-            self.xml = msg.xml
-            self.sender = msg.sender
-            self.roomid = msg.roomid
-            self.content = msg.content
-            self.thumb = msg.thumb
-            self.extra = msg.extra
-
-        def __str__(self) -> str:
-            s = f"{'自己发的:' if self._is_self else ''}"
-            s += f"{self.sender}[{self.roomid}]:{self.id}:{self.type}:{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
-            s += self.content
-            s += f"\n{self.thumb}" if self.thumb else ""
-            s += f"\n{self.extra}" if self.extra else ""
-            return s
-
-        def from_self(self) -> bool:
-            """是否自己发的消息"""
-            return self._is_self == 1
-
-        def from_group(self) -> bool:
-            """是否群聊消息"""
-            return self._is_group
-
-        def is_at(self, wxid) -> bool:
-            """是否被@：群消息，在@名单里，并且不是@所有人"""
-            return self.from_group() and re.findall(
-                f"<atuserlist>.*({wxid}).*</atuserlist>", self.xml) and not re.findall(r"@(?:所有人|all)", self.xml)
-
-        def is_text(self) -> bool:
-            """是否文本消息"""
-            return self.type == 1
+    """WeChatFerry, 一个玩微信的工具。"""
 
     def __init__(self, host: str = None, port: int = 10086, debug: bool = True) -> None:
         self._local_host = False
         self._is_running = False
         self._is_receiving_msg = False
+        self._wcf_root = os.path.abspath(os.path.dirname(__file__))
         self.LOG = logging.getLogger("WCF")
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
@@ -100,7 +61,7 @@ class Wcf():
         if host is None:
             self._local_host = True
             self.host = "127.0.0.1"
-            cmd = fr'"{WCF_ROOT}\wcf.exe" start {self.port} {"debug" if debug else ""}'
+            cmd = fr'"{self._wcf_root}\wcf.exe" start {self.port} {"debug" if debug else ""}'
             if os.system(cmd) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
@@ -144,7 +105,7 @@ class Wcf():
         self.cmd_socket.close()
 
         if self._local_host:
-            cmd = fr'"{WCF_ROOT}\wcf.exe" stop'
+            cmd = fr'"{self._wcf_root}\wcf.exe" stop'
             if os.system(cmd) != 0:
                 self.LOG.error("退出失败！")
                 return
@@ -312,7 +273,7 @@ class Wcf():
                 except Exception as e:
                     pass
                 else:
-                    self.msgQ.put(self.WxMsg(rsp.wxmsg))
+                    self.msgQ.put(WxMsg(rsp.wxmsg))
 
             # 退出前关闭通信通道
             self.msg_socket.close()
@@ -346,7 +307,7 @@ class Wcf():
                 except Exception as e:
                     pass
                 else:
-                    callback(self.WxMsg(rsp.wxmsg))
+                    callback(WxMsg(rsp.wxmsg))
             # 退出前关闭通信通道
             self.msg_socket.close()
 
@@ -430,8 +391,8 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom")      # 群聊
-                    or cnt["wxid"].startswith("gh_")       # 公众号
-                    or cnt["wxid"] in not_friends.keys()   # 其他杂号
+                or cnt["wxid"].startswith("gh_")       # 公众号
+                or cnt["wxid"] in not_friends.keys()   # 其他杂号
                 ):
                 continue
             friends.append(cnt)

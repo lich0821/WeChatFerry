@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from .client import Wcf
-from .client import __version__
+from wcferry.client import Wcf, __version__
+from wcferry.wxmsg import WxMsg
