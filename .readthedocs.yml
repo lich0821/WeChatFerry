@@ -1,0 +1,13 @@
+version: 2
+
+formats:
+  - epub
+  - htmlzip
+
+sphinx:
+  configuration: docs/source/conf.py
+
+python:
+  version: 3.7
+  install:
+    - requirements: docs/requirements.txt
