@@ -21,7 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     license="MIT",
     url="https://github.com/lich0821/WeChatFerry",
-    python_requires='>=3.7',
+    python_requires=">=3.7",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -37,4 +37,8 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python",
     ],
+    project_urls={
+        "Documentation": "https://wechatferry.readthedocs.io/zh/latest/index.html",
+        "GitHub": "https://github.com/lich0821/WeChatFerry/",
+    },
 )
