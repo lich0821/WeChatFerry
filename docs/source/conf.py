@@ -35,6 +35,7 @@ extensions = [
     "myst_parser",
     "autoapi.extension",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "sphinx_copybutton",
 ]
 
