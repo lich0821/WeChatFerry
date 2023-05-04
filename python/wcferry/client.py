@@ -47,7 +47,17 @@ def _retry():
 
 
 class Wcf():
-    """WeChatFerry, 一个玩微信的工具。"""
+    """WeChatFerry, 一个玩微信的工具。
+
+    Args:
+        host (str): `wcferry` RPC 服务器地址，默认本地启动；也可以指定地址连接远程服务
+        port (int): `wcferry` RPC 服务器端口，默认为 10086，接收消息会占用 `port+1` 端口
+        debug (bool): 是否开启调试模式（仅本地启动有效）
+
+    Attributes:
+        contacts (list): 联系人缓存，调用 `get_contacts` 后更新
+        self_wxid (str): 登录账号 wxid
+    """
 
     def __init__(self, host: str = None, port: int = 10086, debug: bool = True) -> None:
         self._local_host = False
@@ -128,6 +138,7 @@ class Wcf():
         return rsp
 
     def is_receiving_msg(self) -> bool:
+        """是否已启动接收消息功能"""
         return self._is_receiving_msg
 
     def is_login(self) -> bool:
@@ -191,7 +202,14 @@ class Wcf():
         return dbs
 
     def get_tables(self, db: str) -> List[dict]:
-        """获取 db 中所有表"""
+        """获取 db 中所有表
+
+        Args:
+            db (str): 数据库名（可通过 `get_dbs` 查询）
+
+        Returns:
+            List[dict]: `db` 下的所有表名及对应建表语句
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_DB_TABLES  # FUNC_GET_DB_TABLES
         req.str = db
@@ -201,7 +219,7 @@ class Wcf():
         return tables
 
     def get_user_info(self) -> dict:
-        """获取个人信息"""
+        """获取登录账号个人信息"""
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_USER_INFO  # FUNC_GET_USER_INFO
         rsp = self._send_request(req)
@@ -210,7 +228,16 @@ class Wcf():
         return ui
 
     def send_text(self, msg: str, receiver: str, aters: Optional[str] = "") -> int:
-        """发送文本消息"""
+        """发送文本消息
+
+        Args:
+            msg (str): 要发送的消息，换行使用 `\\n`；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
+            receiver (str): 消息接收人，wxid 或者 roomid
+            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `nofity@all`
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_TXT  # FUNC_SEND_TXT
         req.txt.msg = msg
@@ -221,7 +248,15 @@ class Wcf():
         return rsp.status
 
     def send_image(self, path: str, receiver: str) -> int:
-        """发送图片"""
+        """发送图片
+
+        Args:
+            path (str): 本地图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_IMG  # FUNC_SEND_IMG
         req.file.path = path
@@ -230,7 +265,15 @@ class Wcf():
         return rsp.status
 
     def send_file(self, path: str, receiver: str) -> int:
-        """发送文件"""
+        """发送文件
+
+        Args:
+            path (str): 本地文件路径，如：`C:/Projs/WeChatRobot/README.MD`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_FILE  # FUNC_SEND_FILE
         req.file.path = path
@@ -239,7 +282,17 @@ class Wcf():
         return rsp.status
 
     def send_xml(self, receiver: str, xml: str, type: int, path: str = None) -> int:
-        """发送文件"""
+        """发送 XML
+
+        Args:
+            receiver (str): 消息接收人，wxid 或者 roomid
+            xml (str): xml 内容
+            type (int): xml 类型，如：0x21 为小程序
+            path (str): 封面图片路径
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_XML  # FUNC_SEND_XML
         req.xml.receiver = receiver
@@ -251,7 +304,15 @@ class Wcf():
         return rsp.status
 
     def send_emotion(self, path: str, receiver: str) -> int:
-        """发送表情"""
+        """发送表情
+
+        Args:
+            path (str): 本地表情路径，如：`C:/Projs/WeChatRobot/emo.gif`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_EMOTION  # FUNC_SEND_EMOTION
         req.file.path = path
@@ -260,10 +321,21 @@ class Wcf():
         return rsp.status
 
     def get_msg(self, block=True) -> WxMsg:
+        """从消息队列中获取消息
+
+        Args:
+            block (bool): 是否阻塞，默认阻塞
+
+        Returns:
+            WxMsg: 微信消息
+
+        Raises:
+            Empty: 如果阻塞并且超时，抛出空异常，需要用户自行捕获
+        """
         return self.msgQ.get(block, timeout=1)
 
     def enable_receiving_msg(self) -> bool:
-        """允许接收消息"""
+        """允许接收消息，成功后通过 `get_msg` 读取消息"""
         def listening_msg():
             rsp = wcf_pb2.Response()
             self.msg_socket.dial(self.msg_url, block=True)
@@ -297,7 +369,10 @@ class Wcf():
         return True
 
     def enable_recv_msg(self, callback: Callable[[WxMsg], None] = None) -> bool:
-        """设置接收消息回调"""
+        """（不建议使用）设置接收消息回调，消息量大时可能会丢失消息
+
+        .. deprecated:: 3.7.0.30.13
+        """
         def listening_msg():
             rsp = wcf_pb2.Response()
             self.msg_socket.dial(self.msg_url, block=True)
@@ -345,7 +420,15 @@ class Wcf():
         return rsp.status
 
     def query_sql(self, db: str, sql: str) -> List[dict]:
-        """执行 SQL"""
+        """执行 SQL，如果数据量大注意分页，以免 OOM
+
+        Args:
+            db (str): 要查询的数据库
+            sql (str): 要执行的 SQL
+
+        Returns:
+            List[dict]: 查询结果
+        """
         result = []
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_EXEC_DB_QUERY  # FUNC_EXEC_DB_QUERY
@@ -363,6 +446,7 @@ class Wcf():
 
     def accept_new_friend(self, v3: str, v4: str, scene: int = 30) -> int:
         """通过好友申请
+
         Args:
             v3 (str): 加密用户名 (好友申请消息里 v3 开头的字符串)
             v4 (str): Ticket (好友申请消息里 v4 开头的字符串)
@@ -400,7 +484,15 @@ class Wcf():
         return friends
 
     def add_chatroom_members(self, roomid: str, wxids: str) -> int:
-        """添加群成员"""
+        """添加群成员
+
+        Args:
+            roomid (str): 待加群的 id
+            wxids (str): 要加到群里的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ADD_ROOM_MEMBERS  # FUNC_ADD_ROOM_MEMBERS
         req.m.roomid = roomid
@@ -410,6 +502,7 @@ class Wcf():
 
     def receive_transfer(self, wxid: str, transferid: str) -> int:
         """接收转账
+
         Args:
             wxid (str): 转账消息里的发送人 wxid
             transferid (str): 转账消息里的 transferid
@@ -426,6 +519,7 @@ class Wcf():
 
     def decrypt_image(self, src: str, dst: str) -> bool:
         """解密图片:
+
         Args:
             src (str): 加密的图片路径
             dst (str): 解密的图片路径

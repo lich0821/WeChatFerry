@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from wcferry import wcf_pb2
 
+
 class WxMsg():
-    """微信消息"""
+    """微信消息
+
+    Attributes:
+        type (int): 消息类型，可通过 `get_msg_types` 获取
+        id (str): 消息 id
+        xml (str): 消息 xml 部分
+        sender (str): 消息发送人
+        roomid (str): （仅群消息有）群 id
+        content (str): 消息内容
+        thumb (str): 视频或图片消息的缩略图路径
+        extra (str): 视频或图片消息的路径
+    """
 
     def __init__(self, msg: wcf_pb2.WxMsg) -> None:
         self._is_self = msg.is_self
