@@ -251,7 +251,7 @@ class Wcf():
         """发送图片，非线程安全
 
         Args:
-            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://github.com/lich0821/WeChatRobot/blob/master/TEQuant.jpeg`
+            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://raw.githubusercontent.com/lich0821/WeChatRobot/master/TEQuant.jpeg`
             receiver (str): 消息接收人，wxid 或者 roomid
 
         Returns:
@@ -268,10 +268,10 @@ class Wcf():
                 response.raw.decode_content = True
 
                 # 保存图片，不删除，等下次覆盖
-                with open(f"{self._wcf_root}/tmp.jpg", "wb") as of:
+                with open(f"{self._wcf_root}/.tmp.jpg", "wb") as of:
                     of.write(response.content)
 
-                path = f"{self._wcf_root}/tmp.jpg"
+                path = f"{self._wcf_root}/.tmp.jpg"
             except Exception as e:
                 self.LOG.error(e)
                 return -1
