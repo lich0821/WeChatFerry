@@ -15,8 +15,8 @@ from time import sleep
 from typing import Callable, List, Optional
 
 import pynng
+import requests
 from google.protobuf import json_format
-
 from wcferry import wcf_pb2
 from wcferry.wxmsg import WxMsg
 
@@ -60,7 +60,7 @@ class Wcf():
     """
 
     def __init__(self, host: str = None, port: int = 10086, debug: bool = True) -> None:
-        self._local_host = False
+        self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
         self._wcf_root = os.path.abspath(os.path.dirname(__file__))
@@ -69,7 +69,7 @@ class Wcf():
         self.port = port
         self.host = host
         if host is None:
-            self._local_host = True
+            self._local_mode = True
             self.host = "127.0.0.1"
             cmd = fr'"{self._wcf_root}\wcf.exe" start {self.port} {"debug" if debug else ""}'
             if os.system(cmd) != 0:
@@ -114,7 +114,7 @@ class Wcf():
         self.disable_recv_msg()
         self.cmd_socket.close()
 
-        if self._local_host:
+        if self._local_mode:
             cmd = fr'"{self._wcf_root}\wcf.exe" stop'
             if os.system(cmd) != 0:
                 self.LOG.error("退出失败！")
@@ -248,15 +248,34 @@ class Wcf():
         return rsp.status
 
     def send_image(self, path: str, receiver: str) -> int:
-        """发送图片
+        """发送图片，非线程安全
 
         Args:
-            path (str): 本地图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg`
+            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://github.com/lich0821/WeChatRobot/blob/master/TEQuant.jpeg`
             receiver (str): 消息接收人，wxid 或者 roomid
 
         Returns:
             int: 0 为成功，其他失败
         """
+        if path.startswith("http"):
+            if not self._local_mode:
+                self.LOG.error(f"只有本地模式才支持网络路径！")
+                return -1
+            try:
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36', }
+                response = requests.get(path, headers=headers, stream=True)
+                response.raw.decode_content = True
+
+                # 保存图片，不删除，等下次覆盖
+                with open(f"{self._wcf_root}/tmp.jpg", "wb") as of:
+                    of.write(response.content)
+
+                path = f"{self._wcf_root}/tmp.jpg"
+            except Exception as e:
+                self.LOG.error(e)
+                return -1
+
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_IMG  # FUNC_SEND_IMG
         req.file.path = path
