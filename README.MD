@@ -40,10 +40,13 @@
 ![碲矿](TEQuant.jpeg)
 
 ## 快速开始
-下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端。
+下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
+
+### Go
+参考 [Go README.MD](go/README.MD)
 
 ### Java
-参考 [README.MD](java/README.MD)
+参考 [Java README.MD](java/README.MD)
 
 ### Python
 [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
@@ -56,7 +59,7 @@ pip install --upgrade wcferry
 * 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### Rust
-参考 [README.MD](rust/README.MD)
+参考 [Rust README.MD](rust/README.MD)
 
 ## 一起开发
 ### 安装开发环境
@@ -90,6 +93,8 @@ vcpkg integrate install
 ## 项目结构
 ```sh
 WeChatFerry
+├── docs              # 文档
+├── go                # Go 客户端
 ├── java              # Java 客户端
 ├── launcher          # 图形版启动器
 ├── python            # Python 客户端
@@ -105,7 +110,7 @@ WeChatFerry
 └── WeChatFerry.sln   # VS2019 工程文件
 ```
 
-### python
+### java
 Java 客户端。
 
 ### launcher
