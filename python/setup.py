@@ -27,7 +27,8 @@ setup(
     install_requires=[
         "setuptools",
         "grpcio-tools",
-        "pynng"
+        "pynng",
+        "requests",
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",
