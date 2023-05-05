@@ -19,7 +19,7 @@ public class Main {
 
         // 登录账号 wxid
         logger.info("wxid: {}", client.getSelfWxid());
-/*
+
         // 消息类型
         logger.info("message types: {}", client.getMsgTypes());
 
@@ -57,6 +57,6 @@ public class Main {
         thread.start();
         // client.diableRecvMsg(); // 需要停止时调用
 
-        client.keepRunning();*/
+        client.keepRunning();
     }
 }
