@@ -39,8 +39,10 @@ class Http(FastAPI):
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
         self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
         self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
+
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
+        self.add_api_route("/msg-types", self.get_msg_types, methods=["GET"], summary="获取消息类型")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -116,9 +118,18 @@ class Http(FastAPI):
     def is_login(self) -> dict:
         """获取登录状态"""
         ret = self.wcf.is_login()
-        return {"status": ret, "message": "成功", "data": {"login": ret}}
+        return {"status": 0, "message": "成功", "data": {"login": ret}}
 
     def get_self_wxid(self) -> dict:
-        """获取登录状态"""
+        """获取登录账号 wxid"""
         ret = self.wcf.get_self_wxid()
-        return {"status": ret, "message": "成功", "data": {"wxid": ret}}
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"wxid": ret}}
+        return {"status": -1, "message": "失败"}
+
+    def get_msg_types(self) -> dict:
+        """获取消息类型"""
+        ret = self.wcf.get_msg_types()
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"types": ret}}
+        return {"status": -1, "message": "失败"}
