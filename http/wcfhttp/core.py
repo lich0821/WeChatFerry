@@ -40,6 +40,7 @@ class Http(FastAPI):
         self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
         self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
+        self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -116,3 +117,8 @@ class Http(FastAPI):
         """获取登录状态"""
         ret = self.wcf.is_login()
         return {"status": ret, "message": "成功", "data": {"login": ret}}
+
+    def get_self_wxid(self) -> dict:
+        """获取登录状态"""
+        ret = self.wcf.get_self_wxid()
+        return {"status": ret, "message": "成功", "data": {"wxid": ret}}
