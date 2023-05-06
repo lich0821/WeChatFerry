@@ -37,6 +37,7 @@ class Http(FastAPI):
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
+        self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -88,4 +89,16 @@ class Http(FastAPI):
                   receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
         """发送文件消息"""
         ret = self.wcf.send_file(path, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_xml(
+            self, receiver: str = Body("filehelper", description="roomid 或者 wxid"),
+            xml:
+            str = Body(
+                '<?xml version="1.0"?><msg><appmsg appid="" sdkver="0"><title>叮当药房，24小时服务，28分钟送药到家！</title><des>叮当快药首家承诺范围内28分钟送药到家！叮当快药核心区域内7*24小时全天候服务，送药上门！叮当快药官网为您提供快捷便利，正品低价，安全放心的购药、送药服务体验。</des><action>view</action><type>33</type></appmsg><fromusername>wxid_xxxxxxxxxxxxxx</fromusername><scene>0</scene><appinfo><version>1</version><appname /></appinfo><commenturl /></msg>',
+                description="xml 内容"),
+            type: int = Body(0x21, description="xml 类型，0x21 为小程序"),
+            path: str = Body(None, description="封面图片路径")) -> dict:
+        """发送 XML 消息"""
+        ret = self.wcf.send_xml(receiver, xml, type, path)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
