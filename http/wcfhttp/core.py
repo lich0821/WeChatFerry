@@ -3,6 +3,7 @@
 
 import logging
 from typing import Any
+import base64
 
 import requests
 from fastapi import Body, FastAPI
@@ -39,6 +40,7 @@ class Http(FastAPI):
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
         self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
         self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
+        self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
 
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
@@ -164,4 +166,18 @@ class Http(FastAPI):
         ret = self.wcf.get_user_info()
         if ret:
             return {"status": 0, "message": "成功", "data": {"ui": ret}}
+        return {"status": -1, "message": "失败"}
+
+    def query_sql(self,
+                  db: str = Body("MicroMsg.db", description="数据库"),
+                  sql: str = Body("SELECT * FROM Contact LIMIT 1;", description="SQL 语句")) -> dict:
+        """执行 SQL，如果数据量大注意分页，以免 OOM"""
+        ret = self.wcf.query_sql(db, sql)
+        if ret:
+            for row in ret:
+                for k, v in row.items():
+                    print(k, type(v))
+                    if type(v) is bytes:
+                        row[k] = base64.b64encode(v)
+            return {"status": 0, "message": "成功", "data": {"bs64": ret}}
         return {"status": -1, "message": "失败"}
