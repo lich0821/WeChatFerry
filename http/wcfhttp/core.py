@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import base64
 import logging
 from typing import Any
-import base64
 
 import requests
 from fastapi import Body, FastAPI
@@ -34,6 +34,16 @@ class Http(FastAPI):
         self.LOG = logging.getLogger(__name__)
         self.wcf = wcf
         self._set_cb(cb)
+
+        self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
+        self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
+        self.add_api_route("/user-info", self.get_user_info, methods=["GET"], summary="获取登录账号个人信息")
+        self.add_api_route("/msg-types", self.get_msg_types, methods=["GET"], summary="获取消息类型")
+        self.add_api_route("/contacts", self.get_contacts, methods=["GET"], summary="获取完整通讯录")
+        self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
+        self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
+        self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
+
         self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例")
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
@@ -45,15 +55,6 @@ class Http(FastAPI):
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
-
-        self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
-        self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
-        self.add_api_route("/msg-types", self.get_msg_types, methods=["GET"], summary="获取消息类型")
-        self.add_api_route("/contacts", self.get_contacts, methods=["GET"], summary="获取完整通讯录")
-        self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
-        self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
-        self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
-        self.add_api_route("/user-info", self.get_user_info, methods=["GET"], summary="获取登录账号个人信息")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -82,49 +83,6 @@ class Http(FastAPI):
         else:
             self.LOG.info(f"没有设置回调，打印消息")
             self.wcf.enable_recv_msg(print)
-
-    def msg_cb(self, msg: Msg):
-        """示例回调方法，简单打印消息"""
-        print(f"收到消息：{msg}")
-        return {"status": 0, "message": "成功"}
-
-    def send_text(self, msg: str = Body("消息"), receiver: str = Body("filehelper"), aters: str = Body("")) -> dict:
-        """发送文本消息，可参考：robot.py 里 sendTextMsg"""
-        ret = self.wcf.send_text(msg, receiver, aters)
-        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
-
-    def send_image(self,
-                   path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="图片路径"),
-                   receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送图片消息"""
-        ret = self.wcf.send_image(path, receiver)
-        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
-
-    def send_file(self,
-                  path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="本地文件路径，不支持网络路径"),
-                  receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送文件消息"""
-        ret = self.wcf.send_file(path, receiver)
-        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
-
-    def send_xml(
-            self, receiver: str = Body("filehelper", description="roomid 或者 wxid"),
-            xml:
-            str = Body(
-                '<?xml version="1.0"?><msg><appmsg appid="" sdkver="0"><title>叮当药房，24小时服务，28分钟送药到家！</title><des>叮当快药首家承诺范围内28分钟送药到家！叮当快药核心区域内7*24小时全天候服务，送药上门！叮当快药官网为您提供快捷便利，正品低价，安全放心的购药、送药服务体验。</des><action>view</action><type>33</type></appmsg><fromusername>wxid_xxxxxxxxxxxxxx</fromusername><scene>0</scene><appinfo><version>1</version><appname /></appinfo><commenturl /></msg>',
-                description="xml 内容"),
-            type: int = Body(0x21, description="xml 类型，0x21 为小程序"),
-            path: str = Body(None, description="封面图片路径")) -> dict:
-        """发送 XML 消息"""
-        ret = self.wcf.send_xml(receiver, xml, type, path)
-        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
-
-    def send_emotion(self,
-                     path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
-                     receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送表情消息"""
-        ret = self.wcf.send_emotion(path, receiver)
-        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def is_login(self) -> dict:
         """获取登录状态"""
@@ -179,6 +137,49 @@ class Http(FastAPI):
         if ret:
             return {"status": 0, "message": "成功", "data": {"ui": ret}}
         return {"status": -1, "message": "失败"}
+
+    def msg_cb(self, msg: Msg):
+        """示例回调方法，简单打印消息"""
+        print(f"收到消息：{msg}")
+        return {"status": 0, "message": "成功"}
+
+    def send_text(self, msg: str = Body("消息"), receiver: str = Body("filehelper"), aters: str = Body("")) -> dict:
+        """发送文本消息，可参考：robot.py 里 sendTextMsg"""
+        ret = self.wcf.send_text(msg, receiver, aters)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_image(self,
+                   path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="图片路径"),
+                   receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+        """发送图片消息"""
+        ret = self.wcf.send_image(path, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_file(self,
+                  path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="本地文件路径，不支持网络路径"),
+                  receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+        """发送文件消息"""
+        ret = self.wcf.send_file(path, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_xml(
+            self, receiver: str = Body("filehelper", description="roomid 或者 wxid"),
+            xml:
+            str = Body(
+                '<?xml version="1.0"?><msg><appmsg appid="" sdkver="0"><title>叮当药房，24小时服务，28分钟送药到家！</title><des>叮当快药首家承诺范围内28分钟送药到家！叮当快药核心区域内7*24小时全天候服务，送药上门！叮当快药官网为您提供快捷便利，正品低价，安全放心的购药、送药服务体验。</des><action>view</action><type>33</type></appmsg><fromusername>wxid_xxxxxxxxxxxxxx</fromusername><scene>0</scene><appinfo><version>1</version><appname /></appinfo><commenturl /></msg>',
+                description="xml 内容"),
+            type: int = Body(0x21, description="xml 类型，0x21 为小程序"),
+            path: str = Body(None, description="封面图片路径")) -> dict:
+        """发送 XML 消息"""
+        ret = self.wcf.send_xml(receiver, xml, type, path)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_emotion(self,
+                     path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
+                     receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+        """发送表情消息"""
+        ret = self.wcf.send_emotion(path, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def query_sql(self,
                   db: str = Body("MicroMsg.db", description="数据库"),
