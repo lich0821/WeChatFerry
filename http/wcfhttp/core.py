@@ -43,6 +43,7 @@ class Http(FastAPI):
         self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
+        self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
 
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
@@ -205,4 +206,11 @@ class Http(FastAPI):
                              wxids: str = Body("wxid_xxxxxxxxxxxxx", description="要加到群里的 wxid，多个用逗号分隔")) -> dict:
         """添加群成员"""
         ret = self.wcf.add_chatroom_members(roomid, wxids)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def receive_transfer(self,
+                         wxid: str = Body("wxid_xxxxxxxxxxxxx", description="转账消息里的发送人 wxid"),
+                         transferid: str = Body("transferid", description="转账消息里的 transferid")) -> dict:
+        """接收转账"""
+        ret = self.wcf.receive_transfer(wxid, transferid)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
