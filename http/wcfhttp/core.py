@@ -39,6 +39,7 @@ class Http(FastAPI):
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
         self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
         self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
+        self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -105,8 +106,13 @@ class Http(FastAPI):
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def send_emotion(self,
-                  path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
-                  receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+                     path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
+                     receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
         """发送表情消息"""
         ret = self.wcf.send_emotion(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def is_login(self) -> dict:
+        """获取登录状态"""
+        ret = self.wcf.is_login()
+        return {"status": ret, "message": "成功", "data": {"login": ret}}
