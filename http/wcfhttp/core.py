@@ -44,6 +44,7 @@ class Http(FastAPI):
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
+        self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
 
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
@@ -214,3 +215,10 @@ class Http(FastAPI):
         """接收转账"""
         ret = self.wcf.receive_transfer(wxid, transferid)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def decrypt_image(self,
+                      src: str = Body("C:\\...", description="加密的图片路径，从图片消息中获取"),
+                      dst: str = Body("C:\\...", description="解密的图片路径")) -> dict:
+        """接收转账"""
+        ret = self.wcf.decrypt_image(src, dst)
+        return {"status": ret, "message": "成功"if ret else "失败"}
