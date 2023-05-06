@@ -38,6 +38,7 @@ class Http(FastAPI):
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
         self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
+        self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -101,4 +102,11 @@ class Http(FastAPI):
             path: str = Body(None, description="封面图片路径")) -> dict:
         """发送 XML 消息"""
         ret = self.wcf.send_xml(receiver, xml, type, path)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_emotion(self,
+                  path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
+                  receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+        """发送表情消息"""
+        ret = self.wcf.send_emotion(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
