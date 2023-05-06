@@ -1,5 +1,7 @@
 # WeChatFerry HTTP 客户端
-基于 [wcferry](https://pypi.org/project/wcferry/) 封装。
+[![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp)
+
+基于 [wcferry](https://pypi.org/project/wcferry/) 封装的 HTTP 客户端。
 
 ## 快速开始
 ### 安装
@@ -23,4 +25,4 @@ wcfhttp --cb http://your_host:your_port/callback
 ```
 
 ### 接收消息回调接口文档
-参考文档（默认地址为：http://localhost:9999/docs）`接收消息回调样例`。
+参考文档（默认地址为：http://localhost:9999/docs ）`接收消息回调样例`。
