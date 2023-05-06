@@ -36,6 +36,7 @@ class Http(FastAPI):
         self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例")
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
+        self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -80,4 +81,11 @@ class Http(FastAPI):
                    receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
         """发送图片消息"""
         ret = self.wcf.send_image(path, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_file(self,
+                  path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="本地文件路径，不支持网络路径"),
+                  receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
+        """发送文件消息"""
+        ret = self.wcf.send_file(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
