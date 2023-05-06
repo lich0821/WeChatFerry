@@ -37,7 +37,7 @@
 
 ![Demo](demo.gif)
 
-|![碲矿](TEQuant.jpeg)|![赞赏](QR.jpeg)|
+|![碲矿](TEQuant.jpg)|![赞赏](QR.jpeg)|
 |:-:|:-:|
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
