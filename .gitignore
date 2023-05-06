@@ -34,3 +34,6 @@ rust/target/
 rust/wcferry/Cargo.lock
 rust/wcferry/.wcf.lock
 /rust/wcferry/target/CACHEDIR.TAG
+
+http/dist/
+http/*.egg-info/
