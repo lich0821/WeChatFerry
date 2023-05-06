@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 import requests
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
@@ -34,6 +34,7 @@ class Http(FastAPI):
         self.wcf = wcf
         self._set_cb(cb)
         self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例")
+        self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
 
     def _set_cb(self, cb):
         def callback(msg: WxMsg):
@@ -67,3 +68,8 @@ class Http(FastAPI):
         """示例回调方法，简单打印消息"""
         print(f"收到消息：{msg}")
         return {"status": 0, "message": "成功"}
+
+    def send_text(self, msg: str = Body("消息"), receiver: str = Body("filehelper"), aters: str = Body("")) -> dict:
+        """发送文本消息，可参考：robot.py 里 sendTextMsg"""
+        ret = self.wcf.send_text(msg, receiver, aters)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败"}
