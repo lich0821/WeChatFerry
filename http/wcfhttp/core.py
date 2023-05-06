@@ -47,6 +47,7 @@ class Http(FastAPI):
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
         self.add_api_route("/msg-types", self.get_msg_types, methods=["GET"], summary="获取消息类型")
         self.add_api_route("/contacts", self.get_contacts, methods=["GET"], summary="获取完整通讯录")
+        self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
         self.add_api_route("/user-info", self.get_user_info, methods=["GET"], summary="获取登录账号个人信息")
@@ -146,6 +147,13 @@ class Http(FastAPI):
         ret = self.wcf.get_contacts()
         if ret:
             return {"status": 0, "message": "成功", "data": {"contacts": ret}}
+        return {"status": -1, "message": "失败"}
+
+    def get_friends(self) -> dict:
+        """获取好友列表"""
+        ret = self.wcf.get_friends()
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"friends": ret}}
         return {"status": -1, "message": "失败"}
 
     def get_dbs(self) -> dict:
