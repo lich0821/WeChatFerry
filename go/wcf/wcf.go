@@ -136,15 +136,17 @@ func (c *Client) ExecDBQuery(db, sql string) []*DbRow {
 /*AcceptFriend 接收好友请求
  * 接收好友请求
  *
- * @param v3 xml.attrib["encryptusername"]
- * @param v4 xml.attrib["ticket"]
+ * @param v3 xml.attrib["encryptusername"] // 加密的用户名
+ * @param v4 xml.attrib["ticket"]   // Ticket
+ * @param scene 17 // 添加方式：17 名片，30 扫码
  */
-func (c *Client) AcceptFriend(v3, v4 string) int32 {
+func (c *Client) AcceptFriend(v3, v4 string, scene int32) int32 {
 	req := genFunReq(Functions_FUNC_ACCEPT_FRIEND)
 	q := Request_V{
 		V: &Verification{
-			V3: v3,
-			V4: v4,
+			V3:    v3,
+			V4:    v4,
+			Scene: scene,
 		}}
 
 	req.Msg = &q
