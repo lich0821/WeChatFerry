@@ -112,7 +112,7 @@ func TestAcceptFriend(t *testing.T) {
 		logs.Err(err)
 		return
 	}
-	logs.Info(wcf.AcceptFriend())
+	logs.Info(wcf.AcceptFriend("encryptusername", "ticket", 17))
 }
 func TestGetUserInfo(t *testing.T) {
 	wcf, err := NewWCF("")

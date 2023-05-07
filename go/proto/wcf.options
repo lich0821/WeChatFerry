@@ -1,9 +1,0 @@
-# Generate all fields as pointers.
-* mangle_names:M_STRIP_PACKAGE
-* fallback_type:FT_POINTER
-MsgTypes* fallback_type:FT_CALLBACK
-RpcContact* fallback_type:FT_CALLBACK
-DbNames* fallback_type:FT_CALLBACK
-DbTable* fallback_type:FT_CALLBACK
-DbField* fallback_type:FT_CALLBACK
-DbRow* fallback_type:FT_CALLBACK
