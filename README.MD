@@ -28,6 +28,8 @@
 
 <details><summary>点击查看支持的客户端</summary>
 
+* Go
+* HTTP
 * Java
 * Python
 * Rust
@@ -35,15 +37,38 @@
 
 ![Demo](demo.gif)
 
-欢迎加群交流，后台回复 `WeChatFerry`：
-
-![碲矿](TEQuant.jpeg)
+|![碲矿](TEQuant.jpg)|![赞赏](QR.jpeg)|
+|:-:|:-:|
+|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
 ## 快速开始
 下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
 
 ### Go
 参考 [Go README.MD](go/README.MD)
+
+### HTTP
+[![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp)
+
+* 安装
+```sh
+pip install --upgrade wcfhttp
+```
+
+* 运行
+```sh
+# 查看版本
+wcfhttp -v
+
+# 查看帮助
+wcfhttp -h
+
+# 忽略新消息运行
+wcfhttp
+
+# 新消息转发到指定地址
+wcfhttp --cb http://your_host:your_port/callback
+```
 
 ### Java
 参考 [Java README.MD](java/README.MD)
@@ -95,6 +120,7 @@ vcpkg integrate install
 WeChatFerry
 ├── docs              # 文档
 ├── go                # Go 客户端
+├── http              # HTTP 客户端
 ├── java              # Java 客户端
 ├── launcher          # 图形版启动器
 ├── python            # Python 客户端
@@ -109,6 +135,12 @@ WeChatFerry
 ├── TEQuant.jpeg      # 二维码，测试用图
 └── WeChatFerry.sln   # VS2019 工程文件
 ```
+
+### go
+Go 客户端。
+
+### http
+HTTP 客户端。
 
 ### java
 Java 客户端。

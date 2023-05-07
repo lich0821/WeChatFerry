@@ -132,8 +132,25 @@ func (c *Client) ExecDBQuery(db, sql string) []*DbRow {
 	}
 	return recv.GetRows().GetRows()
 }
-func (c *Client) AcceptFriend() int32 {
-	err := c.send(genFunReq(Functions_FUNC_ACCEPT_FRIEND).build())
+
+/*AcceptFriend 接收好友请求
+ * 接收好友请求
+ *
+ * @param v3 xml.attrib["encryptusername"] // 加密的用户名
+ * @param v4 xml.attrib["ticket"]   // Ticket
+ * @param scene 17 // 添加方式：17 名片，30 扫码
+ */
+func (c *Client) AcceptFriend(v3, v4 string, scene int32) int32 {
+	req := genFunReq(Functions_FUNC_ACCEPT_FRIEND)
+	q := Request_V{
+		V: &Verification{
+			V3:    v3,
+			V4:    v4,
+			Scene: scene,
+		}}
+
+	req.Msg = &q
+	err := c.send(req.build())
 	if err != nil {
 		logs.Err(err)
 	}
@@ -143,6 +160,59 @@ func (c *Client) AcceptFriend() int32 {
 	}
 	return recv.GetStatus()
 }
+func (c *Client) AddChatroomMembers(roomID, wxIDs string) int32 {
+	req := genFunReq(Functions_FUNC_ADD_ROOM_MEMBERS)
+	q := Request_M{
+		M: &AddMembers{Roomid: roomID, Wxids: wxIDs},
+	}
+	req.Msg = &q
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
+
+// ReceiveTransfer 接收转账
+func (c *Client) ReceiveTransfer(transferId, wxID string) int32 {
+	req := genFunReq(Functions_FUNC_RECV_TRANSFER)
+	q := Request_Tf{
+		Tf: &Transfer{Tid: transferId, Wxid: wxID},
+	}
+	req.Msg = &q
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
+
+// DecryptImage 解密图片 加密路径，解密路径
+func (c *Client) DecryptImage(src, dst string) int32 {
+	req := genFunReq(Functions_FUNC_DECRYPT_IMAGE)
+	q := Request_Dec{
+		Dec: &DecPath{Src: src, Dst: dst},
+	}
+	req.Msg = &q
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
+
 func (c *Client) AddChatRoomMembers(roomId string, wxIds []string) int32 {
 	req := genFunReq(Functions_FUNC_ADD_ROOM_MEMBERS)
 	q := Request_M{
@@ -292,8 +362,8 @@ func (c *Client) OnMSG(f func(msg *WxMsg)) error {
 	if err != nil {
 		return err
 	}
-	socket.SetOption(mangos.OptionRecvDeadline, 2000)
-	socket.SetOption(mangos.OptionSendDeadline, 2000)
+	_ = socket.SetOption(mangos.OptionRecvDeadline, 2000)
+	_ = socket.SetOption(mangos.OptionSendDeadline, 2000)
 	err = socket.Dial(addPort(c.add))
 
 	if err != nil {
@@ -305,7 +375,6 @@ func (c *Client) OnMSG(f func(msg *WxMsg)) error {
 		if err != nil {
 			return err
 		}
-		logs.Info(len(recv))
 		_ = proto.Unmarshal(recv, msg)
 		go f(msg.GetWxmsg())
 	}
