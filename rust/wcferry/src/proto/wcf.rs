@@ -3,7 +3,7 @@
 pub struct Request {
     #[prost(enumeration = "Functions", tag = "1")]
     pub func: i32,
-    #[prost(oneof = "request::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9")]
+    #[prost(oneof = "request::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11")]
     pub msg: ::core::option::Option<request::Msg>,
 }
 /// Nested message and enum types in `Request`.
@@ -27,6 +27,10 @@ pub mod request {
         M(super::AddMembers),
         #[prost(message, tag = "9")]
         Xml(super::XmlMsg),
+        #[prost(message, tag = "10")]
+        Dec(super::DecPath),
+        #[prost(message, tag = "11")]
+        Tf(super::Transfer),
     }
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -34,7 +38,7 @@ pub mod request {
 pub struct Response {
     #[prost(enumeration = "Functions", tag = "1")]
     pub func: i32,
-    #[prost(oneof = "response::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9")]
+    #[prost(oneof = "response::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9, 10")]
     pub msg: ::core::option::Option<response::Msg>,
 }
 /// Nested message and enum types in `Response`.
@@ -42,22 +46,33 @@ pub mod response {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Msg {
+        /// Int 状态，通用
         #[prost(int32, tag = "2")]
         Status(i32),
+        /// 字符串
         #[prost(string, tag = "3")]
         Str(::prost::alloc::string::String),
+        /// 微信消息
         #[prost(message, tag = "4")]
         Wxmsg(super::WxMsg),
+        /// 消息类型
         #[prost(message, tag = "5")]
         Types(super::MsgTypes),
+        /// 联系人
         #[prost(message, tag = "6")]
         Contacts(super::RpcContacts),
+        /// 数据库列表
         #[prost(message, tag = "7")]
         Dbs(super::DbNames),
+        /// 表列表
         #[prost(message, tag = "8")]
         Tables(super::DbTables),
+        /// 行列表
         #[prost(message, tag = "9")]
         Rows(super::DbRows),
+        /// 个人信息
+        #[prost(message, tag = "10")]
+        Ui(super::UserInfo),
     }
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -90,6 +105,12 @@ pub struct WxMsg {
     /// 消息内容
     #[prost(string, tag = "8")]
     pub content: ::prost::alloc::string::String,
+    /// 缩略图
+    #[prost(string, tag = "9")]
+    pub thumb: ::prost::alloc::string::String,
+    /// 附加内容
+    #[prost(string, tag = "10")]
+    pub extra: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -145,20 +166,23 @@ pub struct RpcContact {
     /// 微信号
     #[prost(string, tag = "2")]
     pub code: ::prost::alloc::string::String,
-    /// 微信昵称
+    /// 备注
     #[prost(string, tag = "3")]
+    pub remark: ::prost::alloc::string::String,
+    /// 微信昵称
+    #[prost(string, tag = "4")]
     pub name: ::prost::alloc::string::String,
     /// 国家
-    #[prost(string, tag = "4")]
+    #[prost(string, tag = "5")]
     pub country: ::prost::alloc::string::String,
     /// 省/州
-    #[prost(string, tag = "5")]
+    #[prost(string, tag = "6")]
     pub province: ::prost::alloc::string::String,
     /// 城市
-    #[prost(string, tag = "6")]
+    #[prost(string, tag = "7")]
     pub city: ::prost::alloc::string::String,
     /// 性别
-    #[prost(int32, tag = "7")]
+    #[prost(int32, tag = "8")]
     pub gender: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -227,10 +251,15 @@ pub struct DbRows {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Verification {
+    /// 加密的用户名
     #[prost(string, tag = "1")]
     pub v3: ::prost::alloc::string::String,
+    /// Ticket
     #[prost(string, tag = "2")]
     pub v4: ::prost::alloc::string::String,
+    /// 添加方式：17 名片，30 扫码
+    #[prost(int32, tag = "3")]
+    pub scene: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -242,6 +271,42 @@ pub struct AddMembers {
     #[prost(string, tag = "2")]
     pub wxids: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UserInfo {
+    /// 微信ID
+    #[prost(string, tag = "1")]
+    pub wxid: ::prost::alloc::string::String,
+    /// 昵称
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    /// 手机号
+    #[prost(string, tag = "3")]
+    pub mobile: ::prost::alloc::string::String,
+    /// 文件/图片等父路径
+    #[prost(string, tag = "4")]
+    pub home: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DecPath {
+    /// 源路径
+    #[prost(string, tag = "1")]
+    pub src: ::prost::alloc::string::String,
+    /// 目标路径
+    #[prost(string, tag = "2")]
+    pub dst: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Transfer {
+    /// 转账人
+    #[prost(string, tag = "1")]
+    pub wxid: ::prost::alloc::string::String,
+    /// 转账id transferid
+    #[prost(string, tag = "2")]
+    pub tid: ::prost::alloc::string::String,
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum Functions {
@@ -252,6 +317,7 @@ pub enum Functions {
     FuncGetContacts = 18,
     FuncGetDbNames = 19,
     FuncGetDbTables = 20,
+    FuncGetUserInfo = 21,
     FuncSendTxt = 32,
     FuncSendImg = 33,
     FuncSendFile = 34,
@@ -262,6 +328,8 @@ pub enum Functions {
     FuncExecDbQuery = 80,
     FuncAcceptFriend = 81,
     FuncAddRoomMembers = 82,
+    FuncRecvTransfer = 83,
+    FuncDecryptImage = 96,
 }
 impl Functions {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -277,6 +345,7 @@ impl Functions {
             Functions::FuncGetContacts => "FUNC_GET_CONTACTS",
             Functions::FuncGetDbNames => "FUNC_GET_DB_NAMES",
             Functions::FuncGetDbTables => "FUNC_GET_DB_TABLES",
+            Functions::FuncGetUserInfo => "FUNC_GET_USER_INFO",
             Functions::FuncSendTxt => "FUNC_SEND_TXT",
             Functions::FuncSendImg => "FUNC_SEND_IMG",
             Functions::FuncSendFile => "FUNC_SEND_FILE",
@@ -287,6 +356,8 @@ impl Functions {
             Functions::FuncExecDbQuery => "FUNC_EXEC_DB_QUERY",
             Functions::FuncAcceptFriend => "FUNC_ACCEPT_FRIEND",
             Functions::FuncAddRoomMembers => "FUNC_ADD_ROOM_MEMBERS",
+            Functions::FuncRecvTransfer => "FUNC_RECV_TRANSFER",
+            Functions::FuncDecryptImage => "FUNC_DECRYPT_IMAGE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -299,6 +370,7 @@ impl Functions {
             "FUNC_GET_CONTACTS" => Some(Self::FuncGetContacts),
             "FUNC_GET_DB_NAMES" => Some(Self::FuncGetDbNames),
             "FUNC_GET_DB_TABLES" => Some(Self::FuncGetDbTables),
+            "FUNC_GET_USER_INFO" => Some(Self::FuncGetUserInfo),
             "FUNC_SEND_TXT" => Some(Self::FuncSendTxt),
             "FUNC_SEND_IMG" => Some(Self::FuncSendImg),
             "FUNC_SEND_FILE" => Some(Self::FuncSendFile),
@@ -309,6 +381,8 @@ impl Functions {
             "FUNC_EXEC_DB_QUERY" => Some(Self::FuncExecDbQuery),
             "FUNC_ACCEPT_FRIEND" => Some(Self::FuncAcceptFriend),
             "FUNC_ADD_ROOM_MEMBERS" => Some(Self::FuncAddRoomMembers),
+            "FUNC_RECV_TRANSFER" => Some(Self::FuncRecvTransfer),
+            "FUNC_DECRYPT_IMAGE" => Some(Self::FuncDecryptImage),
             _ => None,
         }
     }
