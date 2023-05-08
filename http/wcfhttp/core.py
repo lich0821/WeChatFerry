@@ -10,7 +10,7 @@ from fastapi import Body, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "37.1.25.0"
+__version__ = "37.1.25.1"
 
 
 class Msg(BaseModel):
@@ -22,6 +22,7 @@ class Msg(BaseModel):
     content: str
     thumb: str
     extra: str
+    is_at: bool
     is_self: bool
     is_group: bool
 
@@ -67,6 +68,7 @@ class Http(FastAPI):
             data["content"] = msg.content
             data["thumb"] = msg.thumb
             data["extra"] = msg.extra
+            data["is_at"] = msg.is_at()
             data["is_self"] = msg.from_self()
             data["is_group"] = msg.from_group()
 
