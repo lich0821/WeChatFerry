@@ -6,10 +6,13 @@
 WeChatFerry
 =======================================
 
+.. image:: _static/QRCodes.jpg
+
 .. toctree::
    :maxdepth: 4
 
    readme_link
+   openapi
    autoapi/index
 
 
