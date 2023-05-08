@@ -34,6 +34,7 @@ class Http(FastAPI):
         self.LOG = logging.getLogger(__name__)
         self.wcf = wcf
         self._set_cb(cb)
+        self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例", tags=["示例"])
 
         self.add_api_route("/login", self.is_login, methods=["GET"], summary="获取登录状态")
         self.add_api_route("/wxid", self.get_self_wxid, methods=["GET"], summary="获取登录账号 wxid")
@@ -44,7 +45,6 @@ class Http(FastAPI):
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
 
-        self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例")
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
@@ -125,7 +125,14 @@ class Http(FastAPI):
         return {"status": -1, "message": "失败"}
 
     def get_tables(self, db: str) -> dict:
-        """获取 db 中所有表"""
+        """获取 db 中所有表
+
+        Args:
+            db (str): 数据库名（可通过 `get_dbs` 查询）
+
+        Returns:
+            List[dict]: `db` 下的所有表名及对应建表语句
+        """
         ret = self.wcf.get_tables(db)
         if ret:
             return {"status": 0, "message": "成功", "data": {"tables": ret}}
@@ -138,27 +145,55 @@ class Http(FastAPI):
             return {"status": 0, "message": "成功", "data": {"ui": ret}}
         return {"status": -1, "message": "失败"}
 
-    def msg_cb(self, msg: Msg):
+    def msg_cb(self, msg: Msg = Body(description="微信消息")):
         """示例回调方法，简单打印消息"""
         print(f"收到消息：{msg}")
         return {"status": 0, "message": "成功"}
 
-    def send_text(self, msg: str = Body("消息"), receiver: str = Body("filehelper"), aters: str = Body("")) -> dict:
-        """发送文本消息，可参考：robot.py 里 sendTextMsg"""
+    def send_text(
+            self, msg: str = Body(description="要发送的消息，换行用\\n表示"),
+            receiver: str = Body("filehelper", description="消息接收者，roomid 或者 wxid"),
+            aters: str = Body("", description="要 @ 的 wxid，多个用逗号分隔；@所有人 用 nofity@all")) -> dict:
+        """发送文本消息，可参考：https://github.com/lich0821/WeChatRobot/blob/master/robot.py 里 sendTextMsg
+
+        Args:
+            msg (str): 要发送的消息，换行使用 `\\n`；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
+            receiver (str): 消息接收人，wxid 或者 roomid
+            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `nofity@all`
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         ret = self.wcf.send_text(msg, receiver, aters)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def send_image(self,
                    path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="图片路径"),
-                   receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送图片消息"""
+                   receiver: str = Body("filehelper", description="消息接收者，roomid 或者 wxid")) -> dict:
+        """发送图片，非线程安全
+
+        Args:
+            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://raw.githubusercontent.com/lich0821/WeChatRobot/master/TEQuant.jpeg`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         ret = self.wcf.send_image(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def send_file(self,
                   path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="本地文件路径，不支持网络路径"),
                   receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送文件消息"""
+        """发送文件
+
+        Args:
+            path (str): 本地文件路径，如：`C:/Projs/WeChatRobot/README.MD`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         ret = self.wcf.send_file(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
@@ -170,21 +205,47 @@ class Http(FastAPI):
                 description="xml 内容"),
             type: int = Body(0x21, description="xml 类型，0x21 为小程序"),
             path: str = Body(None, description="封面图片路径")) -> dict:
-        """发送 XML 消息"""
+        """发送 XML
+
+        Args:
+            receiver (str): 消息接收人，wxid 或者 roomid
+            xml (str): xml 内容
+            type (int): xml 类型，如：0x21 为小程序
+            path (str): 封面图片路径
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         ret = self.wcf.send_xml(receiver, xml, type, path)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def send_emotion(self,
                      path: str = Body("C:/Projs/WeChatRobot/emo.gif", description="本地文件路径，不支持网络路径"),
                      receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
-        """发送表情消息"""
+        """发送表情
+
+        Args:
+            path (str): 本地表情路径，如：`C:/Projs/WeChatRobot/emo.gif`
+            receiver (str): 消息接收人，wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
         ret = self.wcf.send_emotion(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
 
     def query_sql(self,
                   db: str = Body("MicroMsg.db", description="数据库"),
                   sql: str = Body("SELECT * FROM Contact LIMIT 1;", description="SQL 语句")) -> dict:
-        """执行 SQL，如果数据量大注意分页，以免 OOM"""
+        """执行 SQL，如果数据量大注意分页，以免 OOM
+
+        Args:
+            db (str): 要查询的数据库
+            sql (str): 要执行的 SQL
+
+        Returns:
+            List[dict]: 查询结果
+        """
         ret = self.wcf.query_sql(db, sql)
         if ret:
             for row in ret:
@@ -199,27 +260,60 @@ class Http(FastAPI):
                           v3: str = Body("v3", description="加密用户名 (好友申请消息里 v3 开头的字符串)"),
                           v4: str = Body("v4", description="Ticket (好友申请消息里 v4 开头的字符串)"),
                           scene: int = Body(30, description="申请方式 (好友申请消息里的 scene)")) -> dict:
-        """通过好友申请"""
+        """通过好友申请
+
+        Args:
+            v3 (str): 加密用户名 (好友申请消息里 v3 开头的字符串)
+            v4 (str): Ticket (好友申请消息里 v4 开头的字符串)
+            scene: 申请方式 (好友申请消息里的 scene)
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         ret = self.wcf.accept_new_friend(v3, v4, scene)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def add_chatroom_members(self,
                              roomid: str = Body("xxxxxxxx@chatroom", description="待加群的 id"),
                              wxids: str = Body("wxid_xxxxxxxxxxxxx", description="要加到群里的 wxid，多个用逗号分隔")) -> dict:
-        """添加群成员"""
+        """添加群成员
+
+        Args:
+            roomid (str): 待加群的 id
+            wxids (str): 要加到群里的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         ret = self.wcf.add_chatroom_members(roomid, wxids)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def receive_transfer(self,
                          wxid: str = Body("wxid_xxxxxxxxxxxxx", description="转账消息里的发送人 wxid"),
                          transferid: str = Body("transferid", description="转账消息里的 transferid")) -> dict:
-        """接收转账"""
+        """接收转账
+
+        Args:
+            wxid (str): 转账消息里的发送人 wxid
+            transferid (str): 转账消息里的 transferid
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
         ret = self.wcf.receive_transfer(wxid, transferid)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def decrypt_image(self,
                       src: str = Body("C:\\...", description="加密的图片路径，从图片消息中获取"),
                       dst: str = Body("C:\\...", description="解密的图片路径")) -> dict:
-        """接收转账"""
+        """解密图片:
+
+        Args:
+            src (str): 加密的图片路径
+            dst (str): 解密的图片路径
+
+        Returns:
+            bool: 是否成功
+        """
         ret = self.wcf.decrypt_image(src, dst)
         return {"status": ret, "message": "成功"if ret else "失败"}
