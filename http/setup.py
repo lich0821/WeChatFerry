@@ -31,7 +31,7 @@ setup(
     },
     install_requires=[
         "setuptools",
-        f"wcferry=={wcfhttp.core.__version__}",
+        f"wcferry<={wcfhttp.core.__version__}",
         "fastapi",
         "uvicorn[standard]"
     ],
