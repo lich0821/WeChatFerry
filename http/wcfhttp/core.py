@@ -10,7 +10,7 @@ from fastapi import Body, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "37.1.25.1"
+__version__ = "37.1.25.2"
 
 
 class Msg(BaseModel):
@@ -33,6 +33,7 @@ class Http(FastAPI):
     def __init__(self, wcf: Wcf, cb: str, **extra: Any) -> None:
         super().__init__(**extra)
         self.LOG = logging.getLogger(__name__)
+        self.LOG.info(f"wcfhttp version: {__version__}")
         self.wcf = wcf
         self._set_cb(cb)
         self.add_api_route("/msg_cb", self.msg_cb, methods=["POST"], summary="接收消息回调样例", tags=["示例"])
