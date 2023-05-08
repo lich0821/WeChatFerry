@@ -22,6 +22,14 @@ pub struct WeChat {
     pub enable_accept_firend: bool,
 }
 
+#[derive(Clone, Debug)]
+pub struct UserInfo {
+    pub wxid: String,
+    pub name: String,
+    pub mobile: String,
+    pub home: String,
+}
+
 impl Default for WeChat {
     fn default() -> Self {
         WeChat::new(false)
@@ -195,6 +203,36 @@ pub fn get_self_wx_id(wechat: &mut WeChat) -> Result<Option<String>, Box<dyn std
     match response.unwrap() {
         wcf::response::Msg::Str(wx_id) => {
             return Ok(Some(wx_id));
+        }
+        _ => {
+            return Ok(None);
+        }
+    };
+}
+
+pub fn get_user_info(wechat: &mut WeChat) -> Result<Option<UserInfo>, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncGetUserInfo.into(),
+        msg: None,
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("获取用户信息失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(None);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Ui(user_info) => {
+            return Ok(Some(UserInfo {
+                wxid: user_info.wxid,
+                name: user_info.name,
+                mobile: user_info.mobile,
+                home: user_info.home,
+            }));
         }
         _ => {
             return Ok(None);
@@ -605,11 +643,12 @@ pub fn get_msg_types(
 pub fn accept_new_friend(
     v3: String,
     v4: String,
+    scene: i32,
     wechat: &mut WeChat,
 ) -> Result<bool, Box<dyn std::error::Error>> {
     let req = wcf::Request {
         func: wcf::Functions::FuncAcceptFriend.into(),
-        msg: Some(wcf::request::Msg::V(wcf::Verification { v3, v4 })),
+        msg: Some(wcf::request::Msg::V(wcf::Verification { v3, v4, scene })),
     };
     let response = match send_cmd(wechat, req) {
         Ok(res) => res,
@@ -645,6 +684,67 @@ pub fn add_chatroom_members(
         Err(e) => {
             error!("命令发送失败: {}", e);
             return Err("微信群加人失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+pub fn decrypt_image(
+    src: String,
+    dst: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncDecryptImage.into(),
+        msg: Some(wcf::request::Msg::Dec(wcf::DecPath { src, dst })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("图片解密失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+pub fn recv_transfer(
+    wxid: String,
+    transferid: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncRecvTransfer.into(),
+        msg: Some(wcf::request::Msg::Tf(wcf::Transfer {
+            wxid,
+            tid: transferid,
+        })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("接收转账失败".into());
         }
     };
     if response.is_none() {
@@ -743,7 +843,7 @@ mod test {
         let mut wechat = crate::wechat::WeChat::default();
         let v3 = String::from("v3_020b3826fd03010000000000d65613e9435fd2000000501ea9a3dba12f95f6b60a0536a1adb6b4e20a513856625d11892e0635fe745d9c7ee96937f341a860c34107c6417414e5b41e427fc3d26a6af2590a1f@stranger");
         let v4 = String::from("v4_000b708f0b0400000100000000003c3767b326120d5b5795b98031641000000050ded0b020927e3c97896a09d47e6e9eac7eea28e4a39b49644b3b702b82268c1d40370261e3ae6eb543d231fbd29ee7a326598ba810316c10171871103ad967ca4d147d9f6dd8fa5ccd4986042520a1173c8138e5afe21f795ee50fecf58b4ac5269acd80028627dbf65fd17ca57c0e479fbe0392288a6f42@stranger");
-        let status = crate::wechat::accept_new_friend(v3, v4, &mut wechat).unwrap();
+        let status = crate::wechat::accept_new_friend(v3, v4, 17, &mut wechat).unwrap();
         println!("Status: {}", status);
     }
 
@@ -753,6 +853,37 @@ mod test {
         let status = crate::wechat::add_chatroom_members(
             String::from("*****@chatroom"),
             String::from("****"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_get_user_info() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let user_info = crate::wechat::get_user_info(&mut wechat).unwrap();
+        println!("UserInfo: {:?}", user_info);
+    }
+
+    #[test]
+    fn test_recv_transfer() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::recv_transfer(
+            String::from("****"),
+            String::from("1000050001202305070217704377865"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_decrypt_image() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::decrypt_image(
+            String::from("C:\\Users\\Administrator\\Documents\\WeChat Files\\****\\FileStorage\\MsgAttach\\c963b851e0578c320c2966c6fc49e35c\\Image\\2023-05\\c66044e188c64452e236e53eff73324b.dat"),
+            String::from("C:\\foo"),
             &mut wechat,
         )
         .unwrap();
