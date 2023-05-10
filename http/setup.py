@@ -31,9 +31,9 @@ setup(
     },
     install_requires=[
         "setuptools",
-        f"wcferry<={wcfhttp.core.__version__}",
         "fastapi",
-        "uvicorn[standard]"
+        "uvicorn[standard]",
+        "wcferry==37.1.25.2",
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",
