@@ -49,8 +49,16 @@ class WxMsg():
 
     def is_at(self, wxid) -> bool:
         """是否被 @：群消息，在 @ 名单里，并且不是 @ 所有人"""
-        return self.from_group() and re.findall(
-            f"<atuserlist>.*({wxid}).*</atuserlist>", self.xml) and not re.findall(r"@(?:所有人|all|All)", self.content)
+        if not self.from_group():
+            return False  # 只有群消息才能 @
+
+        if not re.findall(f"<atuserlist>.*({wxid}).*</atuserlist>", self.xml):
+            return False  # 不在 @ 清单里
+
+        if re.findall(r"@(?:所有人|all|All)", self.content):
+            return False  # 排除 @ 所有人
+
+        return True
 
     def is_text(self) -> bool:
         """是否文本消息"""
