@@ -88,6 +88,8 @@ pip install --upgrade wcferry
 
 ## 一起开发
 ### 安装开发环境
+<details><summary>点击查看</summary>
+
 #### 安装 vcpkg
 * 安装，参考[Vcpkg: 总览](https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md)。
 ```sh
@@ -108,6 +110,7 @@ vcpkg integrate install
 ```
 
 #### 安装 VS2019
+</details>
 
 ### 编译
 使用 VS2019 打开工程，编译即可。
@@ -135,6 +138,8 @@ WeChatFerry
 ├── TEQuant.jpeg      # 二维码，测试用图
 └── WeChatFerry.sln   # VS2019 工程文件
 ```
+
+<details><summary>点击查看</summary>
 
 ### go
 Go 客户端。
@@ -167,6 +172,7 @@ Rust 客户端。
 
 ### wcf
 跟 `launcher` 类似，命令行版启动器，一般不需要显式运行，各客户端自动调用。
+</details>
 
 ## 版本更新
 客户端越来越多了，版本号开始混乱，所以重新定义了版本号：`w.x.y.z`。
