@@ -13,6 +13,11 @@
 #define GET_WSTRING(addr)       ((WCHAR *)(*(DWORD *)(addr)))
 #define GET_STRING_FROM_P(addr) ((CHAR *)(addr))
 
+typedef struct PortPath {
+    int port;
+    char path[MAX_PATH];
+} PortPath_t;
+
 DWORD GetWeChatPid();
 int OpenWeChat(DWORD *pid);
 int GetWeChatVersion(wchar_t *version);

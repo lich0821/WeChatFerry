@@ -1,16 +1,22 @@
-﻿#include "spy.h"
+﻿#include <filesystem>
+
 #include "load_calls.h"
 #include "log.h"
 #include "rpc_server.h"
+#include "spy.h"
 #include "util.h"
 
 WxCalls_t g_WxCalls      = { 0 };
 DWORD g_WeChatWinDllAddr = 0;
 
-void InitSpy(int port)
+void InitSpy(LPVOID args)
 {
     wchar_t version[16] = { 0 };
-    InitLogger();
+    PortPath_t *pp      = (PortPath_t *)args;
+    int port            = pp->port;
+    std::string path(pp->path);
+
+    InitLogger(path);
     g_WeChatWinDllAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
     if (g_WeChatWinDllAddr == 0) {
         LOG_ERROR("获取wechatWin.dll模块地址失败");

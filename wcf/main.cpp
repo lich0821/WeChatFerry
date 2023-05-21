@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "framework.h"
-
-#include "log.h"
 #include "sdk.h"
 
 void help()
 {
-    LOG_INFO("\nUsage: \n启动: wcf.exe start port [debug]\n关闭: wcf.exe stop\nport: 命令端口, 消息端口为命令端口+1\n");
+    printf("\nUsage: \n启动: wcf.exe start port [debug]\n关闭: wcf.exe stop\nport: 命令端口, 消息端口为命令端口+1\n");
 }
 
 int main(int argc, char *argv[])
