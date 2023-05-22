@@ -549,6 +549,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_is_login(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_SELF_WXID: {
             LOG_DEBUG("[Functions_FUNC_GET_SELF_WXID]");
             ret = func_get_self_wxid(out, out_len);
@@ -639,6 +640,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_decrypt_image(req.msg.dec.src, req.msg.dec.dst, out, out_len);
             break;
         }
+#endif
         default: {
             LOG_ERROR("[UNKNOW FUNCTION]");
             break;
