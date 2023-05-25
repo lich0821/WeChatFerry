@@ -37,7 +37,6 @@ static string GetCntString(DWORD start, DWORD end, const uint8_t *feat, size_t l
         return "";
     }
 
-    // DbgMsg("pfeat: %08X, lfeat: %d", pfeat, lfeat);
     return Wstring2String(wstring(GET_WSTRING_FROM_P(pfeat + FEAT_LEN + 4), lfeat));
 }
 
@@ -67,7 +66,6 @@ vector<RpcContact_t> GetContacts()
         RpcContact_t cnt;
         DWORD pbin   = GET_DWORD(pstart + 0x150);
         DWORD lenbin = GET_DWORD(pstart + 0x154);
-        // DbgMsg("pstart: %08X, pbin: %08X, lenbin: %d", pstart, pbin, lenbin);
 
         cnt.wxid   = GetStringByAddress(pstart + g_WxCalls.contact.wxId);
         cnt.code   = GetStringByAddress(pstart + g_WxCalls.contact.wxCode);
@@ -83,7 +81,6 @@ vector<RpcContact_t> GetContacts()
         } else {
             cnt.gender = (DWORD) * (uint8_t *)(pbin + g_WxCalls.contact.wxGender);
         }
-        // DbgMsg("pstart: %08X, pbin: %08X, lenbin: %d, cnt.gender: %08X", pstart, pbin, lenbin, cnt.gender);
 
         contacts.push_back(cnt);
         pstart += 0x438;
