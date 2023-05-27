@@ -564,12 +564,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_contacts(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_GET_DB_NAMES: {
             LOG_DEBUG("[Functions_FUNC_GET_DB_NAMES]");
             ret = func_get_db_names(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_DB_TABLES: {
             LOG_DEBUG("[Functions_FUNC_GET_DB_TABLES]");
             ret = func_get_db_tables(req.msg.str, out, out_len);

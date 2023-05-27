@@ -241,6 +241,7 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     <ClInclude Include="send_msg.h" />
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
+    <ClInclude Include="sqlite3.h" />
     <ClInclude Include="user_info.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>

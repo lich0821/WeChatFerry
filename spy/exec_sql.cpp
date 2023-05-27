@@ -2,45 +2,18 @@
 
 #include "exec_sql.h"
 #include "load_calls.h"
+#include "sqlite3.h"
 #include "util.h"
 
-#define SQLITE_OK         0   /* Successful result */
-#define SQLITE_ERROR      1   /* Generic error */
-#define SQLITE_INTERNAL   2   /* Internal logic error in SQLite */
-#define SQLITE_PERM       3   /* Access permission denied */
-#define SQLITE_ABORT      4   /* Callback routine requested an abort */
-#define SQLITE_BUSY       5   /* The database file is locked */
-#define SQLITE_LOCKED     6   /* A table in the database is locked */
-#define SQLITE_NOMEM      7   /* A malloc() failed */
-#define SQLITE_READONLY   8   /* Attempt to write a readonly database */
-#define SQLITE_INTERRUPT  9   /* Operation terminated by sqlite3_interrupt()*/
-#define SQLITE_IOERR      10  /* Some kind of disk I/O error occurred */
-#define SQLITE_CORRUPT    11  /* The database disk image is malformed */
-#define SQLITE_NOTFOUND   12  /* Unknown opcode in sqlite3_file_control() */
-#define SQLITE_FULL       13  /* Insertion failed because database is full */
-#define SQLITE_CANTOPEN   14  /* Unable to open the database file */
-#define SQLITE_PROTOCOL   15  /* Database lock protocol error */
-#define SQLITE_EMPTY      16  /* Internal use only */
-#define SQLITE_SCHEMA     17  /* The database schema changed */
-#define SQLITE_TOOBIG     18  /* String or BLOB exceeds size limit */
-#define SQLITE_CONSTRAINT 19  /* Abort due to constraint violation */
-#define SQLITE_MISMATCH   20  /* Data type mismatch */
-#define SQLITE_MISUSE     21  /* Library used incorrectly */
-#define SQLITE_NOLFS      22  /* Uses OS features not supported on host */
-#define SQLITE_AUTH       23  /* Authorization denied */
-#define SQLITE_FORMAT     24  /* Not used */
-#define SQLITE_RANGE      25  /* 2nd parameter to sqlite3_bind out of range */
-#define SQLITE_NOTADB     26  /* File opened that is not a database file */
-#define SQLITE_NOTICE     27  /* Notifications from sqlite3_log() */
-#define SQLITE_WARNING    28  /* Warnings from sqlite3_log() */
-#define SQLITE_ROW        100 /* sqlite3_step() has another row ready */
-#define SQLITE_DONE       101 /* sqlite3_step() has finished executing */
-
-#define SQLITE_INTEGER 1
-#define SQLITE_FLOAT   2
-#define SQLITE_TEXT    3
-#define SQLITE_BLOB    4
-#define SQLITE_NULL    5
+#define OFFSET_DB_INSTANCE     0x2FFDDC8
+#define OFFSET_DB_MICROMSG     0x68
+#define OFFSET_DB_CHAT_MSG     0x1C0
+#define OFFSET_DB_MISC         0x3D8
+#define OFFSET_DB_EMOTION      0x558
+#define OFFSET_DB_MEDIA        0x9B8
+#define OFFSET_DB_BIZCHAT_MSG  0x1120
+#define OFFSET_DB_FUNCTION_MSG 0x11B0
+#define OFFSET_DB_NAME         0x14
 
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
@@ -67,25 +40,27 @@ typedef const void *(__cdecl *Sqlite3_column_blob)(DWORD *, int);
 typedef int(__cdecl *Sqlite3_column_bytes)(DWORD *, int);
 typedef int(__cdecl *Sqlite3_finalize)(DWORD *);
 
+static void GetDbHandle(DWORD base, DWORD offset)
+{
+    wchar_t *wsp;
+    wsp           = (wchar_t *)(*(DWORD *)(base + offset + OFFSET_DB_NAME));
+    string dbname = Wstring2String(wstring(wsp));
+    dbMap[dbname] = *(DWORD *)(base + offset);
+}
+
 dbMap_t GetDbHandles()
 {
-    if (!dbMap.empty())
-        return dbMap;
+    dbMap.clear();
 
-    g_WeChatWinDllAddr       = (DWORD)GetModuleHandle(L"WeChatWin.dll");
-    DWORD sqlHandleBaseAddr  = *(DWORD *)(g_WeChatWinDllAddr + g_WxCalls.sql.base);
-    DWORD sqlHandleBeginAddr = *(DWORD *)(sqlHandleBaseAddr + g_WxCalls.sql.start);
-    DWORD sqlHandleEndAddr   = *(DWORD *)(sqlHandleBaseAddr + g_WxCalls.sql.end);
-    while (sqlHandleBeginAddr < sqlHandleEndAddr) {
-        DWORD dwHandle = *(DWORD *)sqlHandleBeginAddr;
-        string dbName  = Wstring2String(wstring((wchar_t *)(*(DWORD *)(dwHandle + g_WxCalls.sql.name))));
-        DWORD handle   = *(DWORD *)(dwHandle + g_WxCalls.sql.slot);
-        if (handle) {
-            dbMap[dbName] = handle;
-        }
+    DWORD dbInstanceAddr = *(DWORD *)(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
 
-        sqlHandleBeginAddr += 0x04;
-    }
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_MICROMSG);     // MicroMsg.db
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_CHAT_MSG);     // ChatMsg.db
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_MISC);         // Misc.db
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_EMOTION);      // Emotion.db
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_MEDIA);        // Media.db
+    GetDbHandle(dbInstanceAddr, OFFSET_DB_FUNCTION_MSG); // Function.db
+
     return dbMap;
 }
 
