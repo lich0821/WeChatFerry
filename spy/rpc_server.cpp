@@ -574,12 +574,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_db_tables(req.msg.str, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_GET_USER_INFO: {
             LOG_DEBUG("[Functions_FUNC_GET_USER_INFO]");
             ret = func_get_user_info(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_TXT: {
             LOG_DEBUG("[Functions_FUNC_SEND_TXT]");
             ret = func_send_txt(req.msg.txt, out, out_len);

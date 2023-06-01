@@ -33,7 +33,7 @@ UserInfo_t GetUserInfo()
     ui.wxid   = GetSelfWxid();
     ui.name   = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
     ui.mobile = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.mobile);
-    ui.home   = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.ui.home);
+    ui.home   = Wstring2String(GET_WSTRING(g_WeChatWinDllAddr + g_WxCalls.ui.home));
 
     return ui;
 }
