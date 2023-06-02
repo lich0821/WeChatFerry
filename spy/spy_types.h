@@ -23,6 +23,12 @@ typedef struct RecvMsg {
     DWORD extra;   // 附加数据
 } RecvMsg_t;
 
+typedef struct SendText {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+} SendText_t;
+
 typedef struct Sendfile {
     DWORD call1;
     DWORD call2;
@@ -79,7 +85,7 @@ typedef struct TF {
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
-    DWORD sendTextMsg;   // 发送消息
+    SendText_t sendText; // 发送消息
     RecvMsg_t recvMsg;   // 接收消息
     Sendfile_t sendImg;  // 发送图片
     Sendfile_t sendFile; // 发送文件

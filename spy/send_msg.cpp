@@ -13,12 +13,15 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    char buffer[0x3B0] = { 0 };
+    int success = 0;
+    char buffer[0x2D8] = { 0 };
     WxString_t wxMsg   = { 0 };
     WxString_t wxWxid  = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
-    DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
+    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendText.call1;
+    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendText.call2;
+    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendText.call3;
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wsMsg  = String2Wstring(msg);
@@ -49,15 +52,24 @@ void SendTextMessage(string wxid, string msg, string atWxids)
 
     __asm
     {
+        pushad;
+        call sendCall1;
+        push 0x0;
+        push 0x0;
+        push 0x0;
+        push 0x1;
         lea eax, vTxtAtWxids;
-        push 0x01;
         push eax;
-        lea edi, wxMsg;
-        push edi;
+        lea eax, wxMsg;
+        push eax;
         lea edx, wxWxid;
         lea ecx, buffer;
-        call sendCallAddress;
-        add esp, 0xC;
+        call sendCall2;
+        mov success, eax;
+        add esp, 0x18;
+        lea ecx, buffer;
+        call sendCall3;
+        popad;
     }
 }
 
@@ -260,7 +272,7 @@ void SendEmotionMessage(string wxid, string path)
         return;
     }
 
-    char buffer[0x1C]    = { 0 };
+    char buffer[0x1C]     = { 0 };
     WxString_t emoWxid    = { 0 };
     WxString_t emoPath    = { 0 };
     WxString_t nullbuffer = { 0 };

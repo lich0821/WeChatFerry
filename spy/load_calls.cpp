@@ -7,7 +7,7 @@
 WxCalls_t wxCalls = {
     0x2FFD638,                                      // Login Status
     { 0x2FFD4E8, 0x23660F4, 0x2366128, 0x2386F7C }, // User Info: wxid, nickname, mobile, home
-    0x521D30,                                       // Send Message
+    { 0x768140, 0xCE6C80, 0x756960 },               // Send Message
     /* Receive Message:
           Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, thumb, extra */
     { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70, 0x198, 0x1AC },
