@@ -13,7 +13,7 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    int success = 0;
+    int success        = 0;
     char buffer[0x2D8] = { 0 };
     WxString_t wxMsg   = { 0 };
     WxString_t wxWxid  = { 0 };
@@ -78,11 +78,12 @@ void SendImageMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
+    int success        = 0;
     DWORD tmpEAX       = 0;
-    char buf1[0x48]    = { 0 };
-    char buf2[0x3B0]   = { 0 };
+    char buf[0x2D8]    = { 0 };
     WxString_t imgWxid = { 0 };
     WxString_t imgPath = { 0 };
+    WxString_t unkObj  = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wspath = String2Wstring(path);
@@ -99,25 +100,29 @@ void SendImageMessage(string wxid, string path)
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
     DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call2;
     DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call3;
+    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call4;
 
     __asm {
-        pushad
-        call sendCall1
-        sub esp, 0x14
-        mov tmpEAX, eax
-        lea eax, buf1
-        mov ecx, esp
-        lea edi, imgPath
-        push eax
-        call sendCall2
-        mov ecx, dword ptr[tmpEAX]
-        lea eax, imgWxid
-        push edi
-        push eax
-        lea eax, buf2
-        push eax
-        call sendCall3
-        popad
+        pushad;
+        call       sendCall1;
+        sub        esp,0x14;
+        mov        tmpEAX,eax;
+        lea        eax,unkObj;
+        mov        ecx,esp;
+        lea        edi,imgPath;
+        push       eax;
+        call       sendCall2;
+        mov        ecx,dword ptr [tmpEAX];
+        lea        eax,imgWxid;
+        push       edi;
+        push       eax;
+        lea        eax,buf;
+        push       eax;
+        call       sendCall3;
+        mov        success,eax;
+        lea        ecx,buf;
+        call       sendCall4;
+        popad;
     }
 }
 

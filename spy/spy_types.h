@@ -33,6 +33,7 @@ typedef struct Sendfile {
     DWORD call1;
     DWORD call2;
     DWORD call3;
+    DWORD call4;
 } Sendfile_t;
 
 typedef struct Contact {
