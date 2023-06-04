@@ -589,12 +589,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_FILE: {
             LOG_DEBUG("[Functions_FUNC_SEND_FILE]");
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_XML: {
             LOG_DEBUG("[Functions_FUNC_SEND_XML]");
             ret = func_send_xml(req.msg.xml, out, out_len);

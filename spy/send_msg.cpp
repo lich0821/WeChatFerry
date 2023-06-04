@@ -78,12 +78,12 @@ void SendImageMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    int success        = 0;
-    DWORD tmpEAX       = 0;
-    char buf[0x2D8]    = { 0 };
-    WxString_t imgWxid = { 0 };
-    WxString_t imgPath = { 0 };
-    WxString_t unkObj  = { 0 };
+    int success           = 0;
+    DWORD tmpEAX          = 0;
+    char buf[0x2D8]       = { 0 };
+    WxString_t imgWxid    = { 0 };
+    WxString_t imgPath    = { 0 };
+    WxString_t nullbuffer = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wspath = String2Wstring(path);
@@ -107,7 +107,7 @@ void SendImageMessage(string wxid, string path)
         call       sendCall1;
         sub        esp,0x14;
         mov        tmpEAX,eax;
-        lea        eax,unkObj;
+        lea        eax,nullbuffer;
         mov        ecx,esp;
         lea        edi,imgPath;
         push       eax;
@@ -131,8 +131,9 @@ void SendFileMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
+    int success           = 0;
     DWORD tmpEAX          = 0;
-    char buffer[0x3B0]    = { 0 };
+    char buffer[0x2D8]    = { 0 };
     WxString_t fileWxid   = { 0 };
     WxString_t filePath   = { 0 };
     WxString_t nullbuffer = { 0 };
@@ -152,46 +153,49 @@ void SendFileMessage(string wxid, string path)
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
     DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
     DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
+    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call4;
 
     __asm {
-		pushad;
-		pushfd;
-		call sendCall1;
-		sub esp, 0x14;
-		mov tmpEAX, eax;
-		lea eax, nullbuffer;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		push 0x00DBE200;
-		sub esp, 0x14;
-		mov edi, esp;
-		mov dword ptr ds : [edi] , 0x0;
-		mov dword ptr ds : [edi + 0x4] , 0x0;
-		mov dword ptr ds : [edi + 0x8] , 0x0;
-		mov dword ptr ds : [edi + 0xC] , 0x0;
-		mov dword ptr ds : [edi + 0x10] , 0x0;
-		sub esp, 0x14;
-		lea eax, filePath;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		sub esp, 0x14;
-		lea eax, fileWxid;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		mov ecx, dword ptr [tmpEAX];
-		lea eax, buffer;
-		push eax;
-		call sendCall3;
-		mov al,byte ptr [eax + 0x38];
-		movzx eax,al;
-		popfd;
-		popad;
+        pushad;
+        pushfd;
+        call sendCall1;
+        sub esp, 0x14;
+        mov tmpEAX, eax;
+        lea eax, nullbuffer;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        push 0x0;
+        sub esp, 0x14;
+        mov edi, esp;
+        mov dword ptr[edi], 0;
+        mov dword ptr[edi + 0x4], 0;
+        mov dword ptr[edi + 0x8], 0;
+        mov dword ptr[edi + 0xc], 0;
+        mov dword ptr[edi + 0x10], 0;
+        sub esp, 0x14;
+        lea eax, filePath;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        sub esp, 0x14;
+        lea eax, fileWxid;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        mov ecx, dword ptr[tmpEAX];
+        lea eax, buffer;
+        push eax;
+        call sendCall3;
+        mov al, byte ptr[eax + 0x38];
+        movzx eax, al;
+        mov success, eax;
+        lea ecx, buffer;
+        call sendCall4;
+        popfd;
+        popad;
     }
 }
-
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {

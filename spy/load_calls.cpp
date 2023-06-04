@@ -12,7 +12,7 @@ WxCalls_t wxCalls = {
           Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, thumb, extra */
     { 0x550F4C, 0xA96350, 0x38, 0x3C, 0x184, 0x1EC, 0x48, 0x170, 0x70, 0x198, 0x1AC },
     { 0x768140, 0XF59E40, 0XCE6640, 0x756960 },           // Send Image Message
-    { 0xC3B70, 0x771980, 0x3ED8C0 },                      // Send File Message
+    { 0x76AE20, 0xF59E40, 0xB6D1F0, 0x756960 },           // Send File Message
     { 0xB8A70, 0x3ED5E0, 0x107F00, 0x3ED7B0, 0x2386FE4 }, // Send xml Message
     { 0x771980, 0x4777E0, 0x239E888 },                    // Send Emotion Message
     /* Get Contacts:
