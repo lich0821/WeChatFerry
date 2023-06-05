@@ -635,12 +635,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tid, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
             ret = func_decrypt_image(req.msg.dec.src, req.msg.dec.dst, out, out_len);
             break;
         }
-#endif
         default: {
             LOG_ERROR("[UNKNOW FUNCTION]");
             break;
