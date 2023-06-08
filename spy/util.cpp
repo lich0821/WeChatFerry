@@ -213,6 +213,18 @@ string GetStringByAddress(DWORD address)
     return Wstring2String(wstring(GET_WSTRING(address), strLength));
 }
 
+string GetStringByStrAddr(DWORD addr)
+{
+    DWORD strLength = GET_DWORD(addr + 4);
+    return strLength ? string(GET_STRING(addr), strLength) : string();
+}
+
+string GetStringByWstrAddr(DWORD addr)
+{
+    DWORD strLength = GET_DWORD(addr + 4);
+    return strLength ? Wstring2String(wstring(GET_WSTRING(addr), strLength)) : string();
+}
+
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address)
 {
     DWORD value = 0;

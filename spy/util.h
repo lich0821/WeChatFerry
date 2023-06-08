@@ -28,4 +28,6 @@ std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);
 std::wstring String2Wstring(std::string s);
 std::string Wstring2String(std::wstring ws);
 std::string GetStringByAddress(DWORD address);
+std::string GetStringByStrAddr(DWORD addr);
+std::string GetStringByWstrAddr(DWORD addr);
 void DbgMsg(const char *zcFormat, ...);

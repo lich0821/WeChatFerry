@@ -605,11 +605,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
             LOG_DEBUG("[Functions_FUNC_ENABLE_RECV_TXT]");
             ret = func_enable_recv_txt(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_DISABLE_RECV_TXT: {
             LOG_DEBUG("[Functions_FUNC_DISABLE_RECV_TXT]");
             ret = func_disable_recv_txt(out, out_len);
