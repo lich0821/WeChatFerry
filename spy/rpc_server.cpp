@@ -616,12 +616,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_EXEC_DB_QUERY: {
             LOG_DEBUG("[Functions_FUNC_EXEC_DB_QUERY]");
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_ACCEPT_FRIEND: {
             LOG_DEBUG("[Functions_FUNC_ACCEPT_FRIEND]");
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);

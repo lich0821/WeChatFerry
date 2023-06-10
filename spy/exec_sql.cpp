@@ -15,30 +15,10 @@
 #define OFFSET_DB_FUNCTION_MSG 0x11B0
 #define OFFSET_DB_NAME         0x14
 
-extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
 typedef map<string, DWORD> dbMap_t;
 static dbMap_t dbMap;
-
-// 回调函数指针
-typedef int (*sqlite3_callback)(void *, int, char **, char **);
-
-// sqlite3_exec函数指针
-typedef int(__cdecl *Sqlite3_exec)(DWORD,            /* The database on which the SQL executes */
-                                   const char *,     /* The SQL to be executed */
-                                   sqlite3_callback, /* Invoke this callback routine */
-                                   void *,           /* First argument to xCallback() */
-                                   char **           /* Write error messages here */
-);
-typedef int(__cdecl *Sqlite3_prepare)(DWORD, const char *, int, DWORD **, int);
-typedef int(__cdecl *Sqlite3_step)(DWORD *);
-typedef int(__cdecl *Sqlite3_column_count)(DWORD *);
-typedef const char *(__cdecl *Sqlite3_column_name)(DWORD *, int);
-typedef int(__cdecl *Sqlite3_column_type)(DWORD *, int);
-typedef const void *(__cdecl *Sqlite3_column_blob)(DWORD *, int);
-typedef int(__cdecl *Sqlite3_column_bytes)(DWORD *, int);
-typedef int(__cdecl *Sqlite3_finalize)(DWORD *);
 
 static void GetDbHandle(DWORD base, DWORD offset)
 {
@@ -108,9 +88,9 @@ DbTables_t GetDbTables(const string db)
     }
 
     const char *sql             = "select name, sql from sqlite_master where type=\"table\";";
-    Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + g_WxCalls.sql.exec);
+    Sqlite3_exec p_Sqlite3_exec = (Sqlite3_exec)(g_WeChatWinDllAddr + SQLITE3_EXEC_OFFSET);
 
-    p_Sqlite3_exec(it->second, sql, (sqlite3_callback)cbGetTables, (void *)&tables, 0);
+    p_Sqlite3_exec(it->second, sql, (Sqlite3_callback)cbGetTables, (void *)&tables, 0);
 
     return tables;
 }
@@ -118,14 +98,14 @@ DbTables_t GetDbTables(const string db)
 DbRows_t ExecDbQuery(const string db, const string sql)
 {
     DbRows_t rows;
-    Sqlite3_prepare func_prepare           = (Sqlite3_prepare)(g_WeChatWinDllAddr + 0x14227F0);
-    Sqlite3_step func_step                 = (Sqlite3_step)(g_WeChatWinDllAddr + 0x13EA780);
-    Sqlite3_column_count func_column_count = (Sqlite3_column_count)(g_WeChatWinDllAddr + 0x13EACD0);
-    Sqlite3_column_name func_column_name   = (Sqlite3_column_name)(g_WeChatWinDllAddr + 0x13EB630);
-    Sqlite3_column_type func_column_type   = (Sqlite3_column_type)(g_WeChatWinDllAddr + 0x13EB470);
-    Sqlite3_column_blob func_column_blob   = (Sqlite3_column_blob)(g_WeChatWinDllAddr + 0x13EAD10);
-    Sqlite3_column_bytes func_column_bytes = (Sqlite3_column_bytes)(g_WeChatWinDllAddr + 0x13EADD0);
-    Sqlite3_finalize func_finalize         = (Sqlite3_finalize)(g_WeChatWinDllAddr + 0x13E9730);
+    Sqlite3_prepare func_prepare           = (Sqlite3_prepare)(g_WeChatWinDllAddr + SQLITE3_PREPARE_OFFSET);
+    Sqlite3_step func_step                 = (Sqlite3_step)(g_WeChatWinDllAddr + SQLITE3_STEP_OFFSET);
+    Sqlite3_column_count func_column_count = (Sqlite3_column_count)(g_WeChatWinDllAddr + SQLITE3_COLUMN_COUNT_OFFSET);
+    Sqlite3_column_name func_column_name   = (Sqlite3_column_name)(g_WeChatWinDllAddr + SQLITE3_COLUMN_NAME_OFFSET);
+    Sqlite3_column_type func_column_type   = (Sqlite3_column_type)(g_WeChatWinDllAddr + SQLITE3_COLUMN_TYPE_OFFSET);
+    Sqlite3_column_blob func_column_blob   = (Sqlite3_column_blob)(g_WeChatWinDllAddr + SQLITE3_COLUMN_BLOB_OFFSET);
+    Sqlite3_column_bytes func_column_bytes = (Sqlite3_column_bytes)(g_WeChatWinDllAddr + SQLITE3_COLUMN_BYTES_OFFSET);
+    Sqlite3_finalize func_finalize         = (Sqlite3_finalize)(g_WeChatWinDllAddr + SQLITE3_FINALIZE_OFFSET);
 
     if (dbMap.empty()) {
         dbMap = GetDbHandles();
