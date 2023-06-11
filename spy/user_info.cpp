@@ -11,7 +11,7 @@ static char home[MAX_PATH] = { 0 };
 string GetHomePath()
 {
     if (home[0] == 0) {
-        string path = Wstring2String(GET_WSTRING(g_WeChatWinDllAddr + g_WxCalls.ui.home));
+        string path = Wstring2String(GET_WSTRING(g_WeChatWinDllAddr + g_WxCalls.ui.home)) + "\\WeChat Files\\";
         strncpy_s(home, path.c_str(), path.size());
     }
 
