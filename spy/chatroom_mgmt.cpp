@@ -1,7 +1,7 @@
 #include "framework.h"
 #include <sstream>
 
-#include "add_chatroom_member.h"
+#include "chatroom_mgmt.h"
 #include "load_calls.h"
 #include "log.h"
 #include "util.h"

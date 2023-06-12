@@ -17,7 +17,7 @@
 #include "wcf.pb.h"
 
 #include "accept_new_friend.h"
-#include "add_chatroom_member.h"
+#include "chatroom_mgmt.h"
 #include "decrypt_image.h"
 #include "exec_sql.h"
 #include "get_contacts.h"
