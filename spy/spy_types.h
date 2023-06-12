@@ -61,7 +61,8 @@ typedef struct Sql {
 typedef struct NewFriend {
     DWORD call1;
     DWORD call2;
-    DWORD handle;
+    DWORD call3;
+    DWORD call4;
 } NewFriend_t;
 
 typedef struct RoomMember {

@@ -5,36 +5,22 @@
 #include "log.h"
 #include "util.h"
 
-typedef struct NewFriendParam {
-    DWORD handle;
-    DWORD *status;
-    DWORD statusEnd1;
-    DWORD statusEnd2;
-    char buffer[0x3C];
-} NewFriendParam_t;
-
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
 int AcceptNewFriend(std::string v3, std::string v4, int scene)
 {
-    int isSucceeded = 0;
+    int success = 0;
 
-    DWORD acceptNewFriendCall1  = g_WeChatWinDllAddr + g_WxCalls.anf.call1;
-    DWORD acceptNewFriendCall2  = g_WeChatWinDllAddr + g_WxCalls.anf.call2;
-    DWORD acceptNewFriendHandle = g_WeChatWinDllAddr + g_WxCalls.anf.handle;
+    DWORD acceptNewFriendCall1 = g_WeChatWinDllAddr + g_WxCalls.anf.call1;
+    DWORD acceptNewFriendCall2 = g_WeChatWinDllAddr + g_WxCalls.anf.call2;
+    DWORD acceptNewFriendCall3 = g_WeChatWinDllAddr + g_WxCalls.anf.call3;
+    DWORD acceptNewFriendCall4 = g_WeChatWinDllAddr + g_WxCalls.anf.call4;
 
-    char buffer[0x94]      = { 0 };
-    NewFriendParam_t param = { 0 };
-    DWORD status[9] = { 0xB2, (DWORD)&param, 0xB5, (DWORD)&param, 0xB0, (DWORD)&param, 0xB1, (DWORD)&param, 0x00 };
+    char buffer[0x40]      = { 0 };
+    char nullbuffer[0x3CC] = { 0 };
 
-    param.handle             = acceptNewFriendHandle;
-    param.status             = status;
-    param.statusEnd1         = (DWORD)status + 0x20;
-    param.statusEnd2         = (DWORD)status + 0x20;
-    NewFriendParam_t *pParam = &param;
-
-    LOG_DEBUG("v3: {}\nv4: {}", v3, v4);
+    LOG_DEBUG("\nv3: {}\nv4: {}\nscene: {}", v3, v4, scene);
     WxString_t wxV3   = { 0 };
     WxString_t wxV4   = { 0 };
     std::wstring wsV3 = String2Wstring(v3);
@@ -51,26 +37,31 @@ int AcceptNewFriend(std::string v3, std::string v4, int scene)
     __asm {
         pushad;
         pushfd;
-        push 0x0;
-        mov eax, scene;
-        push eax;
+        lea ecx, buffer;
+        call acceptNewFriendCall1;
+        mov esi, 0x0;
+        mov edi, scene;
+        push esi;
+        push edi;
         sub esp, 0x14;
         mov ecx, esp;
         lea eax, wxV4;
         push eax;
-        call acceptNewFriendCall1;
+        call acceptNewFriendCall2;
         sub esp, 0x8;
         push 0x0;
-        lea eax, buffer;
+        lea eax, nullbuffer;
         push eax;
         lea eax, wxV3;
         push eax;
-        mov ecx, pParam;
-        call acceptNewFriendCall2;
-        mov isSucceeded, eax;
+        lea ecx, buffer;
+        call acceptNewFriendCall3;
+        mov success, eax;
+        lea ecx, buffer;
+        call acceptNewFriendCall4;
         popfd;
         popad;
     }
 
-    return isSucceeded; // 成功返回 1
+    return success; // 成功返回 1
 }
