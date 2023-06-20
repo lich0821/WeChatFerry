@@ -16,11 +16,10 @@
 
 #include "wcf.pb.h"
 
-#include "accept_new_friend.h"
 #include "chatroom_mgmt.h"
 #include "decrypt_image.h"
 #include "exec_sql.h"
-#include "get_contacts.h"
+#include "contact_mgmt.h"
 #include "log.h"
 #include "pb_types.h"
 #include "pb_util.h"

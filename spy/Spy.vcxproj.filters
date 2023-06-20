@@ -27,13 +27,10 @@
     <ClInclude Include="log.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="accept_new_friend.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="exec_sql.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="get_contacts.h">
+    <ClInclude Include="contact_mgmt.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="load_calls.h">
@@ -104,13 +101,10 @@
     <ClCompile Include="log.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="accept_new_friend.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="exec_sql.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="get_contacts.cpp">
+    <ClCompile Include="contact_mgmt.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="load_calls.cpp">
