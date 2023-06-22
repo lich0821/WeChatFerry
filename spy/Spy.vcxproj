@@ -107,7 +107,7 @@
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
@@ -153,7 +153,7 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
