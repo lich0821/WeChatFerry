@@ -23,6 +23,7 @@ int AddChatroomMember(string roomid, string wxids)
     DWORD addRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
     DWORD addRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
 
+    DWORD temp           = 0;
     WxString_t txtRoomid = { 0 };
     wstring wsRoomid     = String2Wstring(roomid);
     txtRoomid.text       = (wchar_t *)wsRoomid.c_str();
@@ -45,23 +46,27 @@ int AddChatroomMember(string roomid, string wxids)
 
     LOG_DEBUG("Adding {} members[{}] to {}", vTxtMembers.size(), wxids.c_str(), roomid.c_str());
     __asm {
-		pushad;
-		pushfd;
-		call addRoomMemberCall1;
-		sub esp, 0x14;
-		mov esi, eax;
-		mov ecx, esp;
-		lea eax, txtRoomid;
-		push eax;
-		call addRoomMemberCall2;
-        lea edi, vTxtMembers
-		push edi;
-		mov ecx, esi;
-		call addRoomMemberCall3;
-		mov rv, eax;
-		popfd;
-		popad;
+        pushad;
+        pushfd;
+        call addRoomMemberCall1;
+        sub esp, 0x8;
+        mov temp, eax;
+        mov ecx, esp;
+        mov dword ptr[ecx], 0x0;
+        mov dword ptr[ecx + 4], 0x0;
+        test esi, esi;
+        sub esp, 0x14;
+        mov ecx, esp;
+        lea eax, txtRoomid;
+        push eax;
+        call addRoomMemberCall2;
+        mov ecx, temp;
+        lea eax, vTxtMembers;
+        push eax;
+        call addRoomMemberCall3;
+        mov rv, eax;
+        popfd;
+        popad;
     }
-
     return rv;
 }

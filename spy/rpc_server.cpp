@@ -625,12 +625,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
             LOG_DEBUG("[Functions_FUNC_ADD_ROOM_MEMBERS]");
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_RECV_TRANSFER: {
             LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tid, out, out_len);
