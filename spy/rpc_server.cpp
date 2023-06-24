@@ -486,14 +486,14 @@ bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     return true;
 }
 
-bool func_receive_transfer(char *wxid, char *transferid, uint8_t *out, size_t *len)
+bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
     rsp.func       = Functions_FUNC_RECV_TRANSFER;
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
-    rsp.msg.status = ReceiveTransfer(wxid, transferid);
+    rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
     if (rsp.msg.status != 1) {
         LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
     }
@@ -630,13 +630,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_RECV_TRANSFER: {
             LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
-            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tid, out, out_len);
+            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
             ret = func_decrypt_image(req.msg.dec.src, req.msg.dec.dst, out, out_len);

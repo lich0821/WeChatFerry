@@ -167,5 +167,6 @@ message DecPath
 message Transfer
 {
     string wxid = 1; // 转账人
-    string tid  = 2; // 转账id transferid
+    string tfid = 2; // 转账id transferid
+    string taid = 3; // Transaction id
 }

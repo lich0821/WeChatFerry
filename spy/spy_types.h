@@ -82,6 +82,7 @@ typedef struct Xml {
 typedef struct TF {
     DWORD call1;
     DWORD call2;
+    DWORD call3;
 } TF_t;
 
 typedef struct WxCalls {
