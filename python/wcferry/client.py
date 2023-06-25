@@ -180,6 +180,8 @@ class Wcf():
                 gender = "男"
             elif gender == 2:
                 gender = "女"
+            else:
+                gender = ""
             contact = {
                 "wxid": cnt.get("wxid", ""),
                 "code": cnt.get("code", ""),
