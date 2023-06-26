@@ -521,12 +521,13 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
-    def receive_transfer(self, wxid: str, transferid: str) -> int:
+    def receive_transfer(self, wxid: str, transferid: str, transactionid: str) -> int:
         """接收转账
 
         Args:
             wxid (str): 转账消息里的发送人 wxid
             transferid (str): 转账消息里的 transferid
+            transactionid (str): 转账消息里的 transactionid
 
         Returns:
             int: 1 为成功，其他失败
@@ -534,7 +535,8 @@ class Wcf():
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_RECV_TRANSFER  # FUNC_RECV_TRANSFER
         req.tf.wxid = wxid
-        req.tf.tid = transferid
+        req.tf.tfid = transferid
+        req.tf.taid = transactionid
         rsp = self._send_request(req)
         return rsp.status
 
