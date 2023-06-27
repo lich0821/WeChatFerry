@@ -37,7 +37,6 @@ def process_msg(wcf: Wcf):
 def main():
     LOG.info("Start demo...")
     wcf = Wcf(debug=True)             # 默认连接本地服务
-    # wcf = Wcf("tcp://127.0.0.1:10086") # 连接远端服务
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
@@ -118,3 +117,41 @@ python -m grpc_tools.protoc --python_out=. --proto_path=..\..\rpc\proto\ wcf.pro
 cd python/wcferry
 python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.proto
 ```
+
+## 版本更新
+版本号：`w.x.y.z`。
+
+其中：
+* `w` 是微信的大版本号，如 `37` (3.7.a.a), `38` (3.8.a.a), `39` (3.9.a.a)
+* `x` 是适配的微信的小版本号，从 0 开始
+* `y` 是 `WeChatFerry` 的版本，从 0 开始
+* `z` 是各客户端的版本，从 0 开始
+
+### 37.1.25.5 (2023.05.19)
+支持 `3.7.0.30` 的最后一个版本。
+
+功能：
+
+* 检查登录状态
+* 获取登录账号的 wxid
+* 获取消息类型
+* 获取所有联系人
+* 获取所有好友
+* 获取数据库
+* 获取某数据库下的表
+* 发送文本消息（可 @）
+* 发送图片（Python 客户端支持网络路径）
+* 发送文件
+* 发送 XML
+* 发送表情
+* 允许接收消息
+* 停止接收消息
+* 执行 SQL 查询
+* 接受好友申请
+* 添加群成员
+* 解密图片
+* 某功能
+
+<details><summary>历史更新</summary>
+
+</details>
