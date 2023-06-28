@@ -1,6 +1,8 @@
 # WeChatFerry Python 客户端
 [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/XTJ9H-FsCPCscixAts8i_A)|
+|:-:|:-:|:-:|
 🤖示例机器人框架：[WeChatRobot](https://github.com/lich0821/WeChatRobot)。
 
 ## 快速开始
