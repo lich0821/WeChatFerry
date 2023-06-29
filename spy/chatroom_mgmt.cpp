@@ -1,5 +1,6 @@
 #include "framework.h"
 #include <sstream>
+#include <vector>
 
 #include "chatroom_mgmt.h"
 #include "load_calls.h"
@@ -64,6 +65,61 @@ int AddChatroomMember(string roomid, string wxids)
         lea eax, vTxtMembers;
         push eax;
         call addRoomMemberCall3;
+        mov rv, eax;
+        popfd;
+        popad;
+    }
+    return rv;
+}
+
+int DelChatroomMember(string roomid, string wxids)
+{
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
+    int rv                   = 0;
+    DWORD delRoomMemberCall1 = g_WeChatWinDllAddr + g_WxCalls.drm.call1;
+    DWORD delRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.drm.call2;
+    DWORD delRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.drm.call3;
+
+    DWORD temp           = 0;
+    WxString_t txtRoomid = { 0 };
+    wstring wsRoomid     = String2Wstring(roomid);
+    txtRoomid.text       = (wchar_t *)wsRoomid.c_str();
+    txtRoomid.size       = wsRoomid.size();
+    txtRoomid.capacity   = wsRoomid.capacity();
+
+    vector<wstring> vMembers;
+    vector<WxString_t> vTxtMembers;
+    wstringstream wss(String2Wstring(wxids));
+    while (wss.good()) {
+        wstring wstr;
+        getline(wss, wstr, L',');
+        vMembers.push_back(wstr);
+        WxString_t txtMember = { 0 };
+        txtMember.text       = (wchar_t *)vMembers.back().c_str();
+        txtMember.size       = vMembers.back().size();
+        txtMember.capacity   = vMembers.back().capacity();
+        vTxtMembers.push_back(txtMember);
+    }
+
+    LOG_DEBUG("Adding {} members[{}] to {}", vTxtMembers.size(), wxids.c_str(), roomid.c_str());
+    __asm {
+        pushad;
+        pushfd;
+        call delRoomMemberCall1;
+        sub esp, 0x14;
+        mov esi, eax;
+        mov ecx, esp;
+        lea edi, txtRoomid;
+        push edi;
+        call delRoomMemberCall2;
+        mov ecx, esi;
+        lea eax, vTxtMembers;
+        push eax;
+        call delRoomMemberCall3;
         mov rv, eax;
         popfd;
         popad;

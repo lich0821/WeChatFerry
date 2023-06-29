@@ -23,6 +23,7 @@ WxCalls_t wxCalls = {
     { 0x141BDF0, 0x2366934, 0x1428, 0x142C, 0x3C, 0x50 },
     { 0xA17D50, 0xF59E40, 0xA18BD0, 0xA17E70 }, // Accept New Friend application
     { 0x78CF20, 0xF59E40, 0xBD1DC0 },           // Add chatroom members
+    { 0x78CF20, 0xF59E40, 0xBD22A0 },           // Delete chatroom members
     { 0x7B2E60, 0x15E2C20, 0x79C250 }           // Receive transfer
 };
 
