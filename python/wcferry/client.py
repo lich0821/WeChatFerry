@@ -504,23 +504,6 @@ class Wcf():
 
         return friends
 
-    def add_chatroom_members(self, roomid: str, wxids: str) -> int:
-        """添加群成员
-
-        Args:
-            roomid (str): 待加群的 id
-            wxids (str): 要加到群里的 wxid，多个用逗号分隔
-
-        Returns:
-            int: 1 为成功，其他失败
-        """
-        req = wcf_pb2.Request()
-        req.func = wcf_pb2.FUNC_ADD_ROOM_MEMBERS  # FUNC_ADD_ROOM_MEMBERS
-        req.m.roomid = roomid
-        req.m.wxids = wxids
-        rsp = self._send_request(req)
-        return rsp.status
-
     def receive_transfer(self, wxid: str, transferid: str, transactionid: str) -> int:
         """接收转账
 
@@ -556,3 +539,37 @@ class Wcf():
         req.dec.dst = dst
         rsp = self._send_request(req)
         return rsp.status == 1
+
+    def add_chatroom_members(self, roomid: str, wxids: str) -> int:
+        """添加群成员
+
+        Args:
+            roomid (str): 待加群的 id
+            wxids (str): 要加到群里的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_ADD_ROOM_MEMBERS  # FUNC_ADD_ROOM_MEMBERS
+        req.m.roomid = roomid
+        req.m.wxids = wxids
+        rsp = self._send_request(req)
+        return rsp.status
+
+    def del_chatroom_members(self, roomid: str, wxids: str) -> int:
+        """删除群成员
+
+        Args:
+            roomid (str): 群的 id
+            wxids (str): 要删除成员的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_DEL_ROOM_MEMBERS  # FUNC_DEL_ROOM_MEMBERS
+        req.m.roomid = roomid
+        req.m.wxids = wxids.replace(" ", "")
+        rsp = self._send_request(req)
+        return rsp.status
