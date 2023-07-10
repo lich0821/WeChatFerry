@@ -702,6 +702,35 @@ pub fn add_chatroom_members(
     };
 }
 
+pub fn del_chatroom_members(
+    roomid: String,
+    wxids: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncDelRoomMembers.into(),
+        msg: Some(wcf::request::Msg::M(wcf::AddMembers { roomid, wxids })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("微信群踢人失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
 pub fn decrypt_image(
     src: String,
     dst: String,
@@ -858,6 +887,18 @@ mod test {
         let status = crate::wechat::add_chatroom_members(
             String::from("*****@chatroom"),
             String::from("****"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_del_chatroom_members() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::del_chatroom_members(
+            String::from("34476879773@chatroom"),
+            String::from("*******"),
             &mut wechat,
         )
         .unwrap();
