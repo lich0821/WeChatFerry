@@ -28,24 +28,40 @@ static CHAR recvMsgBackupCode[5] = { 0 };
 
 MsgTypes_t GetMsgTypes()
 {
-    const MsgTypes_t m = { { 0x01, "文字" },
-                           { 0x03, "图片" },
-                           { 0x22, "语音" },
-                           { 0x25, "好友确认" },
-                           { 0x28, "POSSIBLEFRIEND_MSG" },
-                           { 0x2A, "名片" },
-                           { 0x2B, "视频" },
-                           { 0x2F, "石头剪刀布 | 表情图片" },
-                           { 0x30, "位置" },
-                           { 0x31, "共享实时位置、文件、转账、链接" },
-                           { 0x32, "VOIPMSG" },
-                           { 0x33, "微信初始化" },
-                           { 0x34, "VOIPNOTIFY" },
-                           { 0x35, "VOIPINVITE" },
-                           { 0x3E, "小视频" },
-                           { 0x270F, "SYSNOTICE" },
-                           { 0x2710, "红包、系统消息" },
-                           { 0x2712, "撤回消息" } };
+    const MsgTypes_t m = {
+        { 0x01, "文字" },
+        { 0x03, "图片" },
+        { 0x22, "语音" },
+        { 0x25, "好友确认" },
+        { 0x28, "POSSIBLEFRIEND_MSG" },
+        { 0x2A, "名片" },
+        { 0x2B, "视频" },
+        { 0x2F, "石头剪刀布 | 表情图片" },
+        { 0x30, "位置" },
+        { 0x31, "共享实时位置、文件、转账、链接" },
+        { 0x32, "VOIPMSG" },
+        { 0x33, "微信初始化" },
+        { 0x34, "VOIPNOTIFY" },
+        { 0x35, "VOIPINVITE" },
+        { 0x3E, "小视频" },
+        { 0x42, "微信红包" },
+        { 0x270F, "SYSNOTICE" },
+        { 0x2710, "红包、系统消息" },
+        { 0x2712, "撤回消息" },
+        { 0x100031, "搜狗表情" },
+        { 0x1000031, "链接" },
+        { 0x1A000031, "微信红包" },
+        { 0x20010031, "红包封面" },
+        { 0x2D000031, "视频号视频" },
+        { 0x2E000031, "视频号名片" },
+        { 0x31000031, "引用消息" },
+        { 0x37000031, "拍一拍" },
+        { 0x3A000031, "视频号直播" },
+        { 0x3A100031, "商品链接" },
+        { 0x3A200031, "视频号直播" },
+        { 0x3E000031, "音乐链接" },
+        { 0x41000031, "文件" },
+    };
 
     return m;
 }
@@ -73,21 +89,20 @@ void UnHookAddress(DWORD hookAddr, CHAR restoreCode[5])
 void DispatchMsg(DWORD reg)
 {
     WxMsg_t wxMsg;
-    DWORD *p = (DWORD *)reg; // 消息结构基址
 
-    wxMsg.type    = GET_DWORD(*p + g_WxCalls.recvMsg.type);
-    wxMsg.is_self = GET_DWORD(*p + g_WxCalls.recvMsg.isSelf);
-    wxMsg.id      = GetStringByAddress(*p + g_WxCalls.recvMsg.msgId);
-    wxMsg.xml     = GetStringByAddress(*p + g_WxCalls.recvMsg.msgXml);
+    wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
+    wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
+    wxMsg.id      = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgId);
+    wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
 
-    string roomid = GetStringByAddress(*p + g_WxCalls.recvMsg.roomId);
+    string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
     if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
         wxMsg.is_group = true;
         wxMsg.roomid   = roomid;
         if (wxMsg.is_self) {
             wxMsg.sender = GetSelfWxid();
         } else {
-            wxMsg.sender = GetStringByAddress(*p + g_WxCalls.recvMsg.wxId);
+            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxId);
         }
     } else {
         wxMsg.is_group = false;
@@ -98,15 +113,16 @@ void DispatchMsg(DWORD reg)
         }
     }
 
-    wxMsg.content = GetStringByAddress(*p + g_WxCalls.recvMsg.content);
-    wxMsg.thumb   = GetStringByAddress(*p + g_WxCalls.recvMsg.thumb);
+    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
+
+    wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
     if (!wxMsg.thumb.empty()) {
-        wxMsg.thumb = GetHomePath() + "\\WeChat Files\\" + wxMsg.thumb;
+        wxMsg.thumb = GetHomePath() + wxMsg.thumb;
     }
 
-    wxMsg.extra = GetStringByAddress(*p + g_WxCalls.recvMsg.extra);
+    wxMsg.extra = GetStringByStrAddr(reg + g_WxCalls.recvMsg.extra);
     if (!wxMsg.extra.empty()) {
-        wxMsg.extra = GetHomePath() + "\\WeChat Files\\" + wxMsg.extra;
+        wxMsg.extra = GetHomePath() + wxMsg.extra;
     }
 
     {
@@ -120,13 +136,13 @@ void DispatchMsg(DWORD reg)
 __declspec(naked) void RecieveMsgFunc()
 {
     __asm {
-        mov reg_buffer, edi // 把值复制出来
-    }
-
-    DispatchMsg(reg_buffer);
-
-    __asm
-    {
+        pushad
+        pushfd
+        push ecx
+        call DispatchMsg
+        add esp, 0x4
+        popfd
+        popad
         call recvMsgCallAddr // 这个为被覆盖的call
         jmp recvMsgJumpBackAddr // 跳回被HOOK指令的下一条指令
     }
@@ -134,6 +150,7 @@ __declspec(naked) void RecieveMsgFunc()
 
 void ListenMessage()
 {
+    // DbgMsg("ListenMessage");
     // OutputDebugString(L"ListenMessage\n");
     // MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
     if (gIsListening || (g_WeChatWinDllAddr == 0)) {

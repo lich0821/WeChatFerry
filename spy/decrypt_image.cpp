@@ -1,3 +1,5 @@
+﻿#pragma warning( disable: 4244 )
+
 #include <fstream>
 
 #include "decrypt_image.h"

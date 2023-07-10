@@ -16,11 +16,10 @@
 
 #include "wcf.pb.h"
 
-#include "accept_new_friend.h"
-#include "add_chatroom_member.h"
+#include "chatroom_mgmt.h"
+#include "contact_mgmt.h"
 #include "decrypt_image.h"
 #include "exec_sql.h"
-#include "get_contacts.h"
 #include "log.h"
 #include "pb_types.h"
 #include "pb_util.h"
@@ -465,36 +464,14 @@ bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t 
     return true;
 }
 
-bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
-{
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_ADD_ROOM_MEMBERS;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
-
-    rsp.msg.status = AddChatroomMember(roomid, wxids);
-    if (rsp.msg.status != 1) {
-        LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_receive_transfer(char *wxid, char *transferid, uint8_t *out, size_t *len)
+bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
     rsp.func       = Functions_FUNC_RECV_TRANSFER;
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
-    rsp.msg.status = ReceiveTransfer(wxid, transferid);
+    rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
     if (rsp.msg.status != 1) {
         LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
     }
@@ -519,6 +496,50 @@ bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
     rsp.msg.status = (int)DecryptImage(src, dst);
     if (rsp.msg.status != 1) {
         LOG_ERROR("DecryptImage failed.");
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_ADD_ROOM_MEMBERS;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    rsp.msg.status = AddChatroomMember(roomid, wxids);
+    if (rsp.msg.status != 1) {
+        LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_DEL_ROOM_MEMBERS;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    rsp.msg.status = DelChatroomMember(roomid, wxids);
+    if (rsp.msg.status != 1) {
+        LOG_ERROR("DelChatroomMember failed: {}", rsp.msg.status);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -594,6 +615,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_XML: {
             LOG_DEBUG("[Functions_FUNC_SEND_XML]");
             ret = func_send_xml(req.msg.xml, out, out_len);
@@ -604,6 +626,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
             LOG_DEBUG("[Functions_FUNC_ENABLE_RECV_TXT]");
             ret = func_enable_recv_txt(out, out_len);
@@ -624,19 +647,24 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
         }
-        case Functions_FUNC_ADD_ROOM_MEMBERS: {
-            LOG_DEBUG("[Functions_FUNC_ADD_ROOM_MEMBERS]");
-            ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
-            break;
-        }
         case Functions_FUNC_RECV_TRANSFER: {
             LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
-            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tid, out, out_len);
+            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {
             LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
             ret = func_decrypt_image(req.msg.dec.src, req.msg.dec.dst, out, out_len);
+            break;
+        }
+        case Functions_FUNC_ADD_ROOM_MEMBERS: {
+            LOG_DEBUG("[Functions_FUNC_ADD_ROOM_MEMBERS]");
+            ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
+            break;
+        }
+        case Functions_FUNC_DEL_ROOM_MEMBERS: {
+            LOG_DEBUG("[Functions_FUNC_DEL_ROOM_MEMBERS]");
+            ret = func_del_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
         default: {

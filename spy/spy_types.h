@@ -23,10 +23,17 @@ typedef struct RecvMsg {
     DWORD extra;   // 附加数据
 } RecvMsg_t;
 
+typedef struct SendText {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+} SendText_t;
+
 typedef struct Sendfile {
     DWORD call1;
     DWORD call2;
     DWORD call3;
+    DWORD call4;
 } Sendfile_t;
 
 typedef struct Contact {
@@ -54,7 +61,8 @@ typedef struct Sql {
 typedef struct NewFriend {
     DWORD call1;
     DWORD call2;
-    DWORD handle;
+    DWORD call3;
+    DWORD call4;
 } NewFriend_t;
 
 typedef struct RoomMember {
@@ -74,12 +82,13 @@ typedef struct Xml {
 typedef struct TF {
     DWORD call1;
     DWORD call2;
+    DWORD call3;
 } TF_t;
 
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
-    DWORD sendTextMsg;   // 发送消息
+    SendText_t sendText; // 发送消息
     RecvMsg_t recvMsg;   // 接收消息
     Sendfile_t sendImg;  // 发送图片
     Sendfile_t sendFile; // 发送文件
@@ -89,6 +98,7 @@ typedef struct WxCalls {
     Sql_t sql;           // 执行 SQL
     NewFriend_t anf;     // 通过好友申请
     RoomMember_t arm;    // 添加群成员
+    RoomMember_t drm;    // 删除群成员
     TF_t tf;             // 接收转账
 } WxCalls_t;
 

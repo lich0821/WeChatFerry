@@ -107,7 +107,7 @@
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
@@ -153,7 +153,7 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4819</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -226,12 +226,11 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     <ClInclude Include="..\rpc\pb_types.h" />
     <ClInclude Include="..\rpc\pb_util.h" />
     <ClInclude Include="..\rpc\proto\wcf.pb.h" />
-    <ClInclude Include="accept_new_friend.h" />
-    <ClInclude Include="add_chatroom_member.h" />
+    <ClInclude Include="chatroom_mgmt.h" />
     <ClInclude Include="decrypt_image.h" />
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="get_contacts.h" />
+    <ClInclude Include="contact_mgmt.h" />
     <ClInclude Include="load_calls.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="receive_msg.h" />
@@ -241,6 +240,7 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     <ClInclude Include="send_msg.h" />
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
+    <ClInclude Include="sqlite3.h" />
     <ClInclude Include="user_info.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
@@ -250,12 +250,11 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     <ClCompile Include="..\rpc\nanopb\pb_encode.c" />
     <ClCompile Include="..\rpc\pb_util.cpp" />
     <ClCompile Include="..\rpc\proto\wcf.pb.c" />
-    <ClCompile Include="accept_new_friend.cpp" />
-    <ClCompile Include="add_chatroom_member.cpp" />
+    <ClCompile Include="chatroom_mgmt.cpp" />
     <ClCompile Include="decrypt_image.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
-    <ClCompile Include="get_contacts.cpp" />
+    <ClCompile Include="contact_mgmt.cpp" />
     <ClCompile Include="load_calls.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="receive_msg.cpp" />

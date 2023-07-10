@@ -88,3 +88,35 @@ bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcNa
     CloseHandle(hThread);
     return true;
 }
+
+bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPVOID parameter, size_t sz,
+                   DWORD *ret)
+{
+    void *pFunc = GetFuncAddr(dllPath, dllBase, funcName);
+    if (pFunc == NULL) {
+        return false;
+    }
+
+    LPVOID pRemoteAddress = VirtualAllocEx(process, NULL, sz, MEM_COMMIT, PAGE_READWRITE);
+    if (pRemoteAddress == NULL) {
+        MessageBox(NULL, L"申请内存失败", L"CallDllFuncEx", 0);
+        return NULL;
+    }
+
+    WriteProcessMemory(process, pRemoteAddress, parameter, sz, NULL);
+
+    HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, pRemoteAddress, 0, NULL);
+    if (hThread == NULL) {
+        VirtualFree(pRemoteAddress, 0, MEM_RELEASE);
+        MessageBox(NULL, L"远程调用失败", L"CallDllFuncEx", 0);
+        return false;
+    }
+    WaitForSingleObject(hThread, INFINITE);
+    VirtualFree(pRemoteAddress, 0, MEM_RELEASE);
+    if (ret != NULL) {
+        GetExitCodeThread(hThread, ret);
+    }
+
+    CloseHandle(hThread);
+    return true;
+}

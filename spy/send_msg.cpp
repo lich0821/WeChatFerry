@@ -13,12 +13,15 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    char buffer[0x3B0] = { 0 };
+    int success        = 0;
+    char buffer[0x2D8] = { 0 };
     WxString_t wxMsg   = { 0 };
     WxString_t wxWxid  = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
-    DWORD sendCallAddress = g_WeChatWinDllAddr + g_WxCalls.sendTextMsg;
+    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendText.call1;
+    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendText.call2;
+    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendText.call3;
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wsMsg  = String2Wstring(msg);
@@ -49,15 +52,24 @@ void SendTextMessage(string wxid, string msg, string atWxids)
 
     __asm
     {
+        pushad;
+        call sendCall1;
+        push 0x0;
+        push 0x0;
+        push 0x0;
+        push 0x1;
         lea eax, vTxtAtWxids;
-        push 0x01;
         push eax;
-        lea edi, wxMsg;
-        push edi;
+        lea eax, wxMsg;
+        push eax;
         lea edx, wxWxid;
         lea ecx, buffer;
-        call sendCallAddress;
-        add esp, 0xC;
+        call sendCall2;
+        mov success, eax;
+        add esp, 0x18;
+        lea ecx, buffer;
+        call sendCall3;
+        popad;
     }
 }
 
@@ -66,11 +78,12 @@ void SendImageMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    DWORD tmpEAX       = 0;
-    char buf1[0x48]    = { 0 };
-    char buf2[0x3B0]   = { 0 };
-    WxString_t imgWxid = { 0 };
-    WxString_t imgPath = { 0 };
+    int success           = 0;
+    DWORD tmpEAX          = 0;
+    char buf[0x2D8]       = { 0 };
+    WxString_t imgWxid    = { 0 };
+    WxString_t imgPath    = { 0 };
+    WxString_t nullbuffer = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wspath = String2Wstring(path);
@@ -87,25 +100,29 @@ void SendImageMessage(string wxid, string path)
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
     DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call2;
     DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call3;
+    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call4;
 
     __asm {
-        pushad
-        call sendCall1
-        sub esp, 0x14
-        mov tmpEAX, eax
-        lea eax, buf1
-        mov ecx, esp
-        lea edi, imgPath
-        push eax
-        call sendCall2
-        mov ecx, dword ptr[tmpEAX]
-        lea eax, imgWxid
-        push edi
-        push eax
-        lea eax, buf2
-        push eax
-        call sendCall3
-        popad
+        pushad;
+        call       sendCall1;
+        sub        esp,0x14;
+        mov        tmpEAX,eax;
+        lea        eax,nullbuffer;
+        mov        ecx,esp;
+        lea        edi,imgPath;
+        push       eax;
+        call       sendCall2;
+        mov        ecx,dword ptr [tmpEAX];
+        lea        eax,imgWxid;
+        push       edi;
+        push       eax;
+        lea        eax,buf;
+        push       eax;
+        call       sendCall3;
+        mov        success,eax;
+        lea        ecx,buf;
+        call       sendCall4;
+        popad;
     }
 }
 
@@ -114,8 +131,9 @@ void SendFileMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
+    int success           = 0;
     DWORD tmpEAX          = 0;
-    char buffer[0x3B0]    = { 0 };
+    char buffer[0x2D8]    = { 0 };
     WxString_t fileWxid   = { 0 };
     WxString_t filePath   = { 0 };
     WxString_t nullbuffer = { 0 };
@@ -135,46 +153,49 @@ void SendFileMessage(string wxid, string path)
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
     DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
     DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
+    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call4;
 
     __asm {
-		pushad;
-		pushfd;
-		call sendCall1;
-		sub esp, 0x14;
-		mov tmpEAX, eax;
-		lea eax, nullbuffer;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		push 0x00DBE200;
-		sub esp, 0x14;
-		mov edi, esp;
-		mov dword ptr ds : [edi] , 0x0;
-		mov dword ptr ds : [edi + 0x4] , 0x0;
-		mov dword ptr ds : [edi + 0x8] , 0x0;
-		mov dword ptr ds : [edi + 0xC] , 0x0;
-		mov dword ptr ds : [edi + 0x10] , 0x0;
-		sub esp, 0x14;
-		lea eax, filePath;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		sub esp, 0x14;
-		lea eax, fileWxid;
-		mov ecx, esp;
-		push eax;
-		call sendCall2;
-		mov ecx, dword ptr [tmpEAX];
-		lea eax, buffer;
-		push eax;
-		call sendCall3;
-		mov al,byte ptr [eax + 0x38];
-		movzx eax,al;
-		popfd;
-		popad;
+        pushad;
+        pushfd;
+        call sendCall1;
+        sub esp, 0x14;
+        mov tmpEAX, eax;
+        lea eax, nullbuffer;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        push 0x0;
+        sub esp, 0x14;
+        mov edi, esp;
+        mov dword ptr[edi], 0;
+        mov dword ptr[edi + 0x4], 0;
+        mov dword ptr[edi + 0x8], 0;
+        mov dword ptr[edi + 0xc], 0;
+        mov dword ptr[edi + 0x10], 0;
+        sub esp, 0x14;
+        lea eax, filePath;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        sub esp, 0x14;
+        lea eax, fileWxid;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        mov ecx, dword ptr[tmpEAX];
+        lea eax, buffer;
+        push eax;
+        call sendCall3;
+        mov al, byte ptr[eax + 0x38];
+        movzx eax, al;
+        mov success, eax;
+        lea ecx, buffer;
+        call sendCall4;
+        popfd;
+        popad;
     }
 }
-
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {
@@ -260,7 +281,7 @@ void SendEmotionMessage(string wxid, string path)
         return;
     }
 
-    char buffer[0x1C]    = { 0 };
+    char buffer[0x1C]     = { 0 };
     WxString_t emoWxid    = { 0 };
     WxString_t emoPath    = { 0 };
     WxString_t nullbuffer = { 0 };

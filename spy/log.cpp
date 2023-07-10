@@ -1,27 +1,34 @@
+﻿#include <filesystem>
+
 #include "log.h"
+#include "util.h"
 
 #define LOGGER_NAME      "WCF"
-#define LOGGER_FILE_NAME "logs/wcf.txt"
+#define LOGGER_FILE_NAME "/logs/wcf.txt"
 #define LOGGER_MAX_SIZE  1024 * 1024 * 10 // 10M
 #define LOGGER_MAX_FILES 10               // 10 files
 
-void InitLogger()
+void InitLogger(std::string path)
 {
-    static std::shared_ptr<spdlog::logger> gLogger = nullptr;
-    if (gLogger != nullptr) {
+    static std::shared_ptr<spdlog::logger> logger = nullptr;
+    if (logger != nullptr) {
         return;
     }
 
-    gLogger = spdlog::rotating_logger_mt(LOGGER_NAME, LOGGER_FILE_NAME, LOGGER_MAX_SIZE, LOGGER_MAX_FILES);
-    // gLogger = spdlog::stdout_color_mt("console");
+    auto filename = std::filesystem::path(path + LOGGER_FILE_NAME).make_preferred().string();
+    try {
+        logger = spdlog::rotating_logger_mt(LOGGER_NAME, filename, LOGGER_MAX_SIZE, LOGGER_MAX_FILES);
+    } catch (const spdlog::spdlog_ex &ex) {
+        MessageBox(NULL, String2Wstring(ex.what()).c_str(), L"Init LOGGER ERROR", 0);
+    }
 
-    spdlog::set_default_logger(gLogger);
-    gLogger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%s::%#::%!] %v");
+    spdlog::set_default_logger(logger);
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%s::%#::%!] %v");
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
     spdlog::set_level(spdlog::level::debug);
-    gLogger->flush_on(spdlog::level::debug);
+    logger->flush_on(spdlog::level::debug);
 #else
-    gLogger->flush_on(spdlog::level::info);
+    logger->flush_on(spdlog::level::info);
 #endif
     LOG_DEBUG("InitLogger with debug level");
 }

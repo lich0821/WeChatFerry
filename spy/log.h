@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <string>
+
 #ifdef ENABLE_DEBUG_LOG
 #include <stdint.h>
 
@@ -19,4 +21,4 @@ void log_buffer(uint8_t *buffer, size_t len);
 #define LOG_WARN(...)  SPDLOG_WARN(__VA_ARGS__);
 #define LOG_ERROR(...) SPDLOG_ERROR(__VA_ARGS__);
 
-void InitLogger();
+void InitLogger(std::string path);

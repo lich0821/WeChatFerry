@@ -1,10 +1,10 @@
 ﻿#include "Shlwapi.h"
 #include "framework.h"
+#include <filesystem>
 #include <process.h>
 #include <tlhelp32.h>
 
 #include "injector.h"
-#include "log.h"
 #include "sdk.h"
 #include "util.h"
 
@@ -17,7 +17,6 @@ static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
 static int GetDllPath(bool debug, wchar_t *dllPath)
 {
-    InitLogger();
     GetModuleFileName(GetModuleHandle(WECHATSDKDLL), spyDllPath, MAX_PATH);
     PathRemoveFileSpec(spyDllPath);
     if (debug) {
@@ -27,7 +26,7 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
     }
 
     if (!PathFileExists(spyDllPath)) {
-        LOG_ERROR("DLL does not exists: {}.", Wstring2String(spyDllPath));
+        MessageBox(NULL, spyDllPath, L"文件不存在", 0);
         return ERROR_FILE_NOT_FOUND;
     }
 
@@ -46,26 +45,30 @@ int WxInitSDK(bool debug, int port)
 
     status = OpenWeChat(&wcPid);
     if (status != 0) {
-        LOG_ERROR("OpenWeChat failed: {}.", status);
+        MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
         return status;
     }
 
     Sleep(2000); // 等待微信打开
     wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
-        LOG_ERROR("Failed to Inject DLL into WeChat.");
+        MessageBox(NULL, L"注入失败", L"WxInitSDK", 0);
         return -1;
     }
 
-    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)port, NULL)) {
-        LOG_ERROR("Failed to InitSpy.");
+    PortPath_t pp = { 0 };
+    pp.port       = port;
+    sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
+
+    if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+        MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
         return -1;
     }
 
 #ifdef WCF
     FILE *fd = fopen(WCF_LOCK, "wb");
     if (fd == NULL) {
-        LOG_ERROR("Failed to open {}.", WCF_LOCK);
+        MessageBox(NULL, L"无法打开lock文件", L"WxInitSDK", 0);
         return -2;
     }
     fwrite((uint8_t *)&debug, sizeof(debug), 1, fd);
@@ -83,19 +86,19 @@ int WxDestroySDK()
     bool debug;
     DWORD pid = GetWeChatPid();
     if (pid == 0) {
-        LOG_ERROR("WeChat is not running.");
+        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
         return status;
     }
 
     wcProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
     if (wcProcess == NULL) {
-        LOG_ERROR("WeChat is not running.");
+        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
         return -1;
     }
 
     FILE *fd = fopen(WCF_LOCK, "rb");
     if (fd == NULL) {
-        LOG_ERROR("Failed to open {}.", WCF_LOCK);
+        MessageBox(NULL, L"无法打开lock文件", L"WxDestroySDK", 0);
         return -2;
     }
     fread((uint8_t *)&debug, sizeof(debug), 1, fd);
@@ -111,14 +114,12 @@ int WxDestroySDK()
     }
 
     if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL, NULL)) {
-        LOG_ERROR("Failed to CleanupSpy.");
         return -1;
     }
 
     if (!EjectDll(wcProcess, spyBase)) {
-        LOG_ERROR("Failed to Eject DLL.");
         return -1; // TODO: Unify error codes
     }
-    LOG_INFO("WxDestroySDK done.");
+
     return 0;
 }
