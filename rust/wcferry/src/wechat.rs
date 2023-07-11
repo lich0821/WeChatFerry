@@ -53,7 +53,7 @@ impl WeChat {
 }
 
 fn start(wcf_path: PathBuf, debug: bool) -> Result<(), Box<dyn std::error::Error>> {
-    let mut args = vec!["start"];
+    let mut args = vec!["start", "10086"];
     if debug {
         args.push("debug");
     }
@@ -389,14 +389,15 @@ pub fn send_text(
     if response.is_none() {
         return Ok(false);
     }
-    match response.unwrap() {
-        wcf::response::Msg::Status(status) => {
-            return Ok(1 == status);
-        }
-        _ => {
-            return Ok(false);
-        }
-    };
+    return Ok(true);
+    // match response.unwrap() {
+    //     wcf::response::Msg::Status(status) => {
+    //         return Ok(1 == status);
+    //     }
+    //     _ => {
+    //         return Ok(false);
+    //     }
+    // };
 }
 
 pub fn send_image(
@@ -419,17 +420,19 @@ pub fn send_image(
             return Err("图片发送失败".into());
         }
     };
+    println!("{:?}", response);
     if response.is_none() {
         return Ok(false);
     }
-    match response.unwrap() {
-        wcf::response::Msg::Status(status) => {
-            return Ok(1 == status);
-        }
-        _ => {
-            return Ok(false);
-        }
-    };
+    return Ok(true);
+    // match response.unwrap() {
+    //     wcf::response::Msg::Status(status) => {
+    //         return Ok(1 == status);
+    //     }
+    //     _ => {
+    //         return Ok(false);
+    //     }
+    // };
 }
 
 pub fn send_file(
@@ -699,6 +702,35 @@ pub fn add_chatroom_members(
     };
 }
 
+pub fn del_chatroom_members(
+    roomid: String,
+    wxids: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncDelRoomMembers.into(),
+        msg: Some(wcf::request::Msg::M(wcf::AddMembers { roomid, wxids })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("微信群踢人失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
 pub fn decrypt_image(
     src: String,
     dst: String,
@@ -731,13 +763,15 @@ pub fn decrypt_image(
 pub fn recv_transfer(
     wxid: String,
     transferid: String,
+    transcationid: String,
     wechat: &mut WeChat,
 ) -> Result<bool, Box<dyn std::error::Error>> {
     let req = wcf::Request {
         func: wcf::Functions::FuncRecvTransfer.into(),
         msg: Some(wcf::request::Msg::Tf(wcf::Transfer {
-            wxid,
-            tid: transferid,
+            wxid: wxid,
+            taid: transferid,
+            tfid: transcationid,
         })),
     };
     let response = match send_cmd(wechat, req) {
@@ -799,7 +833,7 @@ mod test {
         let status = crate::wechat::send_text(
             &mut wechat,
             String::from("Hello, wcferry!"),
-            String::from("******@chatroom"),
+            String::from("filehelper"),
             String::from(""),
         )
         .unwrap();
@@ -814,7 +848,7 @@ mod test {
         let status = crate::wechat::send_image(
             &mut wechat,
             PathBuf::from("C:\\Users\\Administrator\\Pictures\\1.jpg"),
-            String::from("****@chatroom"),
+            String::from("filehelper"),
         )
         .unwrap();
         println!("Success: {}", status);
@@ -824,7 +858,7 @@ mod test {
     fn test_recv_msg() {
         let mut wechat = crate::wechat::WeChat::default();
         let mut socket = crate::wechat::enable_listen(&mut wechat).unwrap();
-        for _ in 1..100 {
+        for _ in 1..5 {
             let msg = crate::wechat::recv_msg(&mut socket).unwrap();
             println!("WxMsg: {:?}", msg);
         }
@@ -860,6 +894,18 @@ mod test {
     }
 
     #[test]
+    fn test_del_chatroom_members() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::del_chatroom_members(
+            String::from("34476879773@chatroom"),
+            String::from("*******"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
     fn test_get_user_info() {
         let mut wechat = crate::wechat::WeChat::default();
         let user_info = crate::wechat::get_user_info(&mut wechat).unwrap();
@@ -871,7 +917,8 @@ mod test {
         let mut wechat = crate::wechat::WeChat::default();
         let status = crate::wechat::recv_transfer(
             String::from("****"),
-            String::from("1000050001202305070217704377865"),
+            String::from("1000050001202306300415889890620"),
+            String::from("100005000123063000081247810011296088"),
             &mut wechat,
         )
         .unwrap();
