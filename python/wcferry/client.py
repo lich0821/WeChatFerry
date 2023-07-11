@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.0.0a1"
+__version__ = "39.0.0.0a2"
 
 import atexit
 import base64
@@ -174,6 +174,7 @@ class Wcf():
         rsp = self._send_request(req)
         contacts = json_format.MessageToDict(rsp.contacts).get("contacts", [])
 
+        self.contacts.clear()
         for cnt in contacts:
             gender = cnt.get("gender", "")
             if gender == 1:
