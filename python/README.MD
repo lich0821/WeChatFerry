@@ -3,6 +3,7 @@
 
 |[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/XTJ9H-FsCPCscixAts8i_A)|
 |:-:|:-:|:-:|
+
 🤖示例机器人框架：[WeChatRobot](https://github.com/lich0821/WeChatRobot)。
 
 ## 快速开始
@@ -76,13 +77,6 @@ def main():
     # ret = wcf.add_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
 
-    xml = '<?xml version="1.0"?><msg><appmsg appid="" sdkver="0"><title>叮当药房，24小时服务，28分钟送药到家！</title><des>叮当快药首家承诺范围内28分钟送药到家！叮当快药核心区域内7*24小时全天候服务，送药上门！叮当快药官网为您提供快捷便利，正品低价，安全放心的购药、送药服务体验。</des><action>view</action><type>33</type><showtype>0</showtype><content /><url>https://mp.weixin.qq.com/mp/waerrpage?appid=wxc2edadc87077fa2a&amp;type=upgrade&amp;upgradetype=3#wechat_redirect</url><dataurl /><lowurl /><lowdataurl /><recorditem /><thumburl /><messageaction /><md5>7f6f49d301ebf47100199b8a4fcf4de4</md5><extinfo /><sourceusername>gh_c2b88a38c424@app</sourceusername><sourcedisplayname>叮当快药 药店送药到家夜间买药</sourcedisplayname><commenturl /><appattach><totallen>0</totallen><attachid /><emoticonmd5></emoticonmd5><fileext>jpg</fileext><filekey>da0e08f5c7259d03da150d5e7ca6d950</filekey><cdnthumburl>3057020100044b30490201000204e4c0232702032f4ef20204a6bace6f02046401f62d042430326337303430352d333734332d343362652d623335322d6233333566623266376334620204012400030201000405004c537600</cdnthumburl><aeskey>0db26456caf243fbd4efb99058a01d66</aeskey><cdnthumbaeskey>0db26456caf243fbd4efb99058a01d66</cdnthumbaeskey><encryver>1</encryver><cdnthumblength>61558</cdnthumblength><cdnthumbheight>100</cdnthumbheight><cdnthumbwidth>100</cdnthumbwidth></appattach><weappinfo><pagepath>pages/index/index.html</pagepath><username>gh_c2b88a38c424@app</username><appid>wxc2edadc87077fa2a</appid><version>197</version><type>2</type><weappiconurl>http://wx.qlogo.cn/mmhead/Q3auHgzwzM4727n0NQ0ZIPQPlfp15m1WLsnrXbo1kLhFGcolgLyc0A/96</weappiconurl><appservicetype>0</appservicetype><shareId>1_wxc2edadc87077fa2a_29177e9a9b918cb9e75964f80bb8f32e_1677849476_0</shareId></weappinfo><websearch /></appmsg><fromusername>wxid_xxxxxxxxxxxxxx</fromusername><scene>0</scene><appinfo><version>1</version><appname /></appinfo><commenturl /></msg>'
-    ret = wcf.send_xml("filehelper", xml, 0x21)
-    LOG.info(f"send_xml: {ret}")
-
-    ret = wcf.send_emotion("emo.gif", "filehelper")  # 需要确保 gif 路径正确
-    LOG.info(f"send_emotion: {ret}")
-
     # 一直运行
     wcf.keep_running()
 
@@ -129,6 +123,31 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
 
+### 39.0.0.0a0 (2023.07.11)
+支持微信 `3.9.2.23`。
+
+功能：
+
+* 检查登录状态
+* 获取登录账号的 wxid
+* 获取消息类型
+* 获取所有联系人
+* 获取所有好友
+* 获取数据库
+* 获取某数据库下的表
+* 发送文本消息（可 @）
+* 发送图片（Python 客户端支持网络路径）
+* 发送文件
+* 允许接收消息
+* 停止接收消息
+* 执行 SQL 查询
+* 接受好友申请
+* 添加群成员
+* 解密图片
+* 某功能（Breaking Change）
+
+<details><summary>历史更新</summary>
+
 ### 37.1.25.5 (2023.05.19)
 支持 `3.7.0.30` 的最后一个版本。
 
@@ -153,7 +172,4 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * 添加群成员
 * 解密图片
 * 某功能
-
-<details><summary>历史更新</summary>
-
 </details>
