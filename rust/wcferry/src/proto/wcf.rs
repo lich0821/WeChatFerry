@@ -305,7 +305,10 @@ pub struct Transfer {
     pub wxid: ::prost::alloc::string::String,
     /// 转账id transferid
     #[prost(string, tag = "2")]
-    pub tid: ::prost::alloc::string::String,
+    pub tfid: ::prost::alloc::string::String,
+    /// Transaction id
+    #[prost(string, tag = "3")]
+    pub taid: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -327,9 +330,10 @@ pub enum Functions {
     FuncDisableRecvTxt = 64,
     FuncExecDbQuery = 80,
     FuncAcceptFriend = 81,
-    FuncAddRoomMembers = 82,
-    FuncRecvTransfer = 83,
+    FuncRecvTransfer = 82,
     FuncDecryptImage = 96,
+    FuncAddRoomMembers = 112,
+    FuncDelRoomMembers = 113,
 }
 impl Functions {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -355,9 +359,10 @@ impl Functions {
             Functions::FuncDisableRecvTxt => "FUNC_DISABLE_RECV_TXT",
             Functions::FuncExecDbQuery => "FUNC_EXEC_DB_QUERY",
             Functions::FuncAcceptFriend => "FUNC_ACCEPT_FRIEND",
-            Functions::FuncAddRoomMembers => "FUNC_ADD_ROOM_MEMBERS",
             Functions::FuncRecvTransfer => "FUNC_RECV_TRANSFER",
             Functions::FuncDecryptImage => "FUNC_DECRYPT_IMAGE",
+            Functions::FuncAddRoomMembers => "FUNC_ADD_ROOM_MEMBERS",
+            Functions::FuncDelRoomMembers => "FUNC_DEL_ROOM_MEMBERS",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -380,9 +385,10 @@ impl Functions {
             "FUNC_DISABLE_RECV_TXT" => Some(Self::FuncDisableRecvTxt),
             "FUNC_EXEC_DB_QUERY" => Some(Self::FuncExecDbQuery),
             "FUNC_ACCEPT_FRIEND" => Some(Self::FuncAcceptFriend),
-            "FUNC_ADD_ROOM_MEMBERS" => Some(Self::FuncAddRoomMembers),
             "FUNC_RECV_TRANSFER" => Some(Self::FuncRecvTransfer),
             "FUNC_DECRYPT_IMAGE" => Some(Self::FuncDecryptImage),
+            "FUNC_ADD_ROOM_MEMBERS" => Some(Self::FuncAddRoomMembers),
+            "FUNC_DEL_ROOM_MEMBERS" => Some(Self::FuncDelRoomMembers),
             _ => None,
         }
     }
