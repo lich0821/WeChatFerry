@@ -156,13 +156,13 @@ class Http(FastAPI):
     def send_text(
             self, msg: str = Body(description="要发送的消息，换行用\\n表示"),
             receiver: str = Body("filehelper", description="消息接收者，roomid 或者 wxid"),
-            aters: str = Body("", description="要 @ 的 wxid，多个用逗号分隔；@所有人 用 nofity@all")) -> dict:
+            aters: str = Body("", description="要 @ 的 wxid，多个用逗号分隔；@所有人 用 notify@all")) -> dict:
         """发送文本消息，可参考：https://github.com/lich0821/WeChatRobot/blob/master/robot.py 里 sendTextMsg
 
         Args:
             msg (str): 要发送的消息，换行使用 `\\n`；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
             receiver (str): 消息接收人，wxid 或者 roomid
-            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `nofity@all`
+            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `notify@all`
 
         Returns:
             int: 0 为成功，其他失败
