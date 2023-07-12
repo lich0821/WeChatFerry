@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.0.0a2"
+__version__ = "39.0.0.0a3"
 
 import atexit
 import base64
@@ -236,7 +236,7 @@ class Wcf():
         Args:
             msg (str): 要发送的消息，换行使用 `\\n`；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
             receiver (str): 消息接收人，wxid 或者 roomid
-            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `nofity@all`
+            aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `notify@all`
 
         Returns:
             int: 0 为成功，其他失败
