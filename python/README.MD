@@ -131,7 +131,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
 
-### 39.0.0.0a0 (2023.07.11)
+### 39.0.0.0 (2023.07.14)
 支持微信 `3.9.2.23`。
 
 功能：
@@ -180,4 +180,5 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * 添加群成员
 * 解密图片
 * 某功能
+
 </details>
