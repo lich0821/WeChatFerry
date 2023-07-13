@@ -10,7 +10,7 @@ from fastapi import Body, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.0.0"
+__version__ = "39.0.0.1"
 
 
 class Msg(BaseModel):
@@ -55,6 +55,7 @@ class Http(FastAPI):
         self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
+        self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
 
@@ -289,6 +290,21 @@ class Http(FastAPI):
             int: 1 为成功，其他失败
         """
         ret = self.wcf.add_chatroom_members(roomid, wxids)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def del_chatroom_members(self,
+                             roomid: str = Body("xxxxxxxx@chatroom", description="群的 id"),
+                             wxids: str = Body("wxid_xxxxxxxxxxxxx", description="要删除的 wxid，多个用逗号分隔")) -> dict:
+        """删除群成员
+
+        Args:
+            roomid (str): 群的 id
+            wxids (str): 要删除的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        ret = self.wcf.del_chatroom_members(roomid, wxids)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def receive_transfer(self,
