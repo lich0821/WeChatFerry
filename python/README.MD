@@ -143,6 +143,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * 获取所有好友
 * 获取数据库
 * 获取某数据库下的表
+* 获取用户信息
 * 发送文本消息（可 @）
 * 发送图片（Python 客户端支持网络路径）
 * 发送文件
@@ -151,34 +152,6 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * 执行 SQL 查询
 * 接受好友申请
 * 添加群成员
+* 删除群成员
 * 解密图片
 * 某功能（Breaking Change）
-
-<details><summary>历史更新</summary>
-
-### 37.1.25.5 (2023.05.19)
-支持 `3.7.0.30` 的最后一个版本。
-
-功能：
-
-* 检查登录状态
-* 获取登录账号的 wxid
-* 获取消息类型
-* 获取所有联系人
-* 获取所有好友
-* 获取数据库
-* 获取某数据库下的表
-* 发送文本消息（可 @）
-* 发送图片（Python 客户端支持网络路径）
-* 发送文件
-* 发送 XML
-* 发送表情
-* 允许接收消息
-* 停止接收消息
-* 执行 SQL 查询
-* 接受好友申请
-* 添加群成员
-* 解密图片
-* 某功能
-
-</details>
