@@ -39,7 +39,7 @@ def process_msg(wcf: Wcf):
 
 def main():
     LOG.info("Start demo...")
-    wcf = Wcf(debug=True)             # 默认连接本地服务
+    wcf = Wcf(debug=True)
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
@@ -53,28 +53,36 @@ def main():
     Thread(target=process_msg, name="GetMessage", args=(wcf,), daemon=True).start()
 
     # wcf.disable_recv_msg() # 当需要停止接收消息时调用
-
+    sleep(5)
     ret = wcf.send_text("Hello world.", "filehelper")
     LOG.info(f"send_text: {ret}")
 
-    ret = wcf.send_image("TEQuant.jpeg", "filehelper")  # 需要确保图片路径正确
+    sleep(5)
+    ret = wcf.send_image("TEQuant.jpeg", "filehelper")  # 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
     LOG.info(f"send_image: {ret}")
 
-    ret = wcf.send_file("README.MD", "filehelper")  # 需要确保文件路径正确
+    sleep(5)
+    ret = wcf.send_file("README.MD", "filehelper")  # 需要确保文件路径正确，建议使用绝对路径（使用双斜杠\\）
     LOG.info(f"send_file: {ret}")
 
+    sleep(5)
     LOG.info(f"Message types:\n{wcf.get_msg_types()}")
     LOG.info(f"Contacts:\n{wcf.get_contacts()}")
 
+    sleep(5)
     LOG.info(f"DBs:\n{wcf.get_dbs()}")
-    LOG.info(f"Tables:\n{wcf.get_tables('db')}")
+    LOG.info(f"Tables:\n{wcf.get_tables('MicroMsg.db')}")
     LOG.info(f"Results:\n{wcf.query_sql('MicroMsg.db', 'SELECT * FROM Contact LIMIT 1;')}")
 
     # 需要真正的 V3、V4 信息
     # wcf.accept_new_friend("v3", "v4")
 
-    # 填写正确的群 ID 和成员 wxid
+    # 添加群成员，填写正确的群 ID 和成员 wxid
     # ret = wcf.add_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
+    # LOG.info(f"add_chatroom_members: {ret}")
+
+    # 删除群成员，填写正确的群 ID 和成员 wxid
+    # ret = wcf.del_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
 
     # 一直运行
