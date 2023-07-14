@@ -131,8 +131,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.pro
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
 
-### 39.0.0.0 (2023.07.14)
-支持微信 `3.9.2.23`。
+### 39.0.0.1 (2023.07.15)
+修复不能 @ 问题。
 
 功能：
 
