@@ -234,7 +234,7 @@ class Wcf():
         """发送文本消息
 
         Args:
-            msg (str): 要发送的消息，换行使用 `\\n`；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
+            msg (str): 要发送的消息，换行使用 `\\\\n` （单杠）；如果 @ 人的话，需要带上跟 `aters` 里数量相同的 @
             receiver (str): 消息接收人，wxid 或者 roomid
             aters (str): 要 @ 的 wxid，多个用逗号分隔；`@所有人` 只需要 `notify@all`
 

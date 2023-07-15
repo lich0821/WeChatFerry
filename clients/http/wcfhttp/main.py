@@ -28,10 +28,24 @@ def main():
 
     wcf = Wcf(args.wcf_host, args.wcf_port, args.wcf_debug)
     home = "https://github.com/lich0821/WeChatFerry"
+    qrcodes = """<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg" alt="碲矿"></th>
+<th style="text-align:center"><img src="https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg" alt="赞赏"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">后台回复 <code>WeChatFerry</code> 加群交流</td>
+<td style="text-align:center">如果你觉得有用</td>
+</tr>
+</tbody>
+</table>"""
     http = Http(wcf=wcf,
                 cb=cb,
                 title="WeChatFerry HTTP 客户端",
-                description=f"Github: <a href='{home}'>WeChatFerry</a>",)
+                description=f"Github: <a href='{home}'>WeChatFerry</a>{qrcodes}",)
 
     uvicorn.run(app=http, host=args.host, port=args.port)
 

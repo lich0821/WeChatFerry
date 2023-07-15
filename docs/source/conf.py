@@ -53,6 +53,6 @@ myst_enable_extensions = ["linkify", "colon_fence"]
 
 # Document Python Code
 autoapi_type = "python"
-autoapi_dirs = ["../../python/wcferry"]
+autoapi_dirs = ["../../clients/python/wcferry"]
 autoapi_member_order = "groupwise"
 autoapi_options = ["members", "undoc-members", "show-inheritance", "show-module-summary", "imported-members"]
