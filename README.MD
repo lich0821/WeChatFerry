@@ -37,9 +37,9 @@
 * Rust
 </details>
 
-![Demo](demo.gif)
+![Demo](assets/demo.gif)
 
-|![碲矿](TEQuant.jpg)|![赞赏](QR.jpeg)|
+|![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
 |:-:|:-:|
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
@@ -123,22 +123,27 @@ vcpkg integrate install
 ## 项目结构
 ```sh
 WeChatFerry
-├── docs              # 文档
-├── go                # Go 客户端
-├── http              # HTTP 客户端
-├── java              # Java 客户端
-├── launcher          # 图形版启动器
-├── python            # Python 客户端
-├── rpc               # RPC 模块
-├── rust              # Rust 客户端
-├── sdk               # 注入及启动模块
-├── spy               # 核心功能实现模块
-├── wcf               # 命令行版启动器
-├── demo.gif          # 示例图
-├── LICENSE           # LICENSE
-├── README.MD         # 说明
-├── TEQuant.jpeg      # 二维码，测试用图
-└── WeChatFerry.sln   # VS2019 工程文件
+├── LICENSE                 # LICENSE
+├── README.MD               # 说明
+├── WeChatFerry
+│   ├── WeChatFerry.sln     # VS2019 工程文件
+│   ├── launcher            # 图形版启动器
+│   ├── rpc                 # RPC 模块
+│   ├── sdk                 # 注入及启动模块
+│   ├── spy                 # 核心功能实现模块
+│   └── wcf                 # 命令行版启动器
+├── assets
+│   ├── QR.jpeg             # 二维码，测试用图
+│   ├── TEQuant.jpg         # 二维码，测试用图
+│   └── demo.gif            # 示例动图
+├── clients
+│   ├── go                  # Go 客户端
+│   ├── http                # HTTP 客户端
+│   ├── java                # Java 客户端
+│   ├── python              # Python 客户端
+│   └── rust                # Rust 客户端
+└── docs                    # 文档
+
 ```
 
 <details><summary>点击查看</summary>
