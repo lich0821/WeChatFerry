@@ -22,17 +22,17 @@ java/wcferry/bin/
 
 *_pb2_grpc.py
 __pycache__
-python/dist/
-python/*.egg-info
+*/python/dist/
+*/python/*.egg-info
 
-java/target/
+*/java/target/
 WcfGrpc.java
 WcfOuterClass.java
 
-rust/target/
-rust/wcferry/Cargo.lock
-rust/wcferry/.wcf.lock
-/rust/wcferry/target/CACHEDIR.TAG
+*/rust/target/
+*/rust/wcferry/Cargo.lock
+*/rust/wcferry/.wcf.lock
+*/rust/wcferry/target/CACHEDIR.TAG
 
-http/dist/
-http/*.egg-info/
+*/http/dist/
+*/http/*.egg-info/
