@@ -8,11 +8,11 @@ from threading import Thread
 from typing import Any
 
 import requests
-from fastapi import Body, FastAPI
+from fastapi import Body, Query, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.0.1"
+__version__ = "39.0.1.0"
 
 
 class Msg(BaseModel):
@@ -50,6 +50,7 @@ class Http(FastAPI):
         self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
+        self.add_api_route("/pyq/", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
 
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
@@ -59,9 +60,10 @@ class Http(FastAPI):
         self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
-        self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
+
+        self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
     def _forward_msg(self, msg, cb):
         data = {}
@@ -340,6 +342,18 @@ class Http(FastAPI):
             int: 1 为成功，其他失败
         """
         ret = self.wcf.receive_transfer(wxid, transferid, transactionid)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def refresh_pyq(self, id: int = Query(0, description="开始 id，0 为最新页")) -> dict:
+        """刷新朋友圈
+
+        Args:
+            id (int): 开始 id，0 为最新页
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        ret = self.wcf.refresh_pyq(id)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def decrypt_image(self,
