@@ -3,6 +3,8 @@
 
 import base64
 import logging
+from queue import Empty
+from threading import Thread
 from typing import Any
 
 import requests
@@ -14,7 +16,9 @@ __version__ = "39.0.0.1"
 
 
 class Msg(BaseModel):
-    id: str
+    id: int
+    ts: int
+    sign: str
     type: int
     xml: str
     sender: str
@@ -59,31 +63,45 @@ class Http(FastAPI):
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
 
-    def _set_cb(self, cb):
-        def callback(msg: WxMsg):
-            data = {}
-            data["id"] = msg.id
-            data["type"] = msg.type
-            data["xml"] = msg.xml
-            data["sender"] = msg.sender
-            data["roomid"] = msg.roomid
-            data["content"] = msg.content
-            data["thumb"] = msg.thumb
-            data["extra"] = msg.extra
-            data["is_at"] = msg.is_at(self.wcf.self_wxid)
-            data["is_self"] = msg.from_self()
-            data["is_group"] = msg.from_group()
+    def _forward_msg(self, msg, cb):
+        data = {}
+        data["id"] = msg.id
+        data["ts"] = msg.ts
+        data["sign"] = msg.sign
+        data["type"] = msg.type
+        data["xml"] = msg.xml
+        data["sender"] = msg.sender
+        data["roomid"] = msg.roomid
+        data["content"] = msg.content
+        data["thumb"] = msg.thumb
+        data["extra"] = msg.extra
+        data["is_at"] = msg.is_at(self.wcf.self_wxid)
+        data["is_self"] = msg.from_self()
+        data["is_group"] = msg.from_group()
 
-            try:
-                rsp = requests.post(url=cb, json=data)
-                if rsp.status_code != 200:
-                    self.LOG.error(f"消息转发失败，HTTP 状态码为: {rsp.status_code}")
-            except Exception as e:
-                self.LOG.error(f"消息转发异常: {e}")
+        try:
+            rsp = requests.post(url=cb, json=data)
+            if rsp.status_code != 200:
+                self.LOG.error(f"消息转发失败，HTTP 状态码为: {rsp.status_code}")
+        except Exception as e:
+            self.LOG.error(f"消息转发异常: {e}")
+
+    def _set_cb(self, cb):
+        def callback(wcf: Wcf):
+            while wcf.is_receiving_msg():
+                try:
+                    msg = wcf.get_msg()
+                    self.LOG.info(msg)
+                    self._forward_msg(msg, cb)
+                except Empty:
+                    continue  # Empty message
+                except Exception as e:
+                    self.LOG.error(f"Receiving message error: {e}")
 
         if cb:
             self.LOG.info(f"消息回调: {cb}")
-            self.wcf.enable_recv_msg(callback=callback)
+            self.wcf.enable_receiving_msg(pyq=True)  # 同时允许接收朋友圈消息
+            Thread(target=callback, name="GetMessage", args=(self.wcf,), daemon=True).start()
         else:
             self.LOG.info(f"没有设置回调，打印消息")
             self.wcf.enable_recv_msg(print)
