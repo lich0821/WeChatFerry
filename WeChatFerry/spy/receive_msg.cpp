@@ -194,13 +194,14 @@ void DispatchPyq(DWORD reg)
     while (startAddr < endAddr) {
         WxMsg_t wxMsg;
 
-        wxMsg.type    = 0x00; // 朋友圈消息
-        wxMsg.is_self = 0x00;
-        wxMsg.id      = GET_QWORD(startAddr);
-        wxMsg.ts      = GET_DWORD(startAddr + g_WxCalls.pyq.ts);
-        wxMsg.xml     = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.xml);
-        wxMsg.sender  = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.wxid);
-        wxMsg.content = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.content);
+        wxMsg.type     = 0x00; // 朋友圈消息
+        wxMsg.is_self  = false;
+        wxMsg.is_group = false;
+        wxMsg.id       = GET_QWORD(startAddr);
+        wxMsg.ts       = GET_DWORD(startAddr + g_WxCalls.pyq.ts);
+        wxMsg.xml      = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.xml);
+        wxMsg.sender   = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.wxid);
+        wxMsg.content  = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.content);
 
         {
             unique_lock<mutex> lock(gMutex);
