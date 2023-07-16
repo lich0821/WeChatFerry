@@ -17,8 +17,8 @@ typedef struct RawVector {
 static int GetFirstPage()
 {
     int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + 0xC39680;
-    DWORD pyqCall2 = g_WeChatWinDllAddr + 0x14E2140;
+    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
+    DWORD pyqCall2 = g_WeChatWinDllAddr + g_WxCalls.pyq.call2;
 
     char buf[0xB44] = { 0 };
     __asm {
@@ -39,8 +39,8 @@ static int GetFirstPage()
 static int GetNextPage(uint64_t id)
 {
     int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + 0xC39680;
-    DWORD pyqCall3 = g_WeChatWinDllAddr + 0x14E21E0;
+    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
+    DWORD pyqCall3 = g_WeChatWinDllAddr + g_WxCalls.pyq.call3;
 
     RawVector_t tmp = { 0 };
 

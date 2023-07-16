@@ -87,6 +87,21 @@ typedef struct TF {
     DWORD call3;
 } TF_t;
 
+typedef struct Pyq {
+    DWORD hook;
+    DWORD call;
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+    DWORD start;
+    DWORD end;
+    DWORD ts;
+    DWORD wxid;
+    DWORD content;
+    DWORD xml;
+    DWORD step;
+} Pyq_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -102,6 +117,7 @@ typedef struct WxCalls {
     RoomMember_t arm;    // 添加群成员
     RoomMember_t drm;    // 删除群成员
     TF_t tf;             // 接收转账
+    Pyq_t pyq;           // 接收朋友圈消息
 } WxCalls_t;
 
 typedef struct WxString {

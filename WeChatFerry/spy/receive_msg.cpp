@@ -184,8 +184,8 @@ void UnListenMessage()
 
 void DispatchPyq(DWORD reg)
 {
-    DWORD startAddr = *(DWORD *)(reg + 0x20);
-    DWORD endAddr   = *(DWORD *)(reg + 0x24);
+    DWORD startAddr = *(DWORD *)(reg + g_WxCalls.pyq.start);
+    DWORD endAddr   = *(DWORD *)(reg + g_WxCalls.pyq.end);
 
     if (startAddr == 0) {
         return;
@@ -197,10 +197,10 @@ void DispatchPyq(DWORD reg)
         wxMsg.type    = 0x00; // 朋友圈消息
         wxMsg.is_self = 0x00;
         wxMsg.id      = GET_QWORD(startAddr);
-        wxMsg.ts      = GET_DWORD(startAddr + 0x2C);
-        wxMsg.xml     = GetStringByWstrAddr(startAddr + 0x384);
-        wxMsg.sender  = GetStringByWstrAddr(startAddr + 0x18);
-        wxMsg.content = GetStringByWstrAddr(startAddr + 0x3C);
+        wxMsg.ts      = GET_DWORD(startAddr + g_WxCalls.pyq.ts);
+        wxMsg.xml     = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.xml);
+        wxMsg.sender  = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.wxid);
+        wxMsg.content = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.content);
 
         {
             unique_lock<mutex> lock(gMutex);
@@ -209,7 +209,7 @@ void DispatchPyq(DWORD reg)
 
         gCV.notify_all(); // 通知各方消息就绪
 
-        startAddr += 0xB48;
+        startAddr += g_WxCalls.pyq.step;
     }
 }
 
@@ -234,8 +234,8 @@ void ListenPyq()
         return;
     }
 
-    recvPyqHookAddr     = g_WeChatWinDllAddr + 0x14F9E15;
-    recvPyqCallAddr     = g_WeChatWinDllAddr + 0x14FA0A0;
+    recvPyqHookAddr     = g_WeChatWinDllAddr + g_WxCalls.pyq.hook;
+    recvPyqCallAddr     = g_WeChatWinDllAddr + g_WxCalls.pyq.call;
     recvPyqJumpBackAddr = recvPyqHookAddr + 5;
 
     HookAddress(recvPyqHookAddr, RecievePyqFunc, recvPyqBackupCode);

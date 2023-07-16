@@ -24,7 +24,10 @@ WxCalls_t wxCalls = {
     { 0xA17D50, 0xF59E40, 0xA18BD0, 0xA17E70 }, // Accept New Friend application
     { 0x78CF20, 0xF59E40, 0xBD1DC0 },           // Add chatroom members
     { 0x78CF20, 0xF59E40, 0xBD22A0 },           // Delete chatroom members
-    { 0x7B2E60, 0x15E2C20, 0x79C250 }           // Receive transfer
+    { 0x7B2E60, 0x15E2C20, 0x79C250 },          // Receive transfer
+    /* Receive PYQ
+        hook,    call,     call1,    call2,    call3,      start, end,  ts,  wxid, content, xml, step*/
+    { 0x14F9E15, 0x14FA0A0, 0xC39680, 0x14E2140, 0x14E21E0, 0x20, 0x24, 0x2C, 0x18, 0x3C, 0x384, 0xB48 }
 };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)
