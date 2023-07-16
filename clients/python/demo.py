@@ -34,7 +34,7 @@ def main():
     # wcf.enable_recv_msg(LOG.info) # deprecated
 
     # 允许接收消息
-    wcf.enable_receiving_msg()
+    wcf.enable_receiving_msg(pyq=True)  # 同时允许接收朋友圈消息
     Thread(target=process_msg, name="GetMessage", args=(wcf,), daemon=True).start()
 
     # wcf.disable_recv_msg() # 当需要停止接收消息时调用
@@ -69,6 +69,10 @@ def main():
     # 删除群成员，填写正确的群 ID 和成员 wxid
     # ret = wcf.del_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
+
+    sleep(5)
+    wcf.refresh_pyq(0)  # 刷新朋友圈第一页
+    # wcf.refresh_pyq(id)  # 从 id 开始刷新朋友圈
 
     # 一直运行
     wcf.keep_running()

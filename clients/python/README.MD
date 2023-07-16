@@ -39,7 +39,7 @@ def process_msg(wcf: Wcf):
 
 def main():
     LOG.info("Start demo...")
-    wcf = Wcf(debug=True)
+    wcf = Wcf(debug=True)             # 默认连接本地服务
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
@@ -49,7 +49,7 @@ def main():
     # wcf.enable_recv_msg(LOG.info) # deprecated
 
     # 允许接收消息
-    wcf.enable_receiving_msg()
+    wcf.enable_receiving_msg(pyq=True)  # 同时允许接收朋友圈消息
     Thread(target=process_msg, name="GetMessage", args=(wcf,), daemon=True).start()
 
     # wcf.disable_recv_msg() # 当需要停止接收消息时调用
@@ -71,7 +71,7 @@ def main():
 
     sleep(5)
     LOG.info(f"DBs:\n{wcf.get_dbs()}")
-    LOG.info(f"Tables:\n{wcf.get_tables('MicroMsg.db')}")
+    LOG.info(f"Tables:\n{wcf.get_tables('db')}")
     LOG.info(f"Results:\n{wcf.query_sql('MicroMsg.db', 'SELECT * FROM Contact LIMIT 1;')}")
 
     # 需要真正的 V3、V4 信息
@@ -84,6 +84,10 @@ def main():
     # 删除群成员，填写正确的群 ID 和成员 wxid
     # ret = wcf.del_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
+
+    sleep(5)
+    wcf.refresh_pyq(0)  # 刷新朋友圈第一页
+    # wcf.refresh_pyq(id)  # 从 id 开始刷新朋友圈
 
     # 一直运行
     wcf.keep_running()
@@ -123,6 +127,11 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 ```
 
 ## 版本更新
+
+### 39.0.1.0 (2023.07.16)
+* 获取朋友圈消息
+
+<details><summary>点击查看更多</summary>
 版本号：`w.x.y.z`。
 
 其中：
@@ -130,9 +139,6 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
-
-### 39.0.0.1 (2023.07.15)
-修复不能 @ 问题。
 
 功能：
 
@@ -154,4 +160,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 添加群成员
 * 删除群成员
 * 解密图片
+* 获取朋友圈消息
 * 某功能（Breaking Change）
+
+</details>

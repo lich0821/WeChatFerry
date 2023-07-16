@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.0.1"
+__version__ = "39.0.1.0"
 
 import atexit
 import base64
@@ -527,11 +527,11 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
-    def refresh_pyq(self, id: int) -> int:
+    def refresh_pyq(self, id: int = 0) -> int:
         """刷新朋友圈
 
         Args:
-            id (int): 开始 id
+            id (int): 开始 id，0 为最新页
 
         Returns:
             int: 1 为成功，其他失败
