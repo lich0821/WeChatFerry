@@ -23,6 +23,7 @@
 #include "log.h"
 #include "pb_types.h"
 #include "pb_util.h"
+#include "pyq.h"
 #include "receive_msg.h"
 #include "receive_transfer.h"
 #include "rpc_server.h"
@@ -345,16 +346,18 @@ static void PushMessage()
         if (gCV.wait_for(lock, chrono::milliseconds(1000), []() { return !gMsgQueue.empty(); })) {
             while (!gMsgQueue.empty()) {
                 auto wxmsg             = gMsgQueue.front();
+                rsp.msg.wxmsg.id       = wxmsg.id;
                 rsp.msg.wxmsg.is_self  = wxmsg.is_self;
                 rsp.msg.wxmsg.is_group = wxmsg.is_group;
                 rsp.msg.wxmsg.type     = wxmsg.type;
-                rsp.msg.wxmsg.id       = (char *)wxmsg.id.c_str();
-                rsp.msg.wxmsg.xml      = (char *)wxmsg.xml.c_str();
-                rsp.msg.wxmsg.sender   = (char *)wxmsg.sender.c_str();
+                rsp.msg.wxmsg.ts       = wxmsg.ts;
                 rsp.msg.wxmsg.roomid   = (char *)wxmsg.roomid.c_str();
                 rsp.msg.wxmsg.content  = (char *)wxmsg.content.c_str();
+                rsp.msg.wxmsg.sender   = (char *)wxmsg.sender.c_str();
+                rsp.msg.wxmsg.sign     = (char *)wxmsg.sign.c_str();
                 rsp.msg.wxmsg.thumb    = (char *)wxmsg.thumb.c_str();
                 rsp.msg.wxmsg.extra    = (char *)wxmsg.extra.c_str();
+                rsp.msg.wxmsg.xml      = (char *)wxmsg.xml.c_str();
                 gMsgQueue.pop();
                 LOG_DEBUG("Recv msg: {}", wxmsg.content);
                 pb_ostream_t stream = pb_ostream_from_buffer(buffer, G_BUF_SIZE);
@@ -475,6 +478,24 @@ bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, siz
     if (rsp.msg.status != 1) {
         LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
     }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_REFRESH_PYQ;
+    rsp.which_msg = Response_status_tag;
+
+    rsp.msg.status = RefreshPyq(id);
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -650,6 +671,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_RECV_TRANSFER: {
             LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
+            break;
+        }
+        case Functions_FUNC_REFRESH_PYQ: {
+            LOG_DEBUG("[Functions_FUNC_REFRESH_PYQ]");
+            ret = func_refresh_pyq(req.msg.ui64, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {

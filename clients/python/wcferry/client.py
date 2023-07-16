@@ -526,6 +526,22 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def refresh_pyq(self, id: int) -> int:
+        """刷新朋友圈
+
+        Args:
+            id (int): 开始 id
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_REFRESH_PYQ  # FUNC_REFRESH_PYQ
+        req.ui64 = id
+        rsp = self._send_request(req)
+        return rsp.status
+
+
     def decrypt_image(self, src: str, dst: str) -> bool:
         """解密图片:
 

@@ -6,6 +6,7 @@
 #include <queue>
 
 #include "load_calls.h"
+#include "log.h"
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
@@ -26,9 +27,16 @@ static DWORD recvMsgCallAddr     = 0;
 static DWORD recvMsgJumpBackAddr = 0;
 static CHAR recvMsgBackupCode[5] = { 0 };
 
+static DWORD recvPyqHookAddr     = 0;
+static DWORD recvPyqCallAddr     = 0;
+static DWORD recvPyqJumpBackAddr = 0;
+static CHAR recvPyqBackupCode[5] = { 0 };
+static bool gIsListeningPyq      = false;
+
 MsgTypes_t GetMsgTypes()
 {
     const MsgTypes_t m = {
+        { 0x00, "朋友圈消息" },
         { 0x01, "文字" },
         { 0x03, "图片" },
         { 0x22, "语音" },
@@ -164,6 +172,7 @@ void ListenMessage()
 
     HookAddress(recvMsgHookAddr, RecieveMsgFunc, recvMsgBackupCode);
     gIsListening = true;
+    ListenPyq();
 }
 
 void UnListenMessage()
@@ -173,4 +182,75 @@ void UnListenMessage()
     }
     UnHookAddress(recvMsgHookAddr, recvMsgBackupCode);
     gIsListening = false;
+    UnListenPyq();
+}
+
+void DispatchPyq(DWORD reg)
+{
+    DWORD startAddr = *(DWORD *)(reg + 0x20);
+    DWORD endAddr   = *(DWORD *)(reg + 0x24);
+
+    if (startAddr == 0) {
+        return;
+    }
+
+    while (startAddr < endAddr) {
+        WxMsg_t wxMsg;
+
+        wxMsg.type    = 0x00; // 朋友圈消息
+        wxMsg.is_self = 0x00;
+        wxMsg.id      = GET_QWORD(startAddr);
+        wxMsg.ts      = GET_DWORD(startAddr + 0x2C);
+        wxMsg.xml     = GetStringByWstrAddr(startAddr + 0x384);
+        wxMsg.sender  = GetStringByWstrAddr(startAddr + 0x18);
+        wxMsg.content = GetStringByWstrAddr(startAddr + 0x3C);
+
+        {
+            unique_lock<mutex> lock(gMutex);
+            gMsgQueue.push(wxMsg); // 推送到队列
+        }
+
+        gCV.notify_all(); // 通知各方消息就绪
+
+        startAddr += 0xB48;
+    }
+}
+
+__declspec(naked) void RecievePyqFunc()
+{
+    __asm {
+        pushad
+        pushfd
+        push [esp + 0x24]
+        call DispatchPyq
+        add esp, 0x4
+        popfd
+        popad
+        call recvPyqCallAddr // 这个为被覆盖的call
+        jmp recvPyqJumpBackAddr // 跳回被HOOK指令的下一条指令
+    }
+}
+
+void ListenPyq()
+{
+    if (gIsListeningPyq || (g_WeChatWinDllAddr == 0)) {
+        return;
+    }
+
+    recvPyqHookAddr     = g_WeChatWinDllAddr + 0x14F9E15;
+    recvPyqCallAddr     = g_WeChatWinDllAddr + 0x14FA0A0;
+    recvPyqJumpBackAddr = recvPyqHookAddr + 5;
+
+    HookAddress(recvPyqHookAddr, RecievePyqFunc, recvPyqBackupCode);
+    gIsListeningPyq = true;
+}
+
+void UnListenPyq()
+{
+    if (!gIsListeningPyq) {
+        return;
+    }
+
+    UnHookAddress(recvPyqHookAddr, recvPyqBackupCode);
+    gIsListeningPyq = false;
 }

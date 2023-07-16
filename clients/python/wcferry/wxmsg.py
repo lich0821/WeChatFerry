@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from datetime import datetime
 
 from wcferry import wcf_pb2
 
@@ -24,6 +25,8 @@ class WxMsg():
         self._is_group = msg.is_group
         self.type = msg.type
         self.id = msg.id
+        self.ts = msg.ts
+        self.sign = msg.sign
         self.xml = msg.xml
         self.sender = msg.sender
         self.roomid = msg.roomid
@@ -33,7 +36,8 @@ class WxMsg():
 
     def __str__(self) -> str:
         s = f"{'自己发的:' if self._is_self else ''}"
-        s += f"{self.sender}[{self.roomid}]:{self.id}:{self.type}:{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
+        s += f"{self.sender}[{self.roomid}]|{self.id}|{datetime.fromtimestamp(self.ts)}|{self.type}|{self.sign}"
+        s += f"\n{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
         s += self.content
         s += f"\n{self.thumb}" if self.thumb else ""
         s += f"\n{self.extra}" if self.extra else ""
