@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.1.0"
+__version__ = "39.0.2.0"
 
 import atexit
 import base64

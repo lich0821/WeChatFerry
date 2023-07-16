@@ -128,7 +128,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### 39.0.1.0 (2023.07.16)
+### 39.0.2.0 (2023.07.16)
 * 获取朋友圈消息
 
 <details><summary>点击查看更多</summary>
