@@ -12,7 +12,7 @@
 #include "util.h"
 
 // Defined in rpc_server.cpp
-extern bool gIsListening;
+extern bool gIsListening, gIsListeningPyq;
 extern mutex gMutex;
 extern condition_variable gCV;
 extern queue<WxMsg_t> gMsgQueue;
@@ -31,7 +31,6 @@ static DWORD recvPyqHookAddr     = 0;
 static DWORD recvPyqCallAddr     = 0;
 static DWORD recvPyqJumpBackAddr = 0;
 static CHAR recvPyqBackupCode[5] = { 0 };
-static bool gIsListeningPyq      = false;
 
 MsgTypes_t GetMsgTypes()
 {
@@ -172,7 +171,6 @@ void ListenMessage()
 
     HookAddress(recvMsgHookAddr, RecieveMsgFunc, recvMsgBackupCode);
     gIsListening = true;
-    ListenPyq();
 }
 
 void UnListenMessage()
@@ -182,7 +180,6 @@ void UnListenMessage()
     }
     UnHookAddress(recvMsgHookAddr, recvMsgBackupCode);
     gIsListening = false;
-    UnListenPyq();
 }
 
 void DispatchPyq(DWORD reg)

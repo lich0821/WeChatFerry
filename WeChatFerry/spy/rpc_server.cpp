@@ -39,7 +39,8 @@
 
 extern int IsLogin(void); // Defined in spy.cpp
 
-bool gIsListening;
+bool gIsListening    = false;
+bool gIsListeningPyq = false;
 mutex gMutex;
 condition_variable gCV;
 queue<WxMsg_t> gMsgQueue;
@@ -377,7 +378,7 @@ static void PushMessage()
     nng_close(msg_sock);
 }
 
-bool func_enable_recv_txt(uint8_t *out, size_t *len)
+bool func_enable_recv_txt(bool pyq, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
     rsp.func       = Functions_FUNC_ENABLE_RECV_TXT;
@@ -385,6 +386,9 @@ bool func_enable_recv_txt(uint8_t *out, size_t *len)
     rsp.msg.status = -1;
 
     ListenMessage();
+    if (pyq) {
+        ListenPyq();
+    }
     HANDLE msgThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PushMessage, NULL, NULL, NULL);
     if (msgThread != 0) {
         CloseHandle(msgThread);
@@ -408,6 +412,7 @@ bool func_disable_recv_txt(uint8_t *out, size_t *len)
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
+    UnListenPyq();
     UnListenMessage(); // 可能需要1秒之后才能退出，见 PushMessage
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -650,7 +655,8 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
 #endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
             LOG_DEBUG("[Functions_FUNC_ENABLE_RECV_TXT]");
-            ret = func_enable_recv_txt(out, out_len);
+            LOG_BUFFER(in, in_len);
+            ret = func_enable_recv_txt(req.msg.flag, out, out_len);
             break;
         }
         case Functions_FUNC_DISABLE_RECV_TXT: {

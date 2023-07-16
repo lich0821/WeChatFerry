@@ -1,8 +1,10 @@
 #include "framework.h"
 
+#include "log.h"
 #include "spy_types.h"
 #include "util.h"
 
+extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
 
@@ -62,6 +64,11 @@ static int GetNextPage(uint64_t id)
 
 int RefreshPyq(uint64_t id)
 {
+    if (!gIsListeningPyq) {
+        LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
+        return -1;
+    }
+
     if (id == 0) {
         return GetFirstPage();
     }

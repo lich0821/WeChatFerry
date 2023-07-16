@@ -44,6 +44,7 @@ message Request
         DecPath dec    = 10;
         Transfer tf    = 11;
         uint64 ui64    = 12; // 64 位整数，通用
+        bool flag      = 13;
     }
 }
 
