@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.0.1"
+__version__ = "39.0.2.0"
 
 import atexit
 import base64
@@ -358,7 +358,7 @@ class Wcf():
         """
         return self.msgQ.get(block, timeout=1)
 
-    def enable_receiving_msg(self) -> bool:
+    def enable_receiving_msg(self, pyq=False) -> bool:
         """允许接收消息，成功后通过 `get_msg` 读取消息"""
         def listening_msg():
             rsp = wcf_pb2.Response()
@@ -379,13 +379,14 @@ class Wcf():
 
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ENABLE_RECV_TXT  # FUNC_ENABLE_RECV_TXT
+        req.flag = pyq
         rsp = self._send_request(req)
         if rsp.status != 0:
             return False
 
         self._is_receiving_msg = True
         # 阻塞，把控制权交给用户
-        # self._rpc_get_message(callback)
+        # self.listening_msg(callback)
 
         # 不阻塞，启动一个新的线程来接收消息
         Thread(target=listening_msg, name="GetMessage", daemon=True).start()
@@ -523,6 +524,21 @@ class Wcf():
         req.tf.wxid = wxid
         req.tf.tfid = transferid
         req.tf.taid = transactionid
+        rsp = self._send_request(req)
+        return rsp.status
+
+    def refresh_pyq(self, id: int = 0) -> int:
+        """刷新朋友圈
+
+        Args:
+            id (int): 开始 id，0 为最新页
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_REFRESH_PYQ  # FUNC_REFRESH_PYQ
+        req.ui64 = id
         rsp = self._send_request(req)
         return rsp.status
 

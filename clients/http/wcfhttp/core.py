@@ -3,18 +3,22 @@
 
 import base64
 import logging
+from queue import Empty
+from threading import Thread
 from typing import Any
 
 import requests
-from fastapi import Body, FastAPI
+from fastapi import Body, Query, FastAPI
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.0.1"
+__version__ = "39.0.2.0"
 
 
 class Msg(BaseModel):
-    id: str
+    id: int
+    ts: int
+    sign: str
     type: int
     xml: str
     sender: str
@@ -46,6 +50,7 @@ class Http(FastAPI):
         self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
+        self.add_api_route("/pyq/", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
 
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
@@ -55,35 +60,50 @@ class Http(FastAPI):
         self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
-        self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
 
-    def _set_cb(self, cb):
-        def callback(msg: WxMsg):
-            data = {}
-            data["id"] = msg.id
-            data["type"] = msg.type
-            data["xml"] = msg.xml
-            data["sender"] = msg.sender
-            data["roomid"] = msg.roomid
-            data["content"] = msg.content
-            data["thumb"] = msg.thumb
-            data["extra"] = msg.extra
-            data["is_at"] = msg.is_at(self.wcf.self_wxid)
-            data["is_self"] = msg.from_self()
-            data["is_group"] = msg.from_group()
+        self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
-            try:
-                rsp = requests.post(url=cb, json=data)
-                if rsp.status_code != 200:
-                    self.LOG.error(f"消息转发失败，HTTP 状态码为: {rsp.status_code}")
-            except Exception as e:
-                self.LOG.error(f"消息转发异常: {e}")
+    def _forward_msg(self, msg, cb):
+        data = {}
+        data["id"] = msg.id
+        data["ts"] = msg.ts
+        data["sign"] = msg.sign
+        data["type"] = msg.type
+        data["xml"] = msg.xml
+        data["sender"] = msg.sender
+        data["roomid"] = msg.roomid
+        data["content"] = msg.content
+        data["thumb"] = msg.thumb
+        data["extra"] = msg.extra
+        data["is_at"] = msg.is_at(self.wcf.self_wxid)
+        data["is_self"] = msg.from_self()
+        data["is_group"] = msg.from_group()
+
+        try:
+            rsp = requests.post(url=cb, json=data)
+            if rsp.status_code != 200:
+                self.LOG.error(f"消息转发失败，HTTP 状态码为: {rsp.status_code}")
+        except Exception as e:
+            self.LOG.error(f"消息转发异常: {e}")
+
+    def _set_cb(self, cb):
+        def callback(wcf: Wcf):
+            while wcf.is_receiving_msg():
+                try:
+                    msg = wcf.get_msg()
+                    self.LOG.info(msg)
+                    self._forward_msg(msg, cb)
+                except Empty:
+                    continue  # Empty message
+                except Exception as e:
+                    self.LOG.error(f"Receiving message error: {e}")
 
         if cb:
             self.LOG.info(f"消息回调: {cb}")
-            self.wcf.enable_recv_msg(callback=callback)
+            self.wcf.enable_receiving_msg(pyq=True)  # 同时允许接收朋友圈消息
+            Thread(target=callback, name="GetMessage", args=(self.wcf,), daemon=True).start()
         else:
             self.LOG.info(f"没有设置回调，打印消息")
             self.wcf.enable_recv_msg(print)
@@ -322,6 +342,18 @@ class Http(FastAPI):
             int: 1 为成功，其他失败
         """
         ret = self.wcf.receive_transfer(wxid, transferid, transactionid)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def refresh_pyq(self, id: int = Query(0, description="开始 id，0 为最新页")) -> dict:
+        """刷新朋友圈
+
+        Args:
+            id (int): 开始 id，0 为最新页
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        ret = self.wcf.refresh_pyq(id)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def decrypt_image(self,

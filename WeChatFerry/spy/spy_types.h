@@ -12,15 +12,17 @@ typedef struct UserInfoCall {
 typedef struct RecvMsg {
     DWORD hook;    // Hook地址
     DWORD call;    // Call地址
+    DWORD msgId;   // 消息ID地址
     DWORD type;    // 消息类型地址
     DWORD isSelf;  // 是否自己发送标志地址
-    DWORD msgId;   // 消息ID地址
-    DWORD msgXml;  // 消息xml内容地址
+    DWORD ts;      // TimeStamp
     DWORD roomId;  // 群聊时，为群ID；私聊时，为微信ID
-    DWORD wxId;    // 私聊时，为空；群聊时，为发送者微信ID
     DWORD content; // 消息内容地址
+    DWORD wxid;    // 私聊时，为空；群聊时，为发送者微信ID
+    DWORD sign;    // Sign
     DWORD thumb;   // 缩略图
     DWORD extra;   // 附加数据
+    DWORD msgXml;  // 消息xml内容地址
 } RecvMsg_t;
 
 typedef struct SendText {
@@ -85,6 +87,21 @@ typedef struct TF {
     DWORD call3;
 } TF_t;
 
+typedef struct Pyq {
+    DWORD hook;
+    DWORD call;
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+    DWORD start;
+    DWORD end;
+    DWORD ts;
+    DWORD wxid;
+    DWORD content;
+    DWORD xml;
+    DWORD step;
+} Pyq_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -100,6 +117,7 @@ typedef struct WxCalls {
     RoomMember_t arm;    // 添加群成员
     RoomMember_t drm;    // 删除群成员
     TF_t tf;             // 接收转账
+    Pyq_t pyq;           // 接收朋友圈消息
 } WxCalls_t;
 
 typedef struct WxString {

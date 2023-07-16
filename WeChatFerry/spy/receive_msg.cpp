@@ -6,12 +6,13 @@
 #include <queue>
 
 #include "load_calls.h"
+#include "log.h"
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
 
 // Defined in rpc_server.cpp
-extern bool gIsListening;
+extern bool gIsListening, gIsListeningPyq;
 extern mutex gMutex;
 extern condition_variable gCV;
 extern queue<WxMsg_t> gMsgQueue;
@@ -26,9 +27,15 @@ static DWORD recvMsgCallAddr     = 0;
 static DWORD recvMsgJumpBackAddr = 0;
 static CHAR recvMsgBackupCode[5] = { 0 };
 
+static DWORD recvPyqHookAddr     = 0;
+static DWORD recvPyqCallAddr     = 0;
+static DWORD recvPyqJumpBackAddr = 0;
+static CHAR recvPyqBackupCode[5] = { 0 };
+
 MsgTypes_t GetMsgTypes()
 {
     const MsgTypes_t m = {
+        { 0x00, "朋友圈消息" },
         { 0x01, "文字" },
         { 0x03, "图片" },
         { 0x22, "语音" },
@@ -90,9 +97,12 @@ void DispatchMsg(DWORD reg)
 {
     WxMsg_t wxMsg;
 
+    wxMsg.id      = GET_QWORD(reg + g_WxCalls.recvMsg.msgId);
     wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
     wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
-    wxMsg.id      = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgId);
+    wxMsg.ts      = GET_DWORD(reg + g_WxCalls.recvMsg.ts);
+    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
+    wxMsg.sign    = GetStringByStrAddr(reg + g_WxCalls.recvMsg.sign);
     wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
 
     string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
@@ -102,7 +112,7 @@ void DispatchMsg(DWORD reg)
         if (wxMsg.is_self) {
             wxMsg.sender = GetSelfWxid();
         } else {
-            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxId);
+            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxid);
         }
     } else {
         wxMsg.is_group = false;
@@ -112,8 +122,6 @@ void DispatchMsg(DWORD reg)
             wxMsg.sender = roomid;
         }
     }
-
-    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
 
     wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
     if (!wxMsg.thumb.empty()) {
@@ -172,4 +180,75 @@ void UnListenMessage()
     }
     UnHookAddress(recvMsgHookAddr, recvMsgBackupCode);
     gIsListening = false;
+}
+
+void DispatchPyq(DWORD reg)
+{
+    DWORD startAddr = *(DWORD *)(reg + g_WxCalls.pyq.start);
+    DWORD endAddr   = *(DWORD *)(reg + g_WxCalls.pyq.end);
+
+    if (startAddr == 0) {
+        return;
+    }
+
+    while (startAddr < endAddr) {
+        WxMsg_t wxMsg;
+
+        wxMsg.type     = 0x00; // 朋友圈消息
+        wxMsg.is_self  = false;
+        wxMsg.is_group = false;
+        wxMsg.id       = GET_QWORD(startAddr);
+        wxMsg.ts       = GET_DWORD(startAddr + g_WxCalls.pyq.ts);
+        wxMsg.xml      = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.xml);
+        wxMsg.sender   = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.wxid);
+        wxMsg.content  = GetStringByWstrAddr(startAddr + g_WxCalls.pyq.content);
+
+        {
+            unique_lock<mutex> lock(gMutex);
+            gMsgQueue.push(wxMsg); // 推送到队列
+        }
+
+        gCV.notify_all(); // 通知各方消息就绪
+
+        startAddr += g_WxCalls.pyq.step;
+    }
+}
+
+__declspec(naked) void RecievePyqFunc()
+{
+    __asm {
+        pushad
+        pushfd
+        push [esp + 0x24]
+        call DispatchPyq
+        add esp, 0x4
+        popfd
+        popad
+        call recvPyqCallAddr // 这个为被覆盖的call
+        jmp recvPyqJumpBackAddr // 跳回被HOOK指令的下一条指令
+    }
+}
+
+void ListenPyq()
+{
+    if (gIsListeningPyq || (g_WeChatWinDllAddr == 0)) {
+        return;
+    }
+
+    recvPyqHookAddr     = g_WeChatWinDllAddr + g_WxCalls.pyq.hook;
+    recvPyqCallAddr     = g_WeChatWinDllAddr + g_WxCalls.pyq.call;
+    recvPyqJumpBackAddr = recvPyqHookAddr + 5;
+
+    HookAddress(recvPyqHookAddr, RecievePyqFunc, recvPyqBackupCode);
+    gIsListeningPyq = true;
+}
+
+void UnListenPyq()
+{
+    if (!gIsListeningPyq) {
+        return;
+    }
+
+    UnHookAddress(recvPyqHookAddr, recvPyqBackupCode);
+    gIsListeningPyq = false;
 }

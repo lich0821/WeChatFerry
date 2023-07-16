@@ -9,6 +9,7 @@
 #define WECHATINJECTDLL_DEBUG L"spy_debug.dll"
 
 #define GET_DWORD(addr)          ((DWORD) * (DWORD *)(addr))
+#define GET_QWORD(addr)          ((uint64_t) * (uint64_t *)(addr))
 #define GET_STRING(addr)         ((CHAR *)(*(DWORD *)(addr)))
 #define GET_WSTRING(addr)        ((WCHAR *)(*(DWORD *)(addr)))
 #define GET_STRING_FROM_P(addr)  ((CHAR *)(addr))

@@ -25,7 +25,6 @@ def process_msg(wcf: Wcf):
 def main():
     LOG.info("Start demo...")
     wcf = Wcf(debug=True)             # 默认连接本地服务
-    # wcf = Wcf("tcp://127.0.0.1:10086") # 连接远端服务
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
@@ -35,7 +34,7 @@ def main():
     # wcf.enable_recv_msg(LOG.info) # deprecated
 
     # 允许接收消息
-    wcf.enable_receiving_msg()
+    wcf.enable_receiving_msg(pyq=True)  # 同时允许接收朋友圈消息
     Thread(target=process_msg, name="GetMessage", args=(wcf,), daemon=True).start()
 
     # wcf.disable_recv_msg() # 当需要停止接收消息时调用
@@ -70,6 +69,10 @@ def main():
     # 删除群成员，填写正确的群 ID 和成员 wxid
     # ret = wcf.del_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
+
+    sleep(5)
+    wcf.refresh_pyq(0)  # 刷新朋友圈第一页
+    # wcf.refresh_pyq(id)  # 从 id 开始刷新朋友圈
 
     # 一直运行
     wcf.keep_running()
