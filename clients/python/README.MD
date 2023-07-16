@@ -114,12 +114,12 @@ pip install grpcio-tools pynng
 ### 重新生成 PB 文件
 ```sh
 # CMD
-cd python\wcferry
-python -m grpc_tools.protoc --python_out=. --proto_path=..\..\rpc\proto\ wcf.proto
+cd clients\python\wcferry
+python -m grpc_tools.protoc --python_out=. --proto_path=..\..\..\WeChatFerry\rpc\proto\ wcf.proto
 
 # GitBash
-cd python/wcferry
-python -m grpc_tools.protoc --python_out=. --proto_path=../../rpc/proto/ wcf.proto
+cd clients/python/wcferry
+python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc/proto/ wcf.proto
 ```
 
 ## 版本更新
