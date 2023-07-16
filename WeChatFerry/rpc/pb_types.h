@@ -38,14 +38,16 @@ typedef vector<DbRow_t> DbRows_t;
 typedef struct {
     bool is_self;
     bool is_group;
-    int32_t type;
-    string id;
-    string xml;
+    uint32_t type;
+    uint32_t ts;
+    uint64_t id;
     string sender;
     string roomid;
     string content;
+    string sign;
     string thumb;
     string extra;
+    string xml;
 } WxMsg_t;
 
 typedef struct {

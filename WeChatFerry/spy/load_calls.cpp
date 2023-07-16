@@ -9,8 +9,8 @@ WxCalls_t wxCalls = {
     { 0x2FFD484, 0x2FFD590, 0x2FFD500, 0x30238CC }, // User Info: wxid, nickname, mobile, home
     { 0x768140, 0xCE6C80, 0x756960 },               // Send Message
     /* Receive Message:
-          Hook,   call,   type, self,   id, msgXml, roomId, wxId, content, thumb, extra */
-    { 0xD19A0B, 0x756960, 0x38, 0x3C, 0x194, 0x1FC, 0x48, 0x180, 0x70, 0x1A8, 0x1BC },
+          Hook,  call, msgId, type, isSelf, ts, roomId, content, wxid, sign, thumb, extra, msgXml */
+    { 0xD19A0B, 0x756960, 0x30, 0x38, 0x3C, 0x44, 0x48, 0x70, 0x180, 0x194, 0x1A8, 0x1BC, 0x1FC },
     { 0x768140, 0XF59E40, 0XCE6640, 0x756960 },           // Send Image Message
     { 0x76AE20, 0xF59E40, 0xB6D1F0, 0x756960 },           // Send File Message
     { 0xB8A70, 0x3ED5E0, 0x107F00, 0x3ED7B0, 0x2386FE4 }, // Send xml Message

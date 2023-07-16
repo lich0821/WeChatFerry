@@ -90,9 +90,12 @@ void DispatchMsg(DWORD reg)
 {
     WxMsg_t wxMsg;
 
+    wxMsg.id      = GET_QWORD(reg + g_WxCalls.recvMsg.msgId);
     wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
     wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
-    wxMsg.id      = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgId);
+    wxMsg.ts      = GET_DWORD(reg + g_WxCalls.recvMsg.ts);
+    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
+    wxMsg.sign    = GetStringByStrAddr(reg + g_WxCalls.recvMsg.sign);
     wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
 
     string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
@@ -102,7 +105,7 @@ void DispatchMsg(DWORD reg)
         if (wxMsg.is_self) {
             wxMsg.sender = GetSelfWxid();
         } else {
-            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxId);
+            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxid);
         }
     } else {
         wxMsg.is_group = false;
@@ -112,8 +115,6 @@ void DispatchMsg(DWORD reg)
             wxMsg.sender = roomid;
         }
     }
-
-    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
 
     wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
     if (!wxMsg.thumb.empty()) {

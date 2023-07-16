@@ -12,15 +12,17 @@ typedef struct UserInfoCall {
 typedef struct RecvMsg {
     DWORD hook;    // Hook地址
     DWORD call;    // Call地址
+    DWORD msgId;   // 消息ID地址
     DWORD type;    // 消息类型地址
     DWORD isSelf;  // 是否自己发送标志地址
-    DWORD msgId;   // 消息ID地址
-    DWORD msgXml;  // 消息xml内容地址
+    DWORD ts;      // TimeStamp
     DWORD roomId;  // 群聊时，为群ID；私聊时，为微信ID
-    DWORD wxId;    // 私聊时，为空；群聊时，为发送者微信ID
     DWORD content; // 消息内容地址
+    DWORD wxid;    // 私聊时，为空；群聊时，为发送者微信ID
+    DWORD sign;    // Sign
     DWORD thumb;   // 缩略图
     DWORD extra;   // 附加数据
+    DWORD msgXml;  // 消息xml内容地址
 } RecvMsg_t;
 
 typedef struct SendText {
