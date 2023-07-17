@@ -3,7 +3,7 @@
 pub struct Request {
     #[prost(enumeration = "Functions", tag = "1")]
     pub func: i32,
-    #[prost(oneof = "request::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11")]
+    #[prost(oneof = "request::Msg", tags = "2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13")]
     pub msg: ::core::option::Option<request::Msg>,
 }
 /// Nested message and enum types in `Request`.
@@ -31,6 +31,11 @@ pub mod request {
         Dec(super::DecPath),
         #[prost(message, tag = "11")]
         Tf(super::Transfer),
+        /// 64 位整数，通用
+        #[prost(uint64, tag = "12")]
+        Ui64(u64),
+        #[prost(bool, tag = "13")]
+        Flag(bool),
     }
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -87,30 +92,36 @@ pub struct WxMsg {
     /// 是否群消息
     #[prost(bool, tag = "2")]
     pub is_group: bool,
-    /// 消息类型
-    #[prost(int32, tag = "3")]
-    pub r#type: i32,
     /// 消息 id
-    #[prost(string, tag = "4")]
-    pub id: ::prost::alloc::string::String,
-    /// 消息 xml
-    #[prost(string, tag = "5")]
-    pub xml: ::prost::alloc::string::String,
-    /// 消息发送者
-    #[prost(string, tag = "6")]
-    pub sender: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "3")]
+    pub id: u64,
+    /// 消息类型
+    #[prost(uint32, tag = "4")]
+    pub r#type: u32,
+    /// 消息类型
+    #[prost(uint32, tag = "5")]
+    pub ts: u32,
     /// 群 id（如果是群消息的话）
-    #[prost(string, tag = "7")]
+    #[prost(string, tag = "6")]
     pub roomid: ::prost::alloc::string::String,
     /// 消息内容
-    #[prost(string, tag = "8")]
+    #[prost(string, tag = "7")]
     pub content: ::prost::alloc::string::String,
-    /// 缩略图
+    /// 消息发送者
+    #[prost(string, tag = "8")]
+    pub sender: ::prost::alloc::string::String,
+    /// Sign
     #[prost(string, tag = "9")]
+    pub sign: ::prost::alloc::string::String,
+    /// 缩略图
+    #[prost(string, tag = "10")]
     pub thumb: ::prost::alloc::string::String,
     /// 附加内容
-    #[prost(string, tag = "10")]
+    #[prost(string, tag = "11")]
     pub extra: ::prost::alloc::string::String,
+    /// 消息 xml
+    #[prost(string, tag = "12")]
+    pub xml: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -331,6 +342,7 @@ pub enum Functions {
     FuncExecDbQuery = 80,
     FuncAcceptFriend = 81,
     FuncRecvTransfer = 82,
+    FuncRefreshPyq = 83,
     FuncDecryptImage = 96,
     FuncAddRoomMembers = 112,
     FuncDelRoomMembers = 113,
@@ -360,6 +372,7 @@ impl Functions {
             Functions::FuncExecDbQuery => "FUNC_EXEC_DB_QUERY",
             Functions::FuncAcceptFriend => "FUNC_ACCEPT_FRIEND",
             Functions::FuncRecvTransfer => "FUNC_RECV_TRANSFER",
+            Functions::FuncRefreshPyq => "FUNC_REFRESH_PYQ",
             Functions::FuncDecryptImage => "FUNC_DECRYPT_IMAGE",
             Functions::FuncAddRoomMembers => "FUNC_ADD_ROOM_MEMBERS",
             Functions::FuncDelRoomMembers => "FUNC_DEL_ROOM_MEMBERS",
@@ -386,6 +399,7 @@ impl Functions {
             "FUNC_EXEC_DB_QUERY" => Some(Self::FuncExecDbQuery),
             "FUNC_ACCEPT_FRIEND" => Some(Self::FuncAcceptFriend),
             "FUNC_RECV_TRANSFER" => Some(Self::FuncRecvTransfer),
+            "FUNC_REFRESH_PYQ" => Some(Self::FuncRefreshPyq),
             "FUNC_DECRYPT_IMAGE" => Some(Self::FuncDecryptImage),
             "FUNC_ADD_ROOM_MEMBERS" => Some(Self::FuncAddRoomMembers),
             "FUNC_DEL_ROOM_MEMBERS" => Some(Self::FuncDelRoomMembers),

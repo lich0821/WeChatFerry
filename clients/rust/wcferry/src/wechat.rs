@@ -544,7 +544,7 @@ pub fn enable_listen(wechat: &mut WeChat) -> Result<nng::Socket, Box<dyn std::er
     }
     let req = wcf::Request {
         func: wcf::Functions::FuncEnableRecvTxt.into(),
-        msg: None,
+        msg: Some(wcf::request::Msg::Flag(true)),
     };
     let response = match send_cmd(wechat, req) {
         Ok(res) => res,
@@ -770,8 +770,8 @@ pub fn recv_transfer(
         func: wcf::Functions::FuncRecvTransfer.into(),
         msg: Some(wcf::request::Msg::Tf(wcf::Transfer {
             wxid: wxid,
-            taid: transferid,
-            tfid: transcationid,
+            tfid: transferid,
+            taid: transcationid,
         })),
     };
     let response = match send_cmd(wechat, req) {
@@ -787,6 +787,32 @@ pub fn recv_transfer(
     match response.unwrap() {
         wcf::response::Msg::Status(status) => {
             return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/** 刷新朋友圈 */
+pub fn refresh_pyq(id: u64, wechat: &mut WeChat) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncRefreshPyq.into(),
+        msg: Some(wcf::request::Msg::Ui64(id)),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("接收转账失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
         }
         _ => {
             return Ok(false);
@@ -858,9 +884,11 @@ mod test {
     fn test_recv_msg() {
         let mut wechat = crate::wechat::WeChat::default();
         let mut socket = crate::wechat::enable_listen(&mut wechat).unwrap();
-        for _ in 1..5 {
+        for _index in 0..5 {
+            let _ = crate::wechat::refresh_pyq(0, &mut wechat);
             let msg = crate::wechat::recv_msg(&mut socket).unwrap();
             println!("WxMsg: {:?}", msg);
+            println!("--------------------------------------------------");
         }
         let _ = crate::wechat::disable_listen(&mut wechat);
     }
