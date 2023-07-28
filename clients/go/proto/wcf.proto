@@ -1,8 +1,8 @@
 syntax = "proto3";
 
 package wcf;
-option go_package = "./wcf";
 option java_package = "com.iamteer";
+option go_package="../wcf";
 
 enum Functions {
     FUNC_RESERVED         = 0x00;
@@ -22,9 +22,11 @@ enum Functions {
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
     FUNC_ACCEPT_FRIEND    = 0x51;
-    FUNC_ADD_ROOM_MEMBERS = 0x52;
-    FUNC_RECV_TRANSFER    = 0x53;
+    FUNC_RECV_TRANSFER    = 0x52;
+    FUNC_REFRESH_PYQ      = 0x53;
     FUNC_DECRYPT_IMAGE    = 0x60;
+    FUNC_ADD_ROOM_MEMBERS = 0x70;
+    FUNC_DEL_ROOM_MEMBERS = 0x71;
 }
 
 message Request
@@ -42,6 +44,8 @@ message Request
         XmlMsg xml     = 9;
         DecPath dec    = 10;
         Transfer tf    = 11;
+        uint64 ui64    = 12; // 64 位整数，通用
+        bool flag      = 13;
     }
 }
 
@@ -68,14 +72,16 @@ message WxMsg
 {
     bool is_self   = 1;  // 是否自己发送的
     bool is_group  = 2;  // 是否群消息
-    int32 type     = 3;  // 消息类型
-    string id      = 4;  // 消息 id
-    string xml     = 5;  // 消息 xml
-    string sender  = 6;  // 消息发送者
-    string roomid  = 7;  // 群 id（如果是群消息的话）
-    string content = 8;  // 消息内容
-    string thumb   = 9;  // 缩略图
-    string extra   = 10; // 附加内容
+    uint64 id      = 3;  // 消息 id
+    uint32 type    = 4;  // 消息类型
+    uint32 ts      = 5;  // 消息类型
+    string roomid  = 6;  // 群 id（如果是群消息的话）
+    string content = 7;  // 消息内容
+    string sender  = 8;  // 消息发送者
+    string sign    = 9;  // Sign
+    string thumb   = 10; // 缩略图
+    string extra   = 11; // 附加内容
+    string xml     = 12; // 消息 xml
 }
 
 message TextMsg
@@ -168,5 +174,6 @@ message DecPath
 message Transfer
 {
     string wxid = 1; // 转账人
-    string tid  = 2; // 转账id transferid
+    string tfid = 2; // 转账id transferid
+    string taid = 3; // Transaction id
 }
