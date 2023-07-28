@@ -129,7 +129,7 @@ func TestSendTxT(t *testing.T) {
 		logs.Err(err)
 		return
 	}
-	logs.Info(wcf.SendTxt(" Hello @ 淡白", "38975652309@chatroom", []string{"wxid_qvo0irhbw9fk22"}))
+	logs.Info(wcf.SendTxt(" Hello @ 淡白", "38975652309@chatroom", []string{"wxid_xxxxxx"}))
 }
 func TestSendIMG(t *testing.T) {
 	wcf, err := NewWCF("tcp://192.168.26.130:1000")
@@ -137,7 +137,7 @@ func TestSendIMG(t *testing.T) {
 		logs.Err(err)
 		return
 	}
-	logs.Info(wcf.SendIMG("C:\\Users\\Administrator\\Pictures\\1.png", "wxid_qvo0irhbw9fk22"))
+	logs.Info(wcf.SendIMG("C:\\Users\\Administrator\\Pictures\\1.png", "wxid_xxxxxx"))
 }
 func TestSendFile(t *testing.T) {
 	wcf, err := NewWCF("tcp://192.168.26.130:1000")
@@ -145,7 +145,7 @@ func TestSendFile(t *testing.T) {
 		logs.Err(err)
 		return
 	}
-	logs.Info(wcf.SendFile("C:\\Users\\Administrator\\Pictures\\1.txt", "wxid_qvo0irhbw9fk22"))
+	logs.Info(wcf.SendFile("C:\\Users\\Administrator\\Pictures\\1.txt", "wxid_xxxxxx"))
 }
 func TestRefreshPYQ(t *testing.T) {
 	wcf, err := NewWCF("tcp://192.168.26.130:1000")
