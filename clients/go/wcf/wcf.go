@@ -41,6 +41,10 @@ func (c *Client) Recv() (*Response, error) {
 	err = proto.Unmarshal(recv, msg)
 	return msg, err
 }
+func (c *Client) Close() error {
+	c.DisableRecvTxt()
+	return c.socket.Close()
+}
 func (c *Client) IsLogin() bool {
 	err := c.send(genFunReq(Functions_FUNC_IS_LOGIN).build())
 	if err != nil {
@@ -177,11 +181,39 @@ func (c *Client) AddChatroomMembers(roomID, wxIDs string) int32 {
 	return recv.GetStatus()
 }
 
-// ReceiveTransfer 接收转账
-func (c *Client) ReceiveTransfer(transferId, wxID string) int32 {
+/*
+   ReceiveTransfer 接收转账
+   string wxid = 1; // 转账人
+   string tfid = 2; // 转账id transferid
+   string taid = 3; // Transaction id
+*/
+
+func (c *Client) ReceiveTransfer(wxid, tfid, taid string) int32 {
 	req := genFunReq(Functions_FUNC_RECV_TRANSFER)
 	q := Request_Tf{
-		Tf: &Transfer{Tid: transferId, Wxid: wxID},
+		Tf: &Transfer{
+			Wxid: wxid,
+			Tfid: tfid,
+			Taid: taid,
+		},
+	}
+	req.Msg = &q
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
+
+// RefreshPYQ 刷新朋友圈
+func (c *Client) RefreshPYQ() int32 {
+	req := genFunReq(Functions_FUNC_REFRESH_PYQ)
+	q := Request_Ui64{
+		Ui64: 0,
 	}
 	req.Msg = &q
 	err := c.send(req.build())
@@ -215,6 +247,23 @@ func (c *Client) DecryptImage(src, dst string) int32 {
 
 func (c *Client) AddChatRoomMembers(roomId string, wxIds []string) int32 {
 	req := genFunReq(Functions_FUNC_ADD_ROOM_MEMBERS)
+	q := Request_M{
+		M: &AddMembers{Roomid: roomId,
+			Wxids: strings.Join(wxIds, ",")},
+	}
+	req.Msg = &q
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
+func (c *Client) DelChatRoomMembers(roomId string, wxIds []string) int32 {
+	req := genFunReq(Functions_FUNC_DEL_ROOM_MEMBERS)
 	q := Request_M{
 		M: &AddMembers{Roomid: roomId,
 			Wxids: strings.Join(wxIds, ",")},
@@ -270,7 +319,7 @@ func (c *Client) SendTxt(msg string, receiver string, ates []string) int32 {
 
 /*
 SendIMG
-path 绝对路径
+path 绝对路径InBot
 */
 func (c *Client) SendIMG(path string, receiver string) int32 {
 	req := genFunReq(Functions_FUNC_SEND_IMG)
@@ -293,7 +342,7 @@ func (c *Client) SendIMG(path string, receiver string) int32 {
 
 /*
 SendFile
-path 绝对路径
+path 绝对路径InBot
 */
 func (c *Client) SendFile(path string, receiver string) int32 {
 	req := genFunReq(Functions_FUNC_SEND_FILE)
@@ -333,8 +382,30 @@ func (c *Client) SendXml(path, content, receiver string, Type int32) int32 {
 	}
 	return recv.GetStatus()
 }
+func (c *Client) SendEmotion(path, receiver string) int32 {
+	req := genFunReq(Functions_FUNC_SEND_EMOTION)
+	req.Msg = &Request_File{
+		File: &PathMsg{
+			Path:     path,
+			Receiver: receiver,
+		},
+	}
+	err := c.send(req.build())
+	if err != nil {
+		logs.Err(err)
+	}
+	recv, err := c.Recv()
+	if err != nil {
+		logs.Err(err)
+	}
+	return recv.GetStatus()
+}
 func (c *Client) EnableRecvTxt() int32 {
-	err := c.send(genFunReq(Functions_FUNC_ENABLE_RECV_TXT).build())
+	req := genFunReq(Functions_FUNC_ENABLE_RECV_TXT)
+	req.Msg = &Request_Flag{
+		Flag: true,
+	}
+	err := c.send(req.build())
 	if err != nil {
 		logs.Err(err)
 	}
@@ -365,10 +436,10 @@ func (c *Client) OnMSG(f func(msg *WxMsg)) error {
 	_ = socket.SetOption(mangos.OptionRecvDeadline, 2000)
 	_ = socket.SetOption(mangos.OptionSendDeadline, 2000)
 	err = socket.Dial(addPort(c.add))
-
 	if err != nil {
 		return err
 	}
+	defer socket.Close()
 	for c.RecvTxt {
 		msg := &Response{}
 		recv, err := socket.Recv()
