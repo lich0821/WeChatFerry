@@ -18,12 +18,11 @@
 
 #include "chatroom_mgmt.h"
 #include "contact_mgmt.h"
-#include "decrypt_image.h"
 #include "exec_sql.h"
+#include "funcs.h"
 #include "log.h"
 #include "pb_types.h"
 #include "pb_util.h"
-#include "pyq.h"
 #include "receive_msg.h"
 #include "receive_transfer.h"
 #include "rpc_server.h"

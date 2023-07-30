@@ -81,16 +81,13 @@
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="decrypt_image.h">
+    <ClInclude Include="funcs.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="receive_transfer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sqlite3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="pyq.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,13 +143,10 @@
     <ClCompile Include="user_info.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="decrypt_image.cpp">
+    <ClCompile Include="funcs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="receive_transfer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="pyq.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
