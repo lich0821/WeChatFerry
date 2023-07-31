@@ -6,6 +6,7 @@ __version__ = "39.0.2.0"
 import atexit
 import base64
 import logging
+import mimetypes
 import os
 import re
 import sys
@@ -64,6 +65,8 @@ class Wcf():
         self._is_running = False
         self._is_receiving_msg = False
         self._wcf_root = os.path.abspath(os.path.dirname(__file__))
+        self._dl_path = f"{self._wcf_root}/.dl"
+        os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
@@ -250,34 +253,66 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def _download_file(self, url: str) -> str:
+        path = None
+        if not self._local_mode:
+            self.LOG.error(f"只有本地模式才支持网络路径！")
+            return path
+
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36', }
+            rsp = requests.get(url, headers=headers, stream=True, timeout=60)
+            rsp.raw.decode_content = True
+
+            # 提取文件名
+            fname = os.path.basename(url)
+            ct = rsp.headers["content-type"]
+            ext = mimetypes.guess_extension(ct)
+            if ext:
+                if ext not in fname:
+                    fname = fname + ext
+                else:
+                    fname = fname.split(ext)[0] + ext
+
+            # 保存文件，用完后删除
+            with open(f"{self._dl_path}/{fname}", "wb") as of:
+                if "text" in ct:
+                    of.write(rsp.text)
+                of.write(rsp.content)
+
+            path = os.path.normpath(f"{self._dl_path}/{fname}")
+        except Exception as e:
+            self.LOG.error(f"网络资源下载失败: {e}")
+
+        return path
+
+    def _process_path(self, path) -> str:
+        """处理路径，如果是网络路径则下载文件
+        """
+        if path.startswith("http"):
+            path = self._download_file(path)
+            if not path:
+                return -102  # 下载失败
+        elif not os.path.exists(path):
+            self.LOG.error(f"图片或者文件不存在，请检查路径: {path}")
+            return -101  # 文件不存在
+
+        return path
+
     def send_image(self, path: str, receiver: str) -> int:
         """发送图片，非线程安全
 
         Args:
-            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://raw.githubusercontent.com/lich0821/WeChatRobot/master/TEQuant.jpeg`
+            path (str): 图片路径，如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或 `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg`
             receiver (str): 消息接收人，wxid 或者 roomid
 
         Returns:
             int: 0 为成功，其他失败
         """
-        if path.startswith("http"):
-            if not self._local_mode:
-                self.LOG.error(f"只有本地模式才支持网络路径！")
-                return -1
-            try:
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36', }
-                response = requests.get(path, headers=headers, stream=True)
-                response.raw.decode_content = True
-
-                # 保存图片，不删除，等下次覆盖
-                with open(f"{self._wcf_root}/.tmp.jpg", "wb") as of:
-                    of.write(response.content)
-
-                path = f"{self._wcf_root}/.tmp.jpg"
-            except Exception as e:
-                self.LOG.error(e)
-                return -1
+        path = self._process_path(path)
+        if isinstance(path, int):
+            return path
 
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_IMG  # FUNC_SEND_IMG
@@ -287,15 +322,19 @@ class Wcf():
         return rsp.status
 
     def send_file(self, path: str, receiver: str) -> int:
-        """发送文件
+        """发送文件，非线程安全
 
         Args:
-            path (str): 本地文件路径，如：`C:/Projs/WeChatRobot/README.MD`
+            path (str): 本地文件路径，如：`C:/Projs/WeChatRobot/README.MD` 或 `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/README.MD`
             receiver (str): 消息接收人，wxid 或者 roomid
 
         Returns:
             int: 0 为成功，其他失败
         """
+        path = self._process_path(path)
+        if isinstance(path, int):
+            return path
+
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_FILE  # FUNC_SEND_FILE
         req.file.path = path
