@@ -58,11 +58,13 @@ def main():
     LOG.info(f"send_text: {ret}")
 
     sleep(5)
-    ret = wcf.send_image("TEQuant.jpeg", "filehelper")  # 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
+    # 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
+    ret = wcf.send_image("https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg", "filehelper")
     LOG.info(f"send_image: {ret}")
 
     sleep(5)
-    ret = wcf.send_file("README.MD", "filehelper")  # 需要确保文件路径正确，建议使用绝对路径（使用双斜杠\\）
+    # 需要确保文件路径正确，建议使用绝对路径（使用双斜杠\\）
+    ret = wcf.send_file("https://raw.githubusercontent.com/lich0821/WeChatFerry/master/README.MD", "filehelper")
     LOG.info(f"send_file: {ret}")
 
     sleep(5)
@@ -127,11 +129,14 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 ```
 
 ## 版本更新
+### 39.0.2.1 (2023.08.01)
+* 发送文件支持网络路径
+
+<details><summary>点击查看更多</summary>
 
 ### 39.0.2.0 (2023.07.16)
 * 获取朋友圈消息
 
-<details><summary>点击查看更多</summary>
 版本号：`w.x.y.z`。
 
 其中：
@@ -152,7 +157,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 获取用户信息
 * 发送文本消息（可 @）
 * 发送图片（Python 客户端支持网络路径）
-* 发送文件
+* 发送文件（Python 客户端支持网络路径）
 * 允许接收消息
 * 停止接收消息
 * 执行 SQL 查询

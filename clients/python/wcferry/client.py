@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.2.0"
+__version__ = "39.0.2.1"
 
 import atexit
 import base64
@@ -277,8 +277,6 @@ class Wcf():
 
             # 保存文件，用完后删除
             with open(f"{self._dl_path}/{fname}", "wb") as of:
-                if "text" in ct:
-                    of.write(rsp.text)
                 of.write(rsp.content)
 
             path = os.path.normpath(f"{self._dl_path}/{fname}")

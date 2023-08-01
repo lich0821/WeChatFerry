@@ -43,11 +43,13 @@ def main():
     LOG.info(f"send_text: {ret}")
 
     sleep(5)
-    ret = wcf.send_image("TEQuant.jpeg", "filehelper")  # 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
+    # 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
+    ret = wcf.send_image("https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg", "filehelper")
     LOG.info(f"send_image: {ret}")
 
     sleep(5)
-    ret = wcf.send_file("README.MD", "filehelper")  # 需要确保文件路径正确，建议使用绝对路径（使用双斜杠\\）
+    # 需要确保文件路径正确，建议使用绝对路径（使用双斜杠\\）
+    ret = wcf.send_file("https://raw.githubusercontent.com/lich0821/WeChatFerry/master/README.MD", "filehelper")
     LOG.info(f"send_file: {ret}")
 
     sleep(5)
