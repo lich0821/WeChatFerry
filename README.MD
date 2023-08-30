@@ -126,11 +126,20 @@ vcpkg install nng:x86-windows-static
 vcpkg integrate install
 ```
 
+安装完毕后，需要配置protoc的环境变量，并确保在命令行下可用，protoc的路径在`<vcpkg_install_path>\installed\x86-windows-static\tools\protobuf`
+
 #### 安装 VS2019
+
+#### 安装Python3
+
+通过微软商店或者python.org自行下载均可，注意配置好环境变量，确保`python3`在命令行下可用
+
 </details>
 
 ### 编译
 使用 VS2019 打开工程，编译即可。
+
+注：如果遇到执行`protoc`时的9009错误，检查是否是python3环境有问题，或者protoc命令的环境变量配置不正确。
 
 ### 运行
 双击 `Release` 里的 `launcher.exe`，`启动`。
