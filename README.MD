@@ -62,7 +62,7 @@
 下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
 
 ### Go
-参考 [Go README.MD](go/README.MD)
+参考 [Go README.MD](clients/go/README.MD)
 
 ### HTTP
 [![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
@@ -88,7 +88,7 @@ wcfhttp --cb http://your_host:your_port/callback
 ```
 
 ### Java
-参考 [Java README.MD](java/README.MD)
+参考 [Java README.MD](clients/java/README.MD)
 
 ### Python
 [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
@@ -101,7 +101,7 @@ pip install --upgrade wcferry
 * 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### Rust
-参考 [Rust README.MD](rust/README.MD)
+参考 [Rust README.MD](clients/rust/README.MD)
 
 ## 一起开发
 ### 安装开发环境
@@ -126,20 +126,20 @@ vcpkg install nng:x86-windows-static
 vcpkg integrate install
 ```
 
-安装完毕后，需要配置protoc的环境变量，并确保在命令行下可用，protoc的路径在`<vcpkg_install_path>\installed\x86-windows-static\tools\protobuf`
+安装完毕后，需要配置 protoc 的环境变量，并确保在命令行下可用，protoc 的路径在 `<vcpkg_install_path>\installed\x86-windows-static\tools\protobuf`
 
 #### 安装 VS2019
 
-#### 安装Python3
+#### 安装 Python3
 
-通过微软商店或者python.org自行下载均可，注意配置好环境变量，确保`python3`在命令行下可用
+通过微软商店或者 python.org 自行下载均可，注意配置好环境变量，确保 `python3` 在命令行下可用
 
 </details>
 
 ### 编译
 使用 VS2019 打开工程，编译即可。
 
-注：如果遇到执行`protoc`时的9009错误，检查是否是python3环境有问题，或者protoc命令的环境变量配置不正确。
+注：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
 
 ### 运行
 双击 `Release` 里的 `launcher.exe`，`启动`。
