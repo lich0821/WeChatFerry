@@ -19,6 +19,7 @@ import pynng
 import requests
 from google.protobuf import json_format
 from wcferry import wcf_pb2
+from wcferry.roomdata_pb2 import RoomData
 from wcferry.wxmsg import WxMsg
 
 
@@ -536,9 +537,9 @@ class Wcf():
         }
         friends = []
         for cnt in self.get_contacts():
-            if (cnt["wxid"].endswith("@chatroom")      # 群聊
-                or cnt["wxid"].startswith("gh_")       # 公众号
-                or cnt["wxid"] in not_friends.keys()   # 其他杂号
+            if (cnt["wxid"].endswith("@chatroom") or    # 群聊
+                cnt["wxid"].startswith("gh_") or        # 公众号
+                cnt["wxid"] in not_friends.keys()       # 其他杂号
                 ):
                 continue
             friends.append(cnt)
@@ -629,3 +630,34 @@ class Wcf():
         req.m.wxids = wxids.replace(" ", "")
         rsp = self._send_request(req)
         return rsp.status
+
+    def get_chatroom_members(self, roomid: str) -> List[dict]:
+        """获取群成员
+
+        Args:
+            roomid (str): 群的 id
+
+        Returns:
+            List[dict]: 群成员列表: [{wxid: 昵称}, ...]
+        """
+        pass
+        contacts = self.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
+        contacts = {contact["UserName"]: contact["NickName"]for contact in contacts}
+        crs = self.query_sql("MicroMsg.db", f"SELECT RoomData FROM ChatRoom WHERE ChatRoomName = '{roomid}'")
+        if not crs:
+            return []
+
+        bs = crs[0].get("RoomData")
+        if not bs:
+            return []
+
+        crd = RoomData()
+        crd.ParseFromString(bs)
+        if not bs:
+            return []
+
+        names = {}
+        for member in crd.members:
+            names[member.wxid] = member.name if member.name else contacts.get(member.wxid, "")
+
+        return names
