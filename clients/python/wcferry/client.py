@@ -660,3 +660,35 @@ class Wcf():
             members[member.wxid] = member.name if member.name else contacts.get(member.wxid, "")
 
         return members
+
+    def get_alias_in_chatroom(self, wxid: str, roomid: str) -> str:
+        """获取群名片
+
+        Args:
+            wxid (str): wxid
+            roomid (str): 群的 id
+
+        Returns:
+            str: 群名片
+        """
+        nickname = self.query_sql("MicroMsg.db", f"SELECT NickName FROM Contact WHERE UserName = '{wxid}';")
+        if not nickname:
+            return ""
+
+        nickname = nickname[0].get("NickName", "")
+
+        crs = self.query_sql("MicroMsg.db", f"SELECT RoomData FROM ChatRoom WHERE ChatRoomName = '{roomid}';")
+        if not crs:
+            return ""
+
+        bs = crs[0].get("RoomData")
+        if not bs:
+            return ""
+
+        crd = RoomData()
+        crd.ParseFromString(bs)
+        for member in crd.members:
+            if member.wxid == wxid:
+                return member.name if member.name else nickname
+
+        return ""
