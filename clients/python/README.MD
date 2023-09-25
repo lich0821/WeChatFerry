@@ -87,6 +87,14 @@ def main():
     # ret = wcf.del_chatroom_members("chatroom id", "wxid1,wxid2,wxid3,...")
     # LOG.info(f"add_chatroom_members: {ret}")
 
+    # 获取群成员
+    # members = wcf.get_chatroom_members('xxxxxxxx@chatroom')
+    # LOG.info(f"get_chatroom_members: {members}")
+
+    # 获取群成员名片
+    # alias = wcf.get_alias_in_chatroom("wxid_xxxxxxxx", "xxxxxxxx@chatroom")
+    # LOG.info(f"get_alias_in_chatroom: {alias}")
+
     sleep(5)
     wcf.refresh_pyq(0)  # 刷新朋友圈第一页
     # wcf.refresh_pyq(id)  # 从 id 开始刷新朋友圈
@@ -129,10 +137,14 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 ```
 
 ## 版本更新
-### 39.0.2.1 (2023.08.01)
-* 发送文件支持网络路径
+### 39.0.2.2 (2023.09.25)
+* 获取群成员
+* 获取群成员名片
 
 <details><summary>点击查看更多</summary>
+
+### 39.0.2.1 (2023.08.01)
+* 发送文件支持网络路径
 
 ### 39.0.2.0 (2023.07.16)
 * 获取朋友圈消息
