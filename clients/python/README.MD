@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
 ```
 
-|![碲矿](https://gitee.com/lch0821/WeChatFerry/raw/master/assets/TEQuant.jpg)|![赞赏](https://gitee.com/lch0821/WeChatFerry/raw/master/assets/QR.jpeg)|
+|![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg)|
 |:-:|:-:|
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 

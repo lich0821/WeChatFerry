@@ -27,6 +27,6 @@ wcfhttp --cb http://your_host:your_port/callback
 ### 接收消息回调接口文档
 参考文档（默认地址为：http://localhost:9999/docs ）`接收消息回调样例`。
 
-|![碲矿](https://gitee.com/lch0821/WeChatFerry/raw/master/assets/TEQuant.jpg)|![赞赏](https://gitee.com/lch0821/WeChatFerry/raw/master/assets/QR.jpeg)|
+|![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg)|
 |:-:|:-:|
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
