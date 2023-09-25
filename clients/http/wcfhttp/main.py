@@ -31,8 +31,8 @@ def main():
     qrcodes = """<table>
 <thead>
 <tr>
-<th style="text-align:center"><img src="https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg" alt="碲矿"></th>
-<th style="text-align:center"><img src="https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg" alt="赞赏"></th>
+<th style="text-align:center"><img src="https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg" alt="碲矿"></th>
+<th style="text-align:center"><img src="https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg" alt="赞赏"></th>
 </tr>
 </thead>
 <tbody>
