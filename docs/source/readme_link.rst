@@ -1,8 +1,8 @@
 项目介绍
 =========
 
-.. include:: ../../http/README.MD
+.. include:: ../../clients/http/README.MD
    :parser: myst_parser.sphinx_
 
-.. include:: ../../python/README.MD
+.. include:: ../../clients/python/README.MD
    :parser: myst_parser.sphinx_
