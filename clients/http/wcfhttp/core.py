@@ -8,7 +8,7 @@ from threading import Thread
 from typing import Any
 
 import requests
-from fastapi import Body, Query, FastAPI
+from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
@@ -51,6 +51,8 @@ class Http(FastAPI):
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
         self.add_api_route("/pyq/", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
+        self.add_api_route("/chatroom-member/", self.get_chatroom_members, methods=["GET"], summary="获取群成员")
+        self.add_api_route("/alias-in-chatroom/", self.get_alias_in_chatroom, methods=["GET"], summary="获取群成员名片")
 
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
@@ -65,7 +67,7 @@ class Http(FastAPI):
 
         self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
-    def _forward_msg(self, msg, cb):
+    def _forward_msg(self, msg: WxMsg, cb: str):
         data = {}
         data["id"] = msg.id
         data["ts"] = msg.ts
@@ -88,7 +90,7 @@ class Http(FastAPI):
         except Exception as e:
             self.LOG.error(f"消息转发异常: {e}")
 
-    def _set_cb(self, cb):
+    def _set_cb(self, cb: str):
         def callback(wcf: Wcf):
             while wcf.is_receiving_msg():
                 try:
@@ -370,3 +372,29 @@ class Http(FastAPI):
         """
         ret = self.wcf.decrypt_image(src, dst)
         return {"status": ret, "message": "成功"if ret else "失败"}
+
+    def get_chatroom_members(self, roomid: str = Query("xxxxxxxx@chatroom", description="群的 id")) -> dict:
+        """获取群成员
+
+        Args:
+            roomid (str): 群的 id
+
+        Returns:
+            List[dict]: 群成员列表
+        """
+        ret = self.wcf.get_chatroom_members(roomid)
+        return {"status": 0, "message": "成功", "data": {"members": ret}}
+
+    def get_alias_in_chatroom(self, wxid: str = Query("wxid_xxxxxxxxxxxxx", description="wxid"),
+                              roomid: str = Query("xxxxxxxx@chatroom", description="群的 id")) -> dict:
+        """获取群成员名片
+
+        Args:
+            roomid (str): 群的 id
+            wxid (str): wxid
+
+        Returns:
+            str: 名片
+        """
+        ret = self.wcf.get_alias_in_chatroom(wxid, roomid)
+        return {"status": 0, "message": "成功", "data": {"alias": ret}}
