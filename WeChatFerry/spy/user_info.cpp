@@ -39,8 +39,15 @@ UserInfo_t GetUserInfo()
 {
     UserInfo_t ui;
 
-    ui.wxid   = GetSelfWxid();
-    ui.name   = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
+    ui.wxid = GetSelfWxid();
+
+    DWORD nameType = GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.ui.nickName + 0x14);
+    if (nameType == 0xF) {
+        ui.name = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
+    } else { // 0x1F
+        ui.name = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
+    }
+
     ui.mobile = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.mobile);
     ui.home   = GetHomePath();
 
