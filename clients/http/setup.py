@@ -33,7 +33,7 @@ setup(
         "setuptools",
         "fastapi",
         "uvicorn[standard]",
-        "wcferry>=39.0.2.2",
+        "wcferry>=39.0.3.0",
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",
