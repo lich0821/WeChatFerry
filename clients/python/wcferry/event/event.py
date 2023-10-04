@@ -1,6 +1,5 @@
-# coding: utf-8
-# @Author: 小杨大帅哥
-import logging
+# -*- coding: utf-8 -*-
+
 from abc import abstractmethod
 import asyncio
 import logging

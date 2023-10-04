@@ -1,5 +1,5 @@
-# coding: utf-8
-# @Author: 小杨大帅哥
+# -*- coding: utf-8 -*-
+
 from .bot import Register
 from .core import load_function, WxMsg, Wcf
 

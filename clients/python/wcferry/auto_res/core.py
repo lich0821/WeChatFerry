@@ -1,8 +1,7 @@
-# coding: utf-8
-# @Author: 小杨大帅哥
+# -*- coding: utf-8 -*-
+
 import asyncio
 import functools
-import logging
 import queue
 import traceback
 from threading import Thread

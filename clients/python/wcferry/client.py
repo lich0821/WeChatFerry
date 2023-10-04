@@ -498,7 +498,6 @@ class Wcf():
         req.query.db = db
         req.query.sql = sql
         rsp = self._send_request(req)
-        print(rsp)
         rows = json_format.MessageToDict(rsp.rows).get("rows", [])
         for r in rows:
             row = {}

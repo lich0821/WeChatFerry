@@ -1,5 +1,5 @@
-# coding: utf-8
-# @Author: 小杨大帅哥
+# -*- coding: utf-8 -*-
+
 import traceback
 import asyncio
 from threading import Thread
