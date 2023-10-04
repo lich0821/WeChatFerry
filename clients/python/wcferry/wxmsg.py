@@ -2,11 +2,11 @@
 
 import re
 from datetime import datetime
-
+import time
 from wcferry import wcf_pb2
 
 
-class WxMsg():
+class WxMsg(dict):
     """微信消息
 
     Attributes:
@@ -21,27 +21,81 @@ class WxMsg():
     """
 
     def __init__(self, msg: wcf_pb2.WxMsg) -> None:
+        super(WxMsg, self).__init__()
         self._is_self = msg.is_self
         self._is_group = msg.is_group
-        self.type = msg.type
-        self.id = msg.id
-        self.ts = msg.ts
-        self.sign = msg.sign
-        self.xml = msg.xml
-        self.sender = msg.sender
-        self.roomid = msg.roomid
-        self.content = msg.content
-        self.thumb = msg.thumb
-        self.extra = msg.extra
+        self._type = msg.type
+        self._id = msg.id
+        self._ts = msg.ts
+        self._sign = msg.sign
+        self._xml = msg.xml
+        self._sender = msg.sender
+        self._roomid = msg.roomid
+        self._content = msg.content
+        self._thumb = msg.thumb
+        self._extra = msg.extra
+        self.__data = {'isSelf': True if self._is_self else False,
+                       'isGroup': True if self._is_group else False,
+                       'isPyq': True if self._type == 0 else False,
+                       'data': {
+                           'type': self._type,
+                           'content': self._content,
+                           'sender': self._sender,
+                           'msgid': self._id,
+                           'roomid': self._roomid if self._roomid else None,
+                           'xml': self._xml,
+                           'thumb': self._thumb if self._thumb else None,
+                           'extra': self._extra if self._extra else None,
+                           'time': int(time.time() * 1000),
+                       }, 'revokmsgid': None, 'isRevokeMsg': False, }
+        self.__revokmsg_p()
+
+    def __revokmsg_p(self):
+        rmsg = self.__data['data']['content']
+        rev_type = re.findall('<sysmsg type="(.*?)"\s?', rmsg)
+        rev_w = re.findall("<replacemsg><!\[CDATA\[(.*?)]]></replacemsg>", rmsg)
+        if len(rev_type) == 0 or len(rev_w) == 0: return
+        if rev_type[0] == 'revokemsg' and rev_w[0] == '你撤回了一条消息':
+            self.__data['data']['content'] = rev_w[0]
+            self.__data['isRevokeMsg'] = True
+            self.__data['revokmsgid'] = re.findall('<newmsgid>(.*?)</newmsgid>', rmsg)[0]
 
     def __str__(self) -> str:
-        s = f"{'自己发的:' if self._is_self else ''}"
-        s += f"{self.sender}[{self.roomid}]|{self.id}|{datetime.fromtimestamp(self.ts)}|{self.type}|{self.sign}"
-        s += f"\n{self.xml.replace(chr(10), '').replace(chr(9),'')}\n"
-        s += self.content
-        s += f"\n{self.thumb}" if self.thumb else ""
-        s += f"\n{self.extra}" if self.extra else ""
-        return s
+        return repr(self.__data)
+
+    def __repr__(self) -> str:
+        return repr(self.__data)
+
+    def __getitem__(self, key):
+        return self.__data[key]
+
+    def __getattr__(self, item):
+        if item in ['content', 'sender', 'roomid', 'xml', 'thumb', 'extra', 'type']:
+            return self.__data['data'][item]
+        if item == 'id':
+            return self.__data['data']['msgid']
+        if item == 'ts':
+            return self._ts
+        if item == 'sign':
+            return self._sign
+
+    def __setitem__(self, key, value):
+        self.__data[key] = value
+
+    def is_image(self) -> bool:
+        """是否是图片"""
+        return self.type == 3 and ('imgdatahash' in self.__data['data']['content'])
+
+    def is_voice(self) -> bool:
+        """是否是语音"""
+        return self.type == 34 and ('voicemsg' in self.__data['data']['content'])
+
+    def is_video(self) -> bool:
+        """是否是视频"""
+        return self.type == 43 and ('videomsg' in self.__data['data']['content'])
+
+    def is_pyq(self) -> bool:
+        return self.type == 0
 
     def from_self(self) -> bool:
         """是否自己发的消息"""
