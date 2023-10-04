@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from typing import Callable, Any
-from ..event import Event
+from wcferry.event import Event
 from abc import abstractmethod
-from ..client import Wcf
+from wcferry.client import Wcf
 import logging
 
 

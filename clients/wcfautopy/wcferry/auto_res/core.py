@@ -6,8 +6,8 @@ import queue
 import traceback
 from threading import Thread
 from typing import Callable, Any
-from ..client import Wcf
-from ..wxmsg import WxMsg
+from wcferry.client import Wcf
+from wcferry.wxmsg import WxMsg
 
 
 def load_function(cls):
