@@ -11,8 +11,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="wcfauto",
     version=wcfauto.__version__,
-    author="Changhua",
-    author_email="lichanghua0821@gmail.com",
+    author="bujinzhang",
+    author_email="",
     description="一个玩微信的工具",
     long_description=long_description,
     long_description_content_type="text/markdown",
