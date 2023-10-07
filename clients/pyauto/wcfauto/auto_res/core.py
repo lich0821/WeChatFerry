@@ -7,8 +7,8 @@ import traceback
 from threading import Thread
 from typing import Any, Callable
 
-from wcferry.client import Wcf
-from wcferry.wxmsg import WxMsg
+from wcfauto.wcf import WcfV2 as Wcf
+from wcfauto.wcf import WxMsgV2 as WxMsg
 
 
 def load_function(cls):
@@ -52,8 +52,8 @@ def _processing_async_func(self,
         async def __async_func(bot: Wcf, message: WxMsg):
             try:
                 # 判断被装饰函数是否为协程函数, 本函数要求是协程函数
-                if not asyncio.iscoroutinefunction(func): raise ValueError(
-                    f'这里应使用协程函数, 而被装饰函数-> ({func.__name__}) <-是非协程函数')
+                if not asyncio.iscoroutinefunction(func):
+                    raise ValueError(f'这里应使用协程函数, 而被装饰函数-> ({func.__name__}) <-是非协程函数')
                 if message.is_pyq() and isPyq:
                     return await func(bot, message)
                 if not isDivision:
@@ -79,8 +79,9 @@ def _processing_universal_func(self,
         def universal_func(bot: Wcf, message: WxMsg):
             try:
                 # 判断被装饰函数是否为协程函数, 本函数要求是协程函数
-                if asyncio.iscoroutinefunction(func): raise ValueError(
-                    f'这里应使用非协程函数, 而被装饰函数-> ({func.__name__}) <-协程函数')
+                if asyncio.iscoroutinefunction(func):
+                    raise ValueError(
+                        f'这里应使用非协程函数, 而被装饰函数-> ({func.__name__}) <-协程函数')
                 if message.is_pyq() and isPyq:
                     return func(bot, message)
                 if not isDivision:
@@ -115,6 +116,7 @@ def run(self, *args, **kwargs):
     Thread(target=self._process_msg, name="GetMessage", args=(self._wcf,), daemon=True).start()
     self._LOG.debug("开始接受消息")
     self._wcf.keep_running()
+
 
 def stop_receiving(self):
     return self._wcf.disable_recv_msg()

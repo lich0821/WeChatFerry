@@ -5,7 +5,7 @@ from abc import abstractmethod
 from typing import Any, Callable
 
 from wcfauto.event import Event
-from wcferry.client import Wcf
+from wcfauto.wcf import WcfV2 as Wcf
 
 
 class Register(Event):
