@@ -1,19 +1,16 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
-from __future__ import print_function
-from setuptools import setup, find_packages
-
-import wcferry
+import wcfauto
+from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
 setup(
-    name="wcferry",
-    version=wcferry.__version__,
+    name="wcfauto",
+    version=wcfauto.__version__,
     author="Changhua",
     author_email="lichanghua0821@gmail.com",
     description="一个玩微信的工具",
@@ -26,9 +23,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "setuptools",
-        "grpcio-tools",
-        "pynng",
-        "requests",
+        "wcferry",
     ],
     classifiers=[
         "Environment :: Win32 (MS Windows)",

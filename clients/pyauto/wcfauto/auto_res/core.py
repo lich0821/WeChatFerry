@@ -5,7 +5,8 @@ import functools
 import queue
 import traceback
 from threading import Thread
-from typing import Callable, Any
+from typing import Any, Callable
+
 from wcferry.client import Wcf
 from wcferry.wxmsg import WxMsg
 

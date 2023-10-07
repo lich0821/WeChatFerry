@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from abc import abstractmethod
 import asyncio
 import logging
+from abc import abstractmethod
 
 
 class Event(object):
