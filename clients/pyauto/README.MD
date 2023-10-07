@@ -19,8 +19,7 @@ pip install --upgrade wcfauto
 import logging
 from time import sleep
 
-from wcfauto import Register
-from wcferry import Wcf, WxMsg
+from wcfauto import Register, Wcf, WxMsg
 
 logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
 LOG = logging.getLogger("Demo")
