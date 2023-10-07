@@ -1,14 +1,32 @@
 # -*- coding: utf-8 -*-
 
 import re
-from datetime import datetime
 import time
-from wcferry import wcf_pb2
+
+from wcferry import Wcf, WxMsg
 
 
-class WxMsg(dict):
+class WcfV2(Wcf):
+    def __init__(self, host: str, port: int = 10086, debug: bool = True) -> None:
+        super().__init__(host, port, debug)
+
+    def get_msg(self, block=True) -> WxMsg:
+        """从消息队列中获取消息
+
+        Args:
+            block (bool): 是否阻塞，默认阻塞
+
+        Returns:
+            WxMsg: 微信消息
+
+        Raises:
+            Empty: 如果阻塞并且超时，抛出空异常，需要用户自行捕获
+        """
+        return WxMsgV2(self.msgQ.get(block, timeout=1))
+
+
+class WxMsgV2(WxMsg):
     """微信消息
-
     Attributes:
         type (int): 消息类型，可通过 `get_msg_types` 获取
         id (str): 消息 id
@@ -20,10 +38,9 @@ class WxMsg(dict):
         extra (str): 视频或图片消息的路径
     """
 
-    def __init__(self, msg: wcf_pb2.WxMsg) -> None:
-        super(WxMsg, self).__init__()
-        self._is_self = msg.is_self
-        self._is_group = msg.is_group
+    def __init__(self, msg: WxMsg) -> None:
+        # self._is_self = msg._is_self
+        # self._is_group = msg._is_group
         self._type = msg.type
         self._id = msg.id
         self._ts = msg.ts
@@ -54,7 +71,8 @@ class WxMsg(dict):
         rmsg = self.__data['data']['content']
         rev_type = re.findall('<sysmsg type="(.*?)"\s?', rmsg)
         rev_w = re.findall("<replacemsg><!\[CDATA\[(.*?)]]></replacemsg>", rmsg)
-        if len(rev_type) == 0 or len(rev_w) == 0: return
+        if len(rev_type) == 0 or len(rev_w) == 0:
+            return
         if rev_type[0] == 'revokemsg' and rev_w[0] == '你撤回了一条消息':
             self.__data['data']['content'] = rev_w[0]
             self.__data['isRevokeMsg'] = True

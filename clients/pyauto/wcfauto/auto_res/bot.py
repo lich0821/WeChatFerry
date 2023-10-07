@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from typing import Callable, Any
-from wcferry.event import Event
-from abc import abstractmethod
-from wcferry.client import Wcf
 import logging
+from abc import abstractmethod
+from typing import Any, Callable
+
+from wcfauto.event import Event
+from wcfauto.wcf import WcfV2 as Wcf
 
 
 class Register(Event):
