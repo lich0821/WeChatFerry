@@ -79,7 +79,9 @@ def _processing_async_func(self,
                     return await func(bot, message)
             except:
                 traceback.print_exc()
+
         return __async_func
+
     return _async_func
 
 
@@ -109,7 +111,9 @@ def _processing_universal_func(self,
                     return func(bot, message)
             except:
                 traceback.print_exc()
+
         return universal_func
+
     return _universal_func
 
 
@@ -144,8 +148,6 @@ def revoke_message_register(self,
 
 
 def group_changed_register(self,
-                           isGroup: bool = False,
-                           isDivision: bool = False,
                            isPyq: bool = False,
                            allow_other_receive: bool = True):
     def judge_msg(msg):
@@ -154,9 +156,9 @@ def group_changed_register(self,
                 return True
         return False
 
-    return self._processing_async_func(isGroup,
-                                       isDivision,
-                                       isPyq,
+    return self._processing_async_func(isPyq=isPyq,
+                                       isGroup=True,
+                                       isDivision=True,
                                        register_name='groupChanged',
                                        allow_other_receive=allow_other_receive,
                                        judge_msg=judge_msg)

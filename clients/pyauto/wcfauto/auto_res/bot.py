@@ -144,8 +144,6 @@ class Register(Event):
         raise NotImplementedError
 
     def group_changed_register(self,
-                               isGroup: bool = False,
-                               isDivision: bool = False,
                                isPyq: bool = False,
                                allow_other_receive: bool = True):
         """

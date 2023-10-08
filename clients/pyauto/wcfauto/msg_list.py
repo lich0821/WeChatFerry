@@ -9,7 +9,7 @@ class messageList(list):
         super(messageList, self).__init__(*args, **kwargs)
         self.__isRunning = True
         self.__th = None
-        self.__time_step = 2*60
+        self.__time_step = 3*60
         self.__msg_queen = queue.Queue()
         self.start()
 

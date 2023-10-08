@@ -40,6 +40,8 @@ class WxMsgV2(WxMsg):
     """
 
     def __init__(self, msg: WxMsg) -> None:
+        self._is_group = msg._is_group
+        self._is_self = msg._is_self
         self._type = msg.type
         self._id = msg.id
         self._ts = msg.ts

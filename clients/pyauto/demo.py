@@ -83,6 +83,7 @@ def main():
         撤回消息函数装饰器
         """
         print(msg)
+        print(msg.get_revoke_msg())
 
     def judge(msg: WxMsg):
         """
