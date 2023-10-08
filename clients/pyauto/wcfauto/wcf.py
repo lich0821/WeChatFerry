@@ -178,6 +178,7 @@ class WxMsgV2(WxMsg):
     def get_revoke_msg(self) -> "WxMsg" or None:
         """
         获取撤回的消息
+        暂不支持图片、视频、文件等有关文件的消息
         注意仅有撤回的消息在调用函数会返回消息内容, 自行修改 msg内容或者不是撤回的消息在调用该函数后会返回 None
         未撤回的消息调用该函数会返回 None
         :return: 返回被撤回的信息, 信息的类仍然是 WxMsg
