@@ -3,7 +3,6 @@
 
 import logging
 from time import sleep
-
 from wcfauto import Register, Wcf, WxMsg
 
 logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
@@ -68,6 +67,35 @@ def main():
     async def async_process_msg(bot: Wcf, msg: WxMsg):
         """
         异步消息函数装饰器
+        """
+        print(msg)
+
+    @receiver.group_changed_register(allow_other_receive=False)
+    async def group_changed(bot: Wcf, msg: WxMsg):
+        """
+        群组信息变化函数装饰器
+        """
+        print(msg)
+
+    @receiver.revoke_message_register(allow_other_receive=False)
+    async def group_changed(bot: Wcf, msg: WxMsg):
+        """
+        撤回消息函数装饰器
+        """
+        print(msg)
+        print(msg.get_revoke_msg())
+
+    def judge(msg: WxMsg):
+        """
+        消息判断函数
+        """
+        return False
+
+
+    @receiver.custom_message_register(register_name='custom', msg_judge_func=judge, allow_other_receive=False)
+    async def group_changed(bot: Wcf, msg: WxMsg):
+        """
+        自定义消息接收函数装饰器
         """
         print(msg)
 
