@@ -240,7 +240,7 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_IMG;
+    rsp.func       = Functions_FUNC_SEND_FILE;
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
@@ -427,7 +427,7 @@ bool func_disable_recv_txt(uint8_t *out, size_t *len)
 bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_DB_TABLES;
+    rsp.func      = Functions_FUNC_EXEC_DB_QUERY;
     rsp.which_msg = Response_rows_tag;
 
     DbRows_t rows                  = ExecDbQuery(db, sql);
@@ -447,7 +447,7 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_IMG;
+    rsp.func       = Functions_FUNC_ACCEPT_FRIEND;
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
