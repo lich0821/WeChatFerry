@@ -33,7 +33,7 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
     return 0;
 }
 
-int WxInitSDK(bool debug, int port)
+int WxInitSDK(bool debug, int port, int inputPid)
 {
     int status  = 0;
     DWORD wcPid = 0;
@@ -43,13 +43,17 @@ int WxInitSDK(bool debug, int port)
         return status;
     }
 
-    status = OpenWeChat(&wcPid);
-    if (status != 0) {
-        MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
-        return status;
-    }
+    if(inputPid != 0) {
+        wcPid = inputPid;
+    } else {
+        status = OpenWeChat(&wcPid);
+        if (status != 0) {
+            MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
+            return status;
+        }
 
-    Sleep(2000); // 等待微信打开
+        Sleep(2000); // 等待微信打开
+    }
     wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
         MessageBox(NULL, L"注入失败", L"WxInitSDK", 0);
