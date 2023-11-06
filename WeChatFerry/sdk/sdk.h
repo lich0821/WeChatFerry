@@ -1,4 +1,4 @@
 ﻿#pragma once
 
-int WxInitSDK(bool debug, int port, int inputPid);
+int WxInitSDK(bool debug, bool multi, int port, int inputPid);
 int WxDestroySDK();

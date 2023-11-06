@@ -176,7 +176,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)rpc\proto
-$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
+$(SolutionDir)rpc\tool\protoc.exe --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
@@ -273,6 +273,5 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     <ResourceCompile Include="spy.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

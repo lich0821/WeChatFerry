@@ -21,7 +21,7 @@ typedef struct PortPath {
 } PortPath_t;
 
 DWORD GetWeChatPid();
-int OpenWeChat(DWORD *pid);
+int OpenWeChat(DWORD *pid, bool multi);
 int GetWeChatVersion(wchar_t *version);
 int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size);
 DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);

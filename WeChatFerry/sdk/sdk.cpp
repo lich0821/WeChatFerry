@@ -33,7 +33,7 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
     return 0;
 }
 
-int WxInitSDK(bool debug, int port, int inputPid)
+int WxInitSDK(bool debug, bool multi, int port, int inputPid)
 {
     int status  = 0;
     DWORD wcPid = 0;
@@ -46,7 +46,7 @@ int WxInitSDK(bool debug, int port, int inputPid)
     if(inputPid != 0) {
         wcPid = inputPid;
     } else {
-        status = OpenWeChat(&wcPid);
+        status = OpenWeChat(&wcPid, multi);
         if (status != 0) {
             MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
             return status;
