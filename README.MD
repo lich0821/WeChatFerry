@@ -41,7 +41,7 @@
 * 删除群成员
 * 解密图片
 * 获取朋友圈消息
-* 某功能（Breaking Change）
+* 下载图片、文件、视频
 
 </details>
 
@@ -59,10 +59,15 @@
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
 ## 快速开始
-下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)。根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
+### Python
+[![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
-### Go
-参考 [Go README.MD](clients/go/README.md)
+* 安装
+```sh
+pip install --upgrade wcferry
+```
+
+* 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### HTTP
 [![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
@@ -87,18 +92,14 @@ wcfhttp
 wcfhttp --cb http://your_host:your_port/callback
 ```
 
+---
+其余客户端，可下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)，根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
+
+### Go
+参考 [Go README.MD](clients/go/README.md)
+
 ### Java
 参考 [Java README.MD](clients/java/README.MD)
-
-### Python
-[![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
-
-* 安装
-```sh
-pip install --upgrade wcferry
-```
-
-* 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### Rust
 参考 [Rust README.MD](clients/rust/README.MD)
@@ -139,10 +140,16 @@ vcpkg integrate install
 ### 编译
 使用 VS2019 打开工程，编译即可。
 
-注：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
+**注**：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
 
 ### 运行
-双击 `Release` 里的 `launcher.exe`，`启动`。
+有两种方式（二选一）：
+1. 运行 `wcf.exe` 启动
+```sh
+wcf.exe --help
+```
+
+2. 双击 `Release` 里的 `launcher.exe`，`启动`。
 
 ## 项目结构
 ```sh
@@ -207,8 +214,8 @@ Rust 客户端。
 
 ## 版本更新
 
-### v39.0.3 (2023.09.28)
-* 修复登录账号昵称超长报错问题
+### v39.0.4 (2023.11.21)
+* 下载图片、文件和视频
 
 <details><summary>点击查看更多</summary>
 
@@ -219,6 +226,9 @@ Rust 客户端。
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.0.3 (2023.09.28)
+* 修复登录账号昵称超长报错问题
 
 ### v39.0.2 (2023.07.16)
 * 修复朋友圈消息 `is_group` 为 `True` 问题
