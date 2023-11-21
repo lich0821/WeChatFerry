@@ -2,6 +2,7 @@
 
 #include "framework.h"
 #include <condition_variable>
+#include <filesystem>
 #include <mutex>
 #include <queue>
 
@@ -10,6 +11,8 @@
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
+
+namespace fs = std::filesystem;
 
 // Defined in rpc_server.cpp
 extern bool gIsListening, gIsListeningPyq;
@@ -125,12 +128,14 @@ void DispatchMsg(DWORD reg)
 
     wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
     if (!wxMsg.thumb.empty()) {
-        wxMsg.thumb = GetHomePath() + wxMsg.thumb;
+        wxMsg.thumb = fs::path(GetHomePath() + wxMsg.thumb).make_preferred().string();
+        replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
     }
 
     wxMsg.extra = GetStringByStrAddr(reg + g_WxCalls.recvMsg.extra);
     if (!wxMsg.extra.empty()) {
-        wxMsg.extra = GetHomePath() + wxMsg.extra;
+        wxMsg.extra = fs::path(GetHomePath() + wxMsg.extra).make_preferred().string();
+        replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
     }
 
     {
