@@ -511,6 +511,29 @@ bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_DOWNLOAD_ATTACH;
+    rsp.which_msg = Response_str_tag;
+
+    uint64_t id  = att.id;
+    string thumb = string(att.thumb ? att.thumb : "");
+    string extra = string(att.extra ? att.extra : "");
+
+    string path = DownloadAttach(id, thumb, extra);
+    rsp.msg.str = (char *)path.c_str();
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -681,6 +704,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_REFRESH_PYQ: {
             LOG_DEBUG("[Functions_FUNC_REFRESH_PYQ]");
             ret = func_refresh_pyq(req.msg.ui64, out, out_len);
+            break;
+        }
+        case Functions_FUNC_DOWNLOAD_ATTACH: {
+            LOG_DEBUG("[Functions_FUNC_DOWNLOAD_ATTACH]");
+            ret = func_download_attach(req.msg.att, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {

@@ -159,3 +159,39 @@ DbRows_t ExecDbQuery(const string db, const string sql)
     }
     return rows;
 }
+
+int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
+{
+    DWORD msgMgrAddr = GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    DWORD dbIndex    = GET_DWORD(msgMgrAddr + 0x38);
+    DWORD pStart     = GET_DWORD(msgMgrAddr + 0x2C);
+
+    *dbIdx = 0;
+    for (int i = dbIndex - 1; i >= 0; i--) { // 从后往前遍历
+        DWORD dbAddr = GET_DWORD(pStart + i * 0x04);
+        if (dbAddr) {
+            string dbname = Wstring2String(GET_WSTRING(dbAddr));
+            dbMap[dbname] = GET_DWORD(dbAddr + 0x60);
+            string sql    = "SELECT localId FROM MSG WHERE MsgSvrID=" + to_string(id) + ";";
+            DbRows_t rows = ExecDbQuery(dbname, sql);
+            if (rows.empty()) {
+                continue;
+            }
+            DbRow_t row = rows.front();
+            if (row.empty()) {
+                continue;
+            }
+            DbField_t field = row.front();
+            if ((field.column.compare("localId") != 0) && (field.type != 1)) {
+                continue;
+            }
+
+            *localId = strtoul((const char *)(field.content.data()), NULL, 10);
+            *dbIdx   = GET_DWORD(GET_DWORD(dbAddr + 0x18) + 0x144);
+
+            return 0;
+        }
+    }
+
+    return -1;
+}

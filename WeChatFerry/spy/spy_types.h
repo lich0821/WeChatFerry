@@ -102,6 +102,15 @@ typedef struct Pyq {
     DWORD step;
 } Pyq_t;
 
+typedef struct DlAttach{
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+    DWORD call4;
+    DWORD call5;
+    DWORD call6;
+} DlAttach_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -118,6 +127,7 @@ typedef struct WxCalls {
     RoomMember_t drm;    // 删除群成员
     TF_t tf;             // 接收转账
     Pyq_t pyq;           // 接收朋友圈消息
+    DlAttach_t da;       // 下载资源（图片、文件、视频）
 } WxCalls_t;
 
 typedef struct WxString {

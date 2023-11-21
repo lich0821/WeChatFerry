@@ -23,6 +23,7 @@ enum Functions {
     FUNC_ACCEPT_FRIEND    = 0x51;
     FUNC_RECV_TRANSFER    = 0x52;
     FUNC_REFRESH_PYQ      = 0x53;
+    FUNC_DOWNLOAD_ATTACH  = 0x54;
     FUNC_DECRYPT_IMAGE    = 0x60;
     FUNC_ADD_ROOM_MEMBERS = 0x70;
     FUNC_DEL_ROOM_MEMBERS = 0x71;
@@ -45,6 +46,7 @@ message Request
         Transfer tf    = 11;
         uint64 ui64    = 12; // 64 位整数，通用
         bool flag      = 13;
+        AttachMsg att  = 14;
     }
 }
 
@@ -175,4 +177,11 @@ message Transfer
     string wxid = 1; // 转账人
     string tfid = 2; // 转账id transferid
     string taid = 3; // Transaction id
+}
+
+message AttachMsg
+{
+    uint64 id    = 1; // 消息 id
+    string thumb = 2; // 消息中的 thumb
+    string extra = 3; // 消息中的 extra
 }
