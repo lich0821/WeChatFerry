@@ -12,7 +12,7 @@ from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.3.0"
+__version__ = "39.0.4.0"
 
 
 class Msg(BaseModel):
@@ -64,6 +64,7 @@ class Http(FastAPI):
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
+        self.add_api_route("/attachment/", self.download_attachment, methods=["POST"], summary="下载图片、文件和视频")
 
         self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
@@ -372,6 +373,26 @@ class Http(FastAPI):
         """
         ret = self.wcf.decrypt_image(src, dst)
         return {"status": ret, "message": "成功"if ret else "失败"}
+
+    def download_attachment(self,
+                            id: int = Body("0", description="消息中的id"),
+                            thumb: str = Body("C:/...", description="消息中的 thumb"),
+                            extra: str = Body("C:/...", description="消息中的 extra")) -> dict:
+        """下载附件（图片、视频、文件）
+
+        Args:
+            id (int): 消息中 id
+            thumb (str): 消息中的 thumb
+            extra (str): 消息中的 extra
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        ret = self.wcf.download_attach(id, thumb, extra)
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"path": ret}}
+
+        return {"status": -1, "message": "失败，原因见日志"}
 
     def get_chatroom_members(self, roomid: str = Query("xxxxxxxx@chatroom", description="群的 id")) -> dict:
         """获取群成员
