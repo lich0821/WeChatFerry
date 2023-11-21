@@ -540,7 +540,7 @@ class Wcf():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
                     cnt["wxid"].startswith("gh_") or    # 公众号
                     cnt["wxid"] in not_friends.keys()   # 其他杂号
-                    ):
+                ):
                 continue
             friends.append(cnt)
 
@@ -579,6 +579,25 @@ class Wcf():
         req.ui64 = id
         rsp = self._send_request(req)
         return rsp.status
+
+    def download_attach(self, id: int, thumb: str, extra: str) -> str:
+        """下载附件（图片、视频、文件）
+
+        Args:
+            id (int): 消息中 id
+            thumb (str): 消息中的 thumb
+            extra (str): 消息中的 extra
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_DOWNLOAD_ATTACH  # FUNC_DOWNLOAD_ATTACH
+        req.att.id = id
+        req.att.thumb = thumb
+        req.att.extra = extra
+        rsp = self._send_request(req)
+        return rsp.str
 
     def decrypt_image(self, src: str, dst: str) -> bool:
         """解密图片:
