@@ -12,7 +12,7 @@ from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.4.0"
+__version__ = "39.0.5.0"
 
 
 class Msg(BaseModel):
