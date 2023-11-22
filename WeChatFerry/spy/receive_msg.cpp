@@ -2,7 +2,6 @@
 
 #include "framework.h"
 #include <condition_variable>
-#include <filesystem>
 #include <mutex>
 #include <queue>
 
@@ -11,8 +10,6 @@
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
-
-namespace fs = std::filesystem;
 
 // Defined in rpc_server.cpp
 extern bool gIsListening, gIsListeningPyq;
@@ -99,43 +96,48 @@ void UnHookAddress(DWORD hookAddr, CHAR restoreCode[5])
 void DispatchMsg(DWORD reg)
 {
     WxMsg_t wxMsg;
+    try {
+        wxMsg.id      = GET_QWORD(reg + g_WxCalls.recvMsg.msgId);
+        wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
+        wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
+        wxMsg.ts      = GET_DWORD(reg + g_WxCalls.recvMsg.ts);
+        wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
+        wxMsg.sign    = GetStringByStrAddr(reg + g_WxCalls.recvMsg.sign);
+        wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
 
-    wxMsg.id      = GET_QWORD(reg + g_WxCalls.recvMsg.msgId);
-    wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
-    wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
-    wxMsg.ts      = GET_DWORD(reg + g_WxCalls.recvMsg.ts);
-    wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
-    wxMsg.sign    = GetStringByStrAddr(reg + g_WxCalls.recvMsg.sign);
-    wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
-
-    string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
-    if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
-        wxMsg.is_group = true;
-        wxMsg.roomid   = roomid;
-        if (wxMsg.is_self) {
-            wxMsg.sender = GetSelfWxid();
+        string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
+        if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
+            wxMsg.is_group = true;
+            wxMsg.roomid   = roomid;
+            if (wxMsg.is_self) {
+                wxMsg.sender = GetSelfWxid();
+            } else {
+                wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxid);
+            }
         } else {
-            wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxid);
+            wxMsg.is_group = false;
+            if (wxMsg.is_self) {
+                wxMsg.sender = GetSelfWxid();
+            } else {
+                wxMsg.sender = roomid;
+            }
         }
-    } else {
-        wxMsg.is_group = false;
-        if (wxMsg.is_self) {
-            wxMsg.sender = GetSelfWxid();
-        } else {
-            wxMsg.sender = roomid;
+
+        wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
+        if (!wxMsg.thumb.empty()) {
+            wxMsg.thumb = GetHomePath() + wxMsg.thumb;
+            replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
         }
-    }
 
-    wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
-    if (!wxMsg.thumb.empty()) {
-        wxMsg.thumb = fs::path(GetHomePath() + wxMsg.thumb).make_preferred().string();
-        replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
-    }
-
-    wxMsg.extra = GetStringByStrAddr(reg + g_WxCalls.recvMsg.extra);
-    if (!wxMsg.extra.empty()) {
-        wxMsg.extra = fs::path(GetHomePath() + wxMsg.extra).make_preferred().string();
-        replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
+        wxMsg.extra = GetStringByStrAddr(reg + g_WxCalls.recvMsg.extra);
+        if (!wxMsg.extra.empty()) {
+            wxMsg.extra = GetHomePath() + wxMsg.extra;
+            replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
+        }
+    } catch (const std::exception &e) {
+        LOG_ERROR(GB2312ToUtf8(e.what()));
+    } catch (...) {
+        LOG_ERROR("Unknow exception.");
     }
 
     {
