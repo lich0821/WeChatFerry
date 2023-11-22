@@ -35,6 +35,21 @@ string Wstring2String(wstring ws)
     return s;
 }
 
+string GB2312ToUtf8(const char *gb2312)
+{
+    int size_needed = 0;
+
+    size_needed = MultiByteToWideChar(CP_ACP, 0, gb2312, -1, NULL, 0);
+    wstring ws(size_needed, 0);
+    MultiByteToWideChar(CP_ACP, 0, gb2312, -1, &ws[0], size_needed);
+
+    size_needed = WideCharToMultiByte(CP_UTF8, 0, &ws[0], -1, NULL, 0, NULL, NULL);
+    string s(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &ws[0], -1, &s[0], size_needed, NULL, NULL);
+
+    return s;
+}
+
 static int GetWeChatPath(wchar_t *path)
 {
     int ret   = -1;

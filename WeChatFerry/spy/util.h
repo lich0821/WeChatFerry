@@ -28,6 +28,7 @@ DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);
 std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);
 std::wstring String2Wstring(std::string s);
 std::string Wstring2String(std::wstring ws);
+std::string GB2312ToUtf8(const char *gb2312);
 std::string GetStringByAddress(DWORD address);
 std::string GetStringByStrAddr(DWORD addr);
 std::string GetStringByWstrAddr(DWORD addr);
