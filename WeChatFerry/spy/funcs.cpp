@@ -260,16 +260,8 @@ string DownloadAttach(uint64_t id, string thumb, string extra)
     wstring wsSavePath  = String2Wstring(save_path);
     wstring wsThumbPath = String2Wstring(thumb_path);
 
-    WxString_t wxSavePath  = { 0 };
-    WxString_t wxThumbPath = { 0 };
-
-    wxSavePath.text     = (wchar_t *)wsSavePath.c_str();
-    wxSavePath.size     = wsSavePath.size();
-    wxSavePath.capacity = wsSavePath.capacity();
-
-    wxThumbPath.text     = (wchar_t *)wsThumbPath.c_str();
-    wxThumbPath.size     = wsThumbPath.size();
-    wxThumbPath.capacity = wsThumbPath.capacity();
+    WxString wxSavePath(wsSavePath);
+    WxString wxThumbPath(wsThumbPath);
 
     int temp = 1;
     memcpy(&buff[0x19C], &wxThumbPath, sizeof(wxThumbPath));

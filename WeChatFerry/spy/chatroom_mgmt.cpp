@@ -1,4 +1,4 @@
-#include "framework.h"
+﻿#include "framework.h"
 #include <sstream>
 #include <vector>
 
@@ -24,24 +24,18 @@ int AddChatroomMember(string roomid, string wxids)
     DWORD addRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
     DWORD addRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
 
-    DWORD temp           = 0;
-    WxString_t txtRoomid = { 0 };
-    wstring wsRoomid     = String2Wstring(roomid);
-    txtRoomid.text       = (wchar_t *)wsRoomid.c_str();
-    txtRoomid.size       = wsRoomid.size();
-    txtRoomid.capacity   = wsRoomid.capacity();
+    DWORD temp       = 0;
+    wstring wsRoomid = String2Wstring(roomid);
+    WxString txtRoomid(wsRoomid);
 
     vector<wstring> vMembers;
-    vector<WxString_t> vTxtMembers;
+    vector<WxString> vTxtMembers;
     wstringstream wss(String2Wstring(wxids));
     while (wss.good()) {
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
-        WxString_t txtMember = { 0 };
-        txtMember.text       = (wchar_t *)vMembers.back().c_str();
-        txtMember.size       = vMembers.back().size();
-        txtMember.capacity   = vMembers.back().capacity();
+        WxString txtMember(vMembers.back());
         vTxtMembers.push_back(txtMember);
     }
 
@@ -84,24 +78,18 @@ int DelChatroomMember(string roomid, string wxids)
     DWORD delRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.drm.call2;
     DWORD delRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.drm.call3;
 
-    DWORD temp           = 0;
-    WxString_t txtRoomid = { 0 };
-    wstring wsRoomid     = String2Wstring(roomid);
-    txtRoomid.text       = (wchar_t *)wsRoomid.c_str();
-    txtRoomid.size       = wsRoomid.size();
-    txtRoomid.capacity   = wsRoomid.capacity();
+    DWORD temp       = 0;
+    wstring wsRoomid = String2Wstring(roomid);
+    WxString txtRoomid(wsRoomid);
 
     vector<wstring> vMembers;
-    vector<WxString_t> vTxtMembers;
+    vector<WxString> vTxtMembers;
     wstringstream wss(String2Wstring(wxids));
     while (wss.good()) {
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
-        WxString_t txtMember = { 0 };
-        txtMember.text       = (wchar_t *)vMembers.back().c_str();
-        txtMember.size       = vMembers.back().size();
-        txtMember.capacity   = vMembers.back().capacity();
+        WxString txtMember(vMembers.back());
         vTxtMembers.push_back(txtMember);
     }
 

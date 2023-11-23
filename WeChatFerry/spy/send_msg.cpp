@@ -15,8 +15,6 @@ void SendTextMessage(string wxid, string msg, string atWxids)
 {
     int success        = 0;
     char buffer[0x2D8] = { 0 };
-    WxString_t wxMsg   = { 0 };
-    WxString_t wxWxid  = { 0 };
 
     // 发送消息Call地址 = 微信基址 + 偏移
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendText.call1;
@@ -25,16 +23,10 @@ void SendTextMessage(string wxid, string msg, string atWxids)
 
     wstring wsWxid = String2Wstring(wxid);
     wstring wsMsg  = String2Wstring(msg);
+    WxString wxMsg(wsMsg);
+    WxString wxWxid(wsWxid);
 
-    wxMsg.text     = (wchar_t *)wsMsg.c_str();
-    wxMsg.size     = wsMsg.size();
-    wxMsg.capacity = wsMsg.capacity();
-
-    wxWxid.text     = (wchar_t *)wsWxid.c_str();
-    wxWxid.size     = wsWxid.size();
-    wxWxid.capacity = wsWxid.capacity();
-
-    vector<WxString_t> vTxtAtWxids;
+    vector<WxString> vWxAtWxids;
     if (!atWxids.empty()) {
         vector<wstring> vAtWxids;
         wstringstream wss(String2Wstring(atWxids));
@@ -42,11 +34,8 @@ void SendTextMessage(string wxid, string msg, string atWxids)
             wstring wstr;
             getline(wss, wstr, L',');
             vAtWxids.push_back(wstr);
-            WxString_t txtAtWxid = { 0 };
-            txtAtWxid.text       = (wchar_t *)vAtWxids.back().c_str();
-            txtAtWxid.size       = vAtWxids.back().size();
-            txtAtWxid.capacity   = vAtWxids.back().capacity();
-            vTxtAtWxids.push_back(txtAtWxid);
+            WxString wxAtWxid(vAtWxids.back());
+            vWxAtWxids.push_back(wxAtWxid);
         }
     }
 
@@ -58,7 +47,7 @@ void SendTextMessage(string wxid, string msg, string atWxids)
         push 0x0;
         push 0x0;
         push 0x1;
-        lea eax, vTxtAtWxids;
+        lea eax, vWxAtWxids;
         push eax;
         lea eax, wxMsg;
         push eax;
@@ -78,23 +67,16 @@ void SendImageMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    int success           = 0;
-    DWORD tmpEAX          = 0;
-    char buf[0x2D8]       = { 0 };
-    WxString_t imgWxid    = { 0 };
-    WxString_t imgPath    = { 0 };
-    WxString_t nullbuffer = { 0 };
+    int success     = 0;
+    DWORD tmpEAX    = 0;
+    char buf[0x2D8] = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
-    wstring wspath = String2Wstring(path);
+    wstring wsPath = String2Wstring(path);
 
-    imgWxid.text     = (wchar_t *)wsWxid.c_str();
-    imgWxid.size     = wsWxid.size();
-    imgWxid.capacity = wsWxid.capacity();
-
-    imgPath.text     = (wchar_t *)wspath.c_str();
-    imgPath.size     = wspath.size();
-    imgPath.capacity = wspath.capacity();
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
 
     // 发送图片Call地址 = 微信基址 + 偏移
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
@@ -109,11 +91,11 @@ void SendImageMessage(string wxid, string path)
         mov        tmpEAX,eax;
         lea        eax,nullbuffer;
         mov        ecx,esp;
-        lea        edi,imgPath;
+        lea        edi,wxPath;
         push       eax;
         call       sendCall2;
         mov        ecx,dword ptr [tmpEAX];
-        lea        eax,imgWxid;
+        lea        eax,wxWxid;
         push       edi;
         push       eax;
         lea        eax,buf;
@@ -131,23 +113,16 @@ void SendFileMessage(string wxid, string path)
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
-    int success           = 0;
-    DWORD tmpEAX          = 0;
-    char buffer[0x2D8]    = { 0 };
-    WxString_t fileWxid   = { 0 };
-    WxString_t filePath   = { 0 };
-    WxString_t nullbuffer = { 0 };
+    int success        = 0;
+    DWORD tmpEAX       = 0;
+    char buffer[0x2D8] = { 0 };
 
     wstring wsWxid = String2Wstring(wxid);
-    wstring wspath = String2Wstring(path);
+    wstring wsPath = String2Wstring(path);
 
-    fileWxid.text     = (wchar_t *)wsWxid.c_str();
-    fileWxid.size     = wsWxid.size();
-    fileWxid.capacity = wsWxid.capacity();
-
-    filePath.text     = (wchar_t *)wspath.c_str();
-    filePath.size     = wspath.size();
-    filePath.capacity = wspath.capacity();
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
 
     // 发送文件Call地址 = 微信基址 + 偏移
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
@@ -174,12 +149,12 @@ void SendFileMessage(string wxid, string path)
         mov dword ptr[edi + 0xc], 0;
         mov dword ptr[edi + 0x10], 0;
         sub esp, 0x14;
-        lea eax, filePath;
+        lea eax, wxPath;
         mov ecx, esp;
         push eax;
         call sendCall2;
         sub esp, 0x14;
-        lea eax, fileWxid;
+        lea eax, wxWxid;
         mov ecx, esp;
         push eax;
         call sendCall2;
@@ -209,35 +184,22 @@ void SendXmlMessage(string receiver, string xml, string path, int type)
     DWORD sendXmlCall4 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call4;
     DWORD sendXmlParam = g_WeChatWinDllAddr + g_WxCalls.sendXml.param;
 
-    char buffer[0xFF0]    = { 0 };
-    char nullBuf[0x1C]    = { 0 };
-    WxString_t wxReceiver = { 0 };
-    WxString_t wxXml      = { 0 };
-    WxString_t wxPath     = { 0 };
-    WxString_t wxNull     = { 0 };
-    WxString_t wxSender   = { 0 };
+    char buffer[0xFF0] = { 0 };
+    char nullBuf[0x1C] = { 0 };
 
     wstring wsSender   = String2Wstring(GetSelfWxid());
     wstring wsReceiver = String2Wstring(receiver);
     wstring wsXml      = String2Wstring(xml);
 
-    wxReceiver.text     = (wchar_t *)wsReceiver.c_str();
-    wxReceiver.size     = wsReceiver.size();
-    wxReceiver.capacity = wsReceiver.capacity();
-
-    wxXml.text     = (wchar_t *)wsXml.c_str();
-    wxXml.size     = wsXml.size();
-    wxXml.capacity = wsXml.capacity();
-
-    wxSender.text     = (wchar_t *)wsSender.c_str();
-    wxSender.size     = wsSender.size();
-    wxSender.capacity = wsSender.capacity();
+    WxString wxPath;
+    WxString wxNull;
+    WxString wxXml(wsXml);
+    WxString wxSender(wsSender);
+    WxString wxReceiver(wsReceiver);
 
     if (!path.empty()) {
-        wstring wsPath  = String2Wstring(path);
-        wxPath.text     = (wchar_t *)wsPath.c_str();
-        wxPath.size     = wsPath.size();
-        wxPath.capacity = wsPath.capacity();
+        wstring wsPath = String2Wstring(path);
+        wxPath         = WxString(wsPath);
     }
 
     DWORD sendtype = type;
@@ -281,21 +243,13 @@ void SendEmotionMessage(string wxid, string path)
         return;
     }
 
-    char buffer[0x1C]     = { 0 };
-    WxString_t emoWxid    = { 0 };
-    WxString_t emoPath    = { 0 };
-    WxString_t nullbuffer = { 0 };
+    char buffer[0x1C] = { 0 };
+    wstring wsWxid    = String2Wstring(wxid);
+    wstring wsPath    = String2Wstring(path);
 
-    wstring wsWxid = String2Wstring(wxid);
-    wstring wspath = String2Wstring(path);
-
-    emoWxid.text     = (wchar_t *)wsWxid.c_str();
-    emoWxid.size     = wsWxid.size();
-    emoWxid.capacity = wsWxid.capacity();
-
-    emoPath.text     = (wchar_t *)wspath.c_str();
-    emoPath.size     = wspath.size();
-    emoPath.capacity = wspath.capacity();
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
 
     // 发送文件Call地址 = 微信基址 + 偏移
     DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call1;
@@ -317,7 +271,7 @@ void SendEmotionMessage(string wxid, string path)
         mov dword ptr [esi+0xC], 0x0;
         mov dword ptr [esi+0x10], 0x0;
         push 0x2;
-        lea eax, emoWxid;
+        lea eax, wxWxid;
         sub esp, 0x14;
         mov ecx, esp;
         push eax;
@@ -331,7 +285,7 @@ void SendEmotionMessage(string wxid, string path)
         mov dword ptr [esi+0x10], 0x0;
         sub esp, 0x14;
         mov ecx, esp;
-        lea eax, emoPath;
+        lea eax, wxPath;
         push eax;
         call sendCall1;
         mov ecx, ebx;

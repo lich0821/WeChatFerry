@@ -17,22 +17,12 @@ int ReceiveTransfer(string wxid, string transferid, string transactionid)
 
     char payInfo[0x134] = { 0 };
     wstring wsWxid      = String2Wstring(wxid);
-    WxString_t wxWxid   = { 0 };
-    wxWxid.text         = (wchar_t *)wsWxid.c_str();
-    wxWxid.size         = wsWxid.size();
-    wxWxid.capacity     = wsWxid.capacity();
+    wstring wsTfid      = String2Wstring(transferid);
+    wstring wsTaid      = String2Wstring(transactionid);
 
-    wstring wsTfid    = String2Wstring(transferid);
-    WxString_t wxTfid = { 0 };
-    wxTfid.text       = (wchar_t *)wsTfid.c_str();
-    wxTfid.size       = wsTfid.size();
-    wxTfid.capacity   = wsTfid.capacity();
-
-    wstring wsTaid    = String2Wstring(transactionid);
-    WxString_t wxTaid = { 0 };
-    wxTaid.text       = (wchar_t *)wsTaid.c_str();
-    wxTaid.size       = wsTaid.size();
-    wxTaid.capacity   = wsTaid.capacity();
+    WxString wxWxid(wsWxid);
+    WxString wxTfid(wsTfid);
+    WxString wxTaid(wsTaid);
 
     LOG_DEBUG("Receiving transfer, from: {}, transferid: {}, transactionid: {}", wxid, transferid, transactionid);
     __asm {

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "framework.h"
+#include <string>
 
 typedef struct UserInfoCall {
     DWORD wxid;
@@ -102,7 +103,7 @@ typedef struct Pyq {
     DWORD step;
 } Pyq_t;
 
-typedef struct DlAttach{
+typedef struct DlAttach {
     DWORD call1;
     DWORD call2;
     DWORD call3;
@@ -130,9 +131,27 @@ typedef struct WxCalls {
     DlAttach_t da;       // 下载资源（图片、文件、视频）
 } WxCalls_t;
 
-typedef struct WxString {
-    wchar_t *text;
+struct WxString {
+    const wchar_t *wptr;
     DWORD size;
     DWORD capacity;
-    char fill[8];
-} WxString_t;
+    const char *ptr;
+    DWORD clen;
+    WxString()
+    {
+        wptr     = NULL;
+        size     = 0;
+        capacity = 0;
+        ptr      = NULL;
+        clen     = 0;
+    }
+
+    WxString(std::wstring &ws)
+    {
+        wptr     = ws.c_str();
+        size     = ws.size();
+        capacity = ws.capacity();
+        ptr      = NULL;
+        clen     = 0;
+    }
+};
