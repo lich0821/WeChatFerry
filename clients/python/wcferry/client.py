@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.5.1"
+__version__ = "39.0.6.0"
 
 import atexit
 import base64
@@ -540,7 +540,7 @@ class Wcf():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
                     cnt["wxid"].startswith("gh_") or    # 公众号
                     cnt["wxid"] in not_friends.keys()   # 其他杂号
-                ):
+                    ):
                 continue
             friends.append(cnt)
 
@@ -580,7 +580,7 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
-    def download_attach(self, id: int, thumb: str, extra: str) -> str:
+    def download_attach(self, id: int, thumb: str, extra: str) -> int:
         """下载附件（图片、视频、文件）
 
         Args:
@@ -589,7 +589,7 @@ class Wcf():
             extra (str): 消息中的 extra
 
         Returns:
-            str: 成功返回存储路径；空字符串为失败，原因见日志。
+            int: 0 为成功, 其他失败。
         """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_DOWNLOAD_ATTACH  # FUNC_DOWNLOAD_ATTACH
@@ -597,7 +597,7 @@ class Wcf():
         req.att.thumb = thumb
         req.att.extra = extra
         rsp = self._send_request(req)
-        return rsp.str
+        return rsp.status
 
     def get_info_by_wxid(self, wxid: str) -> dict:
         """通过 wxid 查询微信号昵称等信息
@@ -635,22 +635,48 @@ class Wcf():
 
         return contact
 
-    def decrypt_image(self, src: str, dst: str) -> bool:
+    def decrypt_image(self, src: str, dir: str) -> str:
         """解密图片:
 
         Args:
             src (str): 加密的图片路径
-            dst (str): 解密的图片路径
+            dir (str): 保存图片的目录
 
         Returns:
-            bool: 是否成功
+            str: 解密图片的保存路径
         """
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_DECRYPT_IMAGE  # FUNC_DECRYPT_IMAGE
         req.dec.src = src
-        req.dec.dst = dst
+        req.dec.dst = dir
         rsp = self._send_request(req)
-        return rsp.status == 1
+        return rsp.str
+
+    def download_image(self, id: int, extra: str, dir: str, timeout: int = 30) -> str:
+        """下载图片
+
+        Args:
+            id (int): 消息中 id
+            extra (str): 消息中的 extra
+            dir (str): 存放图片的目录
+            timeout (int): 超时时间（秒）
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        if self.download_attach(id, "", extra) != 0:
+            self.LOG.error(f"下载失败")
+            return ""
+        cnt = 0
+        while cnt < 2 * timeout:
+            path = self.decrypt_image(extra, dir)
+            if path:
+                return path
+            sleep(0.5)
+            cnt += 1
+
+        self.LOG.error(f"下载超时")
+        return ""
 
     def add_chatroom_members(self, roomid: str, wxids: str) -> int:
         """添加群成员
