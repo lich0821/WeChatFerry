@@ -12,7 +12,7 @@ from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.5.0"
+__version__ = "39.0.6.0"
 
 
 class Msg(BaseModel):
@@ -65,6 +65,7 @@ class Http(FastAPI):
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
         self.add_api_route("/attachment/", self.download_attachment, methods=["POST"], summary="下载图片、文件和视频")
+        self.add_api_route("/image/", self.download_image, methods=["POST"], summary="下载图片")
 
         self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
@@ -389,6 +390,28 @@ class Http(FastAPI):
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
         ret = self.wcf.download_attach(id, thumb, extra)
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"path": ret}}
+
+        return {"status": -1, "message": "失败，原因见日志"}
+
+    def download_image(self,
+                       id: int = Body("0", description="消息中的id"),
+                       extra: str = Body("C:/...", description="消息中的 extra"),
+                       dir: str = Body("C:/...", description="保存图片的目录"),
+                       timeout: int = Body("30", description="超时时间（秒）")) -> dict:
+        """下载图片
+
+        Args:
+            id (int): 消息中 id
+            extra (str): 消息中的 extra
+            dir (str): 存放图片的目录
+            timeout (int): 超时时间（秒）
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        ret = self.wcf.download_image(id, extra, dir, timeout)
         if ret:
             return {"status": 0, "message": "成功", "data": {"path": ret}}
 
