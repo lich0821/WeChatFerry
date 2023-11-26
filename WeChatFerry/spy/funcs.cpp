@@ -83,12 +83,15 @@ string DecryptImage(string src, string dir)
     }
 
     string dst = "";
-    if (!dir.empty()) {
-        dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
-    }
 
     try {
-        dst += fs::path(src).stem().string() + ext;
+        if (dir.empty()) {
+            dst = fs::path(src).replace_extension(ext).string();
+        } else {
+            dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+            dst += fs::path(src).stem().string() + ext;
+        }
+
         replace(dst.begin(), dst.end(), '\\', '/');
     } catch (...) {
         LOG_ERROR("Unknow exception.");
@@ -226,11 +229,13 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
             break;
     }
 
-    // 创建父目录，由于路径来源于微信，不做检查
-    fs::create_directory(fs::path(save_path).parent_path().string());
     if (fs::exists(save_path)) { // 不重复下载
         return 0;
     }
+
+    LOG_DEBUG("path: {}", save_path);
+    // 创建父目录，由于路径来源于微信，不做检查
+    fs::create_directory(fs::path(save_path).parent_path().string());
 
     wstring wsSavePath  = String2Wstring(save_path);
     wstring wsThumbPath = String2Wstring(thumb_path);

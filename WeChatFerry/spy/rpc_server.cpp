@@ -556,17 +556,20 @@ bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
     return true;
 }
 
-bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
+bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_DECRYPT_IMAGE;
     rsp.which_msg = Response_str_tag;
 
-    if ((src != nullptr) && (dst != nullptr)) {
+    string src = string(dec.src ? dec.src : "");
+    string dst = string(dec.dst ? dec.dst : "");
+    if (src.empty()) {
+        LOG_ERROR("Empty src path.");
+        rsp.msg.str = (char *)"";
+    } else {
         string path = DecryptImage(src, dst);
         rsp.msg.str = (char *)path.c_str();
-    } else {
-        rsp.msg.str = (char *)"";
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -741,7 +744,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_DECRYPT_IMAGE: {
             LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
-            ret = func_decrypt_image(req.msg.dec.src, req.msg.dec.dst, out, out_len);
+            ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
         }
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
@@ -792,24 +795,30 @@ static int RunServer()
             LOG_ERROR("nng_recv error: {}", nng_strerror(rv));
             break;
         }
+        try {
 
-        // LOG_BUFFER(in, in_len);
-        if (dispatcher(in, in_len, gBuffer, &out_len)) {
-            LOG_DEBUG("Send data length {}", out_len);
-            // LOG_BUFFER(gBuffer, out_len);
-            rv = nng_send(sock, gBuffer, out_len, 0);
-            if (rv != 0) {
-                LOG_ERROR("nng_send: {}", nng_strerror(rv));
-            }
+            // LOG_BUFFER(in, in_len);
+            if (dispatcher(in, in_len, gBuffer, &out_len)) {
+                LOG_DEBUG("Send data length {}", out_len);
+                // LOG_BUFFER(gBuffer, out_len);
+                rv = nng_send(sock, gBuffer, out_len, 0);
+                if (rv != 0) {
+                    LOG_ERROR("nng_send: {}", nng_strerror(rv));
+                }
 
-        } else {
-            // Error
-            LOG_ERROR("Dispatcher failed...");
-            rv = nng_send(sock, gBuffer, 0, 0);
-            if (rv != 0) {
-                LOG_ERROR("nng_send: {}", nng_strerror(rv));
+            } else {
+                // Error
+                LOG_ERROR("Dispatcher failed...");
+                rv = nng_send(sock, gBuffer, 0, 0);
+                if (rv != 0) {
+                    LOG_ERROR("nng_send: {}", nng_strerror(rv));
+                }
+                // break;
             }
-            // break;
+        } catch (const std::exception &e) {
+            LOG_ERROR(GB2312ToUtf8(e.what()));
+        } catch (...) {
+            LOG_ERROR("Unknow exception.");
         }
         nng_free(in, in_len);
     }
