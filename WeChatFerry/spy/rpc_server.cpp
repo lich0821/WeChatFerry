@@ -521,8 +521,7 @@ bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
     string thumb = string(att.thumb ? att.thumb : "");
     string extra = string(att.extra ? att.extra : "");
 
-    string path = DownloadAttach(id, thumb, extra);
-    rsp.msg.str = (char *)path.c_str();
+    rsp.msg.status = DownloadAttach(id, thumb, extra);
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -559,14 +558,15 @@ bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
 
 bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_DECRYPT_IMAGE;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_DECRYPT_IMAGE;
+    rsp.which_msg = Response_str_tag;
 
-    rsp.msg.status = (int)DecryptImage(src, dst);
-    if (rsp.msg.status != 1) {
-        LOG_ERROR("DecryptImage failed.");
+    if ((src != nullptr) && (dst != nullptr)) {
+        string path = DecryptImage(src, dst);
+        rsp.msg.str = (char *)path.c_str();
+    } else {
+        rsp.msg.str = (char *)"";
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);

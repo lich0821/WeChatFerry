@@ -53,52 +53,11 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
     return ""; // 错误
 }
 
-bool DecryptImage(string src, string dst)
+string DecryptImage(string src, string dir)
 {
     ifstream in(src.c_str(), ios::binary);
     if (!in.is_open()) {
-        LOG_ERROR("Failed to open file {}", src);
-        return false;
-    }
-
-    filebuf *pfb = in.rdbuf();
-    size_t size  = pfb->pubseekoff(0, ios::end, ios::in);
-    pfb->pubseekpos(0, ios::in);
-
-    char *pBuf = new char[size];
-    pfb->sgetn(pBuf, size);
-    in.close();
-
-    uint8_t key = 0x00;
-    string ext  = get_key(pBuf[0], pBuf[1], &key);
-    if (ext.empty()) {
-        LOG_ERROR("Failed to get key.");
-        return false;
-    }
-
-    for (size_t i = 0; i < size; i++) {
-        pBuf[i] ^= key;
-    }
-
-    ofstream out((dst + ext).c_str(), ios::binary);
-    if (!out.is_open()) {
-        LOG_ERROR("Failed to open file {}", dst);
-        return false;
-    }
-
-    out.write(pBuf, size);
-    out.close();
-
-    delete[] pBuf;
-
-    return true;
-}
-
-static string DecImage(string src)
-{
-    ifstream in(src.c_str(), ios::binary);
-    if (!in.is_open()) {
-        LOG_ERROR("Failed to open file {}", src);
+        LOG_ERROR("Failed to read file {}", src);
         return "";
     }
 
@@ -106,7 +65,9 @@ static string DecImage(string src)
     size_t size  = pfb->pubseekoff(0, ios::end, ios::in);
     pfb->pubseekpos(0, ios::in);
 
-    char *pBuf = new char[size];
+    vector<char> buff;
+    buff.reserve(size);
+    char *pBuf = buff.data();
     pfb->sgetn(pBuf, size);
     in.close();
 
@@ -120,17 +81,28 @@ static string DecImage(string src)
     for (size_t i = 0; i < size; i++) {
         pBuf[i] ^= key;
     }
-    string dst = fs::path(src).replace_extension(ext).string();
+
+    string dst = "";
+    if (!dir.empty()) {
+        dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+    }
+
+    try {
+        dst += fs::path(src).stem().string() + ext;
+        replace(dst.begin(), dst.end(), '\\', '/');
+    } catch (...) {
+        LOG_ERROR("Unknow exception.");
+        return "";
+    }
+
     ofstream out(dst.c_str(), ios::binary);
     if (!out.is_open()) {
-        LOG_ERROR("Failed to open file {}", dst);
+        LOG_ERROR("Failed to write file {}", dst);
         return "";
     }
 
     out.write(pBuf, size);
     out.close();
-
-    delete[] pBuf; // memory leak
 
     return dst;
 }
@@ -197,14 +169,14 @@ int RefreshPyq(uint64_t id)
     return GetNextPage(id);
 }
 
-string DownloadAttach(uint64_t id, string thumb, string extra)
+int DownloadAttach(uint64_t id, string thumb, string extra)
 {
     int status = -1;
     uint64_t localId;
     uint32_t dbIdx;
     if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
-        return "";
+        return status;
     }
 
     char buff[0x2D8] = { 0 };
@@ -286,23 +258,5 @@ string DownloadAttach(uint64_t id, string thumb, string extra)
         popad;
     }
 
-    if (status != 0)
-    {
-        return "";
-    }
-
-    // 保存成功，如果是图片则需要解密。考虑异步？
-    if (type == 0x03) {
-        uint32_t cnt = 0;
-        while (cnt < 10) {
-            if (fs::exists(save_path)) {
-                return DecImage(save_path);
-            }
-            Sleep(500);
-            cnt++;
-        }
-        return "";
-    }
-
-    return save_path;
+    return status;
 }
