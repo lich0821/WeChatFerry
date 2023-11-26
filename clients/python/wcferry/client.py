@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.5.0"
+__version__ = "39.0.5.1"
 
 import atexit
 import base64
@@ -40,7 +40,7 @@ def _retry():
                     logerror(e)
                     ret = wcf_pb2.Response()
             except Exception as e:  # 其他异常，退出
-                logerror(e)
+                logerror(f"Exiting... {e}")
                 sys.exit(-1)
 
             return ret
@@ -84,8 +84,8 @@ class Wcf():
 
         # 连接 RPC
         self.cmd_socket = pynng.Pair1()  # Client --> Server，发送消息
-        self.cmd_socket.send_timeout = 2000  # 发送 2 秒超时
-        self.cmd_socket.recv_timeout = 2000  # 接收 2 秒超时
+        self.cmd_socket.send_timeout = 5000  # 发送 5 秒超时
+        self.cmd_socket.recv_timeout = 5000  # 接收 5 秒超时
         try:
             self.cmd_socket.dial(self.cmd_url, block=True)
         except Exception as e:
@@ -93,8 +93,8 @@ class Wcf():
             os._exit(-2)
 
         self.msg_socket = pynng.Pair1()  # Server --> Client，接收消息
-        self.msg_socket.send_timeout = 2000  # 发送 2 秒超时
-        self.msg_socket.recv_timeout = 2000  # 接收 2 秒超时
+        self.msg_socket.send_timeout = 5000  # 发送 5 秒超时
+        self.msg_socket.recv_timeout = 5000  # 接收 5 秒超时
         self.msg_url = self.cmd_url.replace(str(self.port), str(self.port + 1))
 
         atexit.register(self.cleanup)  # 退出的时候停止消息接收，防止资源占用
