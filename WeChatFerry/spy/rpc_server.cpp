@@ -534,6 +534,29 @@ bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
+{
+    /*借用 Functions_FUNC_GET_CONTACTS */
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_CONTACT_INFO;
+    rsp.which_msg = Response_contacts_tag;
+
+    vector<RpcContact_t> contacts;
+    contacts.push_back(GetContactByWxid(wxid));
+
+    rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
+    rsp.msg.contacts.contacts.arg          = &contacts;
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_decrypt_image(char *src, char *dst, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -709,6 +732,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_DOWNLOAD_ATTACH: {
             LOG_DEBUG("[Functions_FUNC_DOWNLOAD_ATTACH]");
             ret = func_download_attach(req.msg.att, out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_CONTACT_INFO: {
+            LOG_DEBUG("[Functions_FUNC_GET_CONTACT_INFO]");
+            ret = func_get_contact_info(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {

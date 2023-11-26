@@ -141,3 +141,45 @@ int AcceptNewFriend(string v3, string v4, int scene)
 
     return success; // 成功返回 1
 }
+
+/*没啥用，非好友获取不到*/
+RpcContact_t GetContactByWxid(string wxid)
+{
+    RpcContact_t contact;
+    char buff[0x440] = { 0 };
+    wstring wsWxid   = String2Wstring(wxid);
+    WxString pri(wsWxid);
+    DWORD contact_mgr_addr  = g_WeChatWinDllAddr + 0x75A4A0;
+    DWORD get_contact_addr  = g_WeChatWinDllAddr + 0xC04E00;
+    DWORD free_contact_addr = g_WeChatWinDllAddr + 0xEA7880;
+    __asm {
+        PUSHAD
+        PUSHFD
+        CALL       contact_mgr_addr
+        LEA        ECX,buff
+        PUSH       ECX
+        LEA        ECX,pri
+        PUSH       ECX
+        MOV        ECX,EAX
+        CALL       get_contact_addr
+        POPFD
+        POPAD
+    }
+
+    contact.wxid   = wxid;
+    contact.code   = GetStringByWstrAddr((DWORD)buff + g_WxCalls.contact.wxCode);
+    contact.remark = GetStringByWstrAddr((DWORD)buff + g_WxCalls.contact.wxRemark);
+    contact.name   = GetStringByWstrAddr((DWORD)buff + g_WxCalls.contact.wxName);
+    contact.gender = GET_DWORD((DWORD)buff + 0x148);
+
+    __asm {
+        PUSHAD
+        PUSHFD
+        LEA        ECX,buff
+        CALL       free_contact_addr
+        POPFD
+        POPAD
+    }
+
+    return contact;
+}

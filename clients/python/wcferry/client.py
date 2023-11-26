@@ -599,6 +599,42 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.str
 
+    def get_info_by_wxid(self, wxid: str) -> dict:
+        """通过 wxid 查询微信号昵称等信息
+
+        Args:
+            wxid (str): 联系人 wxid
+
+        Returns:
+            dict: {wxid, code, name, gender}
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_GET_CONTACT_INFO  # FUNC_GET_CONTACT_INFO
+        req.str = wxid
+        rsp = self._send_request(req)
+        contacts = json_format.MessageToDict(rsp.contacts).get("contacts", [])
+
+        contact = {}
+        for cnt in contacts:
+            gender = cnt.get("gender", "")
+            if gender == 1:
+                gender = "男"
+            elif gender == 2:
+                gender = "女"
+            else:
+                gender = ""
+            contact = {
+                "wxid": cnt.get("wxid", ""),
+                "code": cnt.get("code", ""),
+                "remark": cnt.get("remark", ""),
+                "name": cnt.get("name", ""),
+                "country": cnt.get("country", ""),
+                "province": cnt.get("province", ""),
+                "city": cnt.get("city", ""),
+                "gender": gender}
+
+        return contact
+
     def decrypt_image(self, src: str, dst: str) -> bool:
         """解密图片:
 
