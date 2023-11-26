@@ -228,6 +228,9 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
 
     // 创建父目录，由于路径来源于微信，不做检查
     fs::create_directory(fs::path(save_path).parent_path().string());
+    if (fs::exists(save_path)) { // 不重复下载
+        return 0;
+    }
 
     wstring wsSavePath  = String2Wstring(save_path);
     wstring wsThumbPath = String2Wstring(thumb_path);
