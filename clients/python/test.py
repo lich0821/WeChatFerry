@@ -26,7 +26,7 @@ def process_msg(wcf: Wcf):
 
 def main():
     LOG.info("Start demo...")
-    wcf = Wcf(host="192.168.1.104", debug=True)             # 默认连接本地服务
+    wcf = Wcf(debug=True)             # 默认连接本地服务
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
