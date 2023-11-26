@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from queue import Empty
 from threading import Thread
 from time import sleep
 
 from wcferry import Wcf
 
-logging.basicConfig(level='DEBUG', format="%(asctime)s %(message)s")
+logging.basicConfig(level='DEBUG', format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 LOG = logging.getLogger("Demo")
 
 
@@ -16,15 +17,16 @@ def process_msg(wcf: Wcf):
     while wcf.is_receiving_msg():
         try:
             msg = wcf.get_msg()
+            LOG.info(msg)  # 简单打印
+        except Empty:
+            continue  # Empty message
         except Exception as e:
-            continue
-
-        LOG.info(msg)  # 简单打印
+            LOG.error(f"Receiving message error: {e}")
 
 
 def main():
     LOG.info("Start demo...")
-    wcf = Wcf(debug=True)             # 默认连接本地服务
+    wcf = Wcf(host="192.168.1.104", debug=True)             # 默认连接本地服务
 
     sleep(5)  # 等微信加载好，以免信息显示异常
     LOG.info(f"已经登录: {True if wcf.is_login() else False}")
@@ -76,9 +78,11 @@ def main():
     wcf.refresh_pyq(0)  # 刷新朋友圈第一页
     # wcf.refresh_pyq(id)  # 从 id 开始刷新朋友圈
 
-    # 一直运行
-    wcf.keep_running()
+    return wcf
 
 
 if __name__ == "__main__":
-    main()
+    wcf = main()
+
+    # 一直运行
+    wcf.keep_running()
