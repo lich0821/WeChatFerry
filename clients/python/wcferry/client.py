@@ -635,6 +635,21 @@ class Wcf():
 
         return contact
 
+    def revoke_msg(self, id: int = 0) -> int:
+        """撤回消息
+
+        Args:
+            id (int): 待撤回消息的 id
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_REVOKE_MSG  # FUNC_REVOKE_MSG
+        req.ui64 = id
+        rsp = self._send_request(req)
+        return rsp.status
+
     def decrypt_image(self, src: str, dir: str) -> str:
         """解密图片:
 

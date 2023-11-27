@@ -268,3 +268,48 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
 
     return status;
 }
+
+int RevokeMsg(uint64_t id)
+{
+    int status = -1;
+    uint64_t localId;
+    uint32_t dbIdx;
+    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
+        return status;
+    }
+
+    char chat_msg[0x2D8] = { 0 };
+
+    DWORD rmCall1 = g_WeChatWinDllAddr + g_WxCalls.rm.call1;
+    DWORD rmCall2 = g_WeChatWinDllAddr + g_WxCalls.rm.call2;
+    DWORD rmCall3 = g_WeChatWinDllAddr + g_WxCalls.rm.call3;
+    DWORD rmCall4 = g_WeChatWinDllAddr + g_WxCalls.rm.call4;
+    DWORD rmCall5 = g_WeChatWinDllAddr + g_WxCalls.rm.call5;
+
+    __asm {
+        pushad;
+        pushfd;
+        lea        ecx, chat_msg;
+        call       rmCall1;
+        call       rmCall2;
+        push       dword ptr [dbIdx];
+        lea        ecx, chat_msg;
+        push       dword ptr [localId];
+        call       rmCall3;
+        add        esp, 0x8;
+        call       rmCall2;
+        lea        ecx, chat_msg;
+        push       ecx;
+        mov        ecx, eax;
+        call       rmCall4;
+        mov        status, eax;
+        lea        ecx, chat_msg;
+        push       0x0;
+        call       rmCall5;
+        popfd;
+        popad;
+    }
+
+    return status;
+}
