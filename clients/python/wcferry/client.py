@@ -598,7 +598,7 @@ class Wcf():
         return rsp.status
 
     def download_attach(self, id: int, thumb: str, extra: str) -> int:
-        """下载附件（图片、视频、文件）
+        """下载附件（图片、视频、文件）。这方法别直接调用，下载图片使用 `download_image`。
 
         Args:
             id (int): 消息中 id
@@ -668,7 +668,7 @@ class Wcf():
         return rsp.status
 
     def decrypt_image(self, src: str, dir: str) -> str:
-        """解密图片:
+        """解密图片。这方法别直接调用，下载图片使用 `download_image`。
 
         Args:
             src (str): 加密的图片路径
@@ -690,7 +690,7 @@ class Wcf():
         Args:
             id (int): 消息中 id
             extra (str): 消息中的 extra
-            dir (str): 存放图片的目录
+            dir (str): 存放图片的目录（目录不存在会出错）
             timeout (int): 超时时间（秒）
 
         Returns:
