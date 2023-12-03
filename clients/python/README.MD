@@ -43,8 +43,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 ```
 
 ## 版本更新
-### v39.0.6 (2023.11.26)
-* 修复下载图片退出问题
+### v39.0.7 (2023.12.03)
+* 保存语音
 
 <details><summary>点击查看更多</summary>
 
@@ -77,6 +77,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 删除群成员
 * 解密图片
 * 获取朋友圈消息
-* 下载图片、文件、视频
+* 保存图片
+* 保存语音
 
 </details>
