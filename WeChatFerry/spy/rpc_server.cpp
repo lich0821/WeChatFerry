@@ -187,6 +187,30 @@ bool func_get_user_info(uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_AUDIO_MSG;
+    rsp.which_msg = Response_str_tag;
+
+    string path = string(dir ? dir : "");
+    if (path.empty()) {
+        LOG_ERROR("Empty dir.");
+        rsp.msg.str = (char *)"";
+    } else {
+        rsp.msg.str = (char *)GetAudio(id, dir).c_str();
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -690,6 +714,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_GET_USER_INFO: {
             LOG_DEBUG("[Functions_FUNC_GET_USER_INFO]");
             ret = func_get_user_info(out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_AUDIO_MSG: {
+            LOG_DEBUG("[Functions_FUNC_GET_AUDIO_MSG]");
+            ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_TXT: {

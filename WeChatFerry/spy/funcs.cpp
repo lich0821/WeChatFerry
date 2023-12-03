@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "codec.h"
 #include "exec_sql.h"
 #include "funcs.h"
 #include "log.h"
@@ -93,6 +94,8 @@ string DecryptImage(string src, string dir)
         }
 
         replace(dst.begin(), dst.end(), '\\', '/');
+    } catch (const std::exception &e) {
+        LOG_ERROR(GB2312ToUtf8(e.what()));
     } catch (...) {
         LOG_ERROR("Unknow exception.");
         return "";
@@ -312,4 +315,24 @@ int RevokeMsg(uint64_t id)
     }
 
     return status;
+}
+
+string GetAudio(uint64_t id, string dir)
+{
+    string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+    mp3path += to_string(id) + ".mp3";
+    replace(mp3path.begin(), mp3path.end(), '\\', '/');
+    if (fs::exists(mp3path)) { // 不重复下载
+        return mp3path;
+    }
+
+    vector<uint8_t> silk = GetAudioData(id);
+    if (silk.size() == 0) {
+        LOG_ERROR("Empty audio data.");
+        return "";
+    }
+
+    Silk2Mp3(silk, mp3path, 24000);
+
+    return mp3path;
 }

@@ -195,3 +195,33 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
 
     return -1;
 }
+
+vector<uint8_t> GetAudioData(uint64_t id)
+{
+    DWORD msgMgrAddr = GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    DWORD dbIndex    = GET_DWORD(msgMgrAddr + 0x38);
+
+    string sql = "SELECT Buf from Media  WHERE Reserved0=" + to_string(id) + ";";
+    for (int i = dbIndex - 1; i >= 0; i--) {
+        string dbname = "MediaMSG" + to_string(i) + ".db";
+        DbRows_t rows = ExecDbQuery(dbname, sql);
+        if (rows.empty()) {
+            continue;
+        }
+        DbRow_t row = rows.front();
+        if (row.empty()) {
+            continue;
+        }
+        DbField_t field = row.front();
+        if (field.column.compare("Buf") != 0) {
+            continue;
+        }
+
+        // 首字节为 0x02，估计是混淆用的？去掉。
+        vector<uint8_t> rv(field.content.begin() + 1, field.content.end());
+
+        return rv;
+    }
+
+    return vector<uint8_t>();
+}

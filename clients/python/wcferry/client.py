@@ -234,6 +234,23 @@ class Wcf():
 
         return ui
 
+    def get_audio_msg(self, id: int, dir: str) -> str:
+        """获取语音消息并转成 MP3
+        Args:
+            id (int): 语音消息 id
+            dir (str): MP3 保存目录（目录不存在会出错）
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_GET_AUDIO_MSG  # FUNC_GET_AUDIO_MSG
+        req.am.id = id
+        req.am.dir = dir
+        rsp = self._send_request(req)
+
+        return rsp.str
+
     def send_text(self, msg: str, receiver: str, aters: Optional[str] = "") -> int:
         """发送文本消息
 
