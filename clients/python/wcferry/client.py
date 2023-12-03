@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.7.0"
+__version__ = "39.0.7.1"
 
 import atexit
 import base64
@@ -234,22 +234,38 @@ class Wcf():
 
         return ui
 
-    def get_audio_msg(self, id: int, dir: str) -> str:
+    def get_audio_msg(self, id: int, dir: str, timeout: int = 3) -> str:
         """获取语音消息并转成 MP3
         Args:
             id (int): 语音消息 id
             dir (str): MP3 保存目录（目录不存在会出错）
+            timeout (int): 超时时间（秒）
 
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        req = wcf_pb2.Request()
-        req.func = wcf_pb2.FUNC_GET_AUDIO_MSG  # FUNC_GET_AUDIO_MSG
-        req.am.id = id
-        req.am.dir = dir
-        rsp = self._send_request(req)
+        def _get_audio_msg(id, dir):
+            req = wcf_pb2.Request()
+            req.func = wcf_pb2.FUNC_GET_AUDIO_MSG  # FUNC_GET_AUDIO_MSG
+            req.am.id = id
+            req.am.dir = dir
+            rsp = self._send_request(req)
 
-        return rsp.str
+            return rsp.str
+
+        if timeout == 0:
+            return _get_audio_msg(id, dir)
+
+        cnt = 0
+        while cnt < timeout:
+            path = _get_audio_msg(id, dir)
+            if path:
+                return path
+            sleep(1)
+            cnt += 1
+
+        self.LOG.error(f"获取超时")
+        return ""
 
     def send_text(self, msg: str, receiver: str, aters: Optional[str] = "") -> int:
         """发送文本消息
