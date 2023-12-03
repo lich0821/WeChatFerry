@@ -180,6 +180,11 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
     int status = -1;
     uint64_t localId;
     uint32_t dbIdx;
+
+    if (fs::exists(extra)) { // 第一道，不重复下载
+        return 0;
+    }
+
     if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
         return status;
