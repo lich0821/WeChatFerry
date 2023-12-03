@@ -12,7 +12,7 @@ from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.6.0"
+__version__ = "39.0.7.0"
 
 
 class Msg(BaseModel):
@@ -63,9 +63,10 @@ class Http(FastAPI):
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
-        self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="解密图片")
-        self.add_api_route("/attachment/", self.download_attachment, methods=["POST"], summary="下载图片、文件和视频")
-        self.add_api_route("/image/", self.download_image, methods=["POST"], summary="下载图片")
+        self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="（废弃）解密图片")
+        self.add_api_route("/attachment/", self.download_attachment, methods=["POST"], summary="（废弃）下载图片、文件和视频")
+        self.add_api_route("/save-image/", self.download_image, methods=["POST"], summary="下载图片")
+        self.add_api_route("/save-audio/", self.get_audio_msg, methods=["POST"], summary="保存语音")
 
         self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
@@ -373,7 +374,7 @@ class Http(FastAPI):
             bool: 是否成功
         """
         ret = self.wcf.decrypt_image(src, dst)
-        return {"status": ret, "message": "成功"if ret else "失败"}
+        return {"status": ret, "message": "成功"if ret else "废弃，请使用 save-image"}
 
     def download_attachment(self,
                             id: int = Body("0", description="消息中的id"),
@@ -393,7 +394,7 @@ class Http(FastAPI):
         if ret:
             return {"status": 0, "message": "成功", "data": {"path": ret}}
 
-        return {"status": -1, "message": "失败，原因见日志"}
+        return {"status": -1, "message": "废弃，请使用 save-image"}
 
     def download_image(self,
                        id: int = Body("0", description="消息中的id"),
@@ -412,6 +413,26 @@ class Http(FastAPI):
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
         ret = self.wcf.download_image(id, extra, dir, timeout)
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"path": ret}}
+
+        return {"status": -1, "message": "失败，原因见日志"}
+
+    def get_audio_msg(self,
+                      id: int = Body("0", description="消息中的id"),
+                      dir: str = Body("C:/...", description="保存语音的目录"),
+                      timeout: int = Body("30", description="超时时间（秒）")) -> dict:
+        """保存语音
+
+        Args:
+            id (int): 消息中 id
+            dir (str): 存放图片的目录
+            timeout (int): 超时时间（秒）
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        ret = self.wcf.get_audio_msg(id, dir, timeout)
         if ret:
             return {"status": 0, "message": "成功", "data": {"path": ret}}
 
