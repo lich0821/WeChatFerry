@@ -179,11 +179,13 @@ DWORD GetWeChatPid()
     return pid;
 }
 
-int OpenWeChat(DWORD *pid)
+int OpenWeChat(DWORD *pid, bool multi)
 {
-    *pid = GetWeChatPid();
-    if (*pid) {
-        return ERROR_SUCCESS;
+    if (!multi) {
+        *pid = GetWeChatPid();
+        if (*pid) {
+            return ERROR_SUCCESS;
+        }
     }
 
     int ret                = -1;
