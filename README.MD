@@ -15,7 +15,7 @@
 
 </details>
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/cnERmc0L6YqYQU2lrXCShg)|
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/mFUwK2cJJrajVqYiM-GlDA)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
@@ -106,6 +106,8 @@ wcfhttp --cb http://your_host:your_port/callback
 参考 [Rust README.MD](clients/rust/README.MD)
 
 ## 一起开发
+> 🛈 非开发用户不需要往往看。
+
 ### 安装开发环境
 <details><summary>点击查看</summary>
 
@@ -144,13 +146,10 @@ vcpkg integrate install
 **注**：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
 
 ### 运行
-有两种方式（二选一）：
-1. 运行 `wcf.exe` 启动
+运行 `wcf.exe` 启动
 ```sh
 wcf.exe --help
 ```
-
-2. 双击 `Release` 里的 `launcher.exe`，`启动`。
 
 ## 项目结构
 ```sh
@@ -159,7 +158,6 @@ WeChatFerry
 ├── README.MD               # 说明
 ├── WeChatFerry
 │   ├── WeChatFerry.sln     # VS2019 工程文件
-│   ├── launcher            # 图形版启动器
 │   ├── rpc                 # RPC 模块
 │   ├── sdk                 # 注入及启动模块
 │   ├── spy                 # 核心功能实现模块
@@ -172,6 +170,7 @@ WeChatFerry
 │   ├── go                  # Go 客户端
 │   ├── http                # HTTP 客户端
 │   ├── java                # Java 客户端
+│   ├── pyauto              # 群友封装的客户端
 │   ├── python              # Python 客户端
 │   └── rust                # Rust 客户端
 └── docs                    # 文档
@@ -189,11 +188,6 @@ HTTP 客户端。
 ### java
 Java 客户端。
 
-### launcher
-> ⚠️ 不要与客户端同时使用！
-
-图形启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。默认监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。
-
 ### python
 Python 客户端。
 
@@ -210,7 +204,8 @@ Rust 客户端。
 间谍模块，注入到微信中，通过 RPC 做消息转发工作。
 
 ### wcf
-跟 `launcher` 类似，命令行版启动器，一般不需要显式运行，各客户端自动调用。
+命令行版启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。默认监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。一般情况不需要显式运行，各客户端自动调用。
+
 </details>
 
 ## 版本更新
