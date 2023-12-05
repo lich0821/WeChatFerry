@@ -334,6 +334,33 @@ bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_SEND_RICH_TXT;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    RichText_t rtt;
+    rtt.account  = string(rt.account ? rt.account : "");
+    rtt.digest   = string(rt.digest ? rt.digest : "");
+    rtt.name     = string(rt.name ? rt.name : "");
+    rtt.receiver = string(rt.receiver ? rt.receiver : "");
+    rtt.thumburl = string(rt.thumburl ? rt.thumburl : "");
+    rtt.title    = string(rt.title ? rt.title : "");
+    rtt.url      = string(rt.url ? rt.url : "");
+
+    rsp.msg.status      = SendRichTextMessage(rtt);
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static void PushMessage()
 {
     static nng_socket msg_sock;
@@ -724,6 +751,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_SEND_TXT: {
             LOG_DEBUG("[Functions_FUNC_SEND_TXT]");
             ret = func_send_txt(req.msg.txt, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_RICH_TXT: {
+            LOG_DEBUG("[Functions_FUNC_SEND_RICH_TXT]");
+            ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_IMG: {

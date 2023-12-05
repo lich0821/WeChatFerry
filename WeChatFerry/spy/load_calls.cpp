@@ -31,7 +31,9 @@ WxCalls_t wxCalls = {
     /*  call1,    call2,    call3,    call4,    call5,    call6*/
     { 0x76F010, 0x792700, 0xBC0370, 0x80F110, 0x82BB40, 0x756E30},
     /*  call1,    call2,    call3,    call4,    call5*/
-    {0x76F010, 0x792700, 0xBC0370, 0xBB5F70, 0x756E30}
+    {0x76F010, 0x792700, 0xBC0370, 0xBB5F70, 0x756E30},
+    /*  call1,    call2,    call3,    call4,    call5*/
+    {0x76E630, 0x76AE20, 0xF59E40, 0xB73000, 0x76E350}
 };
 
 int LoadCalls(const wchar_t *version, WxCalls_t *calls)

@@ -18,6 +18,7 @@ enum Functions {
     FUNC_SEND_FILE        = 0x22;
     FUNC_SEND_XML         = 0x23;
     FUNC_SEND_EMOTION     = 0x24;
+    FUNC_SEND_RICH_TXT    = 0x25;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
@@ -51,6 +52,7 @@ message Request
         bool flag      = 13;
         AttachMsg att  = 14;
         AudioMsg am    = 15;
+        RichText rt    = 16;
     }
 }
 
@@ -194,4 +196,15 @@ message AudioMsg
 {
     uint64 id  = 1; // 语音消息 id
     string dir = 2; // 存放目录
+}
+
+message RichText
+{
+    string name     = 1; // 显示名字
+    string account  = 2; // 公众号 id
+    string title    = 3; // 标题
+    string digest   = 4; // 摘要
+    string url      = 5; // 链接
+    string thumburl = 6; // 缩略图
+    string receiver = 7; // 接收人
 }

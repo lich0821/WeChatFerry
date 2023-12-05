@@ -171,6 +171,7 @@ void SendFileMessage(string wxid, string path)
         popad;
     }
 }
+
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {
@@ -293,4 +294,73 @@ void SendEmotionMessage(string wxid, string path)
         popfd;
         popad;
     }
+}
+
+int SendRichTextMessage(RichText_t &rt)
+{
+    int status       = -1;
+    char buff[0x238] = { 0 };
+
+    DWORD rtCall3 = g_WeChatWinDllAddr + g_WxCalls.rt.call3;
+    DWORD rtCall2 = g_WeChatWinDllAddr + g_WxCalls.rt.call2;
+    DWORD rtCall1 = g_WeChatWinDllAddr + g_WxCalls.rt.call1;
+    DWORD rtCall5 = g_WeChatWinDllAddr + g_WxCalls.rt.call5;
+    DWORD rtCall4 = g_WeChatWinDllAddr + g_WxCalls.rt.call4;
+
+    __asm {
+        pushad;
+        pushfd;
+        lea ecx,buff;
+        call rtCall1;
+        popfd;
+        popad;
+    }
+
+    wstring receiver = String2Wstring(rt.receiver);
+    wstring title    = String2Wstring(rt.title);
+    wstring url      = String2Wstring(rt.url);
+    wstring thumburl = String2Wstring(rt.thumburl);
+    wstring account  = String2Wstring(rt.account);
+    wstring name     = String2Wstring(rt.name);
+    wstring digest   = String2Wstring(rt.digest);
+
+    WxString wxReceiver(receiver);
+    WxString wxTitle(title);
+    WxString wxUrl(url);
+    WxString wxThumburl(thumburl);
+    WxString wxAccount(account);
+    WxString wxName(name);
+    WxString wxDigest(digest);
+
+    memcpy(&buff[0x4], &wxTitle, sizeof(wxTitle));
+    memcpy(&buff[0x2C], &wxUrl, sizeof(wxUrl));
+    memcpy(&buff[0x6C], &wxThumburl, sizeof(wxThumburl));
+    memcpy(&buff[0x94], &wxDigest, sizeof(wxDigest));
+    memcpy(&buff[0x1A0], &wxAccount, sizeof(wxAccount));
+    memcpy(&buff[0x1B4], &wxName, sizeof(wxName));
+
+    __asm {
+        pushad;
+        pushfd;
+        call rtCall2;
+        lea ecx, buff;
+        push ecx;
+        sub esp, 0x14;
+        mov edi, eax;
+        mov ecx, esp;
+        lea ebx, wxReceiver;
+        push ebx;
+        call rtCall3;
+        mov ecx, edi;
+        call rtCall4;
+        mov status, eax;
+        add ebx, 0x14;
+        lea ecx, buff;
+        push 0x0;
+        call rtCall5;
+        popfd;
+        popad;
+    }
+
+    return status;
 }

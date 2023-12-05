@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.7.1"
+__version__ = "39.0.8.0"
 
 import atexit
 import base64
@@ -412,6 +412,43 @@ class Wcf():
         req.func = wcf_pb2.FUNC_SEND_EMOTION  # FUNC_SEND_EMOTION
         req.file.path = path
         req.file.receiver = receiver
+        rsp = self._send_request(req)
+        return rsp.status
+
+    def send_rich_text(
+            self, name: str, account: str, title: str, digest: str, url: str, thumburl: str, receiver: str) -> int:
+        """发送富文本消息
+        卡片样式：
+            |-------------------------------------|
+            |title, 最长两行
+            |(长标题, 标题短的话这行没有)
+            |digest, 最多三行，会占位    |--------|
+            |digest, 最多三行，会占位    |thumburl|
+            |digest, 最多三行，会占位    |--------|
+            |(account logo) name
+            |-------------------------------------|
+        Args:
+            name (str): 左下显示的名字
+            account (str): 填公众号 id 可以显示对应的头像（gh_ 开头的）
+            title (str): 标题，最多两行
+            digest (str): 摘要，三行
+            url (str): 点击后跳转的链接
+            thumburl (str): 缩略图的链接
+            receiver (str): 接收人, wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SEND_RICH_TXT  # FUNC_SEND_RICH_TXT
+        req.rt.name = name
+        req.rt.account = account
+        req.rt.title = title
+        req.rt.digest = digest
+        req.rt.url = url
+        req.rt.thumburl = thumburl
+        req.rt.receiver = receiver
+
         rsp = self._send_request(req)
         return rsp.status
 
