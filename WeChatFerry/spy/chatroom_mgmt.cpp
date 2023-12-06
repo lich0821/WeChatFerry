@@ -19,31 +19,31 @@ int AddChatroomMember(string roomid, string wxids)
         return -1;
     }
 
-    int rv                   = 0;
-    DWORD addRoomMemberCall1 = g_WeChatWinDllAddr + g_WxCalls.arm.call1;
-    DWORD addRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
-    DWORD addRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
+    int rv         = 0;
+    DWORD armCall1 = g_WeChatWinDllAddr + g_WxCalls.arm.call1;
+    DWORD armCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
+    DWORD armCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
 
     DWORD temp       = 0;
     wstring wsRoomid = String2Wstring(roomid);
-    WxString txtRoomid(wsRoomid);
+    WxString wxRoomid(wsRoomid);
 
     vector<wstring> vMembers;
-    vector<WxString> vTxtMembers;
+    vector<WxString> vWxMembers;
     wstringstream wss(String2Wstring(wxids));
     while (wss.good()) {
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
         WxString txtMember(vMembers.back());
-        vTxtMembers.push_back(txtMember);
+        vWxMembers.push_back(txtMember);
     }
 
-    LOG_DEBUG("Adding {} members[{}] to {}", vTxtMembers.size(), wxids.c_str(), roomid.c_str());
+    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
     __asm {
         pushad;
         pushfd;
-        call addRoomMemberCall1;
+        call armCall1;
         sub esp, 0x8;
         mov temp, eax;
         mov ecx, esp;
@@ -52,13 +52,13 @@ int AddChatroomMember(string roomid, string wxids)
         test esi, esi;
         sub esp, 0x14;
         mov ecx, esp;
-        lea eax, txtRoomid;
+        lea eax, wxRoomid;
         push eax;
-        call addRoomMemberCall2;
+        call armCall2;
         mov ecx, temp;
-        lea eax, vTxtMembers;
+        lea eax, vWxMembers;
         push eax;
-        call addRoomMemberCall3;
+        call armCall3;
         mov rv, eax;
         popfd;
         popad;
@@ -73,41 +73,41 @@ int DelChatroomMember(string roomid, string wxids)
         return -1;
     }
 
-    int rv                   = 0;
-    DWORD delRoomMemberCall1 = g_WeChatWinDllAddr + g_WxCalls.drm.call1;
-    DWORD delRoomMemberCall2 = g_WeChatWinDllAddr + g_WxCalls.drm.call2;
-    DWORD delRoomMemberCall3 = g_WeChatWinDllAddr + g_WxCalls.drm.call3;
+    int rv         = 0;
+    DWORD drmCall1 = g_WeChatWinDllAddr + g_WxCalls.drm.call1;
+    DWORD drmCall2 = g_WeChatWinDllAddr + g_WxCalls.drm.call2;
+    DWORD drmCall3 = g_WeChatWinDllAddr + g_WxCalls.drm.call3;
 
     DWORD temp       = 0;
     wstring wsRoomid = String2Wstring(roomid);
-    WxString txtRoomid(wsRoomid);
+    WxString wxRoomid(wsRoomid);
 
     vector<wstring> vMembers;
-    vector<WxString> vTxtMembers;
+    vector<WxString> vWxMembers;
     wstringstream wss(String2Wstring(wxids));
     while (wss.good()) {
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
         WxString txtMember(vMembers.back());
-        vTxtMembers.push_back(txtMember);
+        vWxMembers.push_back(txtMember);
     }
 
-    LOG_DEBUG("Adding {} members[{}] to {}", vTxtMembers.size(), wxids.c_str(), roomid.c_str());
+    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
     __asm {
         pushad;
         pushfd;
-        call delRoomMemberCall1;
+        call drmCall1;
         sub esp, 0x14;
         mov esi, eax;
         mov ecx, esp;
-        lea edi, txtRoomid;
+        lea edi, wxRoomid;
         push edi;
-        call delRoomMemberCall2;
+        call drmCall2;
         mov ecx, esi;
-        lea eax, vTxtMembers;
+        lea eax, vWxMembers;
         push eax;
-        call delRoomMemberCall3;
+        call drmCall3;
         mov rv, eax;
         popfd;
         popad;

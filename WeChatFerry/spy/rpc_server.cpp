@@ -69,11 +69,12 @@ bool func_is_login(uint8_t *out, size_t *len)
 
 bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
-    string wxid   = GetSelfWxid();
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_GET_SELF_WXID;
     rsp.which_msg = Response_str_tag;
-    rsp.msg.str   = (char *)wxid.c_str();
+
+    string wxid = GetSelfWxid();
+    rsp.msg.str = (char *)wxid.c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -192,14 +193,15 @@ bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_GET_AUDIO_MSG;
     rsp.which_msg = Response_str_tag;
+    string path   = "";
 
-    string path = string(dir ? dir : "");
-    if (path.empty()) {
+    if (dir == NULL) {
         LOG_ERROR("Empty dir.");
-        rsp.msg.str = (char *)"";
     } else {
-        rsp.msg.str = (char *)GetAudio(id, dir).c_str();
+        path = GetAudio(id, dir);
     }
+
+    rsp.msg.str = (char *)path.c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -213,12 +215,12 @@ bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 
 bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_TXT;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_TXT;
+    rsp.which_msg = Response_status_tag;
 
     if ((txt.msg == NULL) || (txt.receiver == NULL)) {
+        LOG_ERROR("Empty message or receiver.");
         rsp.msg.status = -1; // Empty message or empty receiver
     } else {
         string msg(txt.msg);
@@ -226,6 +228,7 @@ bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
         string aters(txt.aters ? txt.aters : "");
 
         SendTextMessage(receiver, msg, aters);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -240,15 +243,16 @@ bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 
 bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_IMG;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_IMG;
+    rsp.which_msg = Response_status_tag;
 
     if ((path == NULL) || (receiver == NULL)) {
+        LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
     } else {
         SendImageMessage(receiver, path);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -263,15 +267,16 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 
 bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_FILE;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_FILE;
+    rsp.which_msg = Response_status_tag;
 
     if ((path == NULL) || (receiver == NULL)) {
+        LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
     } else {
         SendImageMessage(receiver, path);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -286,12 +291,12 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 
 bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_XML;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_XML;
+    rsp.which_msg = Response_status_tag;
 
     if ((xml.content == NULL) || (xml.receiver == NULL)) {
+        LOG_ERROR("Empty content or receiver.");
         rsp.msg.status = -1;
     } else {
         string receiver(xml.receiver);
@@ -299,6 +304,7 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
         string path(xml.path ? xml.path : "");
         uint32_t type = (uint32_t)xml.type;
         SendXmlMessage(receiver, content, path, type);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -313,15 +319,16 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 
 bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_EMOTION;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_EMOTION;
+    rsp.which_msg = Response_status_tag;
 
     if ((path == NULL) || (receiver == NULL)) {
+        LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
     } else {
         SendEmotionMessage(receiver, path);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -336,21 +343,26 @@ bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
 
 bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_SEND_RICH_TXT;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_RICH_TXT;
+    rsp.which_msg = Response_status_tag;
 
-    RichText_t rtt;
-    rtt.account  = string(rt.account ? rt.account : "");
-    rtt.digest   = string(rt.digest ? rt.digest : "");
-    rtt.name     = string(rt.name ? rt.name : "");
-    rtt.receiver = string(rt.receiver ? rt.receiver : "");
-    rtt.thumburl = string(rt.thumburl ? rt.thumburl : "");
-    rtt.title    = string(rt.title ? rt.title : "");
-    rtt.url      = string(rt.url ? rt.url : "");
+    if (rt.receiver == NULL) {
+        LOG_ERROR("Empty receiver.");
+        rsp.msg.status = -1;
+    } else {
+        RichText_t rtt;
+        rtt.account  = string(rt.account ? rt.account : "");
+        rtt.digest   = string(rt.digest ? rt.digest : "");
+        rtt.name     = string(rt.name ? rt.name : "");
+        rtt.receiver = string(rt.receiver ? rt.receiver : "");
+        rtt.thumburl = string(rt.thumburl ? rt.thumburl : "");
+        rtt.title    = string(rt.title ? rt.title : "");
+        rtt.url      = string(rt.url ? rt.url : "");
 
-    rsp.msg.status      = SendRichTextMessage(rtt);
+        rsp.msg.status = SendRichTextMessage(rtt);
+    }
+
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
         LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
@@ -368,6 +380,7 @@ bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
     rsp.which_msg = Response_status_tag;
 
     if ((roomid == NULL) || (wxid == NULL)) {
+        LOG_ERROR("Empty roomid or wxid.");
         rsp.msg.status = -1;
     } else {
         rsp.msg.status = SendPatMessage(roomid, wxid);
@@ -502,8 +515,14 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_EXEC_DB_QUERY;
     rsp.which_msg = Response_rows_tag;
+    DbRows_t rows;
 
-    DbRows_t rows                  = ExecDbQuery(db, sql);
+    if ((db == NULL) || (sql == NULL)) {
+        LOG_ERROR("Empty db or sql.");
+    } else {
+        rows = ExecDbQuery(db, sql);
+    }
+
     rsp.msg.rows.rows.arg          = &rows;
     rsp.msg.rows.rows.funcs.encode = encode_rows;
 
@@ -519,19 +538,15 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_ACCEPT_FRIEND;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_ACCEPT_FRIEND;
+    rsp.which_msg = Response_status_tag;
 
     if ((v3 == NULL) || (v4 == NULL)) {
         rsp.msg.status = -1;
         LOG_ERROR("Empty V3 or V4.");
     } else {
         rsp.msg.status = AcceptNewFriend(v3, v4, scene);
-        if (rsp.msg.status != 1) {
-            LOG_ERROR("AcceptNewFriend failed: {}", rsp.msg.status);
-        }
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -546,14 +561,15 @@ bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t 
 
 bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_RECV_TRANSFER;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_RECV_TRANSFER;
+    rsp.which_msg = Response_status_tag;
 
-    rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
-    if (rsp.msg.status != 1) {
-        LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
+    if ((wxid == NULL) || (tfid == NULL) || (taid == NULL)) {
+        rsp.msg.status = -1;
+        LOG_ERROR("Empty wxid, tfid or taid.");
+    } else {
+        rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -652,16 +668,15 @@ bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_DECRYPT_IMAGE;
     rsp.which_msg = Response_str_tag;
+    string path   = "";
 
-    string src = string(dec.src ? dec.src : "");
-    string dst = string(dec.dst ? dec.dst : "");
-    if (src.empty()) {
-        LOG_ERROR("Empty src path.");
-        rsp.msg.str = (char *)"";
+    if ((dec.src == NULL) || (dec.dst == NULL)) {
+        LOG_ERROR("Empty src or dst.");
     } else {
-        string path = DecryptImage(src, dst);
-        rsp.msg.str = (char *)path.c_str();
+        path = DecryptImage(dec.src, dec.dst);
     }
+
+    rsp.msg.str = (char *)path.c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -680,9 +695,11 @@ bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
-    rsp.msg.status = AddChatroomMember(roomid, wxids);
-    if (rsp.msg.status != 1) {
-        LOG_ERROR("AddChatroomMember failed: {}", rsp.msg.status);
+    if ((roomid == NULL) || (wxids == NULL)) {
+        LOG_ERROR("Empty roomid or wxids.");
+        rsp.msg.status = -1;
+    } else {
+        rsp.msg.status = AddChatroomMember(roomid, wxids);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -702,9 +719,11 @@ bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     rsp.which_msg  = Response_status_tag;
     rsp.msg.status = 0;
 
-    rsp.msg.status = DelChatroomMember(roomid, wxids);
-    if (rsp.msg.status != 1) {
-        LOG_ERROR("DelChatroomMember failed: {}", rsp.msg.status);
+    if ((roomid == NULL) || (wxids == NULL)) {
+        LOG_ERROR("Empty roomid or wxids.");
+        rsp.msg.status = -1;
+    } else {
+        rsp.msg.status = DelChatroomMember(roomid, wxids);
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
