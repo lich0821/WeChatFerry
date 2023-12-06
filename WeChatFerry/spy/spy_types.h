@@ -134,6 +134,17 @@ typedef struct CallPatMsg {
     DWORD call3;
 } CallPatMsg_t;
 
+typedef struct CallInviteCM {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+    DWORD call4;
+    DWORD call5;
+    DWORD call6;
+    DWORD call7;
+    DWORD call8;
+} CallInviteCM_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -154,6 +165,7 @@ typedef struct WxCalls {
     RevokeMsg_t rm;      // 撤回消息
     CallRichText_t rt;   // 发送消息卡片
     CallPatMsg_t pm;     // 发送拍一拍消息
+    CallInviteCM_t irm;  // 邀请群成员
 } WxCalls_t;
 
 struct WxString {

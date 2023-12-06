@@ -815,6 +815,23 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def invite_chatroom_members(self, roomid: str, wxids: str) -> int:
+        """邀请群成员
+
+        Args:
+            roomid (str): 群的 id
+            wxids (str): 要邀请成员的 wxid, 多个用逗号`,`分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_INV_ROOM_MEMBERS  # FUNC_INV_ROOM_MEMBERS
+        req.m.roomid = roomid
+        req.m.wxids = wxids.replace(" ", "")
+        rsp = self._send_request(req)
+        return rsp.status
+
     def get_chatroom_members(self, roomid: str) -> Dict:
         """获取群成员
 

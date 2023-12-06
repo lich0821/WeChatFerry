@@ -717,6 +717,30 @@ bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+{
+    Response rsp   = Response_init_default;
+    rsp.func       = Functions_FUNC_INV_ROOM_MEMBERS;
+    rsp.which_msg  = Response_status_tag;
+    rsp.msg.status = 0;
+
+    if ((roomid == NULL) || (wxids == NULL)) {
+        LOG_ERROR("Empty roomid or wxids.");
+        rsp.msg.status = -1;
+    } else {
+        rsp.msg.status = InviteChatroomMember(roomid, wxids);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -866,6 +890,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_DEL_ROOM_MEMBERS: {
             LOG_DEBUG("[Functions_FUNC_DEL_ROOM_MEMBERS]");
             ret = func_del_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
+            break;
+        }
+        case Functions_FUNC_INV_ROOM_MEMBERS: {
+            LOG_DEBUG("[Functions_FUNC_INV_ROOM_MEMBERS]");
+            ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
         default: {
