@@ -180,3 +180,9 @@ struct WxString {
         clen     = 0;
     }
 };
+
+typedef struct RawVector {
+    DWORD start;
+    DWORD finish;
+    DWORD end;
+} RawVector_t;
