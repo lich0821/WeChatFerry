@@ -10,6 +10,7 @@
 #include <string>
 #include <thread>
 
+#include <magic_enum.hpp>
 #include <nng/nng.h>
 #include <nng/protocol/pair1/pair.h>
 #include <nng/supplemental/util/platform.h>
@@ -796,153 +797,124 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         return false;
     }
 
-    LOG_DEBUG("Func: {:#x} Data: {}", (uint8_t)req.func, in_len);
+    LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
     switch (req.func) {
         case Functions_FUNC_IS_LOGIN: {
-            LOG_DEBUG("[Functions_FUNC_IS_LOGIN]");
             ret = func_is_login(out, out_len);
             break;
         }
         case Functions_FUNC_GET_SELF_WXID: {
-            LOG_DEBUG("[Functions_FUNC_GET_SELF_WXID]");
             ret = func_get_self_wxid(out, out_len);
             break;
         }
         case Functions_FUNC_GET_MSG_TYPES: {
-            LOG_DEBUG("[Functions_FUNC_GET_MSG_TYPES]");
             ret = func_get_msg_types(out, out_len);
             break;
         }
         case Functions_FUNC_GET_CONTACTS: {
-            LOG_DEBUG("[Functions_FUNC_GET_CONTACTS]");
             ret = func_get_contacts(out, out_len);
             break;
         }
         case Functions_FUNC_GET_DB_NAMES: {
-            LOG_DEBUG("[Functions_FUNC_GET_DB_NAMES]");
             ret = func_get_db_names(out, out_len);
             break;
         }
         case Functions_FUNC_GET_DB_TABLES: {
-            LOG_DEBUG("[Functions_FUNC_GET_DB_TABLES]");
             ret = func_get_db_tables(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_GET_USER_INFO: {
-            LOG_DEBUG("[Functions_FUNC_GET_USER_INFO]");
             ret = func_get_user_info(out, out_len);
             break;
         }
         case Functions_FUNC_GET_AUDIO_MSG: {
-            LOG_DEBUG("[Functions_FUNC_GET_AUDIO_MSG]");
             ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_TXT: {
-            LOG_DEBUG("[Functions_FUNC_SEND_TXT]");
             ret = func_send_txt(req.msg.txt, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_RICH_TXT: {
-            LOG_DEBUG("[Functions_FUNC_SEND_RICH_TXT]");
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_PAT_MSG: {
-            LOG_DEBUG("[Functions_FUNC_SEND_PAT_MSG]");
             ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_IMG: {
-            LOG_DEBUG("[Functions_FUNC_SEND_IMG]");
             ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_FILE: {
-            LOG_DEBUG("[Functions_FUNC_SEND_FILE]");
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
 #if 0
         case Functions_FUNC_SEND_XML: {
-            LOG_DEBUG("[Functions_FUNC_SEND_XML]");
             ret = func_send_xml(req.msg.xml, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_EMOTION: {
-            LOG_DEBUG("[Functions_FUNC_SEND_EMOTION]");
             ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
 #endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
-            LOG_DEBUG("[Functions_FUNC_ENABLE_RECV_TXT]");
             LOG_BUFFER(in, in_len);
             ret = func_enable_recv_txt(req.msg.flag, out, out_len);
             break;
         }
         case Functions_FUNC_DISABLE_RECV_TXT: {
-            LOG_DEBUG("[Functions_FUNC_DISABLE_RECV_TXT]");
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
         case Functions_FUNC_EXEC_DB_QUERY: {
-            LOG_DEBUG("[Functions_FUNC_EXEC_DB_QUERY]");
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
         case Functions_FUNC_ACCEPT_FRIEND: {
-            LOG_DEBUG("[Functions_FUNC_ACCEPT_FRIEND]");
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
         }
         case Functions_FUNC_RECV_TRANSFER: {
-            LOG_DEBUG("[Functions_FUNC_RECV_TRANSFER]");
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
             break;
         }
         case Functions_FUNC_REFRESH_PYQ: {
-            LOG_DEBUG("[Functions_FUNC_REFRESH_PYQ]");
             ret = func_refresh_pyq(req.msg.ui64, out, out_len);
             break;
         }
         case Functions_FUNC_DOWNLOAD_ATTACH: {
-            LOG_DEBUG("[Functions_FUNC_DOWNLOAD_ATTACH]");
             ret = func_download_attach(req.msg.att, out, out_len);
             break;
         }
         case Functions_FUNC_GET_CONTACT_INFO: {
-            LOG_DEBUG("[Functions_FUNC_GET_CONTACT_INFO]");
             ret = func_get_contact_info(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_REVOKE_MSG: {
-            LOG_DEBUG("[Functions_FUNC_REVOKE_MSG]");
             ret = func_revoke_msg(req.msg.ui64, out, out_len);
             break;
         }
         case Functions_FUNC_DECRYPT_IMAGE: {
-            LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
             ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
         }
         case Functions_FUNC_EXEC_OCR: {
-            LOG_DEBUG("[Functions_FUNC_EXEC_OCR]");
             ret = func_exec_ocr(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
-            LOG_DEBUG("[Functions_FUNC_ADD_ROOM_MEMBERS]");
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
         case Functions_FUNC_DEL_ROOM_MEMBERS: {
-            LOG_DEBUG("[Functions_FUNC_DEL_ROOM_MEMBERS]");
             ret = func_del_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
         case Functions_FUNC_INV_ROOM_MEMBERS: {
-            LOG_DEBUG("[Functions_FUNC_INV_ROOM_MEMBERS]");
             ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
