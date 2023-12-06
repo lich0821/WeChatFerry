@@ -805,11 +805,11 @@ class Wcf():
             self.LOG.error(f"下载失败")
             return ""
         cnt = 0
-        while cnt < 2 * timeout:
+        while cnt < timeout:
             path = self.decrypt_image(extra, dir)
             if path:
                 return path
-            sleep(0.5)
+            sleep(1)
             cnt += 1
 
         self.LOG.error(f"下载超时")
