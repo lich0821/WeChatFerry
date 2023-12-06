@@ -122,7 +122,7 @@ public class Client {
      * @return
      */
     public boolean isLogin() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_IS_LOGIN_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_IS_LOGIN_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getStatus() == 1;
@@ -136,7 +136,7 @@ public class Client {
      * @return
      */
     public String getSelfWxid() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getStr();
@@ -151,7 +151,7 @@ public class Client {
      * @return
      */
     public Map<Integer, String> getMsgTypes() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getTypes().getTypesMap();
@@ -171,7 +171,7 @@ public class Client {
      * @return
      */
     public List<RpcContact> getContacts() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_CONTACTS_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_CONTACTS_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getContacts().getContactsList();
@@ -189,7 +189,7 @@ public class Client {
      */
     public List<DbRow> querySql(String db, String sql) {
         DbQuery dbQuery = DbQuery.newBuilder().setSql(sql).setDb(db).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_EXEC_DB_QUERY_VALUE).setQuery(dbQuery).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_EXEC_DB_QUERY_VALUE).setQuery(dbQuery).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getRows().getRowsList();
@@ -203,7 +203,7 @@ public class Client {
      * @return
      */
     public List<String> getDbNames() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getDbs().getNamesList();
@@ -219,7 +219,7 @@ public class Client {
      * @return
      */
     public Map<String, String> getDbTables(String db) {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
         Response rsp = sendCmd(req);
         Map<String, String> tables = new HashMap<>();
         if (rsp != null) {
@@ -245,7 +245,7 @@ public class Client {
      **/
     public int sendText(String msg, String receiver, String aters) {
         Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
         logger.debug("sendText: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
@@ -265,7 +265,7 @@ public class Client {
      */
     public int sendImage(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
         logger.debug("sendImage: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
@@ -285,7 +285,7 @@ public class Client {
      */
     public int sendFile(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
         logger.debug("sendFile: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
@@ -307,7 +307,7 @@ public class Client {
      */
     public int sendXml(String receiver, String xml, String path, int type) {
         Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
         logger.debug("sendXml: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
@@ -327,7 +327,7 @@ public class Client {
      */
     public int sendEmotion(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
         logger.debug("sendEmotion: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
@@ -348,7 +348,7 @@ public class Client {
     public int acceptNewFriend(String v3, String v4) {
         int ret = -1;
         Verification verification = Verification.newBuilder().setV3(v3).setV4(v4).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             ret = rsp.getStatus();
@@ -365,26 +365,8 @@ public class Client {
      */
     public int addChatroomMembers(String roomID, String wxIds) {
         int ret = -1;
-        AddMembers addMembers = AddMembers.newBuilder().setRoomid(roomID).setWxids(wxIds).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(addMembers).build();
-        Response rsp = sendCmd(req);
-        if (rsp != null) {
-            ret = rsp.getStatus();
-        }
-        return ret;
-    }
-
-    /**
-     * 接收转账
-     *
-     * @param transferid 转账消息里的 transferid
-     * @param wxId       转账消息里的发送人
-     * @return 1 为成功，其他失败
-     */
-    public int receiveTransfer(String transferid, String wxId) {
-        int ret = -1;
-        Transfer build = Transfer.newBuilder().setTid(transferid).setWxid(wxId).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_RECV_TRANSFER_VALUE).setTf(build).build();
+        MemberMgmt memberMgmt = MemberMgmt.newBuilder().setRoomid(roomID).setWxids(wxIds).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             ret = rsp.getStatus();
@@ -402,7 +384,7 @@ public class Client {
     public boolean decryptImage(String srcPath, String dstPath) {
         int ret = -1;
         DecPath build = DecPath.newBuilder().setSrc(srcPath).setDst(dstPath).build();
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             ret = rsp.getStatus();
@@ -416,7 +398,7 @@ public class Client {
      * @return 个人信息
      */
     public UserInfo getUserInfo() {
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_GET_USER_INFO_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_USER_INFO_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getUi();
@@ -484,7 +466,7 @@ public class Client {
             return;
         }
 
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_ENABLE_RECV_TXT_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ENABLE_RECV_TXT_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp == null) {
             logger.error("启动消息接收失败");
@@ -508,7 +490,7 @@ public class Client {
             return 1;
         }
         int ret = -1;
-        Request req = new Request.Builder().setFuncValue(Functions.FUNC_DISABLE_RECV_TXT_VALUE).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DISABLE_RECV_TXT_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             ret = rsp.getStatus();

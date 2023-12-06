@@ -48,6 +48,14 @@ public final class Wcf {
      */
     FUNC_GET_DB_TABLES(20),
     /**
+     * <code>FUNC_GET_USER_INFO = 21;</code>
+     */
+    FUNC_GET_USER_INFO(21),
+    /**
+     * <code>FUNC_GET_AUDIO_MSG = 22;</code>
+     */
+    FUNC_GET_AUDIO_MSG(22),
+    /**
      * <code>FUNC_SEND_TXT = 32;</code>
      */
     FUNC_SEND_TXT(32),
@@ -68,6 +76,14 @@ public final class Wcf {
      */
     FUNC_SEND_EMOTION(36),
     /**
+     * <code>FUNC_SEND_RICH_TXT = 37;</code>
+     */
+    FUNC_SEND_RICH_TXT(37),
+    /**
+     * <code>FUNC_SEND_PAT_MSG = 38;</code>
+     */
+    FUNC_SEND_PAT_MSG(38),
+    /**
      * <code>FUNC_ENABLE_RECV_TXT = 48;</code>
      */
     FUNC_ENABLE_RECV_TXT(48),
@@ -84,9 +100,41 @@ public final class Wcf {
      */
     FUNC_ACCEPT_FRIEND(81),
     /**
-     * <code>FUNC_ADD_ROOM_MEMBERS = 82;</code>
+     * <code>FUNC_RECV_TRANSFER = 82;</code>
      */
-    FUNC_ADD_ROOM_MEMBERS(82),
+    FUNC_RECV_TRANSFER(82),
+    /**
+     * <code>FUNC_REFRESH_PYQ = 83;</code>
+     */
+    FUNC_REFRESH_PYQ(83),
+    /**
+     * <code>FUNC_DOWNLOAD_ATTACH = 84;</code>
+     */
+    FUNC_DOWNLOAD_ATTACH(84),
+    /**
+     * <code>FUNC_GET_CONTACT_INFO = 85;</code>
+     */
+    FUNC_GET_CONTACT_INFO(85),
+    /**
+     * <code>FUNC_REVOKE_MSG = 86;</code>
+     */
+    FUNC_REVOKE_MSG(86),
+    /**
+     * <code>FUNC_DECRYPT_IMAGE = 96;</code>
+     */
+    FUNC_DECRYPT_IMAGE(96),
+    /**
+     * <code>FUNC_ADD_ROOM_MEMBERS = 112;</code>
+     */
+    FUNC_ADD_ROOM_MEMBERS(112),
+    /**
+     * <code>FUNC_DEL_ROOM_MEMBERS = 113;</code>
+     */
+    FUNC_DEL_ROOM_MEMBERS(113),
+    /**
+     * <code>FUNC_INV_ROOM_MEMBERS = 114;</code>
+     */
+    FUNC_INV_ROOM_MEMBERS(114),
     UNRECOGNIZED(-1),
     ;
 
@@ -119,6 +167,14 @@ public final class Wcf {
      */
     public static final int FUNC_GET_DB_TABLES_VALUE = 20;
     /**
+     * <code>FUNC_GET_USER_INFO = 21;</code>
+     */
+    public static final int FUNC_GET_USER_INFO_VALUE = 21;
+    /**
+     * <code>FUNC_GET_AUDIO_MSG = 22;</code>
+     */
+    public static final int FUNC_GET_AUDIO_MSG_VALUE = 22;
+    /**
      * <code>FUNC_SEND_TXT = 32;</code>
      */
     public static final int FUNC_SEND_TXT_VALUE = 32;
@@ -139,6 +195,14 @@ public final class Wcf {
      */
     public static final int FUNC_SEND_EMOTION_VALUE = 36;
     /**
+     * <code>FUNC_SEND_RICH_TXT = 37;</code>
+     */
+    public static final int FUNC_SEND_RICH_TXT_VALUE = 37;
+    /**
+     * <code>FUNC_SEND_PAT_MSG = 38;</code>
+     */
+    public static final int FUNC_SEND_PAT_MSG_VALUE = 38;
+    /**
      * <code>FUNC_ENABLE_RECV_TXT = 48;</code>
      */
     public static final int FUNC_ENABLE_RECV_TXT_VALUE = 48;
@@ -155,9 +219,41 @@ public final class Wcf {
      */
     public static final int FUNC_ACCEPT_FRIEND_VALUE = 81;
     /**
-     * <code>FUNC_ADD_ROOM_MEMBERS = 82;</code>
+     * <code>FUNC_RECV_TRANSFER = 82;</code>
      */
-    public static final int FUNC_ADD_ROOM_MEMBERS_VALUE = 82;
+    public static final int FUNC_RECV_TRANSFER_VALUE = 82;
+    /**
+     * <code>FUNC_REFRESH_PYQ = 83;</code>
+     */
+    public static final int FUNC_REFRESH_PYQ_VALUE = 83;
+    /**
+     * <code>FUNC_DOWNLOAD_ATTACH = 84;</code>
+     */
+    public static final int FUNC_DOWNLOAD_ATTACH_VALUE = 84;
+    /**
+     * <code>FUNC_GET_CONTACT_INFO = 85;</code>
+     */
+    public static final int FUNC_GET_CONTACT_INFO_VALUE = 85;
+    /**
+     * <code>FUNC_REVOKE_MSG = 86;</code>
+     */
+    public static final int FUNC_REVOKE_MSG_VALUE = 86;
+    /**
+     * <code>FUNC_DECRYPT_IMAGE = 96;</code>
+     */
+    public static final int FUNC_DECRYPT_IMAGE_VALUE = 96;
+    /**
+     * <code>FUNC_ADD_ROOM_MEMBERS = 112;</code>
+     */
+    public static final int FUNC_ADD_ROOM_MEMBERS_VALUE = 112;
+    /**
+     * <code>FUNC_DEL_ROOM_MEMBERS = 113;</code>
+     */
+    public static final int FUNC_DEL_ROOM_MEMBERS_VALUE = 113;
+    /**
+     * <code>FUNC_INV_ROOM_MEMBERS = 114;</code>
+     */
+    public static final int FUNC_INV_ROOM_MEMBERS_VALUE = 114;
 
 
     public final int getNumber() {
@@ -191,16 +287,28 @@ public final class Wcf {
         case 18: return FUNC_GET_CONTACTS;
         case 19: return FUNC_GET_DB_NAMES;
         case 20: return FUNC_GET_DB_TABLES;
+        case 21: return FUNC_GET_USER_INFO;
+        case 22: return FUNC_GET_AUDIO_MSG;
         case 32: return FUNC_SEND_TXT;
         case 33: return FUNC_SEND_IMG;
         case 34: return FUNC_SEND_FILE;
         case 35: return FUNC_SEND_XML;
         case 36: return FUNC_SEND_EMOTION;
+        case 37: return FUNC_SEND_RICH_TXT;
+        case 38: return FUNC_SEND_PAT_MSG;
         case 48: return FUNC_ENABLE_RECV_TXT;
         case 64: return FUNC_DISABLE_RECV_TXT;
         case 80: return FUNC_EXEC_DB_QUERY;
         case 81: return FUNC_ACCEPT_FRIEND;
-        case 82: return FUNC_ADD_ROOM_MEMBERS;
+        case 82: return FUNC_RECV_TRANSFER;
+        case 83: return FUNC_REFRESH_PYQ;
+        case 84: return FUNC_DOWNLOAD_ATTACH;
+        case 85: return FUNC_GET_CONTACT_INFO;
+        case 86: return FUNC_REVOKE_MSG;
+        case 96: return FUNC_DECRYPT_IMAGE;
+        case 112: return FUNC_ADD_ROOM_MEMBERS;
+        case 113: return FUNC_DEL_ROOM_MEMBERS;
+        case 114: return FUNC_INV_ROOM_MEMBERS;
         default: return null;
       }
     }
@@ -365,19 +473,31 @@ public final class Wcf {
     com.iamteer.Wcf.VerificationOrBuilder getVOrBuilder();
 
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      * @return Whether the m field is set.
      */
     boolean hasM();
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      * @return The m.
      */
-    com.iamteer.Wcf.AddMembers getM();
+    com.iamteer.Wcf.MemberMgmt getM();
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      */
-    com.iamteer.Wcf.AddMembersOrBuilder getMOrBuilder();
+    com.iamteer.Wcf.MemberMgmtOrBuilder getMOrBuilder();
 
     /**
      * <code>.wcf.XmlMsg xml = 9;</code>
@@ -394,7 +514,127 @@ public final class Wcf {
      */
     com.iamteer.Wcf.XmlMsgOrBuilder getXmlOrBuilder();
 
-    public com.iamteer.Wcf.Request.MsgCase getMsgCase();
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     * @return Whether the dec field is set.
+     */
+    boolean hasDec();
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     * @return The dec.
+     */
+    com.iamteer.Wcf.DecPath getDec();
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     */
+    com.iamteer.Wcf.DecPathOrBuilder getDecOrBuilder();
+
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     * @return Whether the tf field is set.
+     */
+    boolean hasTf();
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     * @return The tf.
+     */
+    com.iamteer.Wcf.Transfer getTf();
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     */
+    com.iamteer.Wcf.TransferOrBuilder getTfOrBuilder();
+
+    /**
+     * <pre>
+     * 64 位整数，通用
+     * </pre>
+     *
+     * <code>uint64 ui64 = 12;</code>
+     * @return Whether the ui64 field is set.
+     */
+    boolean hasUi64();
+    /**
+     * <pre>
+     * 64 位整数，通用
+     * </pre>
+     *
+     * <code>uint64 ui64 = 12;</code>
+     * @return The ui64.
+     */
+    long getUi64();
+
+    /**
+     * <code>bool flag = 13;</code>
+     * @return Whether the flag field is set.
+     */
+    boolean hasFlag();
+    /**
+     * <code>bool flag = 13;</code>
+     * @return The flag.
+     */
+    boolean getFlag();
+
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     * @return Whether the att field is set.
+     */
+    boolean hasAtt();
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     * @return The att.
+     */
+    com.iamteer.Wcf.AttachMsg getAtt();
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     */
+    com.iamteer.Wcf.AttachMsgOrBuilder getAttOrBuilder();
+
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     * @return Whether the am field is set.
+     */
+    boolean hasAm();
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     * @return The am.
+     */
+    com.iamteer.Wcf.AudioMsg getAm();
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     */
+    com.iamteer.Wcf.AudioMsgOrBuilder getAmOrBuilder();
+
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     * @return Whether the rt field is set.
+     */
+    boolean hasRt();
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     * @return The rt.
+     */
+    com.iamteer.Wcf.RichText getRt();
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     */
+    com.iamteer.Wcf.RichTextOrBuilder getRtOrBuilder();
+
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     * @return Whether the pm field is set.
+     */
+    boolean hasPm();
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     * @return The pm.
+     */
+    com.iamteer.Wcf.PatMsg getPm();
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     */
+    com.iamteer.Wcf.PatMsgOrBuilder getPmOrBuilder();
+
+    com.iamteer.Wcf.Request.MsgCase getMsgCase();
   }
   /**
    * Protobuf type {@code wcf.Request}
@@ -419,160 +659,6 @@ public final class Wcf {
       return new Request();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Request(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-              int rawValue = input.readEnum();
-
-              func_ = rawValue;
-              break;
-            }
-            case 18: {
-              com.iamteer.Wcf.Empty.Builder subBuilder = null;
-              if (msgCase_ == 2) {
-                subBuilder = ((com.iamteer.Wcf.Empty) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.Empty.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.Empty) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 2;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-              msgCase_ = 3;
-              msg_ = s;
-              break;
-            }
-            case 34: {
-              com.iamteer.Wcf.TextMsg.Builder subBuilder = null;
-              if (msgCase_ == 4) {
-                subBuilder = ((com.iamteer.Wcf.TextMsg) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.TextMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.TextMsg) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 4;
-              break;
-            }
-            case 42: {
-              com.iamteer.Wcf.PathMsg.Builder subBuilder = null;
-              if (msgCase_ == 5) {
-                subBuilder = ((com.iamteer.Wcf.PathMsg) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.PathMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.PathMsg) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 5;
-              break;
-            }
-            case 50: {
-              com.iamteer.Wcf.DbQuery.Builder subBuilder = null;
-              if (msgCase_ == 6) {
-                subBuilder = ((com.iamteer.Wcf.DbQuery) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.DbQuery.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.DbQuery) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 6;
-              break;
-            }
-            case 58: {
-              com.iamteer.Wcf.Verification.Builder subBuilder = null;
-              if (msgCase_ == 7) {
-                subBuilder = ((com.iamteer.Wcf.Verification) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.Verification.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.Verification) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 7;
-              break;
-            }
-            case 66: {
-              com.iamteer.Wcf.AddMembers.Builder subBuilder = null;
-              if (msgCase_ == 8) {
-                subBuilder = ((com.iamteer.Wcf.AddMembers) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.AddMembers.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.AddMembers) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 8;
-              break;
-            }
-            case 74: {
-              com.iamteer.Wcf.XmlMsg.Builder subBuilder = null;
-              if (msgCase_ == 9) {
-                subBuilder = ((com.iamteer.Wcf.XmlMsg) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.XmlMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.XmlMsg) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 9;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Request_descriptor;
@@ -587,6 +673,7 @@ public final class Wcf {
     }
 
     private int msgCase_ = 0;
+    @SuppressWarnings("serial")
     private java.lang.Object msg_;
     public enum MsgCase
         implements com.google.protobuf.Internal.EnumLite,
@@ -599,6 +686,14 @@ public final class Wcf {
       V(7),
       M(8),
       XML(9),
+      DEC(10),
+      TF(11),
+      UI64(12),
+      FLAG(13),
+      ATT(14),
+      AM(15),
+      RT(16),
+      PM(17),
       MSG_NOT_SET(0);
       private final int value;
       private MsgCase(int value) {
@@ -624,6 +719,14 @@ public final class Wcf {
           case 7: return V;
           case 8: return M;
           case 9: return XML;
+          case 10: return DEC;
+          case 11: return TF;
+          case 12: return UI64;
+          case 13: return FLAG;
+          case 14: return ATT;
+          case 15: return AM;
+          case 16: return RT;
+          case 17: return PM;
           case 0: return MSG_NOT_SET;
           default: return null;
         }
@@ -640,7 +743,7 @@ public final class Wcf {
     }
 
     public static final int FUNC_FIELD_NUMBER = 1;
-    private int func_;
+    private int func_ = 0;
     /**
      * <code>.wcf.Functions func = 1;</code>
      * @return The enum numeric value on the wire for func.
@@ -653,8 +756,7 @@ public final class Wcf {
      * @return The func.
      */
     @java.lang.Override public com.iamteer.Wcf.Functions getFunc() {
-      @SuppressWarnings("deprecation")
-      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
+      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
       return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
     }
 
@@ -709,7 +811,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         if (msgCase_ == 3) {
@@ -729,7 +831,7 @@ public final class Wcf {
         ref = msg_;
       }
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         if (msgCase_ == 3) {
@@ -867,7 +969,11 @@ public final class Wcf {
 
     public static final int M_FIELD_NUMBER = 8;
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      * @return Whether the m field is set.
      */
     @java.lang.Override
@@ -875,25 +981,33 @@ public final class Wcf {
       return msgCase_ == 8;
     }
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      * @return The m.
      */
     @java.lang.Override
-    public com.iamteer.Wcf.AddMembers getM() {
+    public com.iamteer.Wcf.MemberMgmt getM() {
       if (msgCase_ == 8) {
-         return (com.iamteer.Wcf.AddMembers) msg_;
+         return (com.iamteer.Wcf.MemberMgmt) msg_;
       }
-      return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+      return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
     }
     /**
-     * <code>.wcf.AddMembers m = 8;</code>
+     * <pre>
+     * 群成员管理，添加、删除、邀请
+     * </pre>
+     *
+     * <code>.wcf.MemberMgmt m = 8;</code>
      */
     @java.lang.Override
-    public com.iamteer.Wcf.AddMembersOrBuilder getMOrBuilder() {
+    public com.iamteer.Wcf.MemberMgmtOrBuilder getMOrBuilder() {
       if (msgCase_ == 8) {
-         return (com.iamteer.Wcf.AddMembers) msg_;
+         return (com.iamteer.Wcf.MemberMgmt) msg_;
       }
-      return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+      return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
     }
 
     public static final int XML_FIELD_NUMBER = 9;
@@ -925,6 +1039,242 @@ public final class Wcf {
          return (com.iamteer.Wcf.XmlMsg) msg_;
       }
       return com.iamteer.Wcf.XmlMsg.getDefaultInstance();
+    }
+
+    public static final int DEC_FIELD_NUMBER = 10;
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     * @return Whether the dec field is set.
+     */
+    @java.lang.Override
+    public boolean hasDec() {
+      return msgCase_ == 10;
+    }
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     * @return The dec.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.DecPath getDec() {
+      if (msgCase_ == 10) {
+         return (com.iamteer.Wcf.DecPath) msg_;
+      }
+      return com.iamteer.Wcf.DecPath.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.DecPath dec = 10;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.DecPathOrBuilder getDecOrBuilder() {
+      if (msgCase_ == 10) {
+         return (com.iamteer.Wcf.DecPath) msg_;
+      }
+      return com.iamteer.Wcf.DecPath.getDefaultInstance();
+    }
+
+    public static final int TF_FIELD_NUMBER = 11;
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     * @return Whether the tf field is set.
+     */
+    @java.lang.Override
+    public boolean hasTf() {
+      return msgCase_ == 11;
+    }
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     * @return The tf.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.Transfer getTf() {
+      if (msgCase_ == 11) {
+         return (com.iamteer.Wcf.Transfer) msg_;
+      }
+      return com.iamteer.Wcf.Transfer.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.Transfer tf = 11;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.TransferOrBuilder getTfOrBuilder() {
+      if (msgCase_ == 11) {
+         return (com.iamteer.Wcf.Transfer) msg_;
+      }
+      return com.iamteer.Wcf.Transfer.getDefaultInstance();
+    }
+
+    public static final int UI64_FIELD_NUMBER = 12;
+    /**
+     * <pre>
+     * 64 位整数，通用
+     * </pre>
+     *
+     * <code>uint64 ui64 = 12;</code>
+     * @return Whether the ui64 field is set.
+     */
+    @java.lang.Override
+    public boolean hasUi64() {
+      return msgCase_ == 12;
+    }
+    /**
+     * <pre>
+     * 64 位整数，通用
+     * </pre>
+     *
+     * <code>uint64 ui64 = 12;</code>
+     * @return The ui64.
+     */
+    @java.lang.Override
+    public long getUi64() {
+      if (msgCase_ == 12) {
+        return (java.lang.Long) msg_;
+      }
+      return 0L;
+    }
+
+    public static final int FLAG_FIELD_NUMBER = 13;
+    /**
+     * <code>bool flag = 13;</code>
+     * @return Whether the flag field is set.
+     */
+    @java.lang.Override
+    public boolean hasFlag() {
+      return msgCase_ == 13;
+    }
+    /**
+     * <code>bool flag = 13;</code>
+     * @return The flag.
+     */
+    @java.lang.Override
+    public boolean getFlag() {
+      if (msgCase_ == 13) {
+        return (java.lang.Boolean) msg_;
+      }
+      return false;
+    }
+
+    public static final int ATT_FIELD_NUMBER = 14;
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     * @return Whether the att field is set.
+     */
+    @java.lang.Override
+    public boolean hasAtt() {
+      return msgCase_ == 14;
+    }
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     * @return The att.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.AttachMsg getAtt() {
+      if (msgCase_ == 14) {
+         return (com.iamteer.Wcf.AttachMsg) msg_;
+      }
+      return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.AttachMsg att = 14;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.AttachMsgOrBuilder getAttOrBuilder() {
+      if (msgCase_ == 14) {
+         return (com.iamteer.Wcf.AttachMsg) msg_;
+      }
+      return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+    }
+
+    public static final int AM_FIELD_NUMBER = 15;
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     * @return Whether the am field is set.
+     */
+    @java.lang.Override
+    public boolean hasAm() {
+      return msgCase_ == 15;
+    }
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     * @return The am.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.AudioMsg getAm() {
+      if (msgCase_ == 15) {
+         return (com.iamteer.Wcf.AudioMsg) msg_;
+      }
+      return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.AudioMsg am = 15;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.AudioMsgOrBuilder getAmOrBuilder() {
+      if (msgCase_ == 15) {
+         return (com.iamteer.Wcf.AudioMsg) msg_;
+      }
+      return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+    }
+
+    public static final int RT_FIELD_NUMBER = 16;
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     * @return Whether the rt field is set.
+     */
+    @java.lang.Override
+    public boolean hasRt() {
+      return msgCase_ == 16;
+    }
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     * @return The rt.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.RichText getRt() {
+      if (msgCase_ == 16) {
+         return (com.iamteer.Wcf.RichText) msg_;
+      }
+      return com.iamteer.Wcf.RichText.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.RichText rt = 16;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.RichTextOrBuilder getRtOrBuilder() {
+      if (msgCase_ == 16) {
+         return (com.iamteer.Wcf.RichText) msg_;
+      }
+      return com.iamteer.Wcf.RichText.getDefaultInstance();
+    }
+
+    public static final int PM_FIELD_NUMBER = 17;
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     * @return Whether the pm field is set.
+     */
+    @java.lang.Override
+    public boolean hasPm() {
+      return msgCase_ == 17;
+    }
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     * @return The pm.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.PatMsg getPm() {
+      if (msgCase_ == 17) {
+         return (com.iamteer.Wcf.PatMsg) msg_;
+      }
+      return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+    }
+    /**
+     * <code>.wcf.PatMsg pm = 17;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.PatMsgOrBuilder getPmOrBuilder() {
+      if (msgCase_ == 17) {
+         return (com.iamteer.Wcf.PatMsg) msg_;
+      }
+      return com.iamteer.Wcf.PatMsg.getDefaultInstance();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -963,12 +1313,38 @@ public final class Wcf {
         output.writeMessage(7, (com.iamteer.Wcf.Verification) msg_);
       }
       if (msgCase_ == 8) {
-        output.writeMessage(8, (com.iamteer.Wcf.AddMembers) msg_);
+        output.writeMessage(8, (com.iamteer.Wcf.MemberMgmt) msg_);
       }
       if (msgCase_ == 9) {
         output.writeMessage(9, (com.iamteer.Wcf.XmlMsg) msg_);
       }
-      unknownFields.writeTo(output);
+      if (msgCase_ == 10) {
+        output.writeMessage(10, (com.iamteer.Wcf.DecPath) msg_);
+      }
+      if (msgCase_ == 11) {
+        output.writeMessage(11, (com.iamteer.Wcf.Transfer) msg_);
+      }
+      if (msgCase_ == 12) {
+        output.writeUInt64(
+            12, (long)((java.lang.Long) msg_));
+      }
+      if (msgCase_ == 13) {
+        output.writeBool(
+            13, (boolean)((java.lang.Boolean) msg_));
+      }
+      if (msgCase_ == 14) {
+        output.writeMessage(14, (com.iamteer.Wcf.AttachMsg) msg_);
+      }
+      if (msgCase_ == 15) {
+        output.writeMessage(15, (com.iamteer.Wcf.AudioMsg) msg_);
+      }
+      if (msgCase_ == 16) {
+        output.writeMessage(16, (com.iamteer.Wcf.RichText) msg_);
+      }
+      if (msgCase_ == 17) {
+        output.writeMessage(17, (com.iamteer.Wcf.PatMsg) msg_);
+      }
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -1006,13 +1382,47 @@ public final class Wcf {
       }
       if (msgCase_ == 8) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, (com.iamteer.Wcf.AddMembers) msg_);
+          .computeMessageSize(8, (com.iamteer.Wcf.MemberMgmt) msg_);
       }
       if (msgCase_ == 9) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(9, (com.iamteer.Wcf.XmlMsg) msg_);
       }
-      size += unknownFields.getSerializedSize();
+      if (msgCase_ == 10) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(10, (com.iamteer.Wcf.DecPath) msg_);
+      }
+      if (msgCase_ == 11) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(11, (com.iamteer.Wcf.Transfer) msg_);
+      }
+      if (msgCase_ == 12) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(
+              12, (long)((java.lang.Long) msg_));
+      }
+      if (msgCase_ == 13) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(
+              13, (boolean)((java.lang.Boolean) msg_));
+      }
+      if (msgCase_ == 14) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(14, (com.iamteer.Wcf.AttachMsg) msg_);
+      }
+      if (msgCase_ == 15) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(15, (com.iamteer.Wcf.AudioMsg) msg_);
+      }
+      if (msgCase_ == 16) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(16, (com.iamteer.Wcf.RichText) msg_);
+      }
+      if (msgCase_ == 17) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(17, (com.iamteer.Wcf.PatMsg) msg_);
+      }
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -1062,10 +1472,42 @@ public final class Wcf {
           if (!getXml()
               .equals(other.getXml())) return false;
           break;
+        case 10:
+          if (!getDec()
+              .equals(other.getDec())) return false;
+          break;
+        case 11:
+          if (!getTf()
+              .equals(other.getTf())) return false;
+          break;
+        case 12:
+          if (getUi64()
+              != other.getUi64()) return false;
+          break;
+        case 13:
+          if (getFlag()
+              != other.getFlag()) return false;
+          break;
+        case 14:
+          if (!getAtt()
+              .equals(other.getAtt())) return false;
+          break;
+        case 15:
+          if (!getAm()
+              .equals(other.getAm())) return false;
+          break;
+        case 16:
+          if (!getRt()
+              .equals(other.getRt())) return false;
+          break;
+        case 17:
+          if (!getPm()
+              .equals(other.getPm())) return false;
+          break;
         case 0:
         default:
       }
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -1111,10 +1553,44 @@ public final class Wcf {
           hash = (37 * hash) + XML_FIELD_NUMBER;
           hash = (53 * hash) + getXml().hashCode();
           break;
+        case 10:
+          hash = (37 * hash) + DEC_FIELD_NUMBER;
+          hash = (53 * hash) + getDec().hashCode();
+          break;
+        case 11:
+          hash = (37 * hash) + TF_FIELD_NUMBER;
+          hash = (53 * hash) + getTf().hashCode();
+          break;
+        case 12:
+          hash = (37 * hash) + UI64_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              getUi64());
+          break;
+        case 13:
+          hash = (37 * hash) + FLAG_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+              getFlag());
+          break;
+        case 14:
+          hash = (37 * hash) + ATT_FIELD_NUMBER;
+          hash = (53 * hash) + getAtt().hashCode();
+          break;
+        case 15:
+          hash = (37 * hash) + AM_FIELD_NUMBER;
+          hash = (53 * hash) + getAm().hashCode();
+          break;
+        case 16:
+          hash = (37 * hash) + RT_FIELD_NUMBER;
+          hash = (53 * hash) + getRt().hashCode();
+          break;
+        case 17:
+          hash = (37 * hash) + PM_FIELD_NUMBER;
+          hash = (53 * hash) + getPm().hashCode();
+          break;
         case 0:
         default:
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -1230,25 +1706,59 @@ public final class Wcf {
       }
 
       // Construct using com.iamteer.Wcf.Request.newBuilder()
-      Builder() {
-        maybeForceBuilderInitialization();
+      private Builder() {
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         func_ = 0;
-
+        if (emptyBuilder_ != null) {
+          emptyBuilder_.clear();
+        }
+        if (txtBuilder_ != null) {
+          txtBuilder_.clear();
+        }
+        if (fileBuilder_ != null) {
+          fileBuilder_.clear();
+        }
+        if (queryBuilder_ != null) {
+          queryBuilder_.clear();
+        }
+        if (vBuilder_ != null) {
+          vBuilder_.clear();
+        }
+        if (mBuilder_ != null) {
+          mBuilder_.clear();
+        }
+        if (xmlBuilder_ != null) {
+          xmlBuilder_.clear();
+        }
+        if (decBuilder_ != null) {
+          decBuilder_.clear();
+        }
+        if (tfBuilder_ != null) {
+          tfBuilder_.clear();
+        }
+        if (attBuilder_ != null) {
+          attBuilder_.clear();
+        }
+        if (amBuilder_ != null) {
+          amBuilder_.clear();
+        }
+        if (rtBuilder_ != null) {
+          rtBuilder_.clear();
+        }
+        if (pmBuilder_ != null) {
+          pmBuilder_.clear();
+        }
         msgCase_ = 0;
         msg_ = null;
         return this;
@@ -1277,96 +1787,76 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.Request buildPartial() {
         com.iamteer.Wcf.Request result = new com.iamteer.Wcf.Request(this);
-        result.func_ = func_;
-        if (msgCase_ == 2) {
-          if (emptyBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = emptyBuilder_.build();
-          }
-        }
-        if (msgCase_ == 3) {
-          result.msg_ = msg_;
-        }
-        if (msgCase_ == 4) {
-          if (txtBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = txtBuilder_.build();
-          }
-        }
-        if (msgCase_ == 5) {
-          if (fileBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = fileBuilder_.build();
-          }
-        }
-        if (msgCase_ == 6) {
-          if (queryBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = queryBuilder_.build();
-          }
-        }
-        if (msgCase_ == 7) {
-          if (vBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = vBuilder_.build();
-          }
-        }
-        if (msgCase_ == 8) {
-          if (mBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = mBuilder_.build();
-          }
-        }
-        if (msgCase_ == 9) {
-          if (xmlBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = xmlBuilder_.build();
-          }
-        }
-        result.msgCase_ = msgCase_;
+        if (bitField0_ != 0) { buildPartial0(result); }
+        buildPartialOneofs(result);
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.Request result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.func_ = func_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
+
+      private void buildPartialOneofs(com.iamteer.Wcf.Request result) {
+        result.msgCase_ = msgCase_;
+        result.msg_ = this.msg_;
+        if (msgCase_ == 2 &&
+            emptyBuilder_ != null) {
+          result.msg_ = emptyBuilder_.build();
+        }
+        if (msgCase_ == 4 &&
+            txtBuilder_ != null) {
+          result.msg_ = txtBuilder_.build();
+        }
+        if (msgCase_ == 5 &&
+            fileBuilder_ != null) {
+          result.msg_ = fileBuilder_.build();
+        }
+        if (msgCase_ == 6 &&
+            queryBuilder_ != null) {
+          result.msg_ = queryBuilder_.build();
+        }
+        if (msgCase_ == 7 &&
+            vBuilder_ != null) {
+          result.msg_ = vBuilder_.build();
+        }
+        if (msgCase_ == 8 &&
+            mBuilder_ != null) {
+          result.msg_ = mBuilder_.build();
+        }
+        if (msgCase_ == 9 &&
+            xmlBuilder_ != null) {
+          result.msg_ = xmlBuilder_.build();
+        }
+        if (msgCase_ == 10 &&
+            decBuilder_ != null) {
+          result.msg_ = decBuilder_.build();
+        }
+        if (msgCase_ == 11 &&
+            tfBuilder_ != null) {
+          result.msg_ = tfBuilder_.build();
+        }
+        if (msgCase_ == 14 &&
+            attBuilder_ != null) {
+          result.msg_ = attBuilder_.build();
+        }
+        if (msgCase_ == 15 &&
+            amBuilder_ != null) {
+          result.msg_ = amBuilder_.build();
+        }
+        if (msgCase_ == 16 &&
+            rtBuilder_ != null) {
+          result.msg_ = rtBuilder_.build();
+        }
+        if (msgCase_ == 17 &&
+            pmBuilder_ != null) {
+          result.msg_ = pmBuilder_.build();
+        }
       }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Request) {
@@ -1417,11 +1907,43 @@ public final class Wcf {
             mergeXml(other.getXml());
             break;
           }
+          case DEC: {
+            mergeDec(other.getDec());
+            break;
+          }
+          case TF: {
+            mergeTf(other.getTf());
+            break;
+          }
+          case UI64: {
+            setUi64(other.getUi64());
+            break;
+          }
+          case FLAG: {
+            setFlag(other.getFlag());
+            break;
+          }
+          case ATT: {
+            mergeAtt(other.getAtt());
+            break;
+          }
+          case AM: {
+            mergeAm(other.getAm());
+            break;
+          }
+          case RT: {
+            mergeRt(other.getRt());
+            break;
+          }
+          case PM: {
+            mergePm(other.getPm());
+            break;
+          }
           case MSG_NOT_SET: {
             break;
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -1436,17 +1958,142 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.Request parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                func_ = input.readEnum();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                input.readMessage(
+                    getEmptyFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 2;
+                break;
+              } // case 18
+              case 26: {
+                java.lang.String s = input.readStringRequireUtf8();
+                msgCase_ = 3;
+                msg_ = s;
+                break;
+              } // case 26
+              case 34: {
+                input.readMessage(
+                    getTxtFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 4;
+                break;
+              } // case 34
+              case 42: {
+                input.readMessage(
+                    getFileFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 5;
+                break;
+              } // case 42
+              case 50: {
+                input.readMessage(
+                    getQueryFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 6;
+                break;
+              } // case 50
+              case 58: {
+                input.readMessage(
+                    getVFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 7;
+                break;
+              } // case 58
+              case 66: {
+                input.readMessage(
+                    getMFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 8;
+                break;
+              } // case 66
+              case 74: {
+                input.readMessage(
+                    getXmlFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 9;
+                break;
+              } // case 74
+              case 82: {
+                input.readMessage(
+                    getDecFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 10;
+                break;
+              } // case 82
+              case 90: {
+                input.readMessage(
+                    getTfFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 11;
+                break;
+              } // case 90
+              case 96: {
+                msg_ = input.readUInt64();
+                msgCase_ = 12;
+                break;
+              } // case 96
+              case 104: {
+                msg_ = input.readBool();
+                msgCase_ = 13;
+                break;
+              } // case 104
+              case 114: {
+                input.readMessage(
+                    getAttFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 14;
+                break;
+              } // case 114
+              case 122: {
+                input.readMessage(
+                    getAmFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 15;
+                break;
+              } // case 122
+              case 130: {
+                input.readMessage(
+                    getRtFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 16;
+                break;
+              } // case 130
+              case 138: {
+                input.readMessage(
+                    getPmFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 17;
+                break;
+              } // case 138
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.Request) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int msgCase_ = 0;
@@ -1464,6 +2111,7 @@ public final class Wcf {
         return this;
       }
 
+      private int bitField0_;
 
       private int func_ = 0;
       /**
@@ -1479,8 +2127,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setFuncValue(int value) {
-
         func_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -1490,8 +2138,7 @@ public final class Wcf {
        */
       @java.lang.Override
       public com.iamteer.Wcf.Functions getFunc() {
-        @SuppressWarnings("deprecation")
-        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
+        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
         return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
       }
       /**
@@ -1503,7 +2150,7 @@ public final class Wcf {
         if (value == null) {
           throw new NullPointerException();
         }
-
+        bitField0_ |= 0x00000001;
         func_ = value.getNumber();
         onChanged();
         return this;
@@ -1513,7 +2160,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearFunc() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         func_ = 0;
         onChanged();
         return this;
@@ -1643,7 +2290,7 @@ public final class Wcf {
        * <code>.wcf.Empty empty = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.Empty, com.iamteer.Wcf.Empty.Builder, com.iamteer.Wcf.EmptyOrBuilder>
+          com.iamteer.Wcf.Empty, com.iamteer.Wcf.Empty.Builder, com.iamteer.Wcf.EmptyOrBuilder> 
           getEmptyFieldBuilder() {
         if (emptyBuilder_ == null) {
           if (!(msgCase_ == 2)) {
@@ -1657,7 +2304,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 2;
-        onChanged();;
+        onChanged();
         return emptyBuilder_;
       }
 
@@ -1703,7 +2350,7 @@ public final class Wcf {
           ref = msg_;
         }
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           if (msgCase_ == 3) {
@@ -1721,10 +2368,8 @@ public final class Wcf {
        */
       public Builder setStr(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  msgCase_ = 3;
+        if (value == null) { throw new NullPointerException(); }
+        msgCase_ = 3;
         msg_ = value;
         onChanged();
         return this;
@@ -1748,10 +2393,8 @@ public final class Wcf {
        */
       public Builder setStrBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         msgCase_ = 3;
         msg_ = value;
         onChanged();
@@ -1882,7 +2525,7 @@ public final class Wcf {
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.TextMsg, com.iamteer.Wcf.TextMsg.Builder, com.iamteer.Wcf.TextMsgOrBuilder>
+          com.iamteer.Wcf.TextMsg, com.iamteer.Wcf.TextMsg.Builder, com.iamteer.Wcf.TextMsgOrBuilder> 
           getTxtFieldBuilder() {
         if (txtBuilder_ == null) {
           if (!(msgCase_ == 4)) {
@@ -1896,7 +2539,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 4;
-        onChanged();;
+        onChanged();
         return txtBuilder_;
       }
 
@@ -2024,7 +2667,7 @@ public final class Wcf {
        * <code>.wcf.PathMsg file = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.PathMsg, com.iamteer.Wcf.PathMsg.Builder, com.iamteer.Wcf.PathMsgOrBuilder>
+          com.iamteer.Wcf.PathMsg, com.iamteer.Wcf.PathMsg.Builder, com.iamteer.Wcf.PathMsgOrBuilder> 
           getFileFieldBuilder() {
         if (fileBuilder_ == null) {
           if (!(msgCase_ == 5)) {
@@ -2038,7 +2681,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 5;
-        onChanged();;
+        onChanged();
         return fileBuilder_;
       }
 
@@ -2166,7 +2809,7 @@ public final class Wcf {
        * <code>.wcf.DbQuery query = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.DbQuery, com.iamteer.Wcf.DbQuery.Builder, com.iamteer.Wcf.DbQueryOrBuilder>
+          com.iamteer.Wcf.DbQuery, com.iamteer.Wcf.DbQuery.Builder, com.iamteer.Wcf.DbQueryOrBuilder> 
           getQueryFieldBuilder() {
         if (queryBuilder_ == null) {
           if (!(msgCase_ == 6)) {
@@ -2180,7 +2823,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 6;
-        onChanged();;
+        onChanged();
         return queryBuilder_;
       }
 
@@ -2308,7 +2951,7 @@ public final class Wcf {
        * <code>.wcf.Verification v = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.Verification, com.iamteer.Wcf.Verification.Builder, com.iamteer.Wcf.VerificationOrBuilder>
+          com.iamteer.Wcf.Verification, com.iamteer.Wcf.Verification.Builder, com.iamteer.Wcf.VerificationOrBuilder> 
           getVFieldBuilder() {
         if (vBuilder_ == null) {
           if (!(msgCase_ == 7)) {
@@ -2322,14 +2965,18 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 7;
-        onChanged();;
+        onChanged();
         return vBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.AddMembers, com.iamteer.Wcf.AddMembers.Builder, com.iamteer.Wcf.AddMembersOrBuilder> mBuilder_;
+          com.iamteer.Wcf.MemberMgmt, com.iamteer.Wcf.MemberMgmt.Builder, com.iamteer.Wcf.MemberMgmtOrBuilder> mBuilder_;
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        * @return Whether the m field is set.
        */
       @java.lang.Override
@@ -2337,27 +2984,35 @@ public final class Wcf {
         return msgCase_ == 8;
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        * @return The m.
        */
       @java.lang.Override
-      public com.iamteer.Wcf.AddMembers getM() {
+      public com.iamteer.Wcf.MemberMgmt getM() {
         if (mBuilder_ == null) {
           if (msgCase_ == 8) {
-            return (com.iamteer.Wcf.AddMembers) msg_;
+            return (com.iamteer.Wcf.MemberMgmt) msg_;
           }
-          return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+          return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
         } else {
           if (msgCase_ == 8) {
             return mBuilder_.getMessage();
           }
-          return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+          return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
         }
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
-      public Builder setM(com.iamteer.Wcf.AddMembers value) {
+      public Builder setM(com.iamteer.Wcf.MemberMgmt value) {
         if (mBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2371,10 +3026,14 @@ public final class Wcf {
         return this;
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
       public Builder setM(
-          com.iamteer.Wcf.AddMembers.Builder builderForValue) {
+          com.iamteer.Wcf.MemberMgmt.Builder builderForValue) {
         if (mBuilder_ == null) {
           msg_ = builderForValue.build();
           onChanged();
@@ -2385,13 +3044,17 @@ public final class Wcf {
         return this;
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
-      public Builder mergeM(com.iamteer.Wcf.AddMembers value) {
+      public Builder mergeM(com.iamteer.Wcf.MemberMgmt value) {
         if (mBuilder_ == null) {
           if (msgCase_ == 8 &&
-              msg_ != com.iamteer.Wcf.AddMembers.getDefaultInstance()) {
-            msg_ = com.iamteer.Wcf.AddMembers.newBuilder((com.iamteer.Wcf.AddMembers) msg_)
+              msg_ != com.iamteer.Wcf.MemberMgmt.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.MemberMgmt.newBuilder((com.iamteer.Wcf.MemberMgmt) msg_)
                 .mergeFrom(value).buildPartial();
           } else {
             msg_ = value;
@@ -2408,7 +3071,11 @@ public final class Wcf {
         return this;
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
       public Builder clearM() {
         if (mBuilder_ == null) {
@@ -2427,44 +3094,56 @@ public final class Wcf {
         return this;
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
-      public com.iamteer.Wcf.AddMembers.Builder getMBuilder() {
+      public com.iamteer.Wcf.MemberMgmt.Builder getMBuilder() {
         return getMFieldBuilder().getBuilder();
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
       @java.lang.Override
-      public com.iamteer.Wcf.AddMembersOrBuilder getMOrBuilder() {
+      public com.iamteer.Wcf.MemberMgmtOrBuilder getMOrBuilder() {
         if ((msgCase_ == 8) && (mBuilder_ != null)) {
           return mBuilder_.getMessageOrBuilder();
         } else {
           if (msgCase_ == 8) {
-            return (com.iamteer.Wcf.AddMembers) msg_;
+            return (com.iamteer.Wcf.MemberMgmt) msg_;
           }
-          return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+          return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
         }
       }
       /**
-       * <code>.wcf.AddMembers m = 8;</code>
+       * <pre>
+       * 群成员管理，添加、删除、邀请
+       * </pre>
+       *
+       * <code>.wcf.MemberMgmt m = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.AddMembers, com.iamteer.Wcf.AddMembers.Builder, com.iamteer.Wcf.AddMembersOrBuilder>
+          com.iamteer.Wcf.MemberMgmt, com.iamteer.Wcf.MemberMgmt.Builder, com.iamteer.Wcf.MemberMgmtOrBuilder> 
           getMFieldBuilder() {
         if (mBuilder_ == null) {
           if (!(msgCase_ == 8)) {
-            msg_ = com.iamteer.Wcf.AddMembers.getDefaultInstance();
+            msg_ = com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
           }
           mBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              com.iamteer.Wcf.AddMembers, com.iamteer.Wcf.AddMembers.Builder, com.iamteer.Wcf.AddMembersOrBuilder>(
-                  (com.iamteer.Wcf.AddMembers) msg_,
+              com.iamteer.Wcf.MemberMgmt, com.iamteer.Wcf.MemberMgmt.Builder, com.iamteer.Wcf.MemberMgmtOrBuilder>(
+                  (com.iamteer.Wcf.MemberMgmt) msg_,
                   getParentForChildren(),
                   isClean());
           msg_ = null;
         }
         msgCase_ = 8;
-        onChanged();;
+        onChanged();
         return mBuilder_;
       }
 
@@ -2592,7 +3271,7 @@ public final class Wcf {
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.XmlMsg, com.iamteer.Wcf.XmlMsg.Builder, com.iamteer.Wcf.XmlMsgOrBuilder>
+          com.iamteer.Wcf.XmlMsg, com.iamteer.Wcf.XmlMsg.Builder, com.iamteer.Wcf.XmlMsgOrBuilder> 
           getXmlFieldBuilder() {
         if (xmlBuilder_ == null) {
           if (!(msgCase_ == 9)) {
@@ -2606,8 +3285,960 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 9;
-        onChanged();;
+        onChanged();
         return xmlBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.DecPath, com.iamteer.Wcf.DecPath.Builder, com.iamteer.Wcf.DecPathOrBuilder> decBuilder_;
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       * @return Whether the dec field is set.
+       */
+      @java.lang.Override
+      public boolean hasDec() {
+        return msgCase_ == 10;
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       * @return The dec.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.DecPath getDec() {
+        if (decBuilder_ == null) {
+          if (msgCase_ == 10) {
+            return (com.iamteer.Wcf.DecPath) msg_;
+          }
+          return com.iamteer.Wcf.DecPath.getDefaultInstance();
+        } else {
+          if (msgCase_ == 10) {
+            return decBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.DecPath.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      public Builder setDec(com.iamteer.Wcf.DecPath value) {
+        if (decBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          decBuilder_.setMessage(value);
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      public Builder setDec(
+          com.iamteer.Wcf.DecPath.Builder builderForValue) {
+        if (decBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          decBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      public Builder mergeDec(com.iamteer.Wcf.DecPath value) {
+        if (decBuilder_ == null) {
+          if (msgCase_ == 10 &&
+              msg_ != com.iamteer.Wcf.DecPath.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.DecPath.newBuilder((com.iamteer.Wcf.DecPath) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 10) {
+            decBuilder_.mergeFrom(value);
+          } else {
+            decBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      public Builder clearDec() {
+        if (decBuilder_ == null) {
+          if (msgCase_ == 10) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 10) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          decBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      public com.iamteer.Wcf.DecPath.Builder getDecBuilder() {
+        return getDecFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.DecPathOrBuilder getDecOrBuilder() {
+        if ((msgCase_ == 10) && (decBuilder_ != null)) {
+          return decBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 10) {
+            return (com.iamteer.Wcf.DecPath) msg_;
+          }
+          return com.iamteer.Wcf.DecPath.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.DecPath dec = 10;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.DecPath, com.iamteer.Wcf.DecPath.Builder, com.iamteer.Wcf.DecPathOrBuilder> 
+          getDecFieldBuilder() {
+        if (decBuilder_ == null) {
+          if (!(msgCase_ == 10)) {
+            msg_ = com.iamteer.Wcf.DecPath.getDefaultInstance();
+          }
+          decBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.DecPath, com.iamteer.Wcf.DecPath.Builder, com.iamteer.Wcf.DecPathOrBuilder>(
+                  (com.iamteer.Wcf.DecPath) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 10;
+        onChanged();
+        return decBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.Transfer, com.iamteer.Wcf.Transfer.Builder, com.iamteer.Wcf.TransferOrBuilder> tfBuilder_;
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       * @return Whether the tf field is set.
+       */
+      @java.lang.Override
+      public boolean hasTf() {
+        return msgCase_ == 11;
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       * @return The tf.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.Transfer getTf() {
+        if (tfBuilder_ == null) {
+          if (msgCase_ == 11) {
+            return (com.iamteer.Wcf.Transfer) msg_;
+          }
+          return com.iamteer.Wcf.Transfer.getDefaultInstance();
+        } else {
+          if (msgCase_ == 11) {
+            return tfBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.Transfer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      public Builder setTf(com.iamteer.Wcf.Transfer value) {
+        if (tfBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          tfBuilder_.setMessage(value);
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      public Builder setTf(
+          com.iamteer.Wcf.Transfer.Builder builderForValue) {
+        if (tfBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          tfBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      public Builder mergeTf(com.iamteer.Wcf.Transfer value) {
+        if (tfBuilder_ == null) {
+          if (msgCase_ == 11 &&
+              msg_ != com.iamteer.Wcf.Transfer.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.Transfer.newBuilder((com.iamteer.Wcf.Transfer) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 11) {
+            tfBuilder_.mergeFrom(value);
+          } else {
+            tfBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      public Builder clearTf() {
+        if (tfBuilder_ == null) {
+          if (msgCase_ == 11) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 11) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          tfBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      public com.iamteer.Wcf.Transfer.Builder getTfBuilder() {
+        return getTfFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.TransferOrBuilder getTfOrBuilder() {
+        if ((msgCase_ == 11) && (tfBuilder_ != null)) {
+          return tfBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 11) {
+            return (com.iamteer.Wcf.Transfer) msg_;
+          }
+          return com.iamteer.Wcf.Transfer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.Transfer tf = 11;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.Transfer, com.iamteer.Wcf.Transfer.Builder, com.iamteer.Wcf.TransferOrBuilder> 
+          getTfFieldBuilder() {
+        if (tfBuilder_ == null) {
+          if (!(msgCase_ == 11)) {
+            msg_ = com.iamteer.Wcf.Transfer.getDefaultInstance();
+          }
+          tfBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.Transfer, com.iamteer.Wcf.Transfer.Builder, com.iamteer.Wcf.TransferOrBuilder>(
+                  (com.iamteer.Wcf.Transfer) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 11;
+        onChanged();
+        return tfBuilder_;
+      }
+
+      /**
+       * <pre>
+       * 64 位整数，通用
+       * </pre>
+       *
+       * <code>uint64 ui64 = 12;</code>
+       * @return Whether the ui64 field is set.
+       */
+      public boolean hasUi64() {
+        return msgCase_ == 12;
+      }
+      /**
+       * <pre>
+       * 64 位整数，通用
+       * </pre>
+       *
+       * <code>uint64 ui64 = 12;</code>
+       * @return The ui64.
+       */
+      public long getUi64() {
+        if (msgCase_ == 12) {
+          return (java.lang.Long) msg_;
+        }
+        return 0L;
+      }
+      /**
+       * <pre>
+       * 64 位整数，通用
+       * </pre>
+       *
+       * <code>uint64 ui64 = 12;</code>
+       * @param value The ui64 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUi64(long value) {
+
+        msgCase_ = 12;
+        msg_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 64 位整数，通用
+       * </pre>
+       *
+       * <code>uint64 ui64 = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUi64() {
+        if (msgCase_ == 12) {
+          msgCase_ = 0;
+          msg_ = null;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       * <code>bool flag = 13;</code>
+       * @return Whether the flag field is set.
+       */
+      public boolean hasFlag() {
+        return msgCase_ == 13;
+      }
+      /**
+       * <code>bool flag = 13;</code>
+       * @return The flag.
+       */
+      public boolean getFlag() {
+        if (msgCase_ == 13) {
+          return (java.lang.Boolean) msg_;
+        }
+        return false;
+      }
+      /**
+       * <code>bool flag = 13;</code>
+       * @param value The flag to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFlag(boolean value) {
+
+        msgCase_ = 13;
+        msg_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool flag = 13;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFlag() {
+        if (msgCase_ == 13) {
+          msgCase_ = 0;
+          msg_ = null;
+          onChanged();
+        }
+        return this;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.AttachMsg, com.iamteer.Wcf.AttachMsg.Builder, com.iamteer.Wcf.AttachMsgOrBuilder> attBuilder_;
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       * @return Whether the att field is set.
+       */
+      @java.lang.Override
+      public boolean hasAtt() {
+        return msgCase_ == 14;
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       * @return The att.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.AttachMsg getAtt() {
+        if (attBuilder_ == null) {
+          if (msgCase_ == 14) {
+            return (com.iamteer.Wcf.AttachMsg) msg_;
+          }
+          return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+        } else {
+          if (msgCase_ == 14) {
+            return attBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      public Builder setAtt(com.iamteer.Wcf.AttachMsg value) {
+        if (attBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          attBuilder_.setMessage(value);
+        }
+        msgCase_ = 14;
+        return this;
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      public Builder setAtt(
+          com.iamteer.Wcf.AttachMsg.Builder builderForValue) {
+        if (attBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          attBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 14;
+        return this;
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      public Builder mergeAtt(com.iamteer.Wcf.AttachMsg value) {
+        if (attBuilder_ == null) {
+          if (msgCase_ == 14 &&
+              msg_ != com.iamteer.Wcf.AttachMsg.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.AttachMsg.newBuilder((com.iamteer.Wcf.AttachMsg) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 14) {
+            attBuilder_.mergeFrom(value);
+          } else {
+            attBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 14;
+        return this;
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      public Builder clearAtt() {
+        if (attBuilder_ == null) {
+          if (msgCase_ == 14) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 14) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          attBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      public com.iamteer.Wcf.AttachMsg.Builder getAttBuilder() {
+        return getAttFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.AttachMsgOrBuilder getAttOrBuilder() {
+        if ((msgCase_ == 14) && (attBuilder_ != null)) {
+          return attBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 14) {
+            return (com.iamteer.Wcf.AttachMsg) msg_;
+          }
+          return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.AttachMsg att = 14;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.AttachMsg, com.iamteer.Wcf.AttachMsg.Builder, com.iamteer.Wcf.AttachMsgOrBuilder> 
+          getAttFieldBuilder() {
+        if (attBuilder_ == null) {
+          if (!(msgCase_ == 14)) {
+            msg_ = com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+          }
+          attBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.AttachMsg, com.iamteer.Wcf.AttachMsg.Builder, com.iamteer.Wcf.AttachMsgOrBuilder>(
+                  (com.iamteer.Wcf.AttachMsg) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 14;
+        onChanged();
+        return attBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.AudioMsg, com.iamteer.Wcf.AudioMsg.Builder, com.iamteer.Wcf.AudioMsgOrBuilder> amBuilder_;
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       * @return Whether the am field is set.
+       */
+      @java.lang.Override
+      public boolean hasAm() {
+        return msgCase_ == 15;
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       * @return The am.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.AudioMsg getAm() {
+        if (amBuilder_ == null) {
+          if (msgCase_ == 15) {
+            return (com.iamteer.Wcf.AudioMsg) msg_;
+          }
+          return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+        } else {
+          if (msgCase_ == 15) {
+            return amBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      public Builder setAm(com.iamteer.Wcf.AudioMsg value) {
+        if (amBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          amBuilder_.setMessage(value);
+        }
+        msgCase_ = 15;
+        return this;
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      public Builder setAm(
+          com.iamteer.Wcf.AudioMsg.Builder builderForValue) {
+        if (amBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          amBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 15;
+        return this;
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      public Builder mergeAm(com.iamteer.Wcf.AudioMsg value) {
+        if (amBuilder_ == null) {
+          if (msgCase_ == 15 &&
+              msg_ != com.iamteer.Wcf.AudioMsg.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.AudioMsg.newBuilder((com.iamteer.Wcf.AudioMsg) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 15) {
+            amBuilder_.mergeFrom(value);
+          } else {
+            amBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 15;
+        return this;
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      public Builder clearAm() {
+        if (amBuilder_ == null) {
+          if (msgCase_ == 15) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 15) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          amBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      public com.iamteer.Wcf.AudioMsg.Builder getAmBuilder() {
+        return getAmFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.AudioMsgOrBuilder getAmOrBuilder() {
+        if ((msgCase_ == 15) && (amBuilder_ != null)) {
+          return amBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 15) {
+            return (com.iamteer.Wcf.AudioMsg) msg_;
+          }
+          return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.AudioMsg am = 15;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.AudioMsg, com.iamteer.Wcf.AudioMsg.Builder, com.iamteer.Wcf.AudioMsgOrBuilder> 
+          getAmFieldBuilder() {
+        if (amBuilder_ == null) {
+          if (!(msgCase_ == 15)) {
+            msg_ = com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+          }
+          amBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.AudioMsg, com.iamteer.Wcf.AudioMsg.Builder, com.iamteer.Wcf.AudioMsgOrBuilder>(
+                  (com.iamteer.Wcf.AudioMsg) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 15;
+        onChanged();
+        return amBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.RichText, com.iamteer.Wcf.RichText.Builder, com.iamteer.Wcf.RichTextOrBuilder> rtBuilder_;
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       * @return Whether the rt field is set.
+       */
+      @java.lang.Override
+      public boolean hasRt() {
+        return msgCase_ == 16;
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       * @return The rt.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.RichText getRt() {
+        if (rtBuilder_ == null) {
+          if (msgCase_ == 16) {
+            return (com.iamteer.Wcf.RichText) msg_;
+          }
+          return com.iamteer.Wcf.RichText.getDefaultInstance();
+        } else {
+          if (msgCase_ == 16) {
+            return rtBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.RichText.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      public Builder setRt(com.iamteer.Wcf.RichText value) {
+        if (rtBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          rtBuilder_.setMessage(value);
+        }
+        msgCase_ = 16;
+        return this;
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      public Builder setRt(
+          com.iamteer.Wcf.RichText.Builder builderForValue) {
+        if (rtBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          rtBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 16;
+        return this;
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      public Builder mergeRt(com.iamteer.Wcf.RichText value) {
+        if (rtBuilder_ == null) {
+          if (msgCase_ == 16 &&
+              msg_ != com.iamteer.Wcf.RichText.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.RichText.newBuilder((com.iamteer.Wcf.RichText) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 16) {
+            rtBuilder_.mergeFrom(value);
+          } else {
+            rtBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 16;
+        return this;
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      public Builder clearRt() {
+        if (rtBuilder_ == null) {
+          if (msgCase_ == 16) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 16) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          rtBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      public com.iamteer.Wcf.RichText.Builder getRtBuilder() {
+        return getRtFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.RichTextOrBuilder getRtOrBuilder() {
+        if ((msgCase_ == 16) && (rtBuilder_ != null)) {
+          return rtBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 16) {
+            return (com.iamteer.Wcf.RichText) msg_;
+          }
+          return com.iamteer.Wcf.RichText.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.RichText rt = 16;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.RichText, com.iamteer.Wcf.RichText.Builder, com.iamteer.Wcf.RichTextOrBuilder> 
+          getRtFieldBuilder() {
+        if (rtBuilder_ == null) {
+          if (!(msgCase_ == 16)) {
+            msg_ = com.iamteer.Wcf.RichText.getDefaultInstance();
+          }
+          rtBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.RichText, com.iamteer.Wcf.RichText.Builder, com.iamteer.Wcf.RichTextOrBuilder>(
+                  (com.iamteer.Wcf.RichText) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 16;
+        onChanged();
+        return rtBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.PatMsg, com.iamteer.Wcf.PatMsg.Builder, com.iamteer.Wcf.PatMsgOrBuilder> pmBuilder_;
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       * @return Whether the pm field is set.
+       */
+      @java.lang.Override
+      public boolean hasPm() {
+        return msgCase_ == 17;
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       * @return The pm.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.PatMsg getPm() {
+        if (pmBuilder_ == null) {
+          if (msgCase_ == 17) {
+            return (com.iamteer.Wcf.PatMsg) msg_;
+          }
+          return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+        } else {
+          if (msgCase_ == 17) {
+            return pmBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      public Builder setPm(com.iamteer.Wcf.PatMsg value) {
+        if (pmBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          pmBuilder_.setMessage(value);
+        }
+        msgCase_ = 17;
+        return this;
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      public Builder setPm(
+          com.iamteer.Wcf.PatMsg.Builder builderForValue) {
+        if (pmBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          pmBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 17;
+        return this;
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      public Builder mergePm(com.iamteer.Wcf.PatMsg value) {
+        if (pmBuilder_ == null) {
+          if (msgCase_ == 17 &&
+              msg_ != com.iamteer.Wcf.PatMsg.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.PatMsg.newBuilder((com.iamteer.Wcf.PatMsg) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 17) {
+            pmBuilder_.mergeFrom(value);
+          } else {
+            pmBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 17;
+        return this;
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      public Builder clearPm() {
+        if (pmBuilder_ == null) {
+          if (msgCase_ == 17) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 17) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          pmBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      public com.iamteer.Wcf.PatMsg.Builder getPmBuilder() {
+        return getPmFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.PatMsgOrBuilder getPmOrBuilder() {
+        if ((msgCase_ == 17) && (pmBuilder_ != null)) {
+          return pmBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 17) {
+            return (com.iamteer.Wcf.PatMsg) msg_;
+          }
+          return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.wcf.PatMsg pm = 17;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.PatMsg, com.iamteer.Wcf.PatMsg.Builder, com.iamteer.Wcf.PatMsgOrBuilder> 
+          getPmFieldBuilder() {
+        if (pmBuilder_ == null) {
+          if (!(msgCase_ == 17)) {
+            msg_ = com.iamteer.Wcf.PatMsg.getDefaultInstance();
+          }
+          pmBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.PatMsg, com.iamteer.Wcf.PatMsg.Builder, com.iamteer.Wcf.PatMsgOrBuilder>(
+                  (com.iamteer.Wcf.PatMsg) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 17;
+        onChanged();
+        return pmBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -2642,7 +4273,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Request(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -2678,27 +4320,47 @@ public final class Wcf {
     com.iamteer.Wcf.Functions getFunc();
 
     /**
+     * <pre>
+     * Int 状态，通用
+     * </pre>
+     *
      * <code>int32 status = 2;</code>
      * @return Whether the status field is set.
      */
     boolean hasStatus();
     /**
+     * <pre>
+     * Int 状态，通用
+     * </pre>
+     *
      * <code>int32 status = 2;</code>
      * @return The status.
      */
     int getStatus();
 
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return Whether the str field is set.
      */
     boolean hasStr();
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The str.
      */
     java.lang.String getStr();
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The bytes for str.
      */
@@ -2706,96 +4368,195 @@ public final class Wcf {
         getStrBytes();
 
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      * @return Whether the wxmsg field is set.
      */
     boolean hasWxmsg();
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      * @return The wxmsg.
      */
     com.iamteer.Wcf.WxMsg getWxmsg();
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      */
     com.iamteer.Wcf.WxMsgOrBuilder getWxmsgOrBuilder();
 
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      * @return Whether the types field is set.
      */
     boolean hasTypes();
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      * @return The types.
      */
     com.iamteer.Wcf.MsgTypes getTypes();
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      */
     com.iamteer.Wcf.MsgTypesOrBuilder getTypesOrBuilder();
 
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      * @return Whether the contacts field is set.
      */
     boolean hasContacts();
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      * @return The contacts.
      */
     com.iamteer.Wcf.RpcContacts getContacts();
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      */
     com.iamteer.Wcf.RpcContactsOrBuilder getContactsOrBuilder();
 
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      * @return Whether the dbs field is set.
      */
     boolean hasDbs();
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      * @return The dbs.
      */
     com.iamteer.Wcf.DbNames getDbs();
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      */
     com.iamteer.Wcf.DbNamesOrBuilder getDbsOrBuilder();
 
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      * @return Whether the tables field is set.
      */
     boolean hasTables();
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      * @return The tables.
      */
     com.iamteer.Wcf.DbTables getTables();
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      */
     com.iamteer.Wcf.DbTablesOrBuilder getTablesOrBuilder();
 
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      * @return Whether the rows field is set.
      */
     boolean hasRows();
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      * @return The rows.
      */
     com.iamteer.Wcf.DbRows getRows();
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      */
     com.iamteer.Wcf.DbRowsOrBuilder getRowsOrBuilder();
 
-    public com.iamteer.Wcf.Response.MsgCase getMsgCase();
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     * @return Whether the ui field is set.
+     */
+    boolean hasUi();
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     * @return The ui.
+     */
+    com.iamteer.Wcf.UserInfo getUi();
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     */
+    com.iamteer.Wcf.UserInfoOrBuilder getUiOrBuilder();
+
+    com.iamteer.Wcf.Response.MsgCase getMsgCase();
   }
   /**
    * Protobuf type {@code wcf.Response}
@@ -2820,151 +4581,6 @@ public final class Wcf {
       return new Response();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Response(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-              int rawValue = input.readEnum();
-
-              func_ = rawValue;
-              break;
-            }
-            case 16: {
-              msg_ = input.readInt32();
-              msgCase_ = 2;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-              msgCase_ = 3;
-              msg_ = s;
-              break;
-            }
-            case 34: {
-              com.iamteer.Wcf.WxMsg.Builder subBuilder = null;
-              if (msgCase_ == 4) {
-                subBuilder = ((com.iamteer.Wcf.WxMsg) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.WxMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.WxMsg) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 4;
-              break;
-            }
-            case 42: {
-              com.iamteer.Wcf.MsgTypes.Builder subBuilder = null;
-              if (msgCase_ == 5) {
-                subBuilder = ((com.iamteer.Wcf.MsgTypes) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.MsgTypes.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.MsgTypes) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 5;
-              break;
-            }
-            case 50: {
-              com.iamteer.Wcf.RpcContacts.Builder subBuilder = null;
-              if (msgCase_ == 6) {
-                subBuilder = ((com.iamteer.Wcf.RpcContacts) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.RpcContacts.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.RpcContacts) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 6;
-              break;
-            }
-            case 58: {
-              com.iamteer.Wcf.DbNames.Builder subBuilder = null;
-              if (msgCase_ == 7) {
-                subBuilder = ((com.iamteer.Wcf.DbNames) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.DbNames.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.DbNames) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 7;
-              break;
-            }
-            case 66: {
-              com.iamteer.Wcf.DbTables.Builder subBuilder = null;
-              if (msgCase_ == 8) {
-                subBuilder = ((com.iamteer.Wcf.DbTables) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.DbTables.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.DbTables) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 8;
-              break;
-            }
-            case 74: {
-              com.iamteer.Wcf.DbRows.Builder subBuilder = null;
-              if (msgCase_ == 9) {
-                subBuilder = ((com.iamteer.Wcf.DbRows) msg_).toBuilder();
-              }
-              msg_ =
-                  input.readMessage(com.iamteer.Wcf.DbRows.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.iamteer.Wcf.DbRows) msg_);
-                msg_ = subBuilder.buildPartial();
-              }
-              msgCase_ = 9;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Response_descriptor;
@@ -2979,6 +4595,7 @@ public final class Wcf {
     }
 
     private int msgCase_ = 0;
+    @SuppressWarnings("serial")
     private java.lang.Object msg_;
     public enum MsgCase
         implements com.google.protobuf.Internal.EnumLite,
@@ -2991,6 +4608,7 @@ public final class Wcf {
       DBS(7),
       TABLES(8),
       ROWS(9),
+      UI(10),
       MSG_NOT_SET(0);
       private final int value;
       private MsgCase(int value) {
@@ -3016,6 +4634,7 @@ public final class Wcf {
           case 7: return DBS;
           case 8: return TABLES;
           case 9: return ROWS;
+          case 10: return UI;
           case 0: return MSG_NOT_SET;
           default: return null;
         }
@@ -3032,7 +4651,7 @@ public final class Wcf {
     }
 
     public static final int FUNC_FIELD_NUMBER = 1;
-    private int func_;
+    private int func_ = 0;
     /**
      * <code>.wcf.Functions func = 1;</code>
      * @return The enum numeric value on the wire for func.
@@ -3045,13 +4664,16 @@ public final class Wcf {
      * @return The func.
      */
     @java.lang.Override public com.iamteer.Wcf.Functions getFunc() {
-      @SuppressWarnings("deprecation")
-      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
+      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
       return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
     }
 
     public static final int STATUS_FIELD_NUMBER = 2;
     /**
+     * <pre>
+     * Int 状态，通用
+     * </pre>
+     *
      * <code>int32 status = 2;</code>
      * @return Whether the status field is set.
      */
@@ -3060,6 +4682,10 @@ public final class Wcf {
       return msgCase_ == 2;
     }
     /**
+     * <pre>
+     * Int 状态，通用
+     * </pre>
+     *
      * <code>int32 status = 2;</code>
      * @return The status.
      */
@@ -3073,6 +4699,10 @@ public final class Wcf {
 
     public static final int STR_FIELD_NUMBER = 3;
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return Whether the str field is set.
      */
@@ -3080,6 +4710,10 @@ public final class Wcf {
       return msgCase_ == 3;
     }
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The str.
      */
@@ -3091,7 +4725,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         if (msgCase_ == 3) {
@@ -3101,6 +4735,10 @@ public final class Wcf {
       }
     }
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The bytes for str.
      */
@@ -3111,7 +4749,7 @@ public final class Wcf {
         ref = msg_;
       }
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         if (msgCase_ == 3) {
@@ -3125,6 +4763,10 @@ public final class Wcf {
 
     public static final int WXMSG_FIELD_NUMBER = 4;
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      * @return Whether the wxmsg field is set.
      */
@@ -3133,6 +4775,10 @@ public final class Wcf {
       return msgCase_ == 4;
     }
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      * @return The wxmsg.
      */
@@ -3144,6 +4790,10 @@ public final class Wcf {
       return com.iamteer.Wcf.WxMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 微信消息
+     * </pre>
+     *
      * <code>.wcf.WxMsg wxmsg = 4;</code>
      */
     @java.lang.Override
@@ -3156,6 +4806,10 @@ public final class Wcf {
 
     public static final int TYPES_FIELD_NUMBER = 5;
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      * @return Whether the types field is set.
      */
@@ -3164,6 +4818,10 @@ public final class Wcf {
       return msgCase_ == 5;
     }
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      * @return The types.
      */
@@ -3175,6 +4833,10 @@ public final class Wcf {
       return com.iamteer.Wcf.MsgTypes.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
      * <code>.wcf.MsgTypes types = 5;</code>
      */
     @java.lang.Override
@@ -3187,6 +4849,10 @@ public final class Wcf {
 
     public static final int CONTACTS_FIELD_NUMBER = 6;
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      * @return Whether the contacts field is set.
      */
@@ -3195,6 +4861,10 @@ public final class Wcf {
       return msgCase_ == 6;
     }
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      * @return The contacts.
      */
@@ -3206,6 +4876,10 @@ public final class Wcf {
       return com.iamteer.Wcf.RpcContacts.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 联系人
+     * </pre>
+     *
      * <code>.wcf.RpcContacts contacts = 6;</code>
      */
     @java.lang.Override
@@ -3218,6 +4892,10 @@ public final class Wcf {
 
     public static final int DBS_FIELD_NUMBER = 7;
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      * @return Whether the dbs field is set.
      */
@@ -3226,6 +4904,10 @@ public final class Wcf {
       return msgCase_ == 7;
     }
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      * @return The dbs.
      */
@@ -3237,6 +4919,10 @@ public final class Wcf {
       return com.iamteer.Wcf.DbNames.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 数据库列表
+     * </pre>
+     *
      * <code>.wcf.DbNames dbs = 7;</code>
      */
     @java.lang.Override
@@ -3249,6 +4935,10 @@ public final class Wcf {
 
     public static final int TABLES_FIELD_NUMBER = 8;
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      * @return Whether the tables field is set.
      */
@@ -3257,6 +4947,10 @@ public final class Wcf {
       return msgCase_ == 8;
     }
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      * @return The tables.
      */
@@ -3268,6 +4962,10 @@ public final class Wcf {
       return com.iamteer.Wcf.DbTables.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 表列表
+     * </pre>
+     *
      * <code>.wcf.DbTables tables = 8;</code>
      */
     @java.lang.Override
@@ -3280,6 +4978,10 @@ public final class Wcf {
 
     public static final int ROWS_FIELD_NUMBER = 9;
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      * @return Whether the rows field is set.
      */
@@ -3288,6 +4990,10 @@ public final class Wcf {
       return msgCase_ == 9;
     }
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      * @return The rows.
      */
@@ -3299,6 +5005,10 @@ public final class Wcf {
       return com.iamteer.Wcf.DbRows.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 行列表
+     * </pre>
+     *
      * <code>.wcf.DbRows rows = 9;</code>
      */
     @java.lang.Override
@@ -3307,6 +5017,49 @@ public final class Wcf {
          return (com.iamteer.Wcf.DbRows) msg_;
       }
       return com.iamteer.Wcf.DbRows.getDefaultInstance();
+    }
+
+    public static final int UI_FIELD_NUMBER = 10;
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     * @return Whether the ui field is set.
+     */
+    @java.lang.Override
+    public boolean hasUi() {
+      return msgCase_ == 10;
+    }
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     * @return The ui.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.UserInfo getUi() {
+      if (msgCase_ == 10) {
+         return (com.iamteer.Wcf.UserInfo) msg_;
+      }
+      return com.iamteer.Wcf.UserInfo.getDefaultInstance();
+    }
+    /**
+     * <pre>
+     * 个人信息
+     * </pre>
+     *
+     * <code>.wcf.UserInfo ui = 10;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.UserInfoOrBuilder getUiOrBuilder() {
+      if (msgCase_ == 10) {
+         return (com.iamteer.Wcf.UserInfo) msg_;
+      }
+      return com.iamteer.Wcf.UserInfo.getDefaultInstance();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3351,7 +5104,10 @@ public final class Wcf {
       if (msgCase_ == 9) {
         output.writeMessage(9, (com.iamteer.Wcf.DbRows) msg_);
       }
-      unknownFields.writeTo(output);
+      if (msgCase_ == 10) {
+        output.writeMessage(10, (com.iamteer.Wcf.UserInfo) msg_);
+      }
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -3396,7 +5152,11 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(9, (com.iamteer.Wcf.DbRows) msg_);
       }
-      size += unknownFields.getSerializedSize();
+      if (msgCase_ == 10) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(10, (com.iamteer.Wcf.UserInfo) msg_);
+      }
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -3446,10 +5206,14 @@ public final class Wcf {
           if (!getRows()
               .equals(other.getRows())) return false;
           break;
+        case 10:
+          if (!getUi()
+              .equals(other.getUi())) return false;
+          break;
         case 0:
         default:
       }
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -3495,10 +5259,14 @@ public final class Wcf {
           hash = (37 * hash) + ROWS_FIELD_NUMBER;
           hash = (53 * hash) + getRows().hashCode();
           break;
+        case 10:
+          hash = (37 * hash) + UI_FIELD_NUMBER;
+          hash = (53 * hash) + getUi().hashCode();
+          break;
         case 0:
         default:
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -3615,24 +5383,40 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.Response.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         func_ = 0;
-
+        if (wxmsgBuilder_ != null) {
+          wxmsgBuilder_.clear();
+        }
+        if (typesBuilder_ != null) {
+          typesBuilder_.clear();
+        }
+        if (contactsBuilder_ != null) {
+          contactsBuilder_.clear();
+        }
+        if (dbsBuilder_ != null) {
+          dbsBuilder_.clear();
+        }
+        if (tablesBuilder_ != null) {
+          tablesBuilder_.clear();
+        }
+        if (rowsBuilder_ != null) {
+          rowsBuilder_.clear();
+        }
+        if (uiBuilder_ != null) {
+          uiBuilder_.clear();
+        }
         msgCase_ = 0;
         msg_ = null;
         return this;
@@ -3661,92 +5445,52 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.Response buildPartial() {
         com.iamteer.Wcf.Response result = new com.iamteer.Wcf.Response(this);
-        result.func_ = func_;
-        if (msgCase_ == 2) {
-          result.msg_ = msg_;
-        }
-        if (msgCase_ == 3) {
-          result.msg_ = msg_;
-        }
-        if (msgCase_ == 4) {
-          if (wxmsgBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = wxmsgBuilder_.build();
-          }
-        }
-        if (msgCase_ == 5) {
-          if (typesBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = typesBuilder_.build();
-          }
-        }
-        if (msgCase_ == 6) {
-          if (contactsBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = contactsBuilder_.build();
-          }
-        }
-        if (msgCase_ == 7) {
-          if (dbsBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = dbsBuilder_.build();
-          }
-        }
-        if (msgCase_ == 8) {
-          if (tablesBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = tablesBuilder_.build();
-          }
-        }
-        if (msgCase_ == 9) {
-          if (rowsBuilder_ == null) {
-            result.msg_ = msg_;
-          } else {
-            result.msg_ = rowsBuilder_.build();
-          }
-        }
-        result.msgCase_ = msgCase_;
+        if (bitField0_ != 0) { buildPartial0(result); }
+        buildPartialOneofs(result);
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.Response result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.func_ = func_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
+
+      private void buildPartialOneofs(com.iamteer.Wcf.Response result) {
+        result.msgCase_ = msgCase_;
+        result.msg_ = this.msg_;
+        if (msgCase_ == 4 &&
+            wxmsgBuilder_ != null) {
+          result.msg_ = wxmsgBuilder_.build();
+        }
+        if (msgCase_ == 5 &&
+            typesBuilder_ != null) {
+          result.msg_ = typesBuilder_.build();
+        }
+        if (msgCase_ == 6 &&
+            contactsBuilder_ != null) {
+          result.msg_ = contactsBuilder_.build();
+        }
+        if (msgCase_ == 7 &&
+            dbsBuilder_ != null) {
+          result.msg_ = dbsBuilder_.build();
+        }
+        if (msgCase_ == 8 &&
+            tablesBuilder_ != null) {
+          result.msg_ = tablesBuilder_.build();
+        }
+        if (msgCase_ == 9 &&
+            rowsBuilder_ != null) {
+          result.msg_ = rowsBuilder_.build();
+        }
+        if (msgCase_ == 10 &&
+            uiBuilder_ != null) {
+          result.msg_ = uiBuilder_.build();
+        }
       }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Response) {
@@ -3797,11 +5541,15 @@ public final class Wcf {
             mergeRows(other.getRows());
             break;
           }
+          case UI: {
+            mergeUi(other.getUi());
+            break;
+          }
           case MSG_NOT_SET: {
             break;
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -3816,17 +5564,95 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.Response parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                func_ = input.readEnum();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 16: {
+                msg_ = input.readInt32();
+                msgCase_ = 2;
+                break;
+              } // case 16
+              case 26: {
+                java.lang.String s = input.readStringRequireUtf8();
+                msgCase_ = 3;
+                msg_ = s;
+                break;
+              } // case 26
+              case 34: {
+                input.readMessage(
+                    getWxmsgFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 4;
+                break;
+              } // case 34
+              case 42: {
+                input.readMessage(
+                    getTypesFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 5;
+                break;
+              } // case 42
+              case 50: {
+                input.readMessage(
+                    getContactsFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 6;
+                break;
+              } // case 50
+              case 58: {
+                input.readMessage(
+                    getDbsFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 7;
+                break;
+              } // case 58
+              case 66: {
+                input.readMessage(
+                    getTablesFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 8;
+                break;
+              } // case 66
+              case 74: {
+                input.readMessage(
+                    getRowsFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 9;
+                break;
+              } // case 74
+              case 82: {
+                input.readMessage(
+                    getUiFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                msgCase_ = 10;
+                break;
+              } // case 82
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.Response) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int msgCase_ = 0;
@@ -3844,6 +5670,7 @@ public final class Wcf {
         return this;
       }
 
+      private int bitField0_;
 
       private int func_ = 0;
       /**
@@ -3859,8 +5686,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setFuncValue(int value) {
-
         func_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -3870,8 +5697,7 @@ public final class Wcf {
        */
       @java.lang.Override
       public com.iamteer.Wcf.Functions getFunc() {
-        @SuppressWarnings("deprecation")
-        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
+        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
         return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
       }
       /**
@@ -3883,7 +5709,7 @@ public final class Wcf {
         if (value == null) {
           throw new NullPointerException();
         }
-
+        bitField0_ |= 0x00000001;
         func_ = value.getNumber();
         onChanged();
         return this;
@@ -3893,13 +5719,17 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearFunc() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         func_ = 0;
         onChanged();
         return this;
       }
 
       /**
+       * <pre>
+       * Int 状态，通用
+       * </pre>
+       *
        * <code>int32 status = 2;</code>
        * @return Whether the status field is set.
        */
@@ -3907,6 +5737,10 @@ public final class Wcf {
         return msgCase_ == 2;
       }
       /**
+       * <pre>
+       * Int 状态，通用
+       * </pre>
+       *
        * <code>int32 status = 2;</code>
        * @return The status.
        */
@@ -3917,17 +5751,26 @@ public final class Wcf {
         return 0;
       }
       /**
+       * <pre>
+       * Int 状态，通用
+       * </pre>
+       *
        * <code>int32 status = 2;</code>
        * @param value The status to set.
        * @return This builder for chaining.
        */
       public Builder setStatus(int value) {
+
         msgCase_ = 2;
         msg_ = value;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * Int 状态，通用
+       * </pre>
+       *
        * <code>int32 status = 2;</code>
        * @return This builder for chaining.
        */
@@ -3941,6 +5784,10 @@ public final class Wcf {
       }
 
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return Whether the str field is set.
        */
@@ -3949,6 +5796,10 @@ public final class Wcf {
         return msgCase_ == 3;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return The str.
        */
@@ -3971,6 +5822,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return The bytes for str.
        */
@@ -3982,7 +5837,7 @@ public final class Wcf {
           ref = msg_;
         }
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           if (msgCase_ == 3) {
@@ -3994,21 +5849,27 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @param value The str to set.
        * @return This builder for chaining.
        */
       public Builder setStr(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  msgCase_ = 3;
+        if (value == null) { throw new NullPointerException(); }
+        msgCase_ = 3;
         msg_ = value;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return This builder for chaining.
        */
@@ -4021,16 +5882,18 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @param value The bytes for str to set.
        * @return This builder for chaining.
        */
       public Builder setStrBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         msgCase_ = 3;
         msg_ = value;
         onChanged();
@@ -4040,6 +5903,10 @@ public final class Wcf {
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.WxMsg, com.iamteer.Wcf.WxMsg.Builder, com.iamteer.Wcf.WxMsgOrBuilder> wxmsgBuilder_;
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        * @return Whether the wxmsg field is set.
        */
@@ -4048,6 +5915,10 @@ public final class Wcf {
         return msgCase_ == 4;
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        * @return The wxmsg.
        */
@@ -4066,6 +5937,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       public Builder setWxmsg(com.iamteer.Wcf.WxMsg value) {
@@ -4082,6 +5957,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       public Builder setWxmsg(
@@ -4096,6 +5975,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       public Builder mergeWxmsg(com.iamteer.Wcf.WxMsg value) {
@@ -4119,6 +6002,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       public Builder clearWxmsg() {
@@ -4138,12 +6025,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       public com.iamteer.Wcf.WxMsg.Builder getWxmsgBuilder() {
         return getWxmsgFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       @java.lang.Override
@@ -4158,10 +6053,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 微信消息
+       * </pre>
+       *
        * <code>.wcf.WxMsg wxmsg = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.WxMsg, com.iamteer.Wcf.WxMsg.Builder, com.iamteer.Wcf.WxMsgOrBuilder>
+          com.iamteer.Wcf.WxMsg, com.iamteer.Wcf.WxMsg.Builder, com.iamteer.Wcf.WxMsgOrBuilder> 
           getWxmsgFieldBuilder() {
         if (wxmsgBuilder_ == null) {
           if (!(msgCase_ == 4)) {
@@ -4175,13 +6074,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 4;
-        onChanged();;
+        onChanged();
         return wxmsgBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.MsgTypes, com.iamteer.Wcf.MsgTypes.Builder, com.iamteer.Wcf.MsgTypesOrBuilder> typesBuilder_;
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        * @return Whether the types field is set.
        */
@@ -4190,6 +6093,10 @@ public final class Wcf {
         return msgCase_ == 5;
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        * @return The types.
        */
@@ -4208,6 +6115,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       public Builder setTypes(com.iamteer.Wcf.MsgTypes value) {
@@ -4224,6 +6135,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       public Builder setTypes(
@@ -4238,6 +6153,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       public Builder mergeTypes(com.iamteer.Wcf.MsgTypes value) {
@@ -4261,6 +6180,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       public Builder clearTypes() {
@@ -4280,12 +6203,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       public com.iamteer.Wcf.MsgTypes.Builder getTypesBuilder() {
         return getTypesFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       @java.lang.Override
@@ -4300,10 +6231,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
        * <code>.wcf.MsgTypes types = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.MsgTypes, com.iamteer.Wcf.MsgTypes.Builder, com.iamteer.Wcf.MsgTypesOrBuilder>
+          com.iamteer.Wcf.MsgTypes, com.iamteer.Wcf.MsgTypes.Builder, com.iamteer.Wcf.MsgTypesOrBuilder> 
           getTypesFieldBuilder() {
         if (typesBuilder_ == null) {
           if (!(msgCase_ == 5)) {
@@ -4317,13 +6252,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 5;
-        onChanged();;
+        onChanged();
         return typesBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.RpcContacts, com.iamteer.Wcf.RpcContacts.Builder, com.iamteer.Wcf.RpcContactsOrBuilder> contactsBuilder_;
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        * @return Whether the contacts field is set.
        */
@@ -4332,6 +6271,10 @@ public final class Wcf {
         return msgCase_ == 6;
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        * @return The contacts.
        */
@@ -4350,6 +6293,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       public Builder setContacts(com.iamteer.Wcf.RpcContacts value) {
@@ -4366,6 +6313,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       public Builder setContacts(
@@ -4380,6 +6331,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       public Builder mergeContacts(com.iamteer.Wcf.RpcContacts value) {
@@ -4403,6 +6358,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       public Builder clearContacts() {
@@ -4422,12 +6381,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       public com.iamteer.Wcf.RpcContacts.Builder getContactsBuilder() {
         return getContactsFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       @java.lang.Override
@@ -4442,10 +6409,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 联系人
+       * </pre>
+       *
        * <code>.wcf.RpcContacts contacts = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.RpcContacts, com.iamteer.Wcf.RpcContacts.Builder, com.iamteer.Wcf.RpcContactsOrBuilder>
+          com.iamteer.Wcf.RpcContacts, com.iamteer.Wcf.RpcContacts.Builder, com.iamteer.Wcf.RpcContactsOrBuilder> 
           getContactsFieldBuilder() {
         if (contactsBuilder_ == null) {
           if (!(msgCase_ == 6)) {
@@ -4459,13 +6430,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 6;
-        onChanged();;
+        onChanged();
         return contactsBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.DbNames, com.iamteer.Wcf.DbNames.Builder, com.iamteer.Wcf.DbNamesOrBuilder> dbsBuilder_;
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        * @return Whether the dbs field is set.
        */
@@ -4474,6 +6449,10 @@ public final class Wcf {
         return msgCase_ == 7;
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        * @return The dbs.
        */
@@ -4492,6 +6471,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       public Builder setDbs(com.iamteer.Wcf.DbNames value) {
@@ -4508,6 +6491,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       public Builder setDbs(
@@ -4522,6 +6509,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       public Builder mergeDbs(com.iamteer.Wcf.DbNames value) {
@@ -4545,6 +6536,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       public Builder clearDbs() {
@@ -4564,12 +6559,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       public com.iamteer.Wcf.DbNames.Builder getDbsBuilder() {
         return getDbsFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       @java.lang.Override
@@ -4584,10 +6587,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 数据库列表
+       * </pre>
+       *
        * <code>.wcf.DbNames dbs = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.DbNames, com.iamteer.Wcf.DbNames.Builder, com.iamteer.Wcf.DbNamesOrBuilder>
+          com.iamteer.Wcf.DbNames, com.iamteer.Wcf.DbNames.Builder, com.iamteer.Wcf.DbNamesOrBuilder> 
           getDbsFieldBuilder() {
         if (dbsBuilder_ == null) {
           if (!(msgCase_ == 7)) {
@@ -4601,13 +6608,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 7;
-        onChanged();;
+        onChanged();
         return dbsBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.DbTables, com.iamteer.Wcf.DbTables.Builder, com.iamteer.Wcf.DbTablesOrBuilder> tablesBuilder_;
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        * @return Whether the tables field is set.
        */
@@ -4616,6 +6627,10 @@ public final class Wcf {
         return msgCase_ == 8;
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        * @return The tables.
        */
@@ -4634,6 +6649,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       public Builder setTables(com.iamteer.Wcf.DbTables value) {
@@ -4650,6 +6669,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       public Builder setTables(
@@ -4664,6 +6687,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       public Builder mergeTables(com.iamteer.Wcf.DbTables value) {
@@ -4687,6 +6714,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       public Builder clearTables() {
@@ -4706,12 +6737,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       public com.iamteer.Wcf.DbTables.Builder getTablesBuilder() {
         return getTablesFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       @java.lang.Override
@@ -4726,10 +6765,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 表列表
+       * </pre>
+       *
        * <code>.wcf.DbTables tables = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.DbTables, com.iamteer.Wcf.DbTables.Builder, com.iamteer.Wcf.DbTablesOrBuilder>
+          com.iamteer.Wcf.DbTables, com.iamteer.Wcf.DbTables.Builder, com.iamteer.Wcf.DbTablesOrBuilder> 
           getTablesFieldBuilder() {
         if (tablesBuilder_ == null) {
           if (!(msgCase_ == 8)) {
@@ -4743,13 +6786,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 8;
-        onChanged();;
+        onChanged();
         return tablesBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.DbRows, com.iamteer.Wcf.DbRows.Builder, com.iamteer.Wcf.DbRowsOrBuilder> rowsBuilder_;
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        * @return Whether the rows field is set.
        */
@@ -4758,6 +6805,10 @@ public final class Wcf {
         return msgCase_ == 9;
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        * @return The rows.
        */
@@ -4776,6 +6827,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       public Builder setRows(com.iamteer.Wcf.DbRows value) {
@@ -4792,6 +6847,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       public Builder setRows(
@@ -4806,6 +6865,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       public Builder mergeRows(com.iamteer.Wcf.DbRows value) {
@@ -4829,6 +6892,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       public Builder clearRows() {
@@ -4848,12 +6915,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       public com.iamteer.Wcf.DbRows.Builder getRowsBuilder() {
         return getRowsFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       @java.lang.Override
@@ -4868,10 +6943,14 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 行列表
+       * </pre>
+       *
        * <code>.wcf.DbRows rows = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.iamteer.Wcf.DbRows, com.iamteer.Wcf.DbRows.Builder, com.iamteer.Wcf.DbRowsOrBuilder>
+          com.iamteer.Wcf.DbRows, com.iamteer.Wcf.DbRows.Builder, com.iamteer.Wcf.DbRowsOrBuilder> 
           getRowsFieldBuilder() {
         if (rowsBuilder_ == null) {
           if (!(msgCase_ == 9)) {
@@ -4885,8 +6964,186 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 9;
-        onChanged();;
+        onChanged();
         return rowsBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.UserInfo, com.iamteer.Wcf.UserInfo.Builder, com.iamteer.Wcf.UserInfoOrBuilder> uiBuilder_;
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       * @return Whether the ui field is set.
+       */
+      @java.lang.Override
+      public boolean hasUi() {
+        return msgCase_ == 10;
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       * @return The ui.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.UserInfo getUi() {
+        if (uiBuilder_ == null) {
+          if (msgCase_ == 10) {
+            return (com.iamteer.Wcf.UserInfo) msg_;
+          }
+          return com.iamteer.Wcf.UserInfo.getDefaultInstance();
+        } else {
+          if (msgCase_ == 10) {
+            return uiBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.UserInfo.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      public Builder setUi(com.iamteer.Wcf.UserInfo value) {
+        if (uiBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          uiBuilder_.setMessage(value);
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      public Builder setUi(
+          com.iamteer.Wcf.UserInfo.Builder builderForValue) {
+        if (uiBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          uiBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      public Builder mergeUi(com.iamteer.Wcf.UserInfo value) {
+        if (uiBuilder_ == null) {
+          if (msgCase_ == 10 &&
+              msg_ != com.iamteer.Wcf.UserInfo.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.UserInfo.newBuilder((com.iamteer.Wcf.UserInfo) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 10) {
+            uiBuilder_.mergeFrom(value);
+          } else {
+            uiBuilder_.setMessage(value);
+          }
+        }
+        msgCase_ = 10;
+        return this;
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      public Builder clearUi() {
+        if (uiBuilder_ == null) {
+          if (msgCase_ == 10) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 10) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          uiBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      public com.iamteer.Wcf.UserInfo.Builder getUiBuilder() {
+        return getUiFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.UserInfoOrBuilder getUiOrBuilder() {
+        if ((msgCase_ == 10) && (uiBuilder_ != null)) {
+          return uiBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 10) {
+            return (com.iamteer.Wcf.UserInfo) msg_;
+          }
+          return com.iamteer.Wcf.UserInfo.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * 个人信息
+       * </pre>
+       *
+       * <code>.wcf.UserInfo ui = 10;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.UserInfo, com.iamteer.Wcf.UserInfo.Builder, com.iamteer.Wcf.UserInfoOrBuilder> 
+          getUiFieldBuilder() {
+        if (uiBuilder_ == null) {
+          if (!(msgCase_ == 10)) {
+            msg_ = com.iamteer.Wcf.UserInfo.getDefaultInstance();
+          }
+          uiBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.UserInfo, com.iamteer.Wcf.UserInfo.Builder, com.iamteer.Wcf.UserInfoOrBuilder>(
+                  (com.iamteer.Wcf.UserInfo) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 10;
+        onChanged();
+        return uiBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -4921,7 +7178,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Response(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -4967,50 +7235,6 @@ public final class Wcf {
       return new Empty();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Empty(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Empty_descriptor;
@@ -5038,7 +7262,7 @@ public final class Wcf {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -5047,7 +7271,7 @@ public final class Wcf {
       if (size != -1) return size;
 
       size = 0;
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -5062,7 +7286,7 @@ public final class Wcf {
       }
       com.iamteer.Wcf.Empty other = (com.iamteer.Wcf.Empty) obj;
 
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -5073,7 +7297,7 @@ public final class Wcf {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -5190,18 +7414,13 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.Empty.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
@@ -5237,38 +7456,6 @@ public final class Wcf {
       }
 
       @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Empty) {
           return mergeFrom((com.iamteer.Wcf.Empty)other);
@@ -5280,7 +7467,7 @@ public final class Wcf {
 
       public Builder mergeFrom(com.iamteer.Wcf.Empty other) {
         if (other == com.iamteer.Wcf.Empty.getDefaultInstance()) return this;
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -5295,17 +7482,30 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.Empty parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.Empty) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       @java.lang.Override
@@ -5341,7 +7541,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Empty(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -5387,80 +7598,40 @@ public final class Wcf {
 
     /**
      * <pre>
+     * 消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 3;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <pre>
      * 消息类型
      * </pre>
      *
-     * <code>int32 type = 3;</code>
+     * <code>uint32 type = 4;</code>
      * @return The type.
      */
     int getType();
 
     /**
      * <pre>
-     * 消息 id
+     * 消息类型
      * </pre>
      *
-     * <code>string id = 4;</code>
-     * @return The id.
+     * <code>uint32 ts = 5;</code>
+     * @return The ts.
      */
-    java.lang.String getId();
-    /**
-     * <pre>
-     * 消息 id
-     * </pre>
-     *
-     * <code>string id = 4;</code>
-     * @return The bytes for id.
-     */
-    com.google.protobuf.ByteString
-        getIdBytes();
-
-    /**
-     * <pre>
-     * 消息 xml
-     * </pre>
-     *
-     * <code>string xml = 5;</code>
-     * @return The xml.
-     */
-    java.lang.String getXml();
-    /**
-     * <pre>
-     * 消息 xml
-     * </pre>
-     *
-     * <code>string xml = 5;</code>
-     * @return The bytes for xml.
-     */
-    com.google.protobuf.ByteString
-        getXmlBytes();
-
-    /**
-     * <pre>
-     * 消息发送者
-     * </pre>
-     *
-     * <code>string sender = 6;</code>
-     * @return The sender.
-     */
-    java.lang.String getSender();
-    /**
-     * <pre>
-     * 消息发送者
-     * </pre>
-     *
-     * <code>string sender = 6;</code>
-     * @return The bytes for sender.
-     */
-    com.google.protobuf.ByteString
-        getSenderBytes();
+    int getTs();
 
     /**
      * <pre>
      * 群 id（如果是群消息的话）
      * </pre>
      *
-     * <code>string roomid = 7;</code>
+     * <code>string roomid = 6;</code>
      * @return The roomid.
      */
     java.lang.String getRoomid();
@@ -5469,7 +7640,7 @@ public final class Wcf {
      * 群 id（如果是群消息的话）
      * </pre>
      *
-     * <code>string roomid = 7;</code>
+     * <code>string roomid = 6;</code>
      * @return The bytes for roomid.
      */
     com.google.protobuf.ByteString
@@ -5480,7 +7651,7 @@ public final class Wcf {
      * 消息内容
      * </pre>
      *
-     * <code>string content = 8;</code>
+     * <code>string content = 7;</code>
      * @return The content.
      */
     java.lang.String getContent();
@@ -5489,11 +7660,111 @@ public final class Wcf {
      * 消息内容
      * </pre>
      *
-     * <code>string content = 8;</code>
+     * <code>string content = 7;</code>
      * @return The bytes for content.
      */
     com.google.protobuf.ByteString
         getContentBytes();
+
+    /**
+     * <pre>
+     * 消息发送者
+     * </pre>
+     *
+     * <code>string sender = 8;</code>
+     * @return The sender.
+     */
+    java.lang.String getSender();
+    /**
+     * <pre>
+     * 消息发送者
+     * </pre>
+     *
+     * <code>string sender = 8;</code>
+     * @return The bytes for sender.
+     */
+    com.google.protobuf.ByteString
+        getSenderBytes();
+
+    /**
+     * <pre>
+     * Sign
+     * </pre>
+     *
+     * <code>string sign = 9;</code>
+     * @return The sign.
+     */
+    java.lang.String getSign();
+    /**
+     * <pre>
+     * Sign
+     * </pre>
+     *
+     * <code>string sign = 9;</code>
+     * @return The bytes for sign.
+     */
+    com.google.protobuf.ByteString
+        getSignBytes();
+
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumb = 10;</code>
+     * @return The thumb.
+     */
+    java.lang.String getThumb();
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumb = 10;</code>
+     * @return The bytes for thumb.
+     */
+    com.google.protobuf.ByteString
+        getThumbBytes();
+
+    /**
+     * <pre>
+     * 附加内容
+     * </pre>
+     *
+     * <code>string extra = 11;</code>
+     * @return The extra.
+     */
+    java.lang.String getExtra();
+    /**
+     * <pre>
+     * 附加内容
+     * </pre>
+     *
+     * <code>string extra = 11;</code>
+     * @return The bytes for extra.
+     */
+    com.google.protobuf.ByteString
+        getExtraBytes();
+
+    /**
+     * <pre>
+     * 消息 xml
+     * </pre>
+     *
+     * <code>string xml = 12;</code>
+     * @return The xml.
+     */
+    java.lang.String getXml();
+    /**
+     * <pre>
+     * 消息 xml
+     * </pre>
+     *
+     * <code>string xml = 12;</code>
+     * @return The bytes for xml.
+     */
+    com.google.protobuf.ByteString
+        getXmlBytes();
   }
   /**
    * Protobuf type {@code wcf.WxMsg}
@@ -5508,11 +7779,13 @@ public final class Wcf {
       super(builder);
     }
     private WxMsg() {
-      id_ = "";
-      xml_ = "";
-      sender_ = "";
       roomid_ = "";
       content_ = "";
+      sender_ = "";
+      sign_ = "";
+      thumb_ = "";
+      extra_ = "";
+      xml_ = "";
     }
 
     @java.lang.Override
@@ -5522,95 +7795,6 @@ public final class Wcf {
       return new WxMsg();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private WxMsg(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              isSelf_ = input.readBool();
-              break;
-            }
-            case 16: {
-
-              isGroup_ = input.readBool();
-              break;
-            }
-            case 24: {
-
-              type_ = input.readInt32();
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              id_ = s;
-              break;
-            }
-            case 42: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              xml_ = s;
-              break;
-            }
-            case 50: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              sender_ = s;
-              break;
-            }
-            case 58: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              roomid_ = s;
-              break;
-            }
-            case 66: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              content_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_WxMsg_descriptor;
@@ -5625,7 +7809,7 @@ public final class Wcf {
     }
 
     public static final int IS_SELF_FIELD_NUMBER = 1;
-    private boolean isSelf_;
+    private boolean isSelf_ = false;
     /**
      * <pre>
      * 是否自己发送的
@@ -5640,7 +7824,7 @@ public final class Wcf {
     }
 
     public static final int IS_GROUP_FIELD_NUMBER = 2;
-    private boolean isGroup_;
+    private boolean isGroup_ = false;
     /**
      * <pre>
      * 是否群消息
@@ -5654,14 +7838,29 @@ public final class Wcf {
       return isGroup_;
     }
 
-    public static final int TYPE_FIELD_NUMBER = 3;
-    private int type_;
+    public static final int ID_FIELD_NUMBER = 3;
+    private long id_ = 0L;
+    /**
+     * <pre>
+     * 消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 3;</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public long getId() {
+      return id_;
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 4;
+    private int type_ = 0;
     /**
      * <pre>
      * 消息类型
      * </pre>
      *
-     * <code>int32 type = 3;</code>
+     * <code>uint32 type = 4;</code>
      * @return The type.
      */
     @java.lang.Override
@@ -5669,152 +7868,30 @@ public final class Wcf {
       return type_;
     }
 
-    public static final int ID_FIELD_NUMBER = 4;
-    private volatile java.lang.Object id_;
+    public static final int TS_FIELD_NUMBER = 5;
+    private int ts_ = 0;
     /**
      * <pre>
-     * 消息 id
+     * 消息类型
      * </pre>
      *
-     * <code>string id = 4;</code>
-     * @return The id.
+     * <code>uint32 ts = 5;</code>
+     * @return The ts.
      */
     @java.lang.Override
-    public java.lang.String getId() {
-      java.lang.Object ref = id_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        id_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * 消息 id
-     * </pre>
-     *
-     * <code>string id = 4;</code>
-     * @return The bytes for id.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getIdBytes() {
-      java.lang.Object ref = id_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        id_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getTs() {
+      return ts_;
     }
 
-    public static final int XML_FIELD_NUMBER = 5;
-    private volatile java.lang.Object xml_;
-    /**
-     * <pre>
-     * 消息 xml
-     * </pre>
-     *
-     * <code>string xml = 5;</code>
-     * @return The xml.
-     */
-    @java.lang.Override
-    public java.lang.String getXml() {
-      java.lang.Object ref = xml_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        xml_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * 消息 xml
-     * </pre>
-     *
-     * <code>string xml = 5;</code>
-     * @return The bytes for xml.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getXmlBytes() {
-      java.lang.Object ref = xml_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        xml_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int SENDER_FIELD_NUMBER = 6;
-    private volatile java.lang.Object sender_;
-    /**
-     * <pre>
-     * 消息发送者
-     * </pre>
-     *
-     * <code>string sender = 6;</code>
-     * @return The sender.
-     */
-    @java.lang.Override
-    public java.lang.String getSender() {
-      java.lang.Object ref = sender_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        sender_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * 消息发送者
-     * </pre>
-     *
-     * <code>string sender = 6;</code>
-     * @return The bytes for sender.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getSenderBytes() {
-      java.lang.Object ref = sender_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        sender_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ROOMID_FIELD_NUMBER = 7;
-    private volatile java.lang.Object roomid_;
+    public static final int ROOMID_FIELD_NUMBER = 6;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object roomid_ = "";
     /**
      * <pre>
      * 群 id（如果是群消息的话）
      * </pre>
      *
-     * <code>string roomid = 7;</code>
+     * <code>string roomid = 6;</code>
      * @return The roomid.
      */
     @java.lang.Override
@@ -5823,7 +7900,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         roomid_ = s;
@@ -5835,7 +7912,7 @@ public final class Wcf {
      * 群 id（如果是群消息的话）
      * </pre>
      *
-     * <code>string roomid = 7;</code>
+     * <code>string roomid = 6;</code>
      * @return The bytes for roomid.
      */
     @java.lang.Override
@@ -5843,7 +7920,7 @@ public final class Wcf {
         getRoomidBytes() {
       java.lang.Object ref = roomid_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         roomid_ = b;
@@ -5853,14 +7930,15 @@ public final class Wcf {
       }
     }
 
-    public static final int CONTENT_FIELD_NUMBER = 8;
-    private volatile java.lang.Object content_;
+    public static final int CONTENT_FIELD_NUMBER = 7;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object content_ = "";
     /**
      * <pre>
      * 消息内容
      * </pre>
      *
-     * <code>string content = 8;</code>
+     * <code>string content = 7;</code>
      * @return The content.
      */
     @java.lang.Override
@@ -5869,7 +7947,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         content_ = s;
@@ -5881,7 +7959,7 @@ public final class Wcf {
      * 消息内容
      * </pre>
      *
-     * <code>string content = 8;</code>
+     * <code>string content = 7;</code>
      * @return The bytes for content.
      */
     @java.lang.Override
@@ -5889,10 +7967,245 @@ public final class Wcf {
         getContentBytes() {
       java.lang.Object ref = content_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         content_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SENDER_FIELD_NUMBER = 8;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sender_ = "";
+    /**
+     * <pre>
+     * 消息发送者
+     * </pre>
+     *
+     * <code>string sender = 8;</code>
+     * @return The sender.
+     */
+    @java.lang.Override
+    public java.lang.String getSender() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sender_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息发送者
+     * </pre>
+     *
+     * <code>string sender = 8;</code>
+     * @return The bytes for sender.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderBytes() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sender_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SIGN_FIELD_NUMBER = 9;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sign_ = "";
+    /**
+     * <pre>
+     * Sign
+     * </pre>
+     *
+     * <code>string sign = 9;</code>
+     * @return The sign.
+     */
+    @java.lang.Override
+    public java.lang.String getSign() {
+      java.lang.Object ref = sign_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sign_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Sign
+     * </pre>
+     *
+     * <code>string sign = 9;</code>
+     * @return The bytes for sign.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignBytes() {
+      java.lang.Object ref = sign_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sign_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int THUMB_FIELD_NUMBER = 10;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object thumb_ = "";
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumb = 10;</code>
+     * @return The thumb.
+     */
+    @java.lang.Override
+    public java.lang.String getThumb() {
+      java.lang.Object ref = thumb_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        thumb_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumb = 10;</code>
+     * @return The bytes for thumb.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getThumbBytes() {
+      java.lang.Object ref = thumb_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        thumb_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EXTRA_FIELD_NUMBER = 11;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object extra_ = "";
+    /**
+     * <pre>
+     * 附加内容
+     * </pre>
+     *
+     * <code>string extra = 11;</code>
+     * @return The extra.
+     */
+    @java.lang.Override
+    public java.lang.String getExtra() {
+      java.lang.Object ref = extra_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        extra_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 附加内容
+     * </pre>
+     *
+     * <code>string extra = 11;</code>
+     * @return The bytes for extra.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getExtraBytes() {
+      java.lang.Object ref = extra_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        extra_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int XML_FIELD_NUMBER = 12;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object xml_ = "";
+    /**
+     * <pre>
+     * 消息 xml
+     * </pre>
+     *
+     * <code>string xml = 12;</code>
+     * @return The xml.
+     */
+    @java.lang.Override
+    public java.lang.String getXml() {
+      java.lang.Object ref = xml_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        xml_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息 xml
+     * </pre>
+     *
+     * <code>string xml = 12;</code>
+     * @return The bytes for xml.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getXmlBytes() {
+      java.lang.Object ref = xml_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        xml_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -5919,25 +8232,37 @@ public final class Wcf {
       if (isGroup_ != false) {
         output.writeBool(2, isGroup_);
       }
+      if (id_ != 0L) {
+        output.writeUInt64(3, id_);
+      }
       if (type_ != 0) {
-        output.writeInt32(3, type_);
+        output.writeUInt32(4, type_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, xml_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sender_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, sender_);
+      if (ts_ != 0) {
+        output.writeUInt32(5, ts_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(roomid_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, roomid_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, roomid_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, content_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, content_);
       }
-      unknownFields.writeTo(output);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sender_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, sender_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sign_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, sign_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumb_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, thumb_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, extra_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, xml_);
+      }
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -5954,26 +8279,40 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(2, isGroup_);
       }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(3, id_);
+      }
       if (type_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, type_);
+          .computeUInt32Size(4, type_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, xml_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sender_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, sender_);
+      if (ts_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(5, ts_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(roomid_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, roomid_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, roomid_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, content_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, content_);
       }
-      size += unknownFields.getSerializedSize();
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sender_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, sender_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sign_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, sign_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumb_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, thumb_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, extra_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, xml_);
+      }
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -5992,19 +8331,27 @@ public final class Wcf {
           != other.getIsSelf()) return false;
       if (getIsGroup()
           != other.getIsGroup()) return false;
+      if (getId()
+          != other.getId()) return false;
       if (getType()
           != other.getType()) return false;
-      if (!getId()
-          .equals(other.getId())) return false;
-      if (!getXml()
-          .equals(other.getXml())) return false;
-      if (!getSender()
-          .equals(other.getSender())) return false;
+      if (getTs()
+          != other.getTs()) return false;
       if (!getRoomid()
           .equals(other.getRoomid())) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getSender()
+          .equals(other.getSender())) return false;
+      if (!getSign()
+          .equals(other.getSign())) return false;
+      if (!getThumb()
+          .equals(other.getThumb())) return false;
+      if (!getExtra()
+          .equals(other.getExtra())) return false;
+      if (!getXml()
+          .equals(other.getXml())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -6021,19 +8368,28 @@ public final class Wcf {
       hash = (37 * hash) + IS_GROUP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getIsGroup());
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId().hashCode();
-      hash = (37 * hash) + XML_FIELD_NUMBER;
-      hash = (53 * hash) + getXml().hashCode();
-      hash = (37 * hash) + SENDER_FIELD_NUMBER;
-      hash = (53 * hash) + getSender().hashCode();
+      hash = (37 * hash) + TS_FIELD_NUMBER;
+      hash = (53 * hash) + getTs();
       hash = (37 * hash) + ROOMID_FIELD_NUMBER;
       hash = (53 * hash) + getRoomid().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (37 * hash) + SENDER_FIELD_NUMBER;
+      hash = (53 * hash) + getSender().hashCode();
+      hash = (37 * hash) + SIGN_FIELD_NUMBER;
+      hash = (53 * hash) + getSign().hashCode();
+      hash = (37 * hash) + THUMB_FIELD_NUMBER;
+      hash = (53 * hash) + getThumb().hashCode();
+      hash = (37 * hash) + EXTRA_FIELD_NUMBER;
+      hash = (53 * hash) + getExtra().hashCode();
+      hash = (37 * hash) + XML_FIELD_NUMBER;
+      hash = (53 * hash) + getXml().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -6150,38 +8506,30 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.WxMsg.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         isSelf_ = false;
-
         isGroup_ = false;
-
+        id_ = 0L;
         type_ = 0;
-
-        id_ = "";
-
-        xml_ = "";
-
-        sender_ = "";
-
+        ts_ = 0;
         roomid_ = "";
-
         content_ = "";
-
+        sender_ = "";
+        sign_ = "";
+        thumb_ = "";
+        extra_ = "";
+        xml_ = "";
         return this;
       }
 
@@ -6208,50 +8556,51 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.WxMsg buildPartial() {
         com.iamteer.Wcf.WxMsg result = new com.iamteer.Wcf.WxMsg(this);
-        result.isSelf_ = isSelf_;
-        result.isGroup_ = isGroup_;
-        result.type_ = type_;
-        result.id_ = id_;
-        result.xml_ = xml_;
-        result.sender_ = sender_;
-        result.roomid_ = roomid_;
-        result.content_ = content_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.WxMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.isSelf_ = isSelf_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.isGroup_ = isGroup_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.type_ = type_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.ts_ = ts_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.roomid_ = roomid_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.content_ = content_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.sender_ = sender_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.sign_ = sign_;
+        }
+        if (((from_bitField0_ & 0x00000200) != 0)) {
+          result.thumb_ = thumb_;
+        }
+        if (((from_bitField0_ & 0x00000400) != 0)) {
+          result.extra_ = extra_;
+        }
+        if (((from_bitField0_ & 0x00000800) != 0)) {
+          result.xml_ = xml_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.WxMsg) {
@@ -6270,30 +8619,51 @@ public final class Wcf {
         if (other.getIsGroup() != false) {
           setIsGroup(other.getIsGroup());
         }
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
         if (other.getType() != 0) {
           setType(other.getType());
         }
-        if (!other.getId().isEmpty()) {
-          id_ = other.id_;
-          onChanged();
-        }
-        if (!other.getXml().isEmpty()) {
-          xml_ = other.xml_;
-          onChanged();
-        }
-        if (!other.getSender().isEmpty()) {
-          sender_ = other.sender_;
-          onChanged();
+        if (other.getTs() != 0) {
+          setTs(other.getTs());
         }
         if (!other.getRoomid().isEmpty()) {
           roomid_ = other.roomid_;
+          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
+          bitField0_ |= 0x00000040;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        if (!other.getSender().isEmpty()) {
+          sender_ = other.sender_;
+          bitField0_ |= 0x00000080;
+          onChanged();
+        }
+        if (!other.getSign().isEmpty()) {
+          sign_ = other.sign_;
+          bitField0_ |= 0x00000100;
+          onChanged();
+        }
+        if (!other.getThumb().isEmpty()) {
+          thumb_ = other.thumb_;
+          bitField0_ |= 0x00000200;
+          onChanged();
+        }
+        if (!other.getExtra().isEmpty()) {
+          extra_ = other.extra_;
+          bitField0_ |= 0x00000400;
+          onChanged();
+        }
+        if (!other.getXml().isEmpty()) {
+          xml_ = other.xml_;
+          bitField0_ |= 0x00000800;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -6308,19 +8678,93 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.WxMsg parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                isSelf_ = input.readBool();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 16: {
+                isGroup_ = input.readBool();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 24: {
+                id_ = input.readUInt64();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 32: {
+                type_ = input.readUInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 40: {
+                ts_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 50: {
+                roomid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 50
+              case 58: {
+                content_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 58
+              case 66: {
+                sender_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 66
+              case 74: {
+                sign_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 74
+              case 82: {
+                thumb_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000200;
+                break;
+              } // case 82
+              case 90: {
+                extra_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000400;
+                break;
+              } // case 90
+              case 98: {
+                xml_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000800;
+                break;
+              } // case 98
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.WxMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private boolean isSelf_ ;
       /**
@@ -6347,6 +8791,7 @@ public final class Wcf {
       public Builder setIsSelf(boolean value) {
 
         isSelf_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -6359,7 +8804,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearIsSelf() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         isSelf_ = false;
         onChanged();
         return this;
@@ -6390,6 +8835,7 @@ public final class Wcf {
       public Builder setIsGroup(boolean value) {
 
         isGroup_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -6402,8 +8848,52 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearIsGroup() {
-
+        bitField0_ = (bitField0_ & ~0x00000002);
         isGroup_ = false;
+        onChanged();
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 3;</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 3;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        id_ = 0L;
         onChanged();
         return this;
       }
@@ -6414,7 +8904,7 @@ public final class Wcf {
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 3;</code>
+       * <code>uint32 type = 4;</code>
        * @return The type.
        */
       @java.lang.Override
@@ -6426,13 +8916,14 @@ public final class Wcf {
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 3;</code>
+       * <code>uint32 type = 4;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
       public Builder setType(int value) {
 
         type_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -6441,300 +8932,56 @@ public final class Wcf {
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 3;</code>
+       * <code>uint32 type = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
-
+        bitField0_ = (bitField0_ & ~0x00000008);
         type_ = 0;
         onChanged();
         return this;
       }
 
-      private java.lang.Object id_ = "";
+      private int ts_ ;
       /**
        * <pre>
-       * 消息 id
+       * 消息类型
        * </pre>
        *
-       * <code>string id = 4;</code>
-       * @return The id.
+       * <code>uint32 ts = 5;</code>
+       * @return The ts.
        */
-      public java.lang.String getId() {
-        java.lang.Object ref = id_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          id_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      @java.lang.Override
+      public int getTs() {
+        return ts_;
       }
       /**
        * <pre>
-       * 消息 id
+       * 消息类型
        * </pre>
        *
-       * <code>string id = 4;</code>
-       * @return The bytes for id.
-       */
-      public com.google.protobuf.ByteString
-          getIdBytes() {
-        java.lang.Object ref = id_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          id_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 消息 id
-       * </pre>
-       *
-       * <code>string id = 4;</code>
-       * @param value The id to set.
+       * <code>uint32 ts = 5;</code>
+       * @param value The ts to set.
        * @return This builder for chaining.
        */
-      public Builder setId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
+      public Builder setTs(int value) {
 
-        id_ = value;
+        ts_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * 消息 id
+       * 消息类型
        * </pre>
        *
-       * <code>string id = 4;</code>
+       * <code>uint32 ts = 5;</code>
        * @return This builder for chaining.
        */
-      public Builder clearId() {
-
-        id_ = getDefaultInstance().getId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 消息 id
-       * </pre>
-       *
-       * <code>string id = 4;</code>
-       * @param value The bytes for id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
-        id_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object xml_ = "";
-      /**
-       * <pre>
-       * 消息 xml
-       * </pre>
-       *
-       * <code>string xml = 5;</code>
-       * @return The xml.
-       */
-      public java.lang.String getXml() {
-        java.lang.Object ref = xml_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          xml_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 消息 xml
-       * </pre>
-       *
-       * <code>string xml = 5;</code>
-       * @return The bytes for xml.
-       */
-      public com.google.protobuf.ByteString
-          getXmlBytes() {
-        java.lang.Object ref = xml_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          xml_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 消息 xml
-       * </pre>
-       *
-       * <code>string xml = 5;</code>
-       * @param value The xml to set.
-       * @return This builder for chaining.
-       */
-      public Builder setXml(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
-        xml_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 消息 xml
-       * </pre>
-       *
-       * <code>string xml = 5;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearXml() {
-
-        xml_ = getDefaultInstance().getXml();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 消息 xml
-       * </pre>
-       *
-       * <code>string xml = 5;</code>
-       * @param value The bytes for xml to set.
-       * @return This builder for chaining.
-       */
-      public Builder setXmlBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
-        xml_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object sender_ = "";
-      /**
-       * <pre>
-       * 消息发送者
-       * </pre>
-       *
-       * <code>string sender = 6;</code>
-       * @return The sender.
-       */
-      public java.lang.String getSender() {
-        java.lang.Object ref = sender_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          sender_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 消息发送者
-       * </pre>
-       *
-       * <code>string sender = 6;</code>
-       * @return The bytes for sender.
-       */
-      public com.google.protobuf.ByteString
-          getSenderBytes() {
-        java.lang.Object ref = sender_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          sender_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 消息发送者
-       * </pre>
-       *
-       * <code>string sender = 6;</code>
-       * @param value The sender to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSender(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
-        sender_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 消息发送者
-       * </pre>
-       *
-       * <code>string sender = 6;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSender() {
-
-        sender_ = getDefaultInstance().getSender();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 消息发送者
-       * </pre>
-       *
-       * <code>string sender = 6;</code>
-       * @param value The bytes for sender to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSenderBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
-        sender_ = value;
+      public Builder clearTs() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        ts_ = 0;
         onChanged();
         return this;
       }
@@ -6745,7 +8992,7 @@ public final class Wcf {
        * 群 id（如果是群消息的话）
        * </pre>
        *
-       * <code>string roomid = 7;</code>
+       * <code>string roomid = 6;</code>
        * @return The roomid.
        */
       public java.lang.String getRoomid() {
@@ -6765,14 +9012,14 @@ public final class Wcf {
        * 群 id（如果是群消息的话）
        * </pre>
        *
-       * <code>string roomid = 7;</code>
+       * <code>string roomid = 6;</code>
        * @return The bytes for roomid.
        */
       public com.google.protobuf.ByteString
           getRoomidBytes() {
         java.lang.Object ref = roomid_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           roomid_ = b;
@@ -6786,17 +9033,15 @@ public final class Wcf {
        * 群 id（如果是群消息的话）
        * </pre>
        *
-       * <code>string roomid = 7;</code>
+       * <code>string roomid = 6;</code>
        * @param value The roomid to set.
        * @return This builder for chaining.
        */
       public Builder setRoomid(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         roomid_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -6805,12 +9050,12 @@ public final class Wcf {
        * 群 id（如果是群消息的话）
        * </pre>
        *
-       * <code>string roomid = 7;</code>
+       * <code>string roomid = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearRoomid() {
-
         roomid_ = getDefaultInstance().getRoomid();
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -6819,18 +9064,16 @@ public final class Wcf {
        * 群 id（如果是群消息的话）
        * </pre>
        *
-       * <code>string roomid = 7;</code>
+       * <code>string roomid = 6;</code>
        * @param value The bytes for roomid to set.
        * @return This builder for chaining.
        */
       public Builder setRoomidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         roomid_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -6841,7 +9084,7 @@ public final class Wcf {
        * 消息内容
        * </pre>
        *
-       * <code>string content = 8;</code>
+       * <code>string content = 7;</code>
        * @return The content.
        */
       public java.lang.String getContent() {
@@ -6861,14 +9104,14 @@ public final class Wcf {
        * 消息内容
        * </pre>
        *
-       * <code>string content = 8;</code>
+       * <code>string content = 7;</code>
        * @return The bytes for content.
        */
       public com.google.protobuf.ByteString
           getContentBytes() {
         java.lang.Object ref = content_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           content_ = b;
@@ -6882,17 +9125,15 @@ public final class Wcf {
        * 消息内容
        * </pre>
        *
-       * <code>string content = 8;</code>
+       * <code>string content = 7;</code>
        * @param value The content to set.
        * @return This builder for chaining.
        */
       public Builder setContent(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         content_ = value;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -6901,12 +9142,12 @@ public final class Wcf {
        * 消息内容
        * </pre>
        *
-       * <code>string content = 8;</code>
+       * <code>string content = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearContent() {
-
         content_ = getDefaultInstance().getContent();
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
         return this;
       }
@@ -6915,18 +9156,476 @@ public final class Wcf {
        * 消息内容
        * </pre>
        *
-       * <code>string content = 8;</code>
+       * <code>string content = 7;</code>
        * @param value The bytes for content to set.
        * @return This builder for chaining.
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         content_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sender_ = "";
+      /**
+       * <pre>
+       * 消息发送者
+       * </pre>
+       *
+       * <code>string sender = 8;</code>
+       * @return The sender.
+       */
+      public java.lang.String getSender() {
+        java.lang.Object ref = sender_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sender_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送者
+       * </pre>
+       *
+       * <code>string sender = 8;</code>
+       * @return The bytes for sender.
+       */
+      public com.google.protobuf.ByteString
+          getSenderBytes() {
+        java.lang.Object ref = sender_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sender_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送者
+       * </pre>
+       *
+       * <code>string sender = 8;</code>
+       * @param value The sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSender(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        sender_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送者
+       * </pre>
+       *
+       * <code>string sender = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSender() {
+        sender_ = getDefaultInstance().getSender();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送者
+       * </pre>
+       *
+       * <code>string sender = 8;</code>
+       * @param value The bytes for sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSenderBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        sender_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sign_ = "";
+      /**
+       * <pre>
+       * Sign
+       * </pre>
+       *
+       * <code>string sign = 9;</code>
+       * @return The sign.
+       */
+      public java.lang.String getSign() {
+        java.lang.Object ref = sign_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sign_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Sign
+       * </pre>
+       *
+       * <code>string sign = 9;</code>
+       * @return The bytes for sign.
+       */
+      public com.google.protobuf.ByteString
+          getSignBytes() {
+        java.lang.Object ref = sign_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sign_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Sign
+       * </pre>
+       *
+       * <code>string sign = 9;</code>
+       * @param value The sign to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSign(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        sign_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Sign
+       * </pre>
+       *
+       * <code>string sign = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSign() {
+        sign_ = getDefaultInstance().getSign();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Sign
+       * </pre>
+       *
+       * <code>string sign = 9;</code>
+       * @param value The bytes for sign to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        sign_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object thumb_ = "";
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumb = 10;</code>
+       * @return The thumb.
+       */
+      public java.lang.String getThumb() {
+        java.lang.Object ref = thumb_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          thumb_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumb = 10;</code>
+       * @return The bytes for thumb.
+       */
+      public com.google.protobuf.ByteString
+          getThumbBytes() {
+        java.lang.Object ref = thumb_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          thumb_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumb = 10;</code>
+       * @param value The thumb to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumb(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        thumb_ = value;
+        bitField0_ |= 0x00000200;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumb = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearThumb() {
+        thumb_ = getDefaultInstance().getThumb();
+        bitField0_ = (bitField0_ & ~0x00000200);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumb = 10;</code>
+       * @param value The bytes for thumb to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumbBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        thumb_ = value;
+        bitField0_ |= 0x00000200;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object extra_ = "";
+      /**
+       * <pre>
+       * 附加内容
+       * </pre>
+       *
+       * <code>string extra = 11;</code>
+       * @return The extra.
+       */
+      public java.lang.String getExtra() {
+        java.lang.Object ref = extra_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          extra_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 附加内容
+       * </pre>
+       *
+       * <code>string extra = 11;</code>
+       * @return The bytes for extra.
+       */
+      public com.google.protobuf.ByteString
+          getExtraBytes() {
+        java.lang.Object ref = extra_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          extra_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 附加内容
+       * </pre>
+       *
+       * <code>string extra = 11;</code>
+       * @param value The extra to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExtra(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        extra_ = value;
+        bitField0_ |= 0x00000400;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 附加内容
+       * </pre>
+       *
+       * <code>string extra = 11;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExtra() {
+        extra_ = getDefaultInstance().getExtra();
+        bitField0_ = (bitField0_ & ~0x00000400);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 附加内容
+       * </pre>
+       *
+       * <code>string extra = 11;</code>
+       * @param value The bytes for extra to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExtraBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        extra_ = value;
+        bitField0_ |= 0x00000400;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object xml_ = "";
+      /**
+       * <pre>
+       * 消息 xml
+       * </pre>
+       *
+       * <code>string xml = 12;</code>
+       * @return The xml.
+       */
+      public java.lang.String getXml() {
+        java.lang.Object ref = xml_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          xml_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息 xml
+       * </pre>
+       *
+       * <code>string xml = 12;</code>
+       * @return The bytes for xml.
+       */
+      public com.google.protobuf.ByteString
+          getXmlBytes() {
+        java.lang.Object ref = xml_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          xml_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息 xml
+       * </pre>
+       *
+       * <code>string xml = 12;</code>
+       * @param value The xml to set.
+       * @return This builder for chaining.
+       */
+      public Builder setXml(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        xml_ = value;
+        bitField0_ |= 0x00000800;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息 xml
+       * </pre>
+       *
+       * <code>string xml = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearXml() {
+        xml_ = getDefaultInstance().getXml();
+        bitField0_ = (bitField0_ & ~0x00000800);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息 xml
+       * </pre>
+       *
+       * <code>string xml = 12;</code>
+       * @param value The bytes for xml to set.
+       * @return This builder for chaining.
+       */
+      public Builder setXmlBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        xml_ = value;
+        bitField0_ |= 0x00000800;
         onChanged();
         return this;
       }
@@ -6963,7 +9662,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new WxMsg(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -7072,68 +9782,6 @@ public final class Wcf {
       return new TextMsg();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private TextMsg(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              msg_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              receiver_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              aters_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_TextMsg_descriptor;
@@ -7148,7 +9796,8 @@ public final class Wcf {
     }
 
     public static final int MSG_FIELD_NUMBER = 1;
-    private volatile java.lang.Object msg_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object msg_ = "";
     /**
      * <pre>
      * 要发送的消息内容
@@ -7163,7 +9812,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         msg_ = s;
@@ -7183,7 +9832,7 @@ public final class Wcf {
         getMsgBytes() {
       java.lang.Object ref = msg_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         msg_ = b;
@@ -7194,7 +9843,8 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 2;
-    private volatile java.lang.Object receiver_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object receiver_ = "";
     /**
      * <pre>
      * 消息接收人，当为群时可&#64;
@@ -7209,7 +9859,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         receiver_ = s;
@@ -7229,7 +9879,7 @@ public final class Wcf {
         getReceiverBytes() {
       java.lang.Object ref = receiver_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         receiver_ = b;
@@ -7240,7 +9890,8 @@ public final class Wcf {
     }
 
     public static final int ATERS_FIELD_NUMBER = 3;
-    private volatile java.lang.Object aters_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object aters_ = "";
     /**
      * <pre>
      * 要&#64;的人列表，逗号分隔
@@ -7255,7 +9906,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         aters_ = s;
@@ -7275,7 +9926,7 @@ public final class Wcf {
         getAtersBytes() {
       java.lang.Object ref = aters_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         aters_ = b;
@@ -7308,7 +9959,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(aters_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, aters_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -7326,7 +9977,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(aters_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, aters_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -7347,7 +9998,7 @@ public final class Wcf {
           .equals(other.getReceiver())) return false;
       if (!getAters()
           .equals(other.getAters())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -7364,7 +10015,7 @@ public final class Wcf {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + ATERS_FIELD_NUMBER;
       hash = (53 * hash) + getAters().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -7481,28 +10132,21 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.TextMsg.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         msg_ = "";
-
         receiver_ = "";
-
         aters_ = "";
-
         return this;
       }
 
@@ -7529,45 +10173,24 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.TextMsg buildPartial() {
         com.iamteer.Wcf.TextMsg result = new com.iamteer.Wcf.TextMsg(this);
-        result.msg_ = msg_;
-        result.receiver_ = receiver_;
-        result.aters_ = aters_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.TextMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.msg_ = msg_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.receiver_ = receiver_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.aters_ = aters_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.TextMsg) {
@@ -7582,17 +10205,20 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.TextMsg.getDefaultInstance()) return this;
         if (!other.getMsg().isEmpty()) {
           msg_ = other.msg_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getAters().isEmpty()) {
           aters_ = other.aters_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -7607,19 +10233,48 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.TextMsg parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                msg_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                receiver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                aters_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.TextMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object msg_ = "";
       /**
@@ -7654,7 +10309,7 @@ public final class Wcf {
           getMsgBytes() {
         java.lang.Object ref = msg_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           msg_ = b;
@@ -7674,11 +10329,9 @@ public final class Wcf {
        */
       public Builder setMsg(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         msg_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -7691,8 +10344,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearMsg() {
-
         msg_ = getDefaultInstance().getMsg();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -7707,12 +10360,10 @@ public final class Wcf {
        */
       public Builder setMsgBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         msg_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -7750,7 +10401,7 @@ public final class Wcf {
           getReceiverBytes() {
         java.lang.Object ref = receiver_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           receiver_ = b;
@@ -7770,11 +10421,9 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         receiver_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -7787,8 +10436,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
-
         receiver_ = getDefaultInstance().getReceiver();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -7803,12 +10452,10 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         receiver_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -7846,7 +10493,7 @@ public final class Wcf {
           getAtersBytes() {
         java.lang.Object ref = aters_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           aters_ = b;
@@ -7866,11 +10513,9 @@ public final class Wcf {
        */
       public Builder setAters(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         aters_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -7883,8 +10528,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearAters() {
-
         aters_ = getDefaultInstance().getAters();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -7899,12 +10544,10 @@ public final class Wcf {
        */
       public Builder setAtersBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         aters_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -7941,7 +10584,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new TextMsg(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -8029,62 +10683,6 @@ public final class Wcf {
       return new PathMsg();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private PathMsg(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              path_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              receiver_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_PathMsg_descriptor;
@@ -8099,7 +10697,8 @@ public final class Wcf {
     }
 
     public static final int PATH_FIELD_NUMBER = 1;
-    private volatile java.lang.Object path_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object path_ = "";
     /**
      * <pre>
      * 要发送的图片的路径
@@ -8114,7 +10713,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         path_ = s;
@@ -8134,7 +10733,7 @@ public final class Wcf {
         getPathBytes() {
       java.lang.Object ref = path_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         path_ = b;
@@ -8145,7 +10744,8 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 2;
-    private volatile java.lang.Object receiver_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object receiver_ = "";
     /**
      * <pre>
      * 消息接收人
@@ -8160,7 +10760,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         receiver_ = s;
@@ -8180,7 +10780,7 @@ public final class Wcf {
         getReceiverBytes() {
       java.lang.Object ref = receiver_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         receiver_ = b;
@@ -8210,7 +10810,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, receiver_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -8225,7 +10825,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, receiver_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -8244,7 +10844,7 @@ public final class Wcf {
           .equals(other.getPath())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -8259,7 +10859,7 @@ public final class Wcf {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
       hash = (53 * hash) + getReceiver().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -8376,26 +10976,20 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.PathMsg.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         path_ = "";
-
         receiver_ = "";
-
         return this;
       }
 
@@ -8422,44 +11016,21 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.PathMsg buildPartial() {
         com.iamteer.Wcf.PathMsg result = new com.iamteer.Wcf.PathMsg(this);
-        result.path_ = path_;
-        result.receiver_ = receiver_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.PathMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.path_ = path_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.receiver_ = receiver_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.PathMsg) {
@@ -8474,13 +11045,15 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.PathMsg.getDefaultInstance()) return this;
         if (!other.getPath().isEmpty()) {
           path_ = other.path_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -8495,19 +11068,43 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.PathMsg parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                path_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                receiver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.PathMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object path_ = "";
       /**
@@ -8542,7 +11139,7 @@ public final class Wcf {
           getPathBytes() {
         java.lang.Object ref = path_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           path_ = b;
@@ -8562,11 +11159,9 @@ public final class Wcf {
        */
       public Builder setPath(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         path_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -8579,8 +11174,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearPath() {
-
         path_ = getDefaultInstance().getPath();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -8595,12 +11190,10 @@ public final class Wcf {
        */
       public Builder setPathBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         path_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -8638,7 +11231,7 @@ public final class Wcf {
           getReceiverBytes() {
         java.lang.Object ref = receiver_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           receiver_ = b;
@@ -8658,11 +11251,9 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         receiver_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -8675,8 +11266,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
-
         receiver_ = getDefaultInstance().getReceiver();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -8691,12 +11282,10 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         receiver_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -8733,7 +11322,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new PathMsg(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -8852,73 +11452,6 @@ public final class Wcf {
       return new XmlMsg();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private XmlMsg(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              receiver_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              content_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              path_ = s;
-              break;
-            }
-            case 32: {
-
-              type_ = input.readInt32();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_XmlMsg_descriptor;
@@ -8933,7 +11466,8 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 1;
-    private volatile java.lang.Object receiver_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object receiver_ = "";
     /**
      * <pre>
      * 消息接收人
@@ -8948,7 +11482,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         receiver_ = s;
@@ -8968,7 +11502,7 @@ public final class Wcf {
         getReceiverBytes() {
       java.lang.Object ref = receiver_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         receiver_ = b;
@@ -8979,7 +11513,8 @@ public final class Wcf {
     }
 
     public static final int CONTENT_FIELD_NUMBER = 2;
-    private volatile java.lang.Object content_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object content_ = "";
     /**
      * <pre>
      * xml 内容
@@ -8994,7 +11529,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         content_ = s;
@@ -9014,7 +11549,7 @@ public final class Wcf {
         getContentBytes() {
       java.lang.Object ref = content_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         content_ = b;
@@ -9025,7 +11560,8 @@ public final class Wcf {
     }
 
     public static final int PATH_FIELD_NUMBER = 3;
-    private volatile java.lang.Object path_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object path_ = "";
     /**
      * <pre>
      * 图片路径
@@ -9040,7 +11576,7 @@ public final class Wcf {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         path_ = s;
@@ -9060,7 +11596,7 @@ public final class Wcf {
         getPathBytes() {
       java.lang.Object ref = path_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         path_ = b;
@@ -9071,7 +11607,7 @@ public final class Wcf {
     }
 
     public static final int TYPE_FIELD_NUMBER = 4;
-    private int type_;
+    private int type_ = 0;
     /**
      * <pre>
      * 消息类型
@@ -9111,7 +11647,7 @@ public final class Wcf {
       if (type_ != 0) {
         output.writeInt32(4, type_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -9133,7 +11669,7 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, type_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -9156,7 +11692,7 @@ public final class Wcf {
           .equals(other.getPath())) return false;
       if (getType()
           != other.getType()) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -9175,7 +11711,7 @@ public final class Wcf {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -9292,30 +11828,22 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.XmlMsg.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         receiver_ = "";
-
         content_ = "";
-
         path_ = "";
-
         type_ = 0;
-
         return this;
       }
 
@@ -9342,46 +11870,27 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.XmlMsg buildPartial() {
         com.iamteer.Wcf.XmlMsg result = new com.iamteer.Wcf.XmlMsg(this);
-        result.receiver_ = receiver_;
-        result.content_ = content_;
-        result.path_ = path_;
-        result.type_ = type_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.XmlMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.receiver_ = receiver_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.content_ = content_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.path_ = path_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.type_ = type_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.XmlMsg) {
@@ -9396,20 +11905,23 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.XmlMsg.getDefaultInstance()) return this;
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getPath().isEmpty()) {
           path_ = other.path_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (other.getType() != 0) {
           setType(other.getType());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -9424,19 +11936,53 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.XmlMsg parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                receiver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                content_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                path_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 32: {
+                type_ = input.readInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.XmlMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object receiver_ = "";
       /**
@@ -9471,7 +12017,7 @@ public final class Wcf {
           getReceiverBytes() {
         java.lang.Object ref = receiver_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           receiver_ = b;
@@ -9491,11 +12037,9 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         receiver_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -9508,8 +12052,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
-
         receiver_ = getDefaultInstance().getReceiver();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -9524,12 +12068,10 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         receiver_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -9567,7 +12109,7 @@ public final class Wcf {
           getContentBytes() {
         java.lang.Object ref = content_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           content_ = b;
@@ -9587,11 +12129,9 @@ public final class Wcf {
        */
       public Builder setContent(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         content_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -9604,8 +12144,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearContent() {
-
         content_ = getDefaultInstance().getContent();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -9620,12 +12160,10 @@ public final class Wcf {
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         content_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -9663,7 +12201,7 @@ public final class Wcf {
           getPathBytes() {
         java.lang.Object ref = path_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           path_ = b;
@@ -9683,11 +12221,9 @@ public final class Wcf {
        */
       public Builder setPath(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         path_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -9700,8 +12236,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearPath() {
-
         path_ = getDefaultInstance().getPath();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -9716,12 +12252,10 @@ public final class Wcf {
        */
       public Builder setPathBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         path_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -9751,6 +12285,7 @@ public final class Wcf {
       public Builder setType(int value) {
 
         type_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -9763,7 +12298,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearType() {
-
+        bitField0_ = (bitField0_ & ~0x00000008);
         type_ = 0;
         onChanged();
         return this;
@@ -9801,7 +12336,18 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new XmlMsg(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -9848,7 +12394,6 @@ public final class Wcf {
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
-
     /* nullable */
 java.lang.String getTypesOrDefault(
         int key,
@@ -9857,7 +12402,6 @@ java.lang.String defaultValue);
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
-
     java.lang.String getTypesOrThrow(
         int key);
   }
@@ -9883,64 +12427,6 @@ java.lang.String defaultValue);
       return new MsgTypes();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private MsgTypes(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                types_ = com.google.protobuf.MapField.newMapField(
-                    TypesDefaultEntryHolder.defaultEntry);
-                mutable_bitField0_ |= 0x00000001;
-              }
-              com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
-              types__ = input.readMessage(
-                  TypesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-              types_.getMutableMap().put(
-                  types__.getKey(), types__.getValue());
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_MsgTypes_descriptor;
@@ -9972,12 +12458,13 @@ java.lang.String defaultValue);
           java.lang.Integer, java.lang.String> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.Integer, java.lang.String>newDefaultInstance(
-                  com.iamteer.Wcf.internal_static_wcf_MsgTypes_TypesEntry_descriptor,
+                  com.iamteer.Wcf.internal_static_wcf_MsgTypes_TypesEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "");
     }
+    @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
         java.lang.Integer, java.lang.String> types_;
     private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
@@ -9988,14 +12475,12 @@ java.lang.String defaultValue);
       }
       return types_;
     }
-
     public int getTypesCount() {
       return internalGetTypes().getMap().size();
     }
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
-
     @java.lang.Override
     public boolean containsTypes(
         int key) {
@@ -10014,7 +12499,6 @@ java.lang.String defaultValue);
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
-
     public java.util.Map<java.lang.Integer, java.lang.String> getTypesMap() {
       return internalGetTypes().getMap();
     }
@@ -10022,10 +12506,11 @@ java.lang.String defaultValue);
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
-
-    public java.lang.String getTypesOrDefault(
+    public /* nullable */
+java.lang.String getTypesOrDefault(
         int key,
-        java.lang.String defaultValue) {
+        /* nullable */
+java.lang.String defaultValue) {
 
       java.util.Map<java.lang.Integer, java.lang.String> map =
           internalGetTypes().getMap();
@@ -10035,7 +12520,6 @@ java.lang.String defaultValue);
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
-
     public java.lang.String getTypesOrThrow(
         int key) {
 
@@ -10067,7 +12551,7 @@ java.lang.String defaultValue);
           internalGetTypes(),
           TypesDefaultEntryHolder.defaultEntry,
           1);
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -10086,7 +12570,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(1, types__);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -10103,7 +12587,7 @@ java.lang.String defaultValue);
 
       if (!internalGetTypes().equals(
           other.internalGetTypes())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -10118,7 +12602,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + TYPES_FIELD_NUMBER;
         hash = (53 * hash) + internalGetTypes().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -10257,22 +12741,18 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.MsgTypes.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         internalGetMutableTypes().clear();
         return this;
       }
@@ -10300,45 +12780,19 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.MsgTypes buildPartial() {
         com.iamteer.Wcf.MsgTypes result = new com.iamteer.Wcf.MsgTypes(this);
-        int from_bitField0_ = bitField0_;
-        result.types_ = internalGetTypes();
-        result.types_.makeImmutable();
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.MsgTypes result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.types_ = internalGetTypes();
+          result.types_.makeImmutable();
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.MsgTypes) {
@@ -10353,7 +12807,8 @@ java.lang.String defaultValue);
         if (other == com.iamteer.Wcf.MsgTypes.getDefaultInstance()) return this;
         internalGetMutableTypes().mergeFrom(
             other.internalGetTypes());
-        this.mergeUnknownFields(other.unknownFields);
+        bitField0_ |= 0x00000001;
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -10368,17 +12823,39 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.MsgTypes parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
+                types__ = input.readMessage(
+                    TypesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableTypes().getMutableMap().put(
+                    types__.getKey(), types__.getValue());
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.MsgTypes) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -10386,7 +12863,7 @@ java.lang.String defaultValue);
       private com.google.protobuf.MapField<
           java.lang.Integer, java.lang.String> types_;
       private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-      internalGetTypes() {
+          internalGetTypes() {
         if (types_ == null) {
           return com.google.protobuf.MapField.emptyMapField(
               TypesDefaultEntryHolder.defaultEntry);
@@ -10394,8 +12871,7 @@ java.lang.String defaultValue);
         return types_;
       }
       private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-      internalGetMutableTypes() {
-        onChanged();;
+          internalGetMutableTypes() {
         if (types_ == null) {
           types_ = com.google.protobuf.MapField.newMapField(
               TypesDefaultEntryHolder.defaultEntry);
@@ -10403,16 +12879,16 @@ java.lang.String defaultValue);
         if (!types_.isMutable()) {
           types_ = types_.copy();
         }
+        bitField0_ |= 0x00000001;
+        onChanged();
         return types_;
       }
-
       public int getTypesCount() {
         return internalGetTypes().getMap().size();
       }
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
-
       @java.lang.Override
       public boolean containsTypes(
           int key) {
@@ -10431,7 +12907,6 @@ java.lang.String defaultValue);
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
-
       public java.util.Map<java.lang.Integer, java.lang.String> getTypesMap() {
         return internalGetTypes().getMap();
       }
@@ -10439,10 +12914,11 @@ java.lang.String defaultValue);
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
-
-      public java.lang.String getTypesOrDefault(
+      public /* nullable */
+java.lang.String getTypesOrDefault(
           int key,
-          java.lang.String defaultValue) {
+          /* nullable */
+java.lang.String defaultValue) {
 
         java.util.Map<java.lang.Integer, java.lang.String> map =
             internalGetTypes().getMap();
@@ -10452,7 +12928,6 @@ java.lang.String defaultValue);
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
-
       public java.lang.String getTypesOrThrow(
           int key) {
 
@@ -10463,8 +12938,8 @@ java.lang.String defaultValue);
         }
         return map.get(key);
       }
-
       public Builder clearTypes() {
+        bitField0_ = (bitField0_ & ~0x00000001);
         internalGetMutableTypes().getMutableMap()
             .clear();
         return this;
@@ -10472,7 +12947,6 @@ java.lang.String defaultValue);
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
-
       public Builder removeTypes(
           int key) {
 
@@ -10485,7 +12959,8 @@ java.lang.String defaultValue);
        */
       @java.lang.Deprecated
       public java.util.Map<java.lang.Integer, java.lang.String>
-      getMutableTypes() {
+          getMutableTypes() {
+        bitField0_ |= 0x00000001;
         return internalGetMutableTypes().getMutableMap();
       }
       /**
@@ -10495,22 +12970,20 @@ java.lang.String defaultValue);
           int key,
           java.lang.String value) {
 
-        if (value == null) {
-  throw new NullPointerException("map value");
-}
-
+        if (value == null) { throw new NullPointerException("map value"); }
         internalGetMutableTypes().getMutableMap()
             .put(key, value);
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
-
       public Builder putAllTypes(
           java.util.Map<java.lang.Integer, java.lang.String> values) {
         internalGetMutableTypes().getMutableMap()
             .putAll(values);
+        bitField0_ |= 0x00000001;
         return this;
       }
       @java.lang.Override
@@ -10546,7 +13019,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new MsgTypes(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -10612,10 +13096,30 @@ java.lang.String defaultValue);
 
     /**
      * <pre>
+     * 备注
+     * </pre>
+     *
+     * <code>string remark = 3;</code>
+     * @return The remark.
+     */
+    java.lang.String getRemark();
+    /**
+     * <pre>
+     * 备注
+     * </pre>
+     *
+     * <code>string remark = 3;</code>
+     * @return The bytes for remark.
+     */
+    com.google.protobuf.ByteString
+        getRemarkBytes();
+
+    /**
+     * <pre>
      * 微信昵称
      * </pre>
      *
-     * <code>string name = 3;</code>
+     * <code>string name = 4;</code>
      * @return The name.
      */
     java.lang.String getName();
@@ -10624,7 +13128,7 @@ java.lang.String defaultValue);
      * 微信昵称
      * </pre>
      *
-     * <code>string name = 3;</code>
+     * <code>string name = 4;</code>
      * @return The bytes for name.
      */
     com.google.protobuf.ByteString
@@ -10635,7 +13139,7 @@ java.lang.String defaultValue);
      * 国家
      * </pre>
      *
-     * <code>string country = 4;</code>
+     * <code>string country = 5;</code>
      * @return The country.
      */
     java.lang.String getCountry();
@@ -10644,7 +13148,7 @@ java.lang.String defaultValue);
      * 国家
      * </pre>
      *
-     * <code>string country = 4;</code>
+     * <code>string country = 5;</code>
      * @return The bytes for country.
      */
     com.google.protobuf.ByteString
@@ -10655,7 +13159,7 @@ java.lang.String defaultValue);
      * 省/州
      * </pre>
      *
-     * <code>string province = 5;</code>
+     * <code>string province = 6;</code>
      * @return The province.
      */
     java.lang.String getProvince();
@@ -10664,7 +13168,7 @@ java.lang.String defaultValue);
      * 省/州
      * </pre>
      *
-     * <code>string province = 5;</code>
+     * <code>string province = 6;</code>
      * @return The bytes for province.
      */
     com.google.protobuf.ByteString
@@ -10675,7 +13179,7 @@ java.lang.String defaultValue);
      * 城市
      * </pre>
      *
-     * <code>string city = 6;</code>
+     * <code>string city = 7;</code>
      * @return The city.
      */
     java.lang.String getCity();
@@ -10684,7 +13188,7 @@ java.lang.String defaultValue);
      * 城市
      * </pre>
      *
-     * <code>string city = 6;</code>
+     * <code>string city = 7;</code>
      * @return The bytes for city.
      */
     com.google.protobuf.ByteString
@@ -10695,7 +13199,7 @@ java.lang.String defaultValue);
      * 性别
      * </pre>
      *
-     * <code>int32 gender = 7;</code>
+     * <code>int32 gender = 8;</code>
      * @return The gender.
      */
     int getGender();
@@ -10715,6 +13219,7 @@ java.lang.String defaultValue);
     private RpcContact() {
       wxid_ = "";
       code_ = "";
+      remark_ = "";
       name_ = "";
       country_ = "";
       province_ = "";
@@ -10728,91 +13233,6 @@ java.lang.String defaultValue);
       return new RpcContact();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RpcContact(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              wxid_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              code_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              country_ = s;
-              break;
-            }
-            case 42: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              province_ = s;
-              break;
-            }
-            case 50: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              city_ = s;
-              break;
-            }
-            case 56: {
-
-              gender_ = input.readInt32();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_RpcContact_descriptor;
@@ -10827,7 +13247,8 @@ java.lang.String defaultValue);
     }
 
     public static final int WXID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object wxid_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object wxid_ = "";
     /**
      * <pre>
      * 微信 id
@@ -10842,7 +13263,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         wxid_ = s;
@@ -10862,7 +13283,7 @@ java.lang.String defaultValue);
         getWxidBytes() {
       java.lang.Object ref = wxid_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         wxid_ = b;
@@ -10873,7 +13294,8 @@ java.lang.String defaultValue);
     }
 
     public static final int CODE_FIELD_NUMBER = 2;
-    private volatile java.lang.Object code_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object code_ = "";
     /**
      * <pre>
      * 微信号
@@ -10888,7 +13310,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         code_ = s;
@@ -10908,7 +13330,7 @@ java.lang.String defaultValue);
         getCodeBytes() {
       java.lang.Object ref = code_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         code_ = b;
@@ -10918,14 +13340,62 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int NAME_FIELD_NUMBER = 3;
-    private volatile java.lang.Object name_;
+    public static final int REMARK_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object remark_ = "";
+    /**
+     * <pre>
+     * 备注
+     * </pre>
+     *
+     * <code>string remark = 3;</code>
+     * @return The remark.
+     */
+    @java.lang.Override
+    public java.lang.String getRemark() {
+      java.lang.Object ref = remark_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        remark_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 备注
+     * </pre>
+     *
+     * <code>string remark = 3;</code>
+     * @return The bytes for remark.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getRemarkBytes() {
+      java.lang.Object ref = remark_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        remark_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NAME_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
     /**
      * <pre>
      * 微信昵称
      * </pre>
      *
-     * <code>string name = 3;</code>
+     * <code>string name = 4;</code>
      * @return The name.
      */
     @java.lang.Override
@@ -10934,7 +13404,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         name_ = s;
@@ -10946,7 +13416,7 @@ java.lang.String defaultValue);
      * 微信昵称
      * </pre>
      *
-     * <code>string name = 3;</code>
+     * <code>string name = 4;</code>
      * @return The bytes for name.
      */
     @java.lang.Override
@@ -10954,7 +13424,7 @@ java.lang.String defaultValue);
         getNameBytes() {
       java.lang.Object ref = name_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         name_ = b;
@@ -10964,14 +13434,15 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int COUNTRY_FIELD_NUMBER = 4;
-    private volatile java.lang.Object country_;
+    public static final int COUNTRY_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object country_ = "";
     /**
      * <pre>
      * 国家
      * </pre>
      *
-     * <code>string country = 4;</code>
+     * <code>string country = 5;</code>
      * @return The country.
      */
     @java.lang.Override
@@ -10980,7 +13451,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         country_ = s;
@@ -10992,7 +13463,7 @@ java.lang.String defaultValue);
      * 国家
      * </pre>
      *
-     * <code>string country = 4;</code>
+     * <code>string country = 5;</code>
      * @return The bytes for country.
      */
     @java.lang.Override
@@ -11000,7 +13471,7 @@ java.lang.String defaultValue);
         getCountryBytes() {
       java.lang.Object ref = country_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         country_ = b;
@@ -11010,14 +13481,15 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int PROVINCE_FIELD_NUMBER = 5;
-    private volatile java.lang.Object province_;
+    public static final int PROVINCE_FIELD_NUMBER = 6;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object province_ = "";
     /**
      * <pre>
      * 省/州
      * </pre>
      *
-     * <code>string province = 5;</code>
+     * <code>string province = 6;</code>
      * @return The province.
      */
     @java.lang.Override
@@ -11026,7 +13498,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         province_ = s;
@@ -11038,7 +13510,7 @@ java.lang.String defaultValue);
      * 省/州
      * </pre>
      *
-     * <code>string province = 5;</code>
+     * <code>string province = 6;</code>
      * @return The bytes for province.
      */
     @java.lang.Override
@@ -11046,7 +13518,7 @@ java.lang.String defaultValue);
         getProvinceBytes() {
       java.lang.Object ref = province_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         province_ = b;
@@ -11056,14 +13528,15 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int CITY_FIELD_NUMBER = 6;
-    private volatile java.lang.Object city_;
+    public static final int CITY_FIELD_NUMBER = 7;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object city_ = "";
     /**
      * <pre>
      * 城市
      * </pre>
      *
-     * <code>string city = 6;</code>
+     * <code>string city = 7;</code>
      * @return The city.
      */
     @java.lang.Override
@@ -11072,7 +13545,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         city_ = s;
@@ -11084,7 +13557,7 @@ java.lang.String defaultValue);
      * 城市
      * </pre>
      *
-     * <code>string city = 6;</code>
+     * <code>string city = 7;</code>
      * @return The bytes for city.
      */
     @java.lang.Override
@@ -11092,7 +13565,7 @@ java.lang.String defaultValue);
         getCityBytes() {
       java.lang.Object ref = city_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         city_ = b;
@@ -11102,14 +13575,14 @@ java.lang.String defaultValue);
       }
     }
 
-    public static final int GENDER_FIELD_NUMBER = 7;
-    private int gender_;
+    public static final int GENDER_FIELD_NUMBER = 8;
+    private int gender_ = 0;
     /**
      * <pre>
      * 性别
      * </pre>
      *
-     * <code>int32 gender = 7;</code>
+     * <code>int32 gender = 8;</code>
      * @return The gender.
      */
     @java.lang.Override
@@ -11137,22 +13610,25 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(code_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, code_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(remark_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, remark_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, name_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(country_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, country_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, country_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(province_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, province_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, province_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(city_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, city_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, city_);
       }
       if (gender_ != 0) {
-        output.writeInt32(7, gender_);
+        output.writeInt32(8, gender_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -11167,23 +13643,26 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(code_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, code_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(remark_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, remark_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, name_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(country_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, country_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, country_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(province_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, province_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, province_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(city_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, city_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, city_);
       }
       if (gender_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(7, gender_);
+          .computeInt32Size(8, gender_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -11202,6 +13681,8 @@ java.lang.String defaultValue);
           .equals(other.getWxid())) return false;
       if (!getCode()
           .equals(other.getCode())) return false;
+      if (!getRemark()
+          .equals(other.getRemark())) return false;
       if (!getName()
           .equals(other.getName())) return false;
       if (!getCountry()
@@ -11212,7 +13693,7 @@ java.lang.String defaultValue);
           .equals(other.getCity())) return false;
       if (getGender()
           != other.getGender()) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -11227,6 +13708,8 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getWxid().hashCode();
       hash = (37 * hash) + CODE_FIELD_NUMBER;
       hash = (53 * hash) + getCode().hashCode();
+      hash = (37 * hash) + REMARK_FIELD_NUMBER;
+      hash = (53 * hash) + getRemark().hashCode();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + COUNTRY_FIELD_NUMBER;
@@ -11237,7 +13720,7 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getCity().hashCode();
       hash = (37 * hash) + GENDER_FIELD_NUMBER;
       hash = (53 * hash) + getGender();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -11354,36 +13837,26 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.RpcContact.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         wxid_ = "";
-
         code_ = "";
-
+        remark_ = "";
         name_ = "";
-
         country_ = "";
-
         province_ = "";
-
         city_ = "";
-
         gender_ = 0;
-
         return this;
       }
 
@@ -11410,49 +13883,39 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.RpcContact buildPartial() {
         com.iamteer.Wcf.RpcContact result = new com.iamteer.Wcf.RpcContact(this);
-        result.wxid_ = wxid_;
-        result.code_ = code_;
-        result.name_ = name_;
-        result.country_ = country_;
-        result.province_ = province_;
-        result.city_ = city_;
-        result.gender_ = gender_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.RpcContact result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.wxid_ = wxid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.code_ = code_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.remark_ = remark_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.country_ = country_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.province_ = province_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.city_ = city_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.gender_ = gender_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.RpcContact) {
@@ -11467,32 +13930,43 @@ java.lang.String defaultValue);
         if (other == com.iamteer.Wcf.RpcContact.getDefaultInstance()) return this;
         if (!other.getWxid().isEmpty()) {
           wxid_ = other.wxid_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getCode().isEmpty()) {
           code_ = other.code_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getRemark().isEmpty()) {
+          remark_ = other.remark_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          bitField0_ |= 0x00000008;
           onChanged();
         }
         if (!other.getCountry().isEmpty()) {
           country_ = other.country_;
+          bitField0_ |= 0x00000010;
           onChanged();
         }
         if (!other.getProvince().isEmpty()) {
           province_ = other.province_;
+          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (!other.getCity().isEmpty()) {
           city_ = other.city_;
+          bitField0_ |= 0x00000040;
           onChanged();
         }
         if (other.getGender() != 0) {
           setGender(other.getGender());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -11507,19 +13981,73 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.RpcContact parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                wxid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                code_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                remark_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 42: {
+                country_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
+              case 50: {
+                province_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 50
+              case 58: {
+                city_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 58
+              case 64: {
+                gender_ = input.readInt32();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 64
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.RpcContact) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object wxid_ = "";
       /**
@@ -11554,7 +14082,7 @@ java.lang.String defaultValue);
           getWxidBytes() {
         java.lang.Object ref = wxid_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           wxid_ = b;
@@ -11574,11 +14102,9 @@ java.lang.String defaultValue);
        */
       public Builder setWxid(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         wxid_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -11591,8 +14117,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearWxid() {
-
         wxid_ = getDefaultInstance().getWxid();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -11607,12 +14133,10 @@ java.lang.String defaultValue);
        */
       public Builder setWxidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         wxid_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -11650,7 +14174,7 @@ java.lang.String defaultValue);
           getCodeBytes() {
         java.lang.Object ref = code_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           code_ = b;
@@ -11670,11 +14194,9 @@ java.lang.String defaultValue);
        */
       public Builder setCode(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         code_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -11687,8 +14209,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearCode() {
-
         code_ = getDefaultInstance().getCode();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -11703,12 +14225,102 @@ java.lang.String defaultValue);
        */
       public Builder setCodeBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         code_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object remark_ = "";
+      /**
+       * <pre>
+       * 备注
+       * </pre>
+       *
+       * <code>string remark = 3;</code>
+       * @return The remark.
+       */
+      public java.lang.String getRemark() {
+        java.lang.Object ref = remark_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          remark_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 备注
+       * </pre>
+       *
+       * <code>string remark = 3;</code>
+       * @return The bytes for remark.
+       */
+      public com.google.protobuf.ByteString
+          getRemarkBytes() {
+        java.lang.Object ref = remark_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          remark_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 备注
+       * </pre>
+       *
+       * <code>string remark = 3;</code>
+       * @param value The remark to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRemark(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        remark_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 备注
+       * </pre>
+       *
+       * <code>string remark = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRemark() {
+        remark_ = getDefaultInstance().getRemark();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 备注
+       * </pre>
+       *
+       * <code>string remark = 3;</code>
+       * @param value The bytes for remark to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRemarkBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        remark_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -11719,7 +14331,7 @@ java.lang.String defaultValue);
        * 微信昵称
        * </pre>
        *
-       * <code>string name = 3;</code>
+       * <code>string name = 4;</code>
        * @return The name.
        */
       public java.lang.String getName() {
@@ -11739,14 +14351,14 @@ java.lang.String defaultValue);
        * 微信昵称
        * </pre>
        *
-       * <code>string name = 3;</code>
+       * <code>string name = 4;</code>
        * @return The bytes for name.
        */
       public com.google.protobuf.ByteString
           getNameBytes() {
         java.lang.Object ref = name_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           name_ = b;
@@ -11760,17 +14372,15 @@ java.lang.String defaultValue);
        * 微信昵称
        * </pre>
        *
-       * <code>string name = 3;</code>
+       * <code>string name = 4;</code>
        * @param value The name to set.
        * @return This builder for chaining.
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         name_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -11779,12 +14389,12 @@ java.lang.String defaultValue);
        * 微信昵称
        * </pre>
        *
-       * <code>string name = 3;</code>
+       * <code>string name = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearName() {
-
         name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -11793,18 +14403,16 @@ java.lang.String defaultValue);
        * 微信昵称
        * </pre>
        *
-       * <code>string name = 3;</code>
+       * <code>string name = 4;</code>
        * @param value The bytes for name to set.
        * @return This builder for chaining.
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         name_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -11815,7 +14423,7 @@ java.lang.String defaultValue);
        * 国家
        * </pre>
        *
-       * <code>string country = 4;</code>
+       * <code>string country = 5;</code>
        * @return The country.
        */
       public java.lang.String getCountry() {
@@ -11835,14 +14443,14 @@ java.lang.String defaultValue);
        * 国家
        * </pre>
        *
-       * <code>string country = 4;</code>
+       * <code>string country = 5;</code>
        * @return The bytes for country.
        */
       public com.google.protobuf.ByteString
           getCountryBytes() {
         java.lang.Object ref = country_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           country_ = b;
@@ -11856,17 +14464,15 @@ java.lang.String defaultValue);
        * 国家
        * </pre>
        *
-       * <code>string country = 4;</code>
+       * <code>string country = 5;</code>
        * @param value The country to set.
        * @return This builder for chaining.
        */
       public Builder setCountry(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         country_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -11875,12 +14481,12 @@ java.lang.String defaultValue);
        * 国家
        * </pre>
        *
-       * <code>string country = 4;</code>
+       * <code>string country = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearCountry() {
-
         country_ = getDefaultInstance().getCountry();
+        bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
         return this;
       }
@@ -11889,18 +14495,16 @@ java.lang.String defaultValue);
        * 国家
        * </pre>
        *
-       * <code>string country = 4;</code>
+       * <code>string country = 5;</code>
        * @param value The bytes for country to set.
        * @return This builder for chaining.
        */
       public Builder setCountryBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         country_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -11911,7 +14515,7 @@ java.lang.String defaultValue);
        * 省/州
        * </pre>
        *
-       * <code>string province = 5;</code>
+       * <code>string province = 6;</code>
        * @return The province.
        */
       public java.lang.String getProvince() {
@@ -11931,14 +14535,14 @@ java.lang.String defaultValue);
        * 省/州
        * </pre>
        *
-       * <code>string province = 5;</code>
+       * <code>string province = 6;</code>
        * @return The bytes for province.
        */
       public com.google.protobuf.ByteString
           getProvinceBytes() {
         java.lang.Object ref = province_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           province_ = b;
@@ -11952,17 +14556,15 @@ java.lang.String defaultValue);
        * 省/州
        * </pre>
        *
-       * <code>string province = 5;</code>
+       * <code>string province = 6;</code>
        * @param value The province to set.
        * @return This builder for chaining.
        */
       public Builder setProvince(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         province_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -11971,12 +14573,12 @@ java.lang.String defaultValue);
        * 省/州
        * </pre>
        *
-       * <code>string province = 5;</code>
+       * <code>string province = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearProvince() {
-
         province_ = getDefaultInstance().getProvince();
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -11985,18 +14587,16 @@ java.lang.String defaultValue);
        * 省/州
        * </pre>
        *
-       * <code>string province = 5;</code>
+       * <code>string province = 6;</code>
        * @param value The bytes for province to set.
        * @return This builder for chaining.
        */
       public Builder setProvinceBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         province_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -12007,7 +14607,7 @@ java.lang.String defaultValue);
        * 城市
        * </pre>
        *
-       * <code>string city = 6;</code>
+       * <code>string city = 7;</code>
        * @return The city.
        */
       public java.lang.String getCity() {
@@ -12027,14 +14627,14 @@ java.lang.String defaultValue);
        * 城市
        * </pre>
        *
-       * <code>string city = 6;</code>
+       * <code>string city = 7;</code>
        * @return The bytes for city.
        */
       public com.google.protobuf.ByteString
           getCityBytes() {
         java.lang.Object ref = city_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           city_ = b;
@@ -12048,17 +14648,15 @@ java.lang.String defaultValue);
        * 城市
        * </pre>
        *
-       * <code>string city = 6;</code>
+       * <code>string city = 7;</code>
        * @param value The city to set.
        * @return This builder for chaining.
        */
       public Builder setCity(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         city_ = value;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -12067,12 +14665,12 @@ java.lang.String defaultValue);
        * 城市
        * </pre>
        *
-       * <code>string city = 6;</code>
+       * <code>string city = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearCity() {
-
         city_ = getDefaultInstance().getCity();
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
         return this;
       }
@@ -12081,18 +14679,16 @@ java.lang.String defaultValue);
        * 城市
        * </pre>
        *
-       * <code>string city = 6;</code>
+       * <code>string city = 7;</code>
        * @param value The bytes for city to set.
        * @return This builder for chaining.
        */
       public Builder setCityBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         city_ = value;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -12103,7 +14699,7 @@ java.lang.String defaultValue);
        * 性别
        * </pre>
        *
-       * <code>int32 gender = 7;</code>
+       * <code>int32 gender = 8;</code>
        * @return The gender.
        */
       @java.lang.Override
@@ -12115,13 +14711,14 @@ java.lang.String defaultValue);
        * 性别
        * </pre>
        *
-       * <code>int32 gender = 7;</code>
+       * <code>int32 gender = 8;</code>
        * @param value The gender to set.
        * @return This builder for chaining.
        */
       public Builder setGender(int value) {
 
         gender_ = value;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -12130,11 +14727,11 @@ java.lang.String defaultValue);
        * 性别
        * </pre>
        *
-       * <code>int32 gender = 7;</code>
+       * <code>int32 gender = 8;</code>
        * @return This builder for chaining.
        */
       public Builder clearGender() {
-
+        bitField0_ = (bitField0_ & ~0x00000080);
         gender_ = 0;
         onChanged();
         return this;
@@ -12172,7 +14769,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RpcContact(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -12199,7 +14807,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
      */
-    java.util.List<com.iamteer.Wcf.RpcContact>
+    java.util.List<com.iamteer.Wcf.RpcContact> 
         getContactsList();
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
@@ -12212,7 +14820,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
      */
-    java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder>
+    java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder> 
         getContactsOrBuilderList();
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
@@ -12243,63 +14851,6 @@ java.lang.String defaultValue);
       return new RpcContacts();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RpcContacts(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                contacts_ = new java.util.ArrayList<com.iamteer.Wcf.RpcContact>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              contacts_.add(
-                  input.readMessage(com.iamteer.Wcf.RpcContact.parser(), extensionRegistry));
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          contacts_ = java.util.Collections.unmodifiableList(contacts_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_RpcContacts_descriptor;
@@ -12314,6 +14865,7 @@ java.lang.String defaultValue);
     }
 
     public static final int CONTACTS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.RpcContact> contacts_;
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
@@ -12326,7 +14878,7 @@ java.lang.String defaultValue);
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder>
+    public java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder> 
         getContactsOrBuilderList() {
       return contacts_;
     }
@@ -12370,7 +14922,7 @@ java.lang.String defaultValue);
       for (int i = 0; i < contacts_.size(); i++) {
         output.writeMessage(1, contacts_.get(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -12383,7 +14935,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, contacts_.get(i));
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -12400,7 +14952,7 @@ java.lang.String defaultValue);
 
       if (!getContactsList()
           .equals(other.getContactsList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -12415,7 +14967,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + CONTACTS_FIELD_NUMBER;
         hash = (53 * hash) + getContactsList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -12532,29 +15084,25 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.RpcContacts.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getContactsFieldBuilder();
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         if (contactsBuilder_ == null) {
           contacts_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
+          contacts_ = null;
           contactsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -12581,7 +15129,13 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.RpcContacts buildPartial() {
         com.iamteer.Wcf.RpcContacts result = new com.iamteer.Wcf.RpcContacts(this);
-        int from_bitField0_ = bitField0_;
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(com.iamteer.Wcf.RpcContacts result) {
         if (contactsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             contacts_ = java.util.Collections.unmodifiableList(contacts_);
@@ -12591,42 +15145,12 @@ java.lang.String defaultValue);
         } else {
           result.contacts_ = contactsBuilder_.build();
         }
-        onBuilt();
-        return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.RpcContacts result) {
+        int from_bitField0_ = bitField0_;
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.RpcContacts) {
@@ -12657,7 +15181,7 @@ java.lang.String defaultValue);
               contactsBuilder_ = null;
               contacts_ = other.contacts_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              contactsBuilder_ =
+              contactsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getContactsFieldBuilder() : null;
             } else {
@@ -12665,7 +15189,7 @@ java.lang.String defaultValue);
             }
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -12680,17 +15204,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.RpcContacts parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                com.iamteer.Wcf.RpcContact m =
+                    input.readMessage(
+                        com.iamteer.Wcf.RpcContact.parser(),
+                        extensionRegistry);
+                if (contactsBuilder_ == null) {
+                  ensureContactsIsMutable();
+                  contacts_.add(m);
+                } else {
+                  contactsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.RpcContacts) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -12890,7 +15440,7 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.RpcContact contacts = 1;</code>
        */
-      public java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder>
+      public java.util.List<? extends com.iamteer.Wcf.RpcContactOrBuilder> 
            getContactsOrBuilderList() {
         if (contactsBuilder_ != null) {
           return contactsBuilder_.getMessageOrBuilderList();
@@ -12916,12 +15466,12 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.RpcContact contacts = 1;</code>
        */
-      public java.util.List<com.iamteer.Wcf.RpcContact.Builder>
+      public java.util.List<com.iamteer.Wcf.RpcContact.Builder> 
            getContactsBuilderList() {
         return getContactsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.iamteer.Wcf.RpcContact, com.iamteer.Wcf.RpcContact.Builder, com.iamteer.Wcf.RpcContactOrBuilder>
+          com.iamteer.Wcf.RpcContact, com.iamteer.Wcf.RpcContact.Builder, com.iamteer.Wcf.RpcContactOrBuilder> 
           getContactsFieldBuilder() {
         if (contactsBuilder_ == null) {
           contactsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -12967,7 +15517,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RpcContacts(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -13029,7 +15590,8 @@ java.lang.String defaultValue);
       super(builder);
     }
     private DbNames() {
-      names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      names_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
     }
 
     @java.lang.Override
@@ -13039,63 +15601,6 @@ java.lang.String defaultValue);
       return new DbNames();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbNames(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                names_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              names_.add(s);
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          names_ = names_.getUnmodifiableView();
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbNames_descriptor;
@@ -13110,7 +15615,9 @@ java.lang.String defaultValue);
     }
 
     public static final int NAMES_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList names_;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.LazyStringArrayList names_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
     /**
      * <code>repeated string names = 1;</code>
      * @return A list containing the names.
@@ -13161,7 +15668,7 @@ java.lang.String defaultValue);
       for (int i = 0; i < names_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, names_.getRaw(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -13178,7 +15685,7 @@ java.lang.String defaultValue);
         size += dataSize;
         size += 1 * getNamesList().size();
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -13195,7 +15702,7 @@ java.lang.String defaultValue);
 
       if (!getNamesList()
           .equals(other.getNamesList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -13210,7 +15717,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + NAMES_FIELD_NUMBER;
         hash = (53 * hash) + getNamesList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -13327,24 +15834,20 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbNames.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = 0;
+        names_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
         return this;
       }
 
@@ -13371,48 +15874,19 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbNames buildPartial() {
         com.iamteer.Wcf.DbNames result = new com.iamteer.Wcf.DbNames(this);
-        int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          names_ = names_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.names_ = names_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbNames result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          names_.makeImmutable();
+          result.names_ = names_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbNames) {
@@ -13428,14 +15902,14 @@ java.lang.String defaultValue);
         if (!other.names_.isEmpty()) {
           if (names_.isEmpty()) {
             names_ = other.names_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ |= 0x00000001;
           } else {
             ensureNamesIsMutable();
             names_.addAll(other.names_);
           }
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -13450,27 +15924,47 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbNames parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureNamesIsMutable();
+                names_.add(s);
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbNames) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
 
-      private com.google.protobuf.LazyStringList names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private com.google.protobuf.LazyStringArrayList names_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
       private void ensureNamesIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
+        if (!names_.isModifiable()) {
           names_ = new com.google.protobuf.LazyStringArrayList(names_);
-          bitField0_ |= 0x00000001;
-         }
+        }
+        bitField0_ |= 0x00000001;
       }
       /**
        * <code>repeated string names = 1;</code>
@@ -13478,7 +15972,8 @@ java.lang.String defaultValue);
        */
       public com.google.protobuf.ProtocolStringList
           getNamesList() {
-        return names_.getUnmodifiableView();
+        names_.makeImmutable();
+        return names_;
       }
       /**
        * <code>repeated string names = 1;</code>
@@ -13512,11 +16007,10 @@ java.lang.String defaultValue);
        */
       public Builder setNames(
           int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureNamesIsMutable();
+        if (value == null) { throw new NullPointerException(); }
+        ensureNamesIsMutable();
         names_.set(index, value);
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -13527,11 +16021,10 @@ java.lang.String defaultValue);
        */
       public Builder addNames(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureNamesIsMutable();
+        if (value == null) { throw new NullPointerException(); }
+        ensureNamesIsMutable();
         names_.add(value);
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -13545,6 +16038,7 @@ java.lang.String defaultValue);
         ensureNamesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, names_);
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -13553,8 +16047,9 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearNames() {
-        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        names_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);;
         onChanged();
         return this;
       }
@@ -13565,12 +16060,11 @@ java.lang.String defaultValue);
        */
       public Builder addNamesBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         ensureNamesIsMutable();
         names_.add(value);
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -13607,7 +16101,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbNames(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -13695,62 +16200,6 @@ java.lang.String defaultValue);
       return new DbTable();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbTable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              sql_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbTable_descriptor;
@@ -13765,7 +16214,8 @@ java.lang.String defaultValue);
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
-    private volatile java.lang.Object name_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
     /**
      * <pre>
      * 表名
@@ -13780,7 +16230,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         name_ = s;
@@ -13800,7 +16250,7 @@ java.lang.String defaultValue);
         getNameBytes() {
       java.lang.Object ref = name_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         name_ = b;
@@ -13811,7 +16261,8 @@ java.lang.String defaultValue);
     }
 
     public static final int SQL_FIELD_NUMBER = 2;
-    private volatile java.lang.Object sql_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sql_ = "";
     /**
      * <pre>
      * 建表 SQL
@@ -13826,7 +16277,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         sql_ = s;
@@ -13846,7 +16297,7 @@ java.lang.String defaultValue);
         getSqlBytes() {
       java.lang.Object ref = sql_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         sql_ = b;
@@ -13876,7 +16327,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sql_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -13891,7 +16342,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sql_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -13910,7 +16361,7 @@ java.lang.String defaultValue);
           .equals(other.getName())) return false;
       if (!getSql()
           .equals(other.getSql())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -13925,7 +16376,7 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + SQL_FIELD_NUMBER;
       hash = (53 * hash) + getSql().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -14042,26 +16493,20 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbTable.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         name_ = "";
-
         sql_ = "";
-
         return this;
       }
 
@@ -14088,44 +16533,21 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbTable buildPartial() {
         com.iamteer.Wcf.DbTable result = new com.iamteer.Wcf.DbTable(this);
-        result.name_ = name_;
-        result.sql_ = sql_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbTable result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.sql_ = sql_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbTable) {
@@ -14140,13 +16562,15 @@ java.lang.String defaultValue);
         if (other == com.iamteer.Wcf.DbTable.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getSql().isEmpty()) {
           sql_ = other.sql_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -14161,19 +16585,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbTable parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                sql_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbTable) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object name_ = "";
       /**
@@ -14208,7 +16656,7 @@ java.lang.String defaultValue);
           getNameBytes() {
         java.lang.Object ref = name_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           name_ = b;
@@ -14228,11 +16676,9 @@ java.lang.String defaultValue);
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -14245,8 +16691,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearName() {
-
         name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -14261,12 +16707,10 @@ java.lang.String defaultValue);
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -14304,7 +16748,7 @@ java.lang.String defaultValue);
           getSqlBytes() {
         java.lang.Object ref = sql_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           sql_ = b;
@@ -14324,11 +16768,9 @@ java.lang.String defaultValue);
        */
       public Builder setSql(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         sql_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -14341,8 +16783,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearSql() {
-
         sql_ = getDefaultInstance().getSql();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -14357,12 +16799,10 @@ java.lang.String defaultValue);
        */
       public Builder setSqlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         sql_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -14399,7 +16839,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbTable(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -14426,7 +16877,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
      */
-    java.util.List<com.iamteer.Wcf.DbTable>
+    java.util.List<com.iamteer.Wcf.DbTable> 
         getTablesList();
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
@@ -14439,7 +16890,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
      */
-    java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder>
+    java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder> 
         getTablesOrBuilderList();
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
@@ -14470,63 +16921,6 @@ java.lang.String defaultValue);
       return new DbTables();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbTables(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                tables_ = new java.util.ArrayList<com.iamteer.Wcf.DbTable>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              tables_.add(
-                  input.readMessage(com.iamteer.Wcf.DbTable.parser(), extensionRegistry));
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          tables_ = java.util.Collections.unmodifiableList(tables_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbTables_descriptor;
@@ -14541,6 +16935,7 @@ java.lang.String defaultValue);
     }
 
     public static final int TABLES_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbTable> tables_;
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
@@ -14553,7 +16948,7 @@ java.lang.String defaultValue);
      * <code>repeated .wcf.DbTable tables = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder>
+    public java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder> 
         getTablesOrBuilderList() {
       return tables_;
     }
@@ -14597,7 +16992,7 @@ java.lang.String defaultValue);
       for (int i = 0; i < tables_.size(); i++) {
         output.writeMessage(1, tables_.get(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -14610,7 +17005,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, tables_.get(i));
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -14627,7 +17022,7 @@ java.lang.String defaultValue);
 
       if (!getTablesList()
           .equals(other.getTablesList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -14642,7 +17037,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + TABLES_FIELD_NUMBER;
         hash = (53 * hash) + getTablesList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -14759,29 +17154,25 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbTables.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getTablesFieldBuilder();
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         if (tablesBuilder_ == null) {
           tables_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
+          tables_ = null;
           tablesBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -14808,7 +17199,13 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbTables buildPartial() {
         com.iamteer.Wcf.DbTables result = new com.iamteer.Wcf.DbTables(this);
-        int from_bitField0_ = bitField0_;
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbTables result) {
         if (tablesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             tables_ = java.util.Collections.unmodifiableList(tables_);
@@ -14818,42 +17215,12 @@ java.lang.String defaultValue);
         } else {
           result.tables_ = tablesBuilder_.build();
         }
-        onBuilt();
-        return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbTables result) {
+        int from_bitField0_ = bitField0_;
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbTables) {
@@ -14884,7 +17251,7 @@ java.lang.String defaultValue);
               tablesBuilder_ = null;
               tables_ = other.tables_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              tablesBuilder_ =
+              tablesBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getTablesFieldBuilder() : null;
             } else {
@@ -14892,7 +17259,7 @@ java.lang.String defaultValue);
             }
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -14907,17 +17274,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbTables parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                com.iamteer.Wcf.DbTable m =
+                    input.readMessage(
+                        com.iamteer.Wcf.DbTable.parser(),
+                        extensionRegistry);
+                if (tablesBuilder_ == null) {
+                  ensureTablesIsMutable();
+                  tables_.add(m);
+                } else {
+                  tablesBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbTables) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -15117,7 +17510,7 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbTable tables = 1;</code>
        */
-      public java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder>
+      public java.util.List<? extends com.iamteer.Wcf.DbTableOrBuilder> 
            getTablesOrBuilderList() {
         if (tablesBuilder_ != null) {
           return tablesBuilder_.getMessageOrBuilderList();
@@ -15143,12 +17536,12 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbTable tables = 1;</code>
        */
-      public java.util.List<com.iamteer.Wcf.DbTable.Builder>
+      public java.util.List<com.iamteer.Wcf.DbTable.Builder> 
            getTablesBuilderList() {
         return getTablesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.iamteer.Wcf.DbTable, com.iamteer.Wcf.DbTable.Builder, com.iamteer.Wcf.DbTableOrBuilder>
+          com.iamteer.Wcf.DbTable, com.iamteer.Wcf.DbTable.Builder, com.iamteer.Wcf.DbTableOrBuilder> 
           getTablesFieldBuilder() {
         if (tablesBuilder_ == null) {
           tablesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -15194,7 +17587,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbTables(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -15282,62 +17686,6 @@ java.lang.String defaultValue);
       return new DbQuery();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbQuery(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              db_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              sql_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbQuery_descriptor;
@@ -15352,7 +17700,8 @@ java.lang.String defaultValue);
     }
 
     public static final int DB_FIELD_NUMBER = 1;
-    private volatile java.lang.Object db_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object db_ = "";
     /**
      * <pre>
      * 目标数据库
@@ -15367,7 +17716,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         db_ = s;
@@ -15387,7 +17736,7 @@ java.lang.String defaultValue);
         getDbBytes() {
       java.lang.Object ref = db_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         db_ = b;
@@ -15398,7 +17747,8 @@ java.lang.String defaultValue);
     }
 
     public static final int SQL_FIELD_NUMBER = 2;
-    private volatile java.lang.Object sql_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sql_ = "";
     /**
      * <pre>
      * 查询 SQL
@@ -15413,7 +17763,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         sql_ = s;
@@ -15433,7 +17783,7 @@ java.lang.String defaultValue);
         getSqlBytes() {
       java.lang.Object ref = sql_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         sql_ = b;
@@ -15463,7 +17813,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sql_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -15478,7 +17828,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sql_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -15497,7 +17847,7 @@ java.lang.String defaultValue);
           .equals(other.getDb())) return false;
       if (!getSql()
           .equals(other.getSql())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -15512,7 +17862,7 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getDb().hashCode();
       hash = (37 * hash) + SQL_FIELD_NUMBER;
       hash = (53 * hash) + getSql().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -15629,26 +17979,20 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbQuery.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         db_ = "";
-
         sql_ = "";
-
         return this;
       }
 
@@ -15675,44 +18019,21 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbQuery buildPartial() {
         com.iamteer.Wcf.DbQuery result = new com.iamteer.Wcf.DbQuery(this);
-        result.db_ = db_;
-        result.sql_ = sql_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbQuery result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.db_ = db_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.sql_ = sql_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbQuery) {
@@ -15727,13 +18048,15 @@ java.lang.String defaultValue);
         if (other == com.iamteer.Wcf.DbQuery.getDefaultInstance()) return this;
         if (!other.getDb().isEmpty()) {
           db_ = other.db_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getSql().isEmpty()) {
           sql_ = other.sql_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -15748,19 +18071,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbQuery parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                db_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                sql_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbQuery) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object db_ = "";
       /**
@@ -15795,7 +18142,7 @@ java.lang.String defaultValue);
           getDbBytes() {
         java.lang.Object ref = db_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           db_ = b;
@@ -15815,11 +18162,9 @@ java.lang.String defaultValue);
        */
       public Builder setDb(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         db_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -15832,8 +18177,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearDb() {
-
         db_ = getDefaultInstance().getDb();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -15848,12 +18193,10 @@ java.lang.String defaultValue);
        */
       public Builder setDbBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         db_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -15891,7 +18234,7 @@ java.lang.String defaultValue);
           getSqlBytes() {
         java.lang.Object ref = sql_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           sql_ = b;
@@ -15911,11 +18254,9 @@ java.lang.String defaultValue);
        */
       public Builder setSql(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         sql_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -15928,8 +18269,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearSql() {
-
         sql_ = getDefaultInstance().getSql();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -15944,12 +18285,10 @@ java.lang.String defaultValue);
        */
       public Builder setSqlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         sql_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -15986,7 +18325,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbQuery(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -16074,66 +18424,6 @@ java.lang.String defaultValue);
       return new DbField();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbField(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              type_ = input.readInt32();
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              column_ = s;
-              break;
-            }
-            case 26: {
-
-              content_ = input.readBytes();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbField_descriptor;
@@ -16148,7 +18438,7 @@ java.lang.String defaultValue);
     }
 
     public static final int TYPE_FIELD_NUMBER = 1;
-    private int type_;
+    private int type_ = 0;
     /**
      * <pre>
      * 字段类型
@@ -16163,7 +18453,8 @@ java.lang.String defaultValue);
     }
 
     public static final int COLUMN_FIELD_NUMBER = 2;
-    private volatile java.lang.Object column_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object column_ = "";
     /**
      * <pre>
      * 字段名称
@@ -16178,7 +18469,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         column_ = s;
@@ -16198,7 +18489,7 @@ java.lang.String defaultValue);
         getColumnBytes() {
       java.lang.Object ref = column_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         column_ = b;
@@ -16209,7 +18500,7 @@ java.lang.String defaultValue);
     }
 
     public static final int CONTENT_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString content_;
+    private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
     /**
      * <pre>
      * 字段内容
@@ -16246,7 +18537,7 @@ java.lang.String defaultValue);
       if (!content_.isEmpty()) {
         output.writeBytes(3, content_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -16266,7 +18557,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, content_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -16287,7 +18578,7 @@ java.lang.String defaultValue);
           .equals(other.getColumn())) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -16304,7 +18595,7 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getColumn().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -16421,28 +18712,21 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbField.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         type_ = 0;
-
         column_ = "";
-
         content_ = com.google.protobuf.ByteString.EMPTY;
-
         return this;
       }
 
@@ -16469,45 +18753,24 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbField buildPartial() {
         com.iamteer.Wcf.DbField result = new com.iamteer.Wcf.DbField(this);
-        result.type_ = type_;
-        result.column_ = column_;
-        result.content_ = content_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbField result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.type_ = type_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.column_ = column_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.content_ = content_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbField) {
@@ -16525,12 +18788,13 @@ java.lang.String defaultValue);
         }
         if (!other.getColumn().isEmpty()) {
           column_ = other.column_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.getContent() != com.google.protobuf.ByteString.EMPTY) {
           setContent(other.getContent());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -16545,19 +18809,48 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbField parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                type_ = input.readInt32();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                column_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                content_ = input.readBytes();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbField) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private int type_ ;
       /**
@@ -16584,6 +18877,7 @@ java.lang.String defaultValue);
       public Builder setType(int value) {
 
         type_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16596,7 +18890,7 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearType() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         type_ = 0;
         onChanged();
         return this;
@@ -16635,7 +18929,7 @@ java.lang.String defaultValue);
           getColumnBytes() {
         java.lang.Object ref = column_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           column_ = b;
@@ -16655,11 +18949,9 @@ java.lang.String defaultValue);
        */
       public Builder setColumn(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         column_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -16672,8 +18964,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearColumn() {
-
         column_ = getDefaultInstance().getColumn();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -16688,12 +18980,10 @@ java.lang.String defaultValue);
        */
       public Builder setColumnBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         column_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -16721,11 +19011,9 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder setContent(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         content_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -16738,7 +19026,7 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearContent() {
-
+        bitField0_ = (bitField0_ & ~0x00000004);
         content_ = getDefaultInstance().getContent();
         onChanged();
         return this;
@@ -16776,7 +19064,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbField(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -16803,7 +19102,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
      */
-    java.util.List<com.iamteer.Wcf.DbField>
+    java.util.List<com.iamteer.Wcf.DbField> 
         getFieldsList();
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
@@ -16816,7 +19115,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
      */
-    java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder>
+    java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder> 
         getFieldsOrBuilderList();
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
@@ -16847,63 +19146,6 @@ java.lang.String defaultValue);
       return new DbRow();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbRow(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                fields_ = new java.util.ArrayList<com.iamteer.Wcf.DbField>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              fields_.add(
-                  input.readMessage(com.iamteer.Wcf.DbField.parser(), extensionRegistry));
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          fields_ = java.util.Collections.unmodifiableList(fields_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbRow_descriptor;
@@ -16918,6 +19160,7 @@ java.lang.String defaultValue);
     }
 
     public static final int FIELDS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbField> fields_;
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
@@ -16930,7 +19173,7 @@ java.lang.String defaultValue);
      * <code>repeated .wcf.DbField fields = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder>
+    public java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder> 
         getFieldsOrBuilderList() {
       return fields_;
     }
@@ -16974,7 +19217,7 @@ java.lang.String defaultValue);
       for (int i = 0; i < fields_.size(); i++) {
         output.writeMessage(1, fields_.get(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -16987,7 +19230,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, fields_.get(i));
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -17004,7 +19247,7 @@ java.lang.String defaultValue);
 
       if (!getFieldsList()
           .equals(other.getFieldsList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -17019,7 +19262,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + FIELDS_FIELD_NUMBER;
         hash = (53 * hash) + getFieldsList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -17136,29 +19379,25 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbRow.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getFieldsFieldBuilder();
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         if (fieldsBuilder_ == null) {
           fields_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
+          fields_ = null;
           fieldsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -17185,7 +19424,13 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbRow buildPartial() {
         com.iamteer.Wcf.DbRow result = new com.iamteer.Wcf.DbRow(this);
-        int from_bitField0_ = bitField0_;
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbRow result) {
         if (fieldsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             fields_ = java.util.Collections.unmodifiableList(fields_);
@@ -17195,42 +19440,12 @@ java.lang.String defaultValue);
         } else {
           result.fields_ = fieldsBuilder_.build();
         }
-        onBuilt();
-        return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbRow result) {
+        int from_bitField0_ = bitField0_;
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbRow) {
@@ -17261,7 +19476,7 @@ java.lang.String defaultValue);
               fieldsBuilder_ = null;
               fields_ = other.fields_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              fieldsBuilder_ =
+              fieldsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getFieldsFieldBuilder() : null;
             } else {
@@ -17269,7 +19484,7 @@ java.lang.String defaultValue);
             }
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -17284,17 +19499,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbRow parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                com.iamteer.Wcf.DbField m =
+                    input.readMessage(
+                        com.iamteer.Wcf.DbField.parser(),
+                        extensionRegistry);
+                if (fieldsBuilder_ == null) {
+                  ensureFieldsIsMutable();
+                  fields_.add(m);
+                } else {
+                  fieldsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbRow) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -17494,7 +19735,7 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbField fields = 1;</code>
        */
-      public java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder>
+      public java.util.List<? extends com.iamteer.Wcf.DbFieldOrBuilder> 
            getFieldsOrBuilderList() {
         if (fieldsBuilder_ != null) {
           return fieldsBuilder_.getMessageOrBuilderList();
@@ -17520,12 +19761,12 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbField fields = 1;</code>
        */
-      public java.util.List<com.iamteer.Wcf.DbField.Builder>
+      public java.util.List<com.iamteer.Wcf.DbField.Builder> 
            getFieldsBuilderList() {
         return getFieldsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.iamteer.Wcf.DbField, com.iamteer.Wcf.DbField.Builder, com.iamteer.Wcf.DbFieldOrBuilder>
+          com.iamteer.Wcf.DbField, com.iamteer.Wcf.DbField.Builder, com.iamteer.Wcf.DbFieldOrBuilder> 
           getFieldsFieldBuilder() {
         if (fieldsBuilder_ == null) {
           fieldsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -17571,7 +19812,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbRow(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -17598,7 +19850,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
      */
-    java.util.List<com.iamteer.Wcf.DbRow>
+    java.util.List<com.iamteer.Wcf.DbRow> 
         getRowsList();
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
@@ -17611,7 +19863,7 @@ java.lang.String defaultValue);
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
      */
-    java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder>
+    java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder> 
         getRowsOrBuilderList();
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
@@ -17642,63 +19894,6 @@ java.lang.String defaultValue);
       return new DbRows();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private DbRows(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                rows_ = new java.util.ArrayList<com.iamteer.Wcf.DbRow>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              rows_.add(
-                  input.readMessage(com.iamteer.Wcf.DbRow.parser(), extensionRegistry));
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          rows_ = java.util.Collections.unmodifiableList(rows_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbRows_descriptor;
@@ -17713,6 +19908,7 @@ java.lang.String defaultValue);
     }
 
     public static final int ROWS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbRow> rows_;
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
@@ -17725,7 +19921,7 @@ java.lang.String defaultValue);
      * <code>repeated .wcf.DbRow rows = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder>
+    public java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder> 
         getRowsOrBuilderList() {
       return rows_;
     }
@@ -17769,7 +19965,7 @@ java.lang.String defaultValue);
       for (int i = 0; i < rows_.size(); i++) {
         output.writeMessage(1, rows_.get(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -17782,7 +19978,7 @@ java.lang.String defaultValue);
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, rows_.get(i));
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -17799,7 +19995,7 @@ java.lang.String defaultValue);
 
       if (!getRowsList()
           .equals(other.getRowsList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -17814,7 +20010,7 @@ java.lang.String defaultValue);
         hash = (37 * hash) + ROWS_FIELD_NUMBER;
         hash = (53 * hash) + getRowsList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -17931,29 +20127,25 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.DbRows.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getRowsFieldBuilder();
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         if (rowsBuilder_ == null) {
           rows_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
+          rows_ = null;
           rowsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -17980,7 +20172,13 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.DbRows buildPartial() {
         com.iamteer.Wcf.DbRows result = new com.iamteer.Wcf.DbRows(this);
-        int from_bitField0_ = bitField0_;
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbRows result) {
         if (rowsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             rows_ = java.util.Collections.unmodifiableList(rows_);
@@ -17990,42 +20188,12 @@ java.lang.String defaultValue);
         } else {
           result.rows_ = rowsBuilder_.build();
         }
-        onBuilt();
-        return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.DbRows result) {
+        int from_bitField0_ = bitField0_;
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbRows) {
@@ -18056,7 +20224,7 @@ java.lang.String defaultValue);
               rowsBuilder_ = null;
               rows_ = other.rows_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              rowsBuilder_ =
+              rowsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getRowsFieldBuilder() : null;
             } else {
@@ -18064,7 +20232,7 @@ java.lang.String defaultValue);
             }
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -18079,17 +20247,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.DbRows parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                com.iamteer.Wcf.DbRow m =
+                    input.readMessage(
+                        com.iamteer.Wcf.DbRow.parser(),
+                        extensionRegistry);
+                if (rowsBuilder_ == null) {
+                  ensureRowsIsMutable();
+                  rows_.add(m);
+                } else {
+                  rowsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.DbRows) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -18289,7 +20483,7 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbRow rows = 1;</code>
        */
-      public java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder>
+      public java.util.List<? extends com.iamteer.Wcf.DbRowOrBuilder> 
            getRowsOrBuilderList() {
         if (rowsBuilder_ != null) {
           return rowsBuilder_.getMessageOrBuilderList();
@@ -18315,12 +20509,12 @@ java.lang.String defaultValue);
       /**
        * <code>repeated .wcf.DbRow rows = 1;</code>
        */
-      public java.util.List<com.iamteer.Wcf.DbRow.Builder>
+      public java.util.List<com.iamteer.Wcf.DbRow.Builder> 
            getRowsBuilderList() {
         return getRowsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.iamteer.Wcf.DbRow, com.iamteer.Wcf.DbRow.Builder, com.iamteer.Wcf.DbRowOrBuilder>
+          com.iamteer.Wcf.DbRow, com.iamteer.Wcf.DbRow.Builder, com.iamteer.Wcf.DbRowOrBuilder> 
           getRowsFieldBuilder() {
         if (rowsBuilder_ == null) {
           rowsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -18366,7 +20560,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DbRows(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -18391,11 +20596,19 @@ java.lang.String defaultValue);
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 加密的用户名
+     * </pre>
+     *
      * <code>string v3 = 1;</code>
      * @return The v3.
      */
     java.lang.String getV3();
     /**
+     * <pre>
+     * 加密的用户名
+     * </pre>
+     *
      * <code>string v3 = 1;</code>
      * @return The bytes for v3.
      */
@@ -18403,16 +20616,34 @@ java.lang.String defaultValue);
         getV3Bytes();
 
     /**
+     * <pre>
+     * Ticket
+     * </pre>
+     *
      * <code>string v4 = 2;</code>
      * @return The v4.
      */
     java.lang.String getV4();
     /**
+     * <pre>
+     * Ticket
+     * </pre>
+     *
      * <code>string v4 = 2;</code>
      * @return The bytes for v4.
      */
     com.google.protobuf.ByteString
         getV4Bytes();
+
+    /**
+     * <pre>
+     * 添加方式：17 名片，30 扫码
+     * </pre>
+     *
+     * <code>int32 scene = 3;</code>
+     * @return The scene.
+     */
+    int getScene();
   }
   /**
    * Protobuf type {@code wcf.Verification}
@@ -18438,62 +20669,6 @@ java.lang.String defaultValue);
       return new Verification();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Verification(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              v3_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              v4_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Verification_descriptor;
@@ -18508,8 +20683,13 @@ java.lang.String defaultValue);
     }
 
     public static final int V3_FIELD_NUMBER = 1;
-    private volatile java.lang.Object v3_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object v3_ = "";
     /**
+     * <pre>
+     * 加密的用户名
+     * </pre>
+     *
      * <code>string v3 = 1;</code>
      * @return The v3.
      */
@@ -18519,7 +20699,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         v3_ = s;
@@ -18527,6 +20707,10 @@ java.lang.String defaultValue);
       }
     }
     /**
+     * <pre>
+     * 加密的用户名
+     * </pre>
+     *
      * <code>string v3 = 1;</code>
      * @return The bytes for v3.
      */
@@ -18535,7 +20719,7 @@ java.lang.String defaultValue);
         getV3Bytes() {
       java.lang.Object ref = v3_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         v3_ = b;
@@ -18546,8 +20730,13 @@ java.lang.String defaultValue);
     }
 
     public static final int V4_FIELD_NUMBER = 2;
-    private volatile java.lang.Object v4_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object v4_ = "";
     /**
+     * <pre>
+     * Ticket
+     * </pre>
+     *
      * <code>string v4 = 2;</code>
      * @return The v4.
      */
@@ -18557,7 +20746,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         v4_ = s;
@@ -18565,6 +20754,10 @@ java.lang.String defaultValue);
       }
     }
     /**
+     * <pre>
+     * Ticket
+     * </pre>
+     *
      * <code>string v4 = 2;</code>
      * @return The bytes for v4.
      */
@@ -18573,7 +20766,7 @@ java.lang.String defaultValue);
         getV4Bytes() {
       java.lang.Object ref = v4_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         v4_ = b;
@@ -18581,6 +20774,21 @@ java.lang.String defaultValue);
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int SCENE_FIELD_NUMBER = 3;
+    private int scene_ = 0;
+    /**
+     * <pre>
+     * 添加方式：17 名片，30 扫码
+     * </pre>
+     *
+     * <code>int32 scene = 3;</code>
+     * @return The scene.
+     */
+    @java.lang.Override
+    public int getScene() {
+      return scene_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -18603,7 +20811,10 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(v4_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, v4_);
       }
-      unknownFields.writeTo(output);
+      if (scene_ != 0) {
+        output.writeInt32(3, scene_);
+      }
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -18618,7 +20829,11 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(v4_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, v4_);
       }
-      size += unknownFields.getSerializedSize();
+      if (scene_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, scene_);
+      }
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -18637,7 +20852,9 @@ java.lang.String defaultValue);
           .equals(other.getV3())) return false;
       if (!getV4()
           .equals(other.getV4())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (getScene()
+          != other.getScene()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -18652,7 +20869,9 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getV3().hashCode();
       hash = (37 * hash) + V4_FIELD_NUMBER;
       hash = (53 * hash) + getV4().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (37 * hash) + SCENE_FIELD_NUMBER;
+      hash = (53 * hash) + getScene();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -18769,26 +20988,21 @@ java.lang.String defaultValue);
 
       // Construct using com.iamteer.Wcf.Verification.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         v3_ = "";
-
         v4_ = "";
-
+        scene_ = 0;
         return this;
       }
 
@@ -18815,44 +21029,24 @@ java.lang.String defaultValue);
       @java.lang.Override
       public com.iamteer.Wcf.Verification buildPartial() {
         com.iamteer.Wcf.Verification result = new com.iamteer.Wcf.Verification(this);
-        result.v3_ = v3_;
-        result.v4_ = v4_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.Verification result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.v3_ = v3_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.v4_ = v4_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.scene_ = scene_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Verification) {
@@ -18867,13 +21061,18 @@ java.lang.String defaultValue);
         if (other == com.iamteer.Wcf.Verification.getDefaultInstance()) return this;
         if (!other.getV3().isEmpty()) {
           v3_ = other.v3_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getV4().isEmpty()) {
           v4_ = other.v4_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        if (other.getScene() != 0) {
+          setScene(other.getScene());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -18888,22 +21087,55 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.Verification parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                v3_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                v4_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 24: {
+                scene_ = input.readInt32();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.Verification) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object v3_ = "";
       /**
+       * <pre>
+       * 加密的用户名
+       * </pre>
+       *
        * <code>string v3 = 1;</code>
        * @return The v3.
        */
@@ -18920,6 +21152,10 @@ java.lang.String defaultValue);
         }
       }
       /**
+       * <pre>
+       * 加密的用户名
+       * </pre>
+       *
        * <code>string v3 = 1;</code>
        * @return The bytes for v3.
        */
@@ -18927,7 +21163,7 @@ java.lang.String defaultValue);
           getV3Bytes() {
         java.lang.Object ref = v3_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           v3_ = b;
@@ -18937,49 +21173,61 @@ java.lang.String defaultValue);
         }
       }
       /**
+       * <pre>
+       * 加密的用户名
+       * </pre>
+       *
        * <code>string v3 = 1;</code>
        * @param value The v3 to set.
        * @return This builder for chaining.
        */
       public Builder setV3(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         v3_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * 加密的用户名
+       * </pre>
+       *
        * <code>string v3 = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearV3() {
-
         v3_ = getDefaultInstance().getV3();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * 加密的用户名
+       * </pre>
+       *
        * <code>string v3 = 1;</code>
        * @param value The bytes for v3 to set.
        * @return This builder for chaining.
        */
       public Builder setV3Bytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         v3_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
 
       private java.lang.Object v4_ = "";
       /**
+       * <pre>
+       * Ticket
+       * </pre>
+       *
        * <code>string v4 = 2;</code>
        * @return The v4.
        */
@@ -18996,6 +21244,10 @@ java.lang.String defaultValue);
         }
       }
       /**
+       * <pre>
+       * Ticket
+       * </pre>
+       *
        * <code>string v4 = 2;</code>
        * @return The bytes for v4.
        */
@@ -19003,7 +21255,7 @@ java.lang.String defaultValue);
           getV4Bytes() {
         java.lang.Object ref = v4_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           v4_ = b;
@@ -19013,43 +21265,95 @@ java.lang.String defaultValue);
         }
       }
       /**
+       * <pre>
+       * Ticket
+       * </pre>
+       *
        * <code>string v4 = 2;</code>
        * @param value The v4 to set.
        * @return This builder for chaining.
        */
       public Builder setV4(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         v4_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * Ticket
+       * </pre>
+       *
        * <code>string v4 = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearV4() {
-
         v4_ = getDefaultInstance().getV4();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * Ticket
+       * </pre>
+       *
        * <code>string v4 = 2;</code>
        * @param value The bytes for v4 to set.
        * @return This builder for chaining.
        */
       public Builder setV4Bytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         v4_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int scene_ ;
+      /**
+       * <pre>
+       * 添加方式：17 名片，30 扫码
+       * </pre>
+       *
+       * <code>int32 scene = 3;</code>
+       * @return The scene.
+       */
+      @java.lang.Override
+      public int getScene() {
+        return scene_;
+      }
+      /**
+       * <pre>
+       * 添加方式：17 名片，30 扫码
+       * </pre>
+       *
+       * <code>int32 scene = 3;</code>
+       * @param value The scene to set.
+       * @return This builder for chaining.
+       */
+      public Builder setScene(int value) {
+
+        scene_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 添加方式：17 名片，30 扫码
+       * </pre>
+       *
+       * <code>int32 scene = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearScene() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        scene_ = 0;
         onChanged();
         return this;
       }
@@ -19086,7 +21390,18 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Verification(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -19106,8 +21421,8 @@ java.lang.String defaultValue);
 
   }
 
-  public interface AddMembersOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:wcf.AddMembers)
+  public interface MemberMgmtOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.MemberMgmt)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -19151,18 +21466,18 @@ java.lang.String defaultValue);
         getWxidsBytes();
   }
   /**
-   * Protobuf type {@code wcf.AddMembers}
+   * Protobuf type {@code wcf.MemberMgmt}
    */
-  public static final class AddMembers extends
+  public static final class MemberMgmt extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:wcf.AddMembers)
-      AddMembersOrBuilder {
+      // @@protoc_insertion_point(message_implements:wcf.MemberMgmt)
+      MemberMgmtOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use AddMembers.newBuilder() to construct.
-    private AddMembers(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use MemberMgmt.newBuilder() to construct.
+    private MemberMgmt(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private AddMembers() {
+    private MemberMgmt() {
       roomid_ = "";
       wxids_ = "";
     }
@@ -19171,80 +21486,25 @@ java.lang.String defaultValue);
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new AddMembers();
+      return new MemberMgmt();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private AddMembers(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              roomid_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              wxids_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.iamteer.Wcf.internal_static_wcf_AddMembers_descriptor;
+      return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.iamteer.Wcf.internal_static_wcf_AddMembers_fieldAccessorTable
+      return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.iamteer.Wcf.AddMembers.class, com.iamteer.Wcf.AddMembers.Builder.class);
+              com.iamteer.Wcf.MemberMgmt.class, com.iamteer.Wcf.MemberMgmt.Builder.class);
     }
 
     public static final int ROOMID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object roomid_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object roomid_ = "";
     /**
      * <pre>
      * 要加的群ID
@@ -19259,7 +21519,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         roomid_ = s;
@@ -19279,7 +21539,7 @@ java.lang.String defaultValue);
         getRoomidBytes() {
       java.lang.Object ref = roomid_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         roomid_ = b;
@@ -19290,7 +21550,8 @@ java.lang.String defaultValue);
     }
 
     public static final int WXIDS_FIELD_NUMBER = 2;
-    private volatile java.lang.Object wxids_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object wxids_ = "";
     /**
      * <pre>
      * 要加群的人列表，逗号分隔
@@ -19305,7 +21566,7 @@ java.lang.String defaultValue);
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         wxids_ = s;
@@ -19325,7 +21586,7 @@ java.lang.String defaultValue);
         getWxidsBytes() {
       java.lang.Object ref = wxids_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         wxids_ = b;
@@ -19355,7 +21616,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxids_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, wxids_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -19370,7 +21631,7 @@ java.lang.String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxids_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, wxids_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -19380,16 +21641,16 @@ java.lang.String defaultValue);
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof com.iamteer.Wcf.AddMembers)) {
+      if (!(obj instanceof com.iamteer.Wcf.MemberMgmt)) {
         return super.equals(obj);
       }
-      com.iamteer.Wcf.AddMembers other = (com.iamteer.Wcf.AddMembers) obj;
+      com.iamteer.Wcf.MemberMgmt other = (com.iamteer.Wcf.MemberMgmt) obj;
 
       if (!getRoomid()
           .equals(other.getRoomid())) return false;
       if (!getWxids()
           .equals(other.getWxids())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -19404,74 +21665,74 @@ java.lang.String defaultValue);
       hash = (53 * hash) + getRoomid().hashCode();
       hash = (37 * hash) + WXIDS_FIELD_NUMBER;
       hash = (53 * hash) + getWxids().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(byte[] data)
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(java.io.InputStream input)
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.iamteer.Wcf.AddMembers parseDelimitedFrom(java.io.InputStream input)
+    public static com.iamteer.Wcf.MemberMgmt parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.iamteer.Wcf.AddMembers parseDelimitedFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static com.iamteer.Wcf.AddMembers parseFrom(
+    public static com.iamteer.Wcf.MemberMgmt parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -19484,7 +21745,7 @@ java.lang.String defaultValue);
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.iamteer.Wcf.AddMembers prototype) {
+    public static Builder newBuilder(com.iamteer.Wcf.MemberMgmt prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -19500,64 +21761,58 @@ java.lang.String defaultValue);
       return builder;
     }
     /**
-     * Protobuf type {@code wcf.AddMembers}
+     * Protobuf type {@code wcf.MemberMgmt}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:wcf.AddMembers)
-        com.iamteer.Wcf.AddMembersOrBuilder {
+        // @@protoc_insertion_point(builder_implements:wcf.MemberMgmt)
+        com.iamteer.Wcf.MemberMgmtOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.iamteer.Wcf.internal_static_wcf_AddMembers_descriptor;
+        return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.iamteer.Wcf.internal_static_wcf_AddMembers_fieldAccessorTable
+        return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.iamteer.Wcf.AddMembers.class, com.iamteer.Wcf.AddMembers.Builder.class);
+                com.iamteer.Wcf.MemberMgmt.class, com.iamteer.Wcf.MemberMgmt.Builder.class);
       }
 
-      // Construct using com.iamteer.Wcf.AddMembers.newBuilder()
+      // Construct using com.iamteer.Wcf.MemberMgmt.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         roomid_ = "";
-
         wxids_ = "";
-
         return this;
       }
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.iamteer.Wcf.internal_static_wcf_AddMembers_descriptor;
+        return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_descriptor;
       }
 
       @java.lang.Override
-      public com.iamteer.Wcf.AddMembers getDefaultInstanceForType() {
-        return com.iamteer.Wcf.AddMembers.getDefaultInstance();
+      public com.iamteer.Wcf.MemberMgmt getDefaultInstanceForType() {
+        return com.iamteer.Wcf.MemberMgmt.getDefaultInstance();
       }
 
       @java.lang.Override
-      public com.iamteer.Wcf.AddMembers build() {
-        com.iamteer.Wcf.AddMembers result = buildPartial();
+      public com.iamteer.Wcf.MemberMgmt build() {
+        com.iamteer.Wcf.MemberMgmt result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -19565,67 +21820,46 @@ java.lang.String defaultValue);
       }
 
       @java.lang.Override
-      public com.iamteer.Wcf.AddMembers buildPartial() {
-        com.iamteer.Wcf.AddMembers result = new com.iamteer.Wcf.AddMembers(this);
-        result.roomid_ = roomid_;
-        result.wxids_ = wxids_;
+      public com.iamteer.Wcf.MemberMgmt buildPartial() {
+        com.iamteer.Wcf.MemberMgmt result = new com.iamteer.Wcf.MemberMgmt(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
+      private void buildPartial0(com.iamteer.Wcf.MemberMgmt result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.roomid_ = roomid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.wxids_ = wxids_;
+        }
       }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
+
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.iamteer.Wcf.AddMembers) {
-          return mergeFrom((com.iamteer.Wcf.AddMembers)other);
+        if (other instanceof com.iamteer.Wcf.MemberMgmt) {
+          return mergeFrom((com.iamteer.Wcf.MemberMgmt)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.iamteer.Wcf.AddMembers other) {
-        if (other == com.iamteer.Wcf.AddMembers.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.iamteer.Wcf.MemberMgmt other) {
+        if (other == com.iamteer.Wcf.MemberMgmt.getDefaultInstance()) return this;
         if (!other.getRoomid().isEmpty()) {
           roomid_ = other.roomid_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getWxids().isEmpty()) {
           wxids_ = other.wxids_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -19640,19 +21874,43 @@ java.lang.String defaultValue);
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.iamteer.Wcf.AddMembers parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                roomid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                wxids_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.iamteer.Wcf.AddMembers) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object roomid_ = "";
       /**
@@ -19687,7 +21945,7 @@ java.lang.String defaultValue);
           getRoomidBytes() {
         java.lang.Object ref = roomid_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           roomid_ = b;
@@ -19707,11 +21965,9 @@ java.lang.String defaultValue);
        */
       public Builder setRoomid(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         roomid_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -19724,8 +21980,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearRoomid() {
-
         roomid_ = getDefaultInstance().getRoomid();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -19740,12 +21996,10 @@ java.lang.String defaultValue);
        */
       public Builder setRoomidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         roomid_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -19783,7 +22037,7 @@ java.lang.String defaultValue);
           getWxidsBytes() {
         java.lang.Object ref = wxids_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           wxids_ = b;
@@ -19803,11 +22057,9 @@ java.lang.String defaultValue);
        */
       public Builder setWxids(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-
+        if (value == null) { throw new NullPointerException(); }
         wxids_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -19820,8 +22072,8 @@ java.lang.String defaultValue);
        * @return This builder for chaining.
        */
       public Builder clearWxids() {
-
         wxids_ = getDefaultInstance().getWxids();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -19836,12 +22088,10 @@ java.lang.String defaultValue);
        */
       public Builder setWxidsBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         wxids_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -19858,41 +22108,6692 @@ java.lang.String defaultValue);
       }
 
 
-      // @@protoc_insertion_point(builder_scope:wcf.AddMembers)
+      // @@protoc_insertion_point(builder_scope:wcf.MemberMgmt)
     }
 
-    // @@protoc_insertion_point(class_scope:wcf.AddMembers)
-    private static final com.iamteer.Wcf.AddMembers DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:wcf.MemberMgmt)
+    private static final com.iamteer.Wcf.MemberMgmt DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.iamteer.Wcf.AddMembers();
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.MemberMgmt();
     }
 
-    public static com.iamteer.Wcf.AddMembers getDefaultInstance() {
+    public static com.iamteer.Wcf.MemberMgmt getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<AddMembers>
-        PARSER = new com.google.protobuf.AbstractParser<AddMembers>() {
+    private static final com.google.protobuf.Parser<MemberMgmt>
+        PARSER = new com.google.protobuf.AbstractParser<MemberMgmt>() {
       @java.lang.Override
-      public AddMembers parsePartialFrom(
+      public MemberMgmt parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new AddMembers(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
-    public static com.google.protobuf.Parser<AddMembers> parser() {
+    public static com.google.protobuf.Parser<MemberMgmt> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<AddMembers> getParserForType() {
+    public com.google.protobuf.Parser<MemberMgmt> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.iamteer.Wcf.AddMembers getDefaultInstanceForType() {
+    public com.iamteer.Wcf.MemberMgmt getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface UserInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.UserInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 微信ID
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The wxid.
+     */
+    java.lang.String getWxid();
+    /**
+     * <pre>
+     * 微信ID
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The bytes for wxid.
+     */
+    com.google.protobuf.ByteString
+        getWxidBytes();
+
+    /**
+     * <pre>
+     * 昵称
+     * </pre>
+     *
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * 昵称
+     * </pre>
+     *
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <pre>
+     * 手机号
+     * </pre>
+     *
+     * <code>string mobile = 3;</code>
+     * @return The mobile.
+     */
+    java.lang.String getMobile();
+    /**
+     * <pre>
+     * 手机号
+     * </pre>
+     *
+     * <code>string mobile = 3;</code>
+     * @return The bytes for mobile.
+     */
+    com.google.protobuf.ByteString
+        getMobileBytes();
+
+    /**
+     * <pre>
+     * 文件/图片等父路径
+     * </pre>
+     *
+     * <code>string home = 4;</code>
+     * @return The home.
+     */
+    java.lang.String getHome();
+    /**
+     * <pre>
+     * 文件/图片等父路径
+     * </pre>
+     *
+     * <code>string home = 4;</code>
+     * @return The bytes for home.
+     */
+    com.google.protobuf.ByteString
+        getHomeBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.UserInfo}
+   */
+  public static final class UserInfo extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.UserInfo)
+      UserInfoOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use UserInfo.newBuilder() to construct.
+    private UserInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private UserInfo() {
+      wxid_ = "";
+      name_ = "";
+      mobile_ = "";
+      home_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new UserInfo();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_UserInfo_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_UserInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.UserInfo.class, com.iamteer.Wcf.UserInfo.Builder.class);
+    }
+
+    public static final int WXID_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object wxid_ = "";
+    /**
+     * <pre>
+     * 微信ID
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The wxid.
+     */
+    @java.lang.Override
+    public java.lang.String getWxid() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        wxid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 微信ID
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The bytes for wxid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWxidBytes() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        wxid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
+    /**
+     * <pre>
+     * 昵称
+     * </pre>
+     *
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 昵称
+     * </pre>
+     *
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MOBILE_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object mobile_ = "";
+    /**
+     * <pre>
+     * 手机号
+     * </pre>
+     *
+     * <code>string mobile = 3;</code>
+     * @return The mobile.
+     */
+    @java.lang.Override
+    public java.lang.String getMobile() {
+      java.lang.Object ref = mobile_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        mobile_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 手机号
+     * </pre>
+     *
+     * <code>string mobile = 3;</code>
+     * @return The bytes for mobile.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMobileBytes() {
+      java.lang.Object ref = mobile_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        mobile_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HOME_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object home_ = "";
+    /**
+     * <pre>
+     * 文件/图片等父路径
+     * </pre>
+     *
+     * <code>string home = 4;</code>
+     * @return The home.
+     */
+    @java.lang.Override
+    public java.lang.String getHome() {
+      java.lang.Object ref = home_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        home_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 文件/图片等父路径
+     * </pre>
+     *
+     * <code>string home = 4;</code>
+     * @return The bytes for home.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHomeBytes() {
+      java.lang.Object ref = home_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        home_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, wxid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mobile_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, mobile_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, home_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, wxid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mobile_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, mobile_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, home_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.UserInfo)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.UserInfo other = (com.iamteer.Wcf.UserInfo) obj;
+
+      if (!getWxid()
+          .equals(other.getWxid())) return false;
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getMobile()
+          .equals(other.getMobile())) return false;
+      if (!getHome()
+          .equals(other.getHome())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + WXID_FIELD_NUMBER;
+      hash = (53 * hash) + getWxid().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + MOBILE_FIELD_NUMBER;
+      hash = (53 * hash) + getMobile().hashCode();
+      hash = (37 * hash) + HOME_FIELD_NUMBER;
+      hash = (53 * hash) + getHome().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.UserInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.UserInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.UserInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.UserInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.UserInfo}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.UserInfo)
+        com.iamteer.Wcf.UserInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_UserInfo_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_UserInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.UserInfo.class, com.iamteer.Wcf.UserInfo.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.UserInfo.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        wxid_ = "";
+        name_ = "";
+        mobile_ = "";
+        home_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_UserInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.UserInfo getDefaultInstanceForType() {
+        return com.iamteer.Wcf.UserInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.UserInfo build() {
+        com.iamteer.Wcf.UserInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.UserInfo buildPartial() {
+        com.iamteer.Wcf.UserInfo result = new com.iamteer.Wcf.UserInfo(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.UserInfo result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.wxid_ = wxid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.mobile_ = mobile_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.home_ = home_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.UserInfo) {
+          return mergeFrom((com.iamteer.Wcf.UserInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.UserInfo other) {
+        if (other == com.iamteer.Wcf.UserInfo.getDefaultInstance()) return this;
+        if (!other.getWxid().isEmpty()) {
+          wxid_ = other.wxid_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getMobile().isEmpty()) {
+          mobile_ = other.mobile_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        if (!other.getHome().isEmpty()) {
+          home_ = other.home_;
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                wxid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                mobile_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                home_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object wxid_ = "";
+      /**
+       * <pre>
+       * 微信ID
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return The wxid.
+       */
+      public java.lang.String getWxid() {
+        java.lang.Object ref = wxid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          wxid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 微信ID
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return The bytes for wxid.
+       */
+      public com.google.protobuf.ByteString
+          getWxidBytes() {
+        java.lang.Object ref = wxid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          wxid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 微信ID
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @param value The wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        wxid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 微信ID
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWxid() {
+        wxid_ = getDefaultInstance().getWxid();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 微信ID
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @param value The bytes for wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        wxid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * 昵称
+       * </pre>
+       *
+       * <code>string name = 2;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 昵称
+       * </pre>
+       *
+       * <code>string name = 2;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 昵称
+       * </pre>
+       *
+       * <code>string name = 2;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        name_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 昵称
+       * </pre>
+       *
+       * <code>string name = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 昵称
+       * </pre>
+       *
+       * <code>string name = 2;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        name_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object mobile_ = "";
+      /**
+       * <pre>
+       * 手机号
+       * </pre>
+       *
+       * <code>string mobile = 3;</code>
+       * @return The mobile.
+       */
+      public java.lang.String getMobile() {
+        java.lang.Object ref = mobile_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          mobile_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 手机号
+       * </pre>
+       *
+       * <code>string mobile = 3;</code>
+       * @return The bytes for mobile.
+       */
+      public com.google.protobuf.ByteString
+          getMobileBytes() {
+        java.lang.Object ref = mobile_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          mobile_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 手机号
+       * </pre>
+       *
+       * <code>string mobile = 3;</code>
+       * @param value The mobile to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMobile(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        mobile_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 手机号
+       * </pre>
+       *
+       * <code>string mobile = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMobile() {
+        mobile_ = getDefaultInstance().getMobile();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 手机号
+       * </pre>
+       *
+       * <code>string mobile = 3;</code>
+       * @param value The bytes for mobile to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMobileBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        mobile_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object home_ = "";
+      /**
+       * <pre>
+       * 文件/图片等父路径
+       * </pre>
+       *
+       * <code>string home = 4;</code>
+       * @return The home.
+       */
+      public java.lang.String getHome() {
+        java.lang.Object ref = home_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          home_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 文件/图片等父路径
+       * </pre>
+       *
+       * <code>string home = 4;</code>
+       * @return The bytes for home.
+       */
+      public com.google.protobuf.ByteString
+          getHomeBytes() {
+        java.lang.Object ref = home_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          home_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 文件/图片等父路径
+       * </pre>
+       *
+       * <code>string home = 4;</code>
+       * @param value The home to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHome(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        home_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 文件/图片等父路径
+       * </pre>
+       *
+       * <code>string home = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHome() {
+        home_ = getDefaultInstance().getHome();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 文件/图片等父路径
+       * </pre>
+       *
+       * <code>string home = 4;</code>
+       * @param value The bytes for home to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHomeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        home_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.UserInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.UserInfo)
+    private static final com.iamteer.Wcf.UserInfo DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.UserInfo();
+    }
+
+    public static com.iamteer.Wcf.UserInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<UserInfo>
+        PARSER = new com.google.protobuf.AbstractParser<UserInfo>() {
+      @java.lang.Override
+      public UserInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<UserInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<UserInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.UserInfo getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface DecPathOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.DecPath)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 源路径
+     * </pre>
+     *
+     * <code>string src = 1;</code>
+     * @return The src.
+     */
+    java.lang.String getSrc();
+    /**
+     * <pre>
+     * 源路径
+     * </pre>
+     *
+     * <code>string src = 1;</code>
+     * @return The bytes for src.
+     */
+    com.google.protobuf.ByteString
+        getSrcBytes();
+
+    /**
+     * <pre>
+     * 目标路径
+     * </pre>
+     *
+     * <code>string dst = 2;</code>
+     * @return The dst.
+     */
+    java.lang.String getDst();
+    /**
+     * <pre>
+     * 目标路径
+     * </pre>
+     *
+     * <code>string dst = 2;</code>
+     * @return The bytes for dst.
+     */
+    com.google.protobuf.ByteString
+        getDstBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.DecPath}
+   */
+  public static final class DecPath extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.DecPath)
+      DecPathOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DecPath.newBuilder() to construct.
+    private DecPath(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DecPath() {
+      src_ = "";
+      dst_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new DecPath();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_DecPath_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_DecPath_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.DecPath.class, com.iamteer.Wcf.DecPath.Builder.class);
+    }
+
+    public static final int SRC_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object src_ = "";
+    /**
+     * <pre>
+     * 源路径
+     * </pre>
+     *
+     * <code>string src = 1;</code>
+     * @return The src.
+     */
+    @java.lang.Override
+    public java.lang.String getSrc() {
+      java.lang.Object ref = src_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        src_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 源路径
+     * </pre>
+     *
+     * <code>string src = 1;</code>
+     * @return The bytes for src.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSrcBytes() {
+      java.lang.Object ref = src_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        src_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DST_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object dst_ = "";
+    /**
+     * <pre>
+     * 目标路径
+     * </pre>
+     *
+     * <code>string dst = 2;</code>
+     * @return The dst.
+     */
+    @java.lang.Override
+    public java.lang.String getDst() {
+      java.lang.Object ref = dst_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        dst_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 目标路径
+     * </pre>
+     *
+     * <code>string dst = 2;</code>
+     * @return The bytes for dst.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDstBytes() {
+      java.lang.Object ref = dst_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        dst_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(src_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, src_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dst_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, dst_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(src_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, src_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dst_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, dst_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.DecPath)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.DecPath other = (com.iamteer.Wcf.DecPath) obj;
+
+      if (!getSrc()
+          .equals(other.getSrc())) return false;
+      if (!getDst()
+          .equals(other.getDst())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SRC_FIELD_NUMBER;
+      hash = (53 * hash) + getSrc().hashCode();
+      hash = (37 * hash) + DST_FIELD_NUMBER;
+      hash = (53 * hash) + getDst().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.DecPath parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.DecPath parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.DecPath parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.DecPath prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.DecPath}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.DecPath)
+        com.iamteer.Wcf.DecPathOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_DecPath_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_DecPath_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.DecPath.class, com.iamteer.Wcf.DecPath.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.DecPath.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        src_ = "";
+        dst_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_DecPath_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.DecPath getDefaultInstanceForType() {
+        return com.iamteer.Wcf.DecPath.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.DecPath build() {
+        com.iamteer.Wcf.DecPath result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.DecPath buildPartial() {
+        com.iamteer.Wcf.DecPath result = new com.iamteer.Wcf.DecPath(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.DecPath result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.src_ = src_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.dst_ = dst_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.DecPath) {
+          return mergeFrom((com.iamteer.Wcf.DecPath)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.DecPath other) {
+        if (other == com.iamteer.Wcf.DecPath.getDefaultInstance()) return this;
+        if (!other.getSrc().isEmpty()) {
+          src_ = other.src_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getDst().isEmpty()) {
+          dst_ = other.dst_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                src_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                dst_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object src_ = "";
+      /**
+       * <pre>
+       * 源路径
+       * </pre>
+       *
+       * <code>string src = 1;</code>
+       * @return The src.
+       */
+      public java.lang.String getSrc() {
+        java.lang.Object ref = src_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          src_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 源路径
+       * </pre>
+       *
+       * <code>string src = 1;</code>
+       * @return The bytes for src.
+       */
+      public com.google.protobuf.ByteString
+          getSrcBytes() {
+        java.lang.Object ref = src_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          src_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 源路径
+       * </pre>
+       *
+       * <code>string src = 1;</code>
+       * @param value The src to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSrc(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        src_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 源路径
+       * </pre>
+       *
+       * <code>string src = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSrc() {
+        src_ = getDefaultInstance().getSrc();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 源路径
+       * </pre>
+       *
+       * <code>string src = 1;</code>
+       * @param value The bytes for src to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSrcBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        src_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object dst_ = "";
+      /**
+       * <pre>
+       * 目标路径
+       * </pre>
+       *
+       * <code>string dst = 2;</code>
+       * @return The dst.
+       */
+      public java.lang.String getDst() {
+        java.lang.Object ref = dst_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          dst_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 目标路径
+       * </pre>
+       *
+       * <code>string dst = 2;</code>
+       * @return The bytes for dst.
+       */
+      public com.google.protobuf.ByteString
+          getDstBytes() {
+        java.lang.Object ref = dst_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          dst_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 目标路径
+       * </pre>
+       *
+       * <code>string dst = 2;</code>
+       * @param value The dst to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDst(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        dst_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 目标路径
+       * </pre>
+       *
+       * <code>string dst = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDst() {
+        dst_ = getDefaultInstance().getDst();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 目标路径
+       * </pre>
+       *
+       * <code>string dst = 2;</code>
+       * @param value The bytes for dst to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDstBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        dst_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.DecPath)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.DecPath)
+    private static final com.iamteer.Wcf.DecPath DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.DecPath();
+    }
+
+    public static com.iamteer.Wcf.DecPath getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DecPath>
+        PARSER = new com.google.protobuf.AbstractParser<DecPath>() {
+      @java.lang.Override
+      public DecPath parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<DecPath> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DecPath> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.DecPath getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface TransferOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.Transfer)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 转账人
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The wxid.
+     */
+    java.lang.String getWxid();
+    /**
+     * <pre>
+     * 转账人
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The bytes for wxid.
+     */
+    com.google.protobuf.ByteString
+        getWxidBytes();
+
+    /**
+     * <pre>
+     * 转账id transferid
+     * </pre>
+     *
+     * <code>string tfid = 2;</code>
+     * @return The tfid.
+     */
+    java.lang.String getTfid();
+    /**
+     * <pre>
+     * 转账id transferid
+     * </pre>
+     *
+     * <code>string tfid = 2;</code>
+     * @return The bytes for tfid.
+     */
+    com.google.protobuf.ByteString
+        getTfidBytes();
+
+    /**
+     * <pre>
+     * Transaction id
+     * </pre>
+     *
+     * <code>string taid = 3;</code>
+     * @return The taid.
+     */
+    java.lang.String getTaid();
+    /**
+     * <pre>
+     * Transaction id
+     * </pre>
+     *
+     * <code>string taid = 3;</code>
+     * @return The bytes for taid.
+     */
+    com.google.protobuf.ByteString
+        getTaidBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.Transfer}
+   */
+  public static final class Transfer extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.Transfer)
+      TransferOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use Transfer.newBuilder() to construct.
+    private Transfer(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Transfer() {
+      wxid_ = "";
+      tfid_ = "";
+      taid_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new Transfer();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_Transfer_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_Transfer_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.Transfer.class, com.iamteer.Wcf.Transfer.Builder.class);
+    }
+
+    public static final int WXID_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object wxid_ = "";
+    /**
+     * <pre>
+     * 转账人
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The wxid.
+     */
+    @java.lang.Override
+    public java.lang.String getWxid() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        wxid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 转账人
+     * </pre>
+     *
+     * <code>string wxid = 1;</code>
+     * @return The bytes for wxid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWxidBytes() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        wxid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TFID_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object tfid_ = "";
+    /**
+     * <pre>
+     * 转账id transferid
+     * </pre>
+     *
+     * <code>string tfid = 2;</code>
+     * @return The tfid.
+     */
+    @java.lang.Override
+    public java.lang.String getTfid() {
+      java.lang.Object ref = tfid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tfid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 转账id transferid
+     * </pre>
+     *
+     * <code>string tfid = 2;</code>
+     * @return The bytes for tfid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTfidBytes() {
+      java.lang.Object ref = tfid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        tfid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TAID_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object taid_ = "";
+    /**
+     * <pre>
+     * Transaction id
+     * </pre>
+     *
+     * <code>string taid = 3;</code>
+     * @return The taid.
+     */
+    @java.lang.Override
+    public java.lang.String getTaid() {
+      java.lang.Object ref = taid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        taid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction id
+     * </pre>
+     *
+     * <code>string taid = 3;</code>
+     * @return The bytes for taid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTaidBytes() {
+      java.lang.Object ref = taid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        taid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, wxid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(tfid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tfid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(taid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, taid_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, wxid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(tfid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tfid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(taid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, taid_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.Transfer)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.Transfer other = (com.iamteer.Wcf.Transfer) obj;
+
+      if (!getWxid()
+          .equals(other.getWxid())) return false;
+      if (!getTfid()
+          .equals(other.getTfid())) return false;
+      if (!getTaid()
+          .equals(other.getTaid())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + WXID_FIELD_NUMBER;
+      hash = (53 * hash) + getWxid().hashCode();
+      hash = (37 * hash) + TFID_FIELD_NUMBER;
+      hash = (53 * hash) + getTfid().hashCode();
+      hash = (37 * hash) + TAID_FIELD_NUMBER;
+      hash = (53 * hash) + getTaid().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.Transfer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.Transfer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.Transfer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.Transfer prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.Transfer}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.Transfer)
+        com.iamteer.Wcf.TransferOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_Transfer_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_Transfer_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.Transfer.class, com.iamteer.Wcf.Transfer.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.Transfer.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        wxid_ = "";
+        tfid_ = "";
+        taid_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_Transfer_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.Transfer getDefaultInstanceForType() {
+        return com.iamteer.Wcf.Transfer.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.Transfer build() {
+        com.iamteer.Wcf.Transfer result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.Transfer buildPartial() {
+        com.iamteer.Wcf.Transfer result = new com.iamteer.Wcf.Transfer(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.Transfer result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.wxid_ = wxid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.tfid_ = tfid_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.taid_ = taid_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.Transfer) {
+          return mergeFrom((com.iamteer.Wcf.Transfer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.Transfer other) {
+        if (other == com.iamteer.Wcf.Transfer.getDefaultInstance()) return this;
+        if (!other.getWxid().isEmpty()) {
+          wxid_ = other.wxid_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getTfid().isEmpty()) {
+          tfid_ = other.tfid_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getTaid().isEmpty()) {
+          taid_ = other.taid_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                wxid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                tfid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                taid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object wxid_ = "";
+      /**
+       * <pre>
+       * 转账人
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return The wxid.
+       */
+      public java.lang.String getWxid() {
+        java.lang.Object ref = wxid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          wxid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转账人
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return The bytes for wxid.
+       */
+      public com.google.protobuf.ByteString
+          getWxidBytes() {
+        java.lang.Object ref = wxid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          wxid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转账人
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @param value The wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        wxid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转账人
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWxid() {
+        wxid_ = getDefaultInstance().getWxid();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转账人
+       * </pre>
+       *
+       * <code>string wxid = 1;</code>
+       * @param value The bytes for wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        wxid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tfid_ = "";
+      /**
+       * <pre>
+       * 转账id transferid
+       * </pre>
+       *
+       * <code>string tfid = 2;</code>
+       * @return The tfid.
+       */
+      public java.lang.String getTfid() {
+        java.lang.Object ref = tfid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tfid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转账id transferid
+       * </pre>
+       *
+       * <code>string tfid = 2;</code>
+       * @return The bytes for tfid.
+       */
+      public com.google.protobuf.ByteString
+          getTfidBytes() {
+        java.lang.Object ref = tfid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          tfid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转账id transferid
+       * </pre>
+       *
+       * <code>string tfid = 2;</code>
+       * @param value The tfid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTfid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        tfid_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转账id transferid
+       * </pre>
+       *
+       * <code>string tfid = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTfid() {
+        tfid_ = getDefaultInstance().getTfid();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转账id transferid
+       * </pre>
+       *
+       * <code>string tfid = 2;</code>
+       * @param value The bytes for tfid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTfidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        tfid_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object taid_ = "";
+      /**
+       * <pre>
+       * Transaction id
+       * </pre>
+       *
+       * <code>string taid = 3;</code>
+       * @return The taid.
+       */
+      public java.lang.String getTaid() {
+        java.lang.Object ref = taid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          taid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction id
+       * </pre>
+       *
+       * <code>string taid = 3;</code>
+       * @return The bytes for taid.
+       */
+      public com.google.protobuf.ByteString
+          getTaidBytes() {
+        java.lang.Object ref = taid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          taid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction id
+       * </pre>
+       *
+       * <code>string taid = 3;</code>
+       * @param value The taid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTaid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        taid_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction id
+       * </pre>
+       *
+       * <code>string taid = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTaid() {
+        taid_ = getDefaultInstance().getTaid();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction id
+       * </pre>
+       *
+       * <code>string taid = 3;</code>
+       * @param value The bytes for taid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTaidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        taid_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.Transfer)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.Transfer)
+    private static final com.iamteer.Wcf.Transfer DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.Transfer();
+    }
+
+    public static com.iamteer.Wcf.Transfer getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Transfer>
+        PARSER = new com.google.protobuf.AbstractParser<Transfer>() {
+      @java.lang.Override
+      public Transfer parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Transfer> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Transfer> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.Transfer getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AttachMsgOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.AttachMsg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <pre>
+     * 消息中的 thumb
+     * </pre>
+     *
+     * <code>string thumb = 2;</code>
+     * @return The thumb.
+     */
+    java.lang.String getThumb();
+    /**
+     * <pre>
+     * 消息中的 thumb
+     * </pre>
+     *
+     * <code>string thumb = 2;</code>
+     * @return The bytes for thumb.
+     */
+    com.google.protobuf.ByteString
+        getThumbBytes();
+
+    /**
+     * <pre>
+     * 消息中的 extra
+     * </pre>
+     *
+     * <code>string extra = 3;</code>
+     * @return The extra.
+     */
+    java.lang.String getExtra();
+    /**
+     * <pre>
+     * 消息中的 extra
+     * </pre>
+     *
+     * <code>string extra = 3;</code>
+     * @return The bytes for extra.
+     */
+    com.google.protobuf.ByteString
+        getExtraBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.AttachMsg}
+   */
+  public static final class AttachMsg extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.AttachMsg)
+      AttachMsgOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use AttachMsg.newBuilder() to construct.
+    private AttachMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private AttachMsg() {
+      thumb_ = "";
+      extra_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new AttachMsg();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_AttachMsg_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_AttachMsg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.AttachMsg.class, com.iamteer.Wcf.AttachMsg.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_ = 0L;
+    /**
+     * <pre>
+     * 消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 1;</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public long getId() {
+      return id_;
+    }
+
+    public static final int THUMB_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object thumb_ = "";
+    /**
+     * <pre>
+     * 消息中的 thumb
+     * </pre>
+     *
+     * <code>string thumb = 2;</code>
+     * @return The thumb.
+     */
+    @java.lang.Override
+    public java.lang.String getThumb() {
+      java.lang.Object ref = thumb_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        thumb_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息中的 thumb
+     * </pre>
+     *
+     * <code>string thumb = 2;</code>
+     * @return The bytes for thumb.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getThumbBytes() {
+      java.lang.Object ref = thumb_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        thumb_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EXTRA_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object extra_ = "";
+    /**
+     * <pre>
+     * 消息中的 extra
+     * </pre>
+     *
+     * <code>string extra = 3;</code>
+     * @return The extra.
+     */
+    @java.lang.Override
+    public java.lang.String getExtra() {
+      java.lang.Object ref = extra_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        extra_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息中的 extra
+     * </pre>
+     *
+     * <code>string extra = 3;</code>
+     * @return The bytes for extra.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getExtraBytes() {
+      java.lang.Object ref = extra_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        extra_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeUInt64(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumb_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, thumb_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, extra_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumb_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, thumb_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, extra_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.AttachMsg)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.AttachMsg other = (com.iamteer.Wcf.AttachMsg) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getThumb()
+          .equals(other.getThumb())) return false;
+      if (!getExtra()
+          .equals(other.getExtra())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + THUMB_FIELD_NUMBER;
+      hash = (53 * hash) + getThumb().hashCode();
+      hash = (37 * hash) + EXTRA_FIELD_NUMBER;
+      hash = (53 * hash) + getExtra().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AttachMsg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.AttachMsg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.AttachMsg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.AttachMsg)
+        com.iamteer.Wcf.AttachMsgOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_AttachMsg_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_AttachMsg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.AttachMsg.class, com.iamteer.Wcf.AttachMsg.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.AttachMsg.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        id_ = 0L;
+        thumb_ = "";
+        extra_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_AttachMsg_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AttachMsg getDefaultInstanceForType() {
+        return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AttachMsg build() {
+        com.iamteer.Wcf.AttachMsg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AttachMsg buildPartial() {
+        com.iamteer.Wcf.AttachMsg result = new com.iamteer.Wcf.AttachMsg(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.AttachMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.thumb_ = thumb_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.extra_ = extra_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.AttachMsg) {
+          return mergeFrom((com.iamteer.Wcf.AttachMsg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.AttachMsg other) {
+        if (other == com.iamteer.Wcf.AttachMsg.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getThumb().isEmpty()) {
+          thumb_ = other.thumb_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getExtra().isEmpty()) {
+          extra_ = other.extra_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                id_ = input.readUInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                thumb_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                extra_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private long id_ ;
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object thumb_ = "";
+      /**
+       * <pre>
+       * 消息中的 thumb
+       * </pre>
+       *
+       * <code>string thumb = 2;</code>
+       * @return The thumb.
+       */
+      public java.lang.String getThumb() {
+        java.lang.Object ref = thumb_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          thumb_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息中的 thumb
+       * </pre>
+       *
+       * <code>string thumb = 2;</code>
+       * @return The bytes for thumb.
+       */
+      public com.google.protobuf.ByteString
+          getThumbBytes() {
+        java.lang.Object ref = thumb_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          thumb_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息中的 thumb
+       * </pre>
+       *
+       * <code>string thumb = 2;</code>
+       * @param value The thumb to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumb(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        thumb_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息中的 thumb
+       * </pre>
+       *
+       * <code>string thumb = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearThumb() {
+        thumb_ = getDefaultInstance().getThumb();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息中的 thumb
+       * </pre>
+       *
+       * <code>string thumb = 2;</code>
+       * @param value The bytes for thumb to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumbBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        thumb_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object extra_ = "";
+      /**
+       * <pre>
+       * 消息中的 extra
+       * </pre>
+       *
+       * <code>string extra = 3;</code>
+       * @return The extra.
+       */
+      public java.lang.String getExtra() {
+        java.lang.Object ref = extra_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          extra_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息中的 extra
+       * </pre>
+       *
+       * <code>string extra = 3;</code>
+       * @return The bytes for extra.
+       */
+      public com.google.protobuf.ByteString
+          getExtraBytes() {
+        java.lang.Object ref = extra_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          extra_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息中的 extra
+       * </pre>
+       *
+       * <code>string extra = 3;</code>
+       * @param value The extra to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExtra(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        extra_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息中的 extra
+       * </pre>
+       *
+       * <code>string extra = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExtra() {
+        extra_ = getDefaultInstance().getExtra();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息中的 extra
+       * </pre>
+       *
+       * <code>string extra = 3;</code>
+       * @param value The bytes for extra to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExtraBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        extra_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.AttachMsg)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.AttachMsg)
+    private static final com.iamteer.Wcf.AttachMsg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.AttachMsg();
+    }
+
+    public static com.iamteer.Wcf.AttachMsg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AttachMsg>
+        PARSER = new com.google.protobuf.AbstractParser<AttachMsg>() {
+      @java.lang.Override
+      public AttachMsg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AttachMsg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AttachMsg> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.AttachMsg getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AudioMsgOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.AudioMsg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 语音消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <pre>
+     * 存放目录
+     * </pre>
+     *
+     * <code>string dir = 2;</code>
+     * @return The dir.
+     */
+    java.lang.String getDir();
+    /**
+     * <pre>
+     * 存放目录
+     * </pre>
+     *
+     * <code>string dir = 2;</code>
+     * @return The bytes for dir.
+     */
+    com.google.protobuf.ByteString
+        getDirBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.AudioMsg}
+   */
+  public static final class AudioMsg extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.AudioMsg)
+      AudioMsgOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use AudioMsg.newBuilder() to construct.
+    private AudioMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private AudioMsg() {
+      dir_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new AudioMsg();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_AudioMsg_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_AudioMsg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.AudioMsg.class, com.iamteer.Wcf.AudioMsg.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_ = 0L;
+    /**
+     * <pre>
+     * 语音消息 id
+     * </pre>
+     *
+     * <code>uint64 id = 1;</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public long getId() {
+      return id_;
+    }
+
+    public static final int DIR_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object dir_ = "";
+    /**
+     * <pre>
+     * 存放目录
+     * </pre>
+     *
+     * <code>string dir = 2;</code>
+     * @return The dir.
+     */
+    @java.lang.Override
+    public java.lang.String getDir() {
+      java.lang.Object ref = dir_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        dir_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 存放目录
+     * </pre>
+     *
+     * <code>string dir = 2;</code>
+     * @return The bytes for dir.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDirBytes() {
+      java.lang.Object ref = dir_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        dir_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeUInt64(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dir_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, dir_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dir_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, dir_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.AudioMsg)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.AudioMsg other = (com.iamteer.Wcf.AudioMsg) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getDir()
+          .equals(other.getDir())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + DIR_FIELD_NUMBER;
+      hash = (53 * hash) + getDir().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.AudioMsg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.AudioMsg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.AudioMsg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.AudioMsg)
+        com.iamteer.Wcf.AudioMsgOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_AudioMsg_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_AudioMsg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.AudioMsg.class, com.iamteer.Wcf.AudioMsg.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.AudioMsg.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        id_ = 0L;
+        dir_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_AudioMsg_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AudioMsg getDefaultInstanceForType() {
+        return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AudioMsg build() {
+        com.iamteer.Wcf.AudioMsg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.AudioMsg buildPartial() {
+        com.iamteer.Wcf.AudioMsg result = new com.iamteer.Wcf.AudioMsg(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.AudioMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.dir_ = dir_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.AudioMsg) {
+          return mergeFrom((com.iamteer.Wcf.AudioMsg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.AudioMsg other) {
+        if (other == com.iamteer.Wcf.AudioMsg.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getDir().isEmpty()) {
+          dir_ = other.dir_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                id_ = input.readUInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                dir_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private long id_ ;
+      /**
+       * <pre>
+       * 语音消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <pre>
+       * 语音消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 语音消息 id
+       * </pre>
+       *
+       * <code>uint64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object dir_ = "";
+      /**
+       * <pre>
+       * 存放目录
+       * </pre>
+       *
+       * <code>string dir = 2;</code>
+       * @return The dir.
+       */
+      public java.lang.String getDir() {
+        java.lang.Object ref = dir_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          dir_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 存放目录
+       * </pre>
+       *
+       * <code>string dir = 2;</code>
+       * @return The bytes for dir.
+       */
+      public com.google.protobuf.ByteString
+          getDirBytes() {
+        java.lang.Object ref = dir_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          dir_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 存放目录
+       * </pre>
+       *
+       * <code>string dir = 2;</code>
+       * @param value The dir to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDir(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        dir_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 存放目录
+       * </pre>
+       *
+       * <code>string dir = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDir() {
+        dir_ = getDefaultInstance().getDir();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 存放目录
+       * </pre>
+       *
+       * <code>string dir = 2;</code>
+       * @param value The bytes for dir to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        dir_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.AudioMsg)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.AudioMsg)
+    private static final com.iamteer.Wcf.AudioMsg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.AudioMsg();
+    }
+
+    public static com.iamteer.Wcf.AudioMsg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AudioMsg>
+        PARSER = new com.google.protobuf.AbstractParser<AudioMsg>() {
+      @java.lang.Override
+      public AudioMsg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AudioMsg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AudioMsg> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.AudioMsg getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RichTextOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.RichText)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 显示名字
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * 显示名字
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <pre>
+     * 公众号 id
+     * </pre>
+     *
+     * <code>string account = 2;</code>
+     * @return The account.
+     */
+    java.lang.String getAccount();
+    /**
+     * <pre>
+     * 公众号 id
+     * </pre>
+     *
+     * <code>string account = 2;</code>
+     * @return The bytes for account.
+     */
+    com.google.protobuf.ByteString
+        getAccountBytes();
+
+    /**
+     * <pre>
+     * 标题
+     * </pre>
+     *
+     * <code>string title = 3;</code>
+     * @return The title.
+     */
+    java.lang.String getTitle();
+    /**
+     * <pre>
+     * 标题
+     * </pre>
+     *
+     * <code>string title = 3;</code>
+     * @return The bytes for title.
+     */
+    com.google.protobuf.ByteString
+        getTitleBytes();
+
+    /**
+     * <pre>
+     * 摘要
+     * </pre>
+     *
+     * <code>string digest = 4;</code>
+     * @return The digest.
+     */
+    java.lang.String getDigest();
+    /**
+     * <pre>
+     * 摘要
+     * </pre>
+     *
+     * <code>string digest = 4;</code>
+     * @return The bytes for digest.
+     */
+    com.google.protobuf.ByteString
+        getDigestBytes();
+
+    /**
+     * <pre>
+     * 链接
+     * </pre>
+     *
+     * <code>string url = 5;</code>
+     * @return The url.
+     */
+    java.lang.String getUrl();
+    /**
+     * <pre>
+     * 链接
+     * </pre>
+     *
+     * <code>string url = 5;</code>
+     * @return The bytes for url.
+     */
+    com.google.protobuf.ByteString
+        getUrlBytes();
+
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumburl = 6;</code>
+     * @return The thumburl.
+     */
+    java.lang.String getThumburl();
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumburl = 6;</code>
+     * @return The bytes for thumburl.
+     */
+    com.google.protobuf.ByteString
+        getThumburlBytes();
+
+    /**
+     * <pre>
+     * 接收人
+     * </pre>
+     *
+     * <code>string receiver = 7;</code>
+     * @return The receiver.
+     */
+    java.lang.String getReceiver();
+    /**
+     * <pre>
+     * 接收人
+     * </pre>
+     *
+     * <code>string receiver = 7;</code>
+     * @return The bytes for receiver.
+     */
+    com.google.protobuf.ByteString
+        getReceiverBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.RichText}
+   */
+  public static final class RichText extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.RichText)
+      RichTextOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RichText.newBuilder() to construct.
+    private RichText(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RichText() {
+      name_ = "";
+      account_ = "";
+      title_ = "";
+      digest_ = "";
+      url_ = "";
+      thumburl_ = "";
+      receiver_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new RichText();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_RichText_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_RichText_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.RichText.class, com.iamteer.Wcf.RichText.Builder.class);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
+    /**
+     * <pre>
+     * 显示名字
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 显示名字
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ACCOUNT_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object account_ = "";
+    /**
+     * <pre>
+     * 公众号 id
+     * </pre>
+     *
+     * <code>string account = 2;</code>
+     * @return The account.
+     */
+    @java.lang.Override
+    public java.lang.String getAccount() {
+      java.lang.Object ref = account_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        account_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 公众号 id
+     * </pre>
+     *
+     * <code>string account = 2;</code>
+     * @return The bytes for account.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAccountBytes() {
+      java.lang.Object ref = account_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        account_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TITLE_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object title_ = "";
+    /**
+     * <pre>
+     * 标题
+     * </pre>
+     *
+     * <code>string title = 3;</code>
+     * @return The title.
+     */
+    @java.lang.Override
+    public java.lang.String getTitle() {
+      java.lang.Object ref = title_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        title_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 标题
+     * </pre>
+     *
+     * <code>string title = 3;</code>
+     * @return The bytes for title.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTitleBytes() {
+      java.lang.Object ref = title_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        title_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DIGEST_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object digest_ = "";
+    /**
+     * <pre>
+     * 摘要
+     * </pre>
+     *
+     * <code>string digest = 4;</code>
+     * @return The digest.
+     */
+    @java.lang.Override
+    public java.lang.String getDigest() {
+      java.lang.Object ref = digest_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        digest_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 摘要
+     * </pre>
+     *
+     * <code>string digest = 4;</code>
+     * @return The bytes for digest.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDigestBytes() {
+      java.lang.Object ref = digest_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        digest_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int URL_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object url_ = "";
+    /**
+     * <pre>
+     * 链接
+     * </pre>
+     *
+     * <code>string url = 5;</code>
+     * @return The url.
+     */
+    @java.lang.Override
+    public java.lang.String getUrl() {
+      java.lang.Object ref = url_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        url_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 链接
+     * </pre>
+     *
+     * <code>string url = 5;</code>
+     * @return The bytes for url.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUrlBytes() {
+      java.lang.Object ref = url_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        url_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int THUMBURL_FIELD_NUMBER = 6;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object thumburl_ = "";
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumburl = 6;</code>
+     * @return The thumburl.
+     */
+    @java.lang.Override
+    public java.lang.String getThumburl() {
+      java.lang.Object ref = thumburl_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        thumburl_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 缩略图
+     * </pre>
+     *
+     * <code>string thumburl = 6;</code>
+     * @return The bytes for thumburl.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getThumburlBytes() {
+      java.lang.Object ref = thumburl_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        thumburl_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RECEIVER_FIELD_NUMBER = 7;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object receiver_ = "";
+    /**
+     * <pre>
+     * 接收人
+     * </pre>
+     *
+     * <code>string receiver = 7;</code>
+     * @return The receiver.
+     */
+    @java.lang.Override
+    public java.lang.String getReceiver() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        receiver_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 接收人
+     * </pre>
+     *
+     * <code>string receiver = 7;</code>
+     * @return The bytes for receiver.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReceiverBytes() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        receiver_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(account_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, account_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(title_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, title_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(digest_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, digest_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(url_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, url_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumburl_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, thumburl_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, receiver_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(account_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, account_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(title_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, title_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(digest_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, digest_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(url_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, url_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(thumburl_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, thumburl_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, receiver_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.RichText)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.RichText other = (com.iamteer.Wcf.RichText) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getAccount()
+          .equals(other.getAccount())) return false;
+      if (!getTitle()
+          .equals(other.getTitle())) return false;
+      if (!getDigest()
+          .equals(other.getDigest())) return false;
+      if (!getUrl()
+          .equals(other.getUrl())) return false;
+      if (!getThumburl()
+          .equals(other.getThumburl())) return false;
+      if (!getReceiver()
+          .equals(other.getReceiver())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + ACCOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + getAccount().hashCode();
+      hash = (37 * hash) + TITLE_FIELD_NUMBER;
+      hash = (53 * hash) + getTitle().hashCode();
+      hash = (37 * hash) + DIGEST_FIELD_NUMBER;
+      hash = (53 * hash) + getDigest().hashCode();
+      hash = (37 * hash) + URL_FIELD_NUMBER;
+      hash = (53 * hash) + getUrl().hashCode();
+      hash = (37 * hash) + THUMBURL_FIELD_NUMBER;
+      hash = (53 * hash) + getThumburl().hashCode();
+      hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
+      hash = (53 * hash) + getReceiver().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.RichText parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.RichText parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.RichText parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.RichText parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.RichText prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.RichText}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.RichText)
+        com.iamteer.Wcf.RichTextOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_RichText_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_RichText_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.RichText.class, com.iamteer.Wcf.RichText.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.RichText.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        name_ = "";
+        account_ = "";
+        title_ = "";
+        digest_ = "";
+        url_ = "";
+        thumburl_ = "";
+        receiver_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_RichText_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.RichText getDefaultInstanceForType() {
+        return com.iamteer.Wcf.RichText.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.RichText build() {
+        com.iamteer.Wcf.RichText result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.RichText buildPartial() {
+        com.iamteer.Wcf.RichText result = new com.iamteer.Wcf.RichText(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.RichText result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.account_ = account_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.title_ = title_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.digest_ = digest_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.url_ = url_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.thumburl_ = thumburl_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.receiver_ = receiver_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.RichText) {
+          return mergeFrom((com.iamteer.Wcf.RichText)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.RichText other) {
+        if (other == com.iamteer.Wcf.RichText.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getAccount().isEmpty()) {
+          account_ = other.account_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getTitle().isEmpty()) {
+          title_ = other.title_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        if (!other.getDigest().isEmpty()) {
+          digest_ = other.digest_;
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        if (!other.getUrl().isEmpty()) {
+          url_ = other.url_;
+          bitField0_ |= 0x00000010;
+          onChanged();
+        }
+        if (!other.getThumburl().isEmpty()) {
+          thumburl_ = other.thumburl_;
+          bitField0_ |= 0x00000020;
+          onChanged();
+        }
+        if (!other.getReceiver().isEmpty()) {
+          receiver_ = other.receiver_;
+          bitField0_ |= 0x00000040;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                account_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                title_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                digest_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 42: {
+                url_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
+              case 50: {
+                thumburl_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 50
+              case 58: {
+                receiver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 58
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * 显示名字
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 显示名字
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 显示名字
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 显示名字
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 显示名字
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object account_ = "";
+      /**
+       * <pre>
+       * 公众号 id
+       * </pre>
+       *
+       * <code>string account = 2;</code>
+       * @return The account.
+       */
+      public java.lang.String getAccount() {
+        java.lang.Object ref = account_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          account_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 公众号 id
+       * </pre>
+       *
+       * <code>string account = 2;</code>
+       * @return The bytes for account.
+       */
+      public com.google.protobuf.ByteString
+          getAccountBytes() {
+        java.lang.Object ref = account_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          account_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 公众号 id
+       * </pre>
+       *
+       * <code>string account = 2;</code>
+       * @param value The account to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAccount(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        account_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 公众号 id
+       * </pre>
+       *
+       * <code>string account = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAccount() {
+        account_ = getDefaultInstance().getAccount();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 公众号 id
+       * </pre>
+       *
+       * <code>string account = 2;</code>
+       * @param value The bytes for account to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAccountBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        account_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object title_ = "";
+      /**
+       * <pre>
+       * 标题
+       * </pre>
+       *
+       * <code>string title = 3;</code>
+       * @return The title.
+       */
+      public java.lang.String getTitle() {
+        java.lang.Object ref = title_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          title_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 标题
+       * </pre>
+       *
+       * <code>string title = 3;</code>
+       * @return The bytes for title.
+       */
+      public com.google.protobuf.ByteString
+          getTitleBytes() {
+        java.lang.Object ref = title_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          title_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 标题
+       * </pre>
+       *
+       * <code>string title = 3;</code>
+       * @param value The title to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTitle(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        title_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 标题
+       * </pre>
+       *
+       * <code>string title = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTitle() {
+        title_ = getDefaultInstance().getTitle();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 标题
+       * </pre>
+       *
+       * <code>string title = 3;</code>
+       * @param value The bytes for title to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTitleBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        title_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object digest_ = "";
+      /**
+       * <pre>
+       * 摘要
+       * </pre>
+       *
+       * <code>string digest = 4;</code>
+       * @return The digest.
+       */
+      public java.lang.String getDigest() {
+        java.lang.Object ref = digest_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          digest_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 摘要
+       * </pre>
+       *
+       * <code>string digest = 4;</code>
+       * @return The bytes for digest.
+       */
+      public com.google.protobuf.ByteString
+          getDigestBytes() {
+        java.lang.Object ref = digest_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          digest_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 摘要
+       * </pre>
+       *
+       * <code>string digest = 4;</code>
+       * @param value The digest to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDigest(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        digest_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 摘要
+       * </pre>
+       *
+       * <code>string digest = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDigest() {
+        digest_ = getDefaultInstance().getDigest();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 摘要
+       * </pre>
+       *
+       * <code>string digest = 4;</code>
+       * @param value The bytes for digest to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDigestBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        digest_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object url_ = "";
+      /**
+       * <pre>
+       * 链接
+       * </pre>
+       *
+       * <code>string url = 5;</code>
+       * @return The url.
+       */
+      public java.lang.String getUrl() {
+        java.lang.Object ref = url_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          url_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 链接
+       * </pre>
+       *
+       * <code>string url = 5;</code>
+       * @return The bytes for url.
+       */
+      public com.google.protobuf.ByteString
+          getUrlBytes() {
+        java.lang.Object ref = url_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          url_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 链接
+       * </pre>
+       *
+       * <code>string url = 5;</code>
+       * @param value The url to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUrl(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        url_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 链接
+       * </pre>
+       *
+       * <code>string url = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUrl() {
+        url_ = getDefaultInstance().getUrl();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 链接
+       * </pre>
+       *
+       * <code>string url = 5;</code>
+       * @param value The bytes for url to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUrlBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        url_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object thumburl_ = "";
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumburl = 6;</code>
+       * @return The thumburl.
+       */
+      public java.lang.String getThumburl() {
+        java.lang.Object ref = thumburl_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          thumburl_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumburl = 6;</code>
+       * @return The bytes for thumburl.
+       */
+      public com.google.protobuf.ByteString
+          getThumburlBytes() {
+        java.lang.Object ref = thumburl_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          thumburl_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumburl = 6;</code>
+       * @param value The thumburl to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumburl(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        thumburl_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumburl = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearThumburl() {
+        thumburl_ = getDefaultInstance().getThumburl();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 缩略图
+       * </pre>
+       *
+       * <code>string thumburl = 6;</code>
+       * @param value The bytes for thumburl to set.
+       * @return This builder for chaining.
+       */
+      public Builder setThumburlBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        thumburl_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object receiver_ = "";
+      /**
+       * <pre>
+       * 接收人
+       * </pre>
+       *
+       * <code>string receiver = 7;</code>
+       * @return The receiver.
+       */
+      public java.lang.String getReceiver() {
+        java.lang.Object ref = receiver_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          receiver_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 接收人
+       * </pre>
+       *
+       * <code>string receiver = 7;</code>
+       * @return The bytes for receiver.
+       */
+      public com.google.protobuf.ByteString
+          getReceiverBytes() {
+        java.lang.Object ref = receiver_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          receiver_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 接收人
+       * </pre>
+       *
+       * <code>string receiver = 7;</code>
+       * @param value The receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiver(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        receiver_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 接收人
+       * </pre>
+       *
+       * <code>string receiver = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReceiver() {
+        receiver_ = getDefaultInstance().getReceiver();
+        bitField0_ = (bitField0_ & ~0x00000040);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 接收人
+       * </pre>
+       *
+       * <code>string receiver = 7;</code>
+       * @param value The bytes for receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiverBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        receiver_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.RichText)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.RichText)
+    private static final com.iamteer.Wcf.RichText DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.RichText();
+    }
+
+    public static com.iamteer.Wcf.RichText getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RichText>
+        PARSER = new com.google.protobuf.AbstractParser<RichText>() {
+      @java.lang.Override
+      public RichText parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<RichText> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RichText> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.RichText getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface PatMsgOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.PatMsg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 群 id
+     * </pre>
+     *
+     * <code>string roomid = 1;</code>
+     * @return The roomid.
+     */
+    java.lang.String getRoomid();
+    /**
+     * <pre>
+     * 群 id
+     * </pre>
+     *
+     * <code>string roomid = 1;</code>
+     * @return The bytes for roomid.
+     */
+    com.google.protobuf.ByteString
+        getRoomidBytes();
+
+    /**
+     * <pre>
+     * wxid
+     * </pre>
+     *
+     * <code>string wxid = 2;</code>
+     * @return The wxid.
+     */
+    java.lang.String getWxid();
+    /**
+     * <pre>
+     * wxid
+     * </pre>
+     *
+     * <code>string wxid = 2;</code>
+     * @return The bytes for wxid.
+     */
+    com.google.protobuf.ByteString
+        getWxidBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.PatMsg}
+   */
+  public static final class PatMsg extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.PatMsg)
+      PatMsgOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use PatMsg.newBuilder() to construct.
+    private PatMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private PatMsg() {
+      roomid_ = "";
+      wxid_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new PatMsg();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_PatMsg_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_PatMsg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.PatMsg.class, com.iamteer.Wcf.PatMsg.Builder.class);
+    }
+
+    public static final int ROOMID_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object roomid_ = "";
+    /**
+     * <pre>
+     * 群 id
+     * </pre>
+     *
+     * <code>string roomid = 1;</code>
+     * @return The roomid.
+     */
+    @java.lang.Override
+    public java.lang.String getRoomid() {
+      java.lang.Object ref = roomid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        roomid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 群 id
+     * </pre>
+     *
+     * <code>string roomid = 1;</code>
+     * @return The bytes for roomid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getRoomidBytes() {
+      java.lang.Object ref = roomid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        roomid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int WXID_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object wxid_ = "";
+    /**
+     * <pre>
+     * wxid
+     * </pre>
+     *
+     * <code>string wxid = 2;</code>
+     * @return The wxid.
+     */
+    @java.lang.Override
+    public java.lang.String getWxid() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        wxid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * wxid
+     * </pre>
+     *
+     * <code>string wxid = 2;</code>
+     * @return The bytes for wxid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWxidBytes() {
+      java.lang.Object ref = wxid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        wxid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(roomid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, roomid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, wxid_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(roomid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, roomid_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, wxid_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.PatMsg)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.PatMsg other = (com.iamteer.Wcf.PatMsg) obj;
+
+      if (!getRoomid()
+          .equals(other.getRoomid())) return false;
+      if (!getWxid()
+          .equals(other.getWxid())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ROOMID_FIELD_NUMBER;
+      hash = (53 * hash) + getRoomid().hashCode();
+      hash = (37 * hash) + WXID_FIELD_NUMBER;
+      hash = (53 * hash) + getWxid().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.PatMsg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.PatMsg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.PatMsg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.PatMsg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.PatMsg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.PatMsg)
+        com.iamteer.Wcf.PatMsgOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_PatMsg_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_PatMsg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.PatMsg.class, com.iamteer.Wcf.PatMsg.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.PatMsg.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        roomid_ = "";
+        wxid_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_PatMsg_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.PatMsg getDefaultInstanceForType() {
+        return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.PatMsg build() {
+        com.iamteer.Wcf.PatMsg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.PatMsg buildPartial() {
+        com.iamteer.Wcf.PatMsg result = new com.iamteer.Wcf.PatMsg(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.iamteer.Wcf.PatMsg result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.roomid_ = roomid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.wxid_ = wxid_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.PatMsg) {
+          return mergeFrom((com.iamteer.Wcf.PatMsg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.PatMsg other) {
+        if (other == com.iamteer.Wcf.PatMsg.getDefaultInstance()) return this;
+        if (!other.getRoomid().isEmpty()) {
+          roomid_ = other.roomid_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getWxid().isEmpty()) {
+          wxid_ = other.wxid_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                roomid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                wxid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object roomid_ = "";
+      /**
+       * <pre>
+       * 群 id
+       * </pre>
+       *
+       * <code>string roomid = 1;</code>
+       * @return The roomid.
+       */
+      public java.lang.String getRoomid() {
+        java.lang.Object ref = roomid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          roomid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 群 id
+       * </pre>
+       *
+       * <code>string roomid = 1;</code>
+       * @return The bytes for roomid.
+       */
+      public com.google.protobuf.ByteString
+          getRoomidBytes() {
+        java.lang.Object ref = roomid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          roomid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 群 id
+       * </pre>
+       *
+       * <code>string roomid = 1;</code>
+       * @param value The roomid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRoomid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        roomid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 群 id
+       * </pre>
+       *
+       * <code>string roomid = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRoomid() {
+        roomid_ = getDefaultInstance().getRoomid();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 群 id
+       * </pre>
+       *
+       * <code>string roomid = 1;</code>
+       * @param value The bytes for roomid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRoomidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        roomid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object wxid_ = "";
+      /**
+       * <pre>
+       * wxid
+       * </pre>
+       *
+       * <code>string wxid = 2;</code>
+       * @return The wxid.
+       */
+      public java.lang.String getWxid() {
+        java.lang.Object ref = wxid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          wxid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * wxid
+       * </pre>
+       *
+       * <code>string wxid = 2;</code>
+       * @return The bytes for wxid.
+       */
+      public com.google.protobuf.ByteString
+          getWxidBytes() {
+        java.lang.Object ref = wxid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          wxid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * wxid
+       * </pre>
+       *
+       * <code>string wxid = 2;</code>
+       * @param value The wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        wxid_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * wxid
+       * </pre>
+       *
+       * <code>string wxid = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWxid() {
+        wxid_ = getDefaultInstance().getWxid();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * wxid
+       * </pre>
+       *
+       * <code>string wxid = 2;</code>
+       * @param value The bytes for wxid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWxidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        wxid_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.PatMsg)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.PatMsg)
+    private static final com.iamteer.Wcf.PatMsg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.PatMsg();
+    }
+
+    public static com.iamteer.Wcf.PatMsg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PatMsg>
+        PARSER = new com.google.protobuf.AbstractParser<PatMsg>() {
+      @java.lang.Override
+      public PatMsg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PatMsg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PatMsg> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.PatMsg getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -19900,104 +28801,139 @@ java.lang.String defaultValue);
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_Request_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_Request_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_Response_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_Response_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_Empty_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_Empty_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_WxMsg_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_WxMsg_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_TextMsg_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_TextMsg_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_PathMsg_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_PathMsg_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_XmlMsg_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_XmlMsg_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_MsgTypes_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_MsgTypes_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_MsgTypes_TypesEntry_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_MsgTypes_TypesEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_RpcContact_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_RpcContact_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_RpcContacts_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_RpcContacts_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbNames_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbNames_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbTable_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbTable_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbTables_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbTables_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbQuery_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbQuery_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbField_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbField_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbRow_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbRow_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_DbRows_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_DbRows_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_wcf_Verification_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_Verification_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_wcf_AddMembers_descriptor;
-  private static final
+    internal_static_wcf_MemberMgmt_descriptor;
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_wcf_AddMembers_fieldAccessorTable;
+      internal_static_wcf_MemberMgmt_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_UserInfo_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_UserInfo_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_DecPath_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_DecPath_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_Transfer_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_Transfer_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_AttachMsg_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_AttachMsg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_AudioMsg_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_AudioMsg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_RichText_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_RichText_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_PatMsg_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_PatMsg_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -20007,55 +28943,80 @@ java.lang.String defaultValue);
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\twcf.proto\022\003wcf\"\216\002\n\007Request\022\034\n\004func\030\001 \001" +
+      "\n\twcf.proto\022\003wcf\"\334\003\n\007Request\022\034\n\004func\030\001 \001" +
       "(\0162\016.wcf.Functions\022\033\n\005empty\030\002 \001(\0132\n.wcf." +
       "EmptyH\000\022\r\n\003str\030\003 \001(\tH\000\022\033\n\003txt\030\004 \001(\0132\014.wc" +
       "f.TextMsgH\000\022\034\n\004file\030\005 \001(\0132\014.wcf.PathMsgH" +
       "\000\022\035\n\005query\030\006 \001(\0132\014.wcf.DbQueryH\000\022\036\n\001v\030\007 " +
       "\001(\0132\021.wcf.VerificationH\000\022\034\n\001m\030\010 \001(\0132\017.wc" +
-      "f.AddMembersH\000\022\032\n\003xml\030\t \001(\0132\013.wcf.XmlMsg" +
-      "H\000B\005\n\003msg\"\216\002\n\010Response\022\034\n\004func\030\001 \001(\0162\016.w" +
-      "cf.Functions\022\020\n\006status\030\002 \001(\005H\000\022\r\n\003str\030\003 " +
-      "\001(\tH\000\022\033\n\005wxmsg\030\004 \001(\0132\n.wcf.WxMsgH\000\022\036\n\005ty" +
-      "pes\030\005 \001(\0132\r.wcf.MsgTypesH\000\022$\n\010contacts\030\006" +
-      " \001(\0132\020.wcf.RpcContactsH\000\022\033\n\003dbs\030\007 \001(\0132\014." +
-      "wcf.DbNamesH\000\022\037\n\006tables\030\010 \001(\0132\r.wcf.DbTa" +
-      "blesH\000\022\033\n\004rows\030\t \001(\0132\013.wcf.DbRowsH\000B\005\n\003m" +
-      "sg\"\007\n\005Empty\"\202\001\n\005WxMsg\022\017\n\007is_self\030\001 \001(\010\022\020" +
-      "\n\010is_group\030\002 \001(\010\022\014\n\004type\030\003 \001(\005\022\n\n\002id\030\004 \001" +
-      "(\t\022\013\n\003xml\030\005 \001(\t\022\016\n\006sender\030\006 \001(\t\022\016\n\006roomi" +
-      "d\030\007 \001(\t\022\017\n\007content\030\010 \001(\t\"7\n\007TextMsg\022\013\n\003m" +
-      "sg\030\001 \001(\t\022\020\n\010receiver\030\002 \001(\t\022\r\n\005aters\030\003 \001(" +
-      "\t\")\n\007PathMsg\022\014\n\004path\030\001 \001(\t\022\020\n\010receiver\030\002" +
-      " \001(\t\"G\n\006XmlMsg\022\020\n\010receiver\030\001 \001(\t\022\017\n\007cont" +
-      "ent\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004type\030\004 \001(\005\"a\n" +
-      "\010MsgTypes\022\'\n\005types\030\001 \003(\0132\030.wcf.MsgTypes." +
-      "TypesEntry\032,\n\nTypesEntry\022\013\n\003key\030\001 \001(\005\022\r\n" +
-      "\005value\030\002 \001(\t:\0028\001\"w\n\nRpcContact\022\014\n\004wxid\030\001" +
-      " \001(\t\022\014\n\004code\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\017\n\007coun" +
-      "try\030\004 \001(\t\022\020\n\010province\030\005 \001(\t\022\014\n\004city\030\006 \001(" +
-      "\t\022\016\n\006gender\030\007 \001(\005\"0\n\013RpcContacts\022!\n\010cont" +
-      "acts\030\001 \003(\0132\017.wcf.RpcContact\"\030\n\007DbNames\022\r" +
-      "\n\005names\030\001 \003(\t\"$\n\007DbTable\022\014\n\004name\030\001 \001(\t\022\013" +
-      "\n\003sql\030\002 \001(\t\"(\n\010DbTables\022\034\n\006tables\030\001 \003(\0132" +
-      "\014.wcf.DbTable\"\"\n\007DbQuery\022\n\n\002db\030\001 \001(\t\022\013\n\003" +
-      "sql\030\002 \001(\t\"8\n\007DbField\022\014\n\004type\030\001 \001(\005\022\016\n\006co" +
-      "lumn\030\002 \001(\t\022\017\n\007content\030\003 \001(\014\"%\n\005DbRow\022\034\n\006" +
-      "fields\030\001 \003(\0132\014.wcf.DbField\"\"\n\006DbRows\022\030\n\004" +
-      "rows\030\001 \003(\0132\n.wcf.DbRow\"&\n\014Verification\022\n" +
-      "\n\002v3\030\001 \001(\t\022\n\n\002v4\030\002 \001(\t\"+\n\nAddMembers\022\016\n\006" +
-      "roomid\030\001 \001(\t\022\r\n\005wxids\030\002 \001(\t*\213\003\n\tFunction" +
-      "s\022\021\n\rFUNC_RESERVED\020\000\022\021\n\rFUNC_IS_LOGIN\020\001\022" +
-      "\026\n\022FUNC_GET_SELF_WXID\020\020\022\026\n\022FUNC_GET_MSG_" +
-      "TYPES\020\021\022\025\n\021FUNC_GET_CONTACTS\020\022\022\025\n\021FUNC_G" +
-      "ET_DB_NAMES\020\023\022\026\n\022FUNC_GET_DB_TABLES\020\024\022\021\n" +
-      "\rFUNC_SEND_TXT\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016F" +
-      "UNC_SEND_FILE\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FU" +
-      "NC_SEND_EMOTION\020$\022\030\n\024FUNC_ENABLE_RECV_TX" +
-      "T\0200\022\031\n\025FUNC_DISABLE_RECV_TXT\020@\022\026\n\022FUNC_E" +
-      "XEC_DB_QUERY\020P\022\026\n\022FUNC_ACCEPT_FRIEND\020Q\022\031" +
-      "\n\025FUNC_ADD_ROOM_MEMBERS\020RB\r\n\013com.iamteer" +
-      "b\006proto3"
+      "f.MemberMgmtH\000\022\032\n\003xml\030\t \001(\0132\013.wcf.XmlMsg" +
+      "H\000\022\033\n\003dec\030\n \001(\0132\014.wcf.DecPathH\000\022\033\n\002tf\030\013 " +
+      "\001(\0132\r.wcf.TransferH\000\022\016\n\004ui64\030\014 \001(\004H\000\022\016\n\004" +
+      "flag\030\r \001(\010H\000\022\035\n\003att\030\016 \001(\0132\016.wcf.AttachMs" +
+      "gH\000\022\033\n\002am\030\017 \001(\0132\r.wcf.AudioMsgH\000\022\033\n\002rt\030\020" +
+      " \001(\0132\r.wcf.RichTextH\000\022\031\n\002pm\030\021 \001(\0132\013.wcf." +
+      "PatMsgH\000B\005\n\003msg\"\253\002\n\010Response\022\034\n\004func\030\001 \001" +
+      "(\0162\016.wcf.Functions\022\020\n\006status\030\002 \001(\005H\000\022\r\n\003" +
+      "str\030\003 \001(\tH\000\022\033\n\005wxmsg\030\004 \001(\0132\n.wcf.WxMsgH\000" +
+      "\022\036\n\005types\030\005 \001(\0132\r.wcf.MsgTypesH\000\022$\n\010cont" +
+      "acts\030\006 \001(\0132\020.wcf.RpcContactsH\000\022\033\n\003dbs\030\007 " +
+      "\001(\0132\014.wcf.DbNamesH\000\022\037\n\006tables\030\010 \001(\0132\r.wc" +
+      "f.DbTablesH\000\022\033\n\004rows\030\t \001(\0132\013.wcf.DbRowsH" +
+      "\000\022\033\n\002ui\030\n \001(\0132\r.wcf.UserInfoH\000B\005\n\003msg\"\007\n" +
+      "\005Empty\"\272\001\n\005WxMsg\022\017\n\007is_self\030\001 \001(\010\022\020\n\010is_" +
+      "group\030\002 \001(\010\022\n\n\002id\030\003 \001(\004\022\014\n\004type\030\004 \001(\r\022\n\n" +
+      "\002ts\030\005 \001(\r\022\016\n\006roomid\030\006 \001(\t\022\017\n\007content\030\007 \001" +
+      "(\t\022\016\n\006sender\030\010 \001(\t\022\014\n\004sign\030\t \001(\t\022\r\n\005thum" +
+      "b\030\n \001(\t\022\r\n\005extra\030\013 \001(\t\022\013\n\003xml\030\014 \001(\t\"7\n\007T" +
+      "extMsg\022\013\n\003msg\030\001 \001(\t\022\020\n\010receiver\030\002 \001(\t\022\r\n" +
+      "\005aters\030\003 \001(\t\")\n\007PathMsg\022\014\n\004path\030\001 \001(\t\022\020\n" +
+      "\010receiver\030\002 \001(\t\"G\n\006XmlMsg\022\020\n\010receiver\030\001 " +
+      "\001(\t\022\017\n\007content\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004ty" +
+      "pe\030\004 \001(\005\"a\n\010MsgTypes\022\'\n\005types\030\001 \003(\0132\030.wc" +
+      "f.MsgTypes.TypesEntry\032,\n\nTypesEntry\022\013\n\003k" +
+      "ey\030\001 \001(\005\022\r\n\005value\030\002 \001(\t:\0028\001\"\207\001\n\nRpcConta" +
+      "ct\022\014\n\004wxid\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\016\n\006remark" +
+      "\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\017\n\007country\030\005 \001(\t\022\020\n" +
+      "\010province\030\006 \001(\t\022\014\n\004city\030\007 \001(\t\022\016\n\006gender\030" +
+      "\010 \001(\005\"0\n\013RpcContacts\022!\n\010contacts\030\001 \003(\0132\017" +
+      ".wcf.RpcContact\"\030\n\007DbNames\022\r\n\005names\030\001 \003(" +
+      "\t\"$\n\007DbTable\022\014\n\004name\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"" +
+      "(\n\010DbTables\022\034\n\006tables\030\001 \003(\0132\014.wcf.DbTabl" +
+      "e\"\"\n\007DbQuery\022\n\n\002db\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"8\n" +
+      "\007DbField\022\014\n\004type\030\001 \001(\005\022\016\n\006column\030\002 \001(\t\022\017" +
+      "\n\007content\030\003 \001(\014\"%\n\005DbRow\022\034\n\006fields\030\001 \003(\013" +
+      "2\014.wcf.DbField\"\"\n\006DbRows\022\030\n\004rows\030\001 \003(\0132\n" +
+      ".wcf.DbRow\"5\n\014Verification\022\n\n\002v3\030\001 \001(\t\022\n" +
+      "\n\002v4\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\"+\n\nMemberMgmt\022" +
+      "\016\n\006roomid\030\001 \001(\t\022\r\n\005wxids\030\002 \001(\t\"D\n\010UserIn" +
+      "fo\022\014\n\004wxid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\016\n\006mobile" +
+      "\030\003 \001(\t\022\014\n\004home\030\004 \001(\t\"#\n\007DecPath\022\013\n\003src\030\001" +
+      " \001(\t\022\013\n\003dst\030\002 \001(\t\"4\n\010Transfer\022\014\n\004wxid\030\001 " +
+      "\001(\t\022\014\n\004tfid\030\002 \001(\t\022\014\n\004taid\030\003 \001(\t\"5\n\tAttac" +
+      "hMsg\022\n\n\002id\030\001 \001(\004\022\r\n\005thumb\030\002 \001(\t\022\r\n\005extra" +
+      "\030\003 \001(\t\"#\n\010AudioMsg\022\n\n\002id\030\001 \001(\004\022\013\n\003dir\030\002 " +
+      "\001(\t\"y\n\010RichText\022\014\n\004name\030\001 \001(\t\022\017\n\007account" +
+      "\030\002 \001(\t\022\r\n\005title\030\003 \001(\t\022\016\n\006digest\030\004 \001(\t\022\013\n" +
+      "\003url\030\005 \001(\t\022\020\n\010thumburl\030\006 \001(\t\022\020\n\010receiver" +
+      "\030\007 \001(\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001(\t\022\014\n\004wxid" +
+      "\030\002 \001(\t*\260\005\n\tFunctions\022\021\n\rFUNC_RESERVED\020\000\022" +
+      "\021\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF_WXID" +
+      "\020\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_GET_C" +
+      "ONTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n\022FUNC" +
+      "_GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_INFO\020\025" +
+      "\022\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SEND_TX" +
+      "T\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND_FILE" +
+      "\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_EMOTI" +
+      "ON\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUNC_SEN" +
+      "D_PAT_MSG\020&\022\030\n\024FUNC_ENABLE_RECV_TXT\0200\022\031\n" +
+      "\025FUNC_DISABLE_RECV_TXT\020@\022\026\n\022FUNC_EXEC_DB" +
+      "_QUERY\020P\022\026\n\022FUNC_ACCEPT_FRIEND\020Q\022\026\n\022FUNC" +
+      "_RECV_TRANSFER\020R\022\024\n\020FUNC_REFRESH_PYQ\020S\022\030" +
+      "\n\024FUNC_DOWNLOAD_ATTACH\020T\022\031\n\025FUNC_GET_CON" +
+      "TACT_INFO\020U\022\023\n\017FUNC_REVOKE_MSG\020V\022\026\n\022FUNC" +
+      "_DECRYPT_IMAGE\020`\022\031\n\025FUNC_ADD_ROOM_MEMBER" +
+      "S\020p\022\031\n\025FUNC_DEL_ROOM_MEMBERS\020q\022\031\n\025FUNC_I" +
+      "NV_ROOM_MEMBERS\020rB\r\n\013com.iamteerb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -20066,13 +29027,13 @@ java.lang.String defaultValue);
     internal_static_wcf_Request_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_Request_descriptor,
-        new java.lang.String[] { "Func", "Empty", "Str", "Txt", "File", "Query", "V", "M", "Xml", "Msg", });
+        new java.lang.String[] { "Func", "Empty", "Str", "Txt", "File", "Query", "V", "M", "Xml", "Dec", "Tf", "Ui64", "Flag", "Att", "Am", "Rt", "Pm", "Msg", });
     internal_static_wcf_Response_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_wcf_Response_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_Response_descriptor,
-        new java.lang.String[] { "Func", "Status", "Str", "Wxmsg", "Types", "Contacts", "Dbs", "Tables", "Rows", "Msg", });
+        new java.lang.String[] { "Func", "Status", "Str", "Wxmsg", "Types", "Contacts", "Dbs", "Tables", "Rows", "Ui", "Msg", });
     internal_static_wcf_Empty_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_wcf_Empty_fieldAccessorTable = new
@@ -20084,7 +29045,7 @@ java.lang.String defaultValue);
     internal_static_wcf_WxMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_WxMsg_descriptor,
-        new java.lang.String[] { "IsSelf", "IsGroup", "Type", "Id", "Xml", "Sender", "Roomid", "Content", });
+        new java.lang.String[] { "IsSelf", "IsGroup", "Id", "Type", "Ts", "Roomid", "Content", "Sender", "Sign", "Thumb", "Extra", "Xml", });
     internal_static_wcf_TextMsg_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_wcf_TextMsg_fieldAccessorTable = new
@@ -20120,7 +29081,7 @@ java.lang.String defaultValue);
     internal_static_wcf_RpcContact_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_RpcContact_descriptor,
-        new java.lang.String[] { "Wxid", "Code", "Name", "Country", "Province", "City", "Gender", });
+        new java.lang.String[] { "Wxid", "Code", "Remark", "Name", "Country", "Province", "City", "Gender", });
     internal_static_wcf_RpcContacts_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_wcf_RpcContacts_fieldAccessorTable = new
@@ -20174,13 +29135,55 @@ java.lang.String defaultValue);
     internal_static_wcf_Verification_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_Verification_descriptor,
-        new java.lang.String[] { "V3", "V4", });
-    internal_static_wcf_AddMembers_descriptor =
+        new java.lang.String[] { "V3", "V4", "Scene", });
+    internal_static_wcf_MemberMgmt_descriptor =
       getDescriptor().getMessageTypes().get(18);
-    internal_static_wcf_AddMembers_fieldAccessorTable = new
+    internal_static_wcf_MemberMgmt_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_wcf_AddMembers_descriptor,
+        internal_static_wcf_MemberMgmt_descriptor,
         new java.lang.String[] { "Roomid", "Wxids", });
+    internal_static_wcf_UserInfo_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_wcf_UserInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_UserInfo_descriptor,
+        new java.lang.String[] { "Wxid", "Name", "Mobile", "Home", });
+    internal_static_wcf_DecPath_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_wcf_DecPath_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_DecPath_descriptor,
+        new java.lang.String[] { "Src", "Dst", });
+    internal_static_wcf_Transfer_descriptor =
+      getDescriptor().getMessageTypes().get(21);
+    internal_static_wcf_Transfer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_Transfer_descriptor,
+        new java.lang.String[] { "Wxid", "Tfid", "Taid", });
+    internal_static_wcf_AttachMsg_descriptor =
+      getDescriptor().getMessageTypes().get(22);
+    internal_static_wcf_AttachMsg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_AttachMsg_descriptor,
+        new java.lang.String[] { "Id", "Thumb", "Extra", });
+    internal_static_wcf_AudioMsg_descriptor =
+      getDescriptor().getMessageTypes().get(23);
+    internal_static_wcf_AudioMsg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_AudioMsg_descriptor,
+        new java.lang.String[] { "Id", "Dir", });
+    internal_static_wcf_RichText_descriptor =
+      getDescriptor().getMessageTypes().get(24);
+    internal_static_wcf_RichText_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_RichText_descriptor,
+        new java.lang.String[] { "Name", "Account", "Title", "Digest", "Url", "Thumburl", "Receiver", });
+    internal_static_wcf_PatMsg_descriptor =
+      getDescriptor().getMessageTypes().get(25);
+    internal_static_wcf_PatMsg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_PatMsg_descriptor,
+        new java.lang.String[] { "Roomid", "Wxid", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
