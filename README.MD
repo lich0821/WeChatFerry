@@ -127,6 +127,7 @@ git clone https://github.com/microsoft/vcpkg
 vcpkg install protobuf[zlib]:x86-windows-static
 vcpkg install spdlog:x86-windows-static
 vcpkg install nng:x86-windows-static
+vcpkg install magic-enum:x86-windows-static
 vcpkg integrate install
 ```
 
