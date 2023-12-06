@@ -364,3 +364,34 @@ int SendRichTextMessage(RichText_t &rt)
 
     return status;
 }
+
+int SendPatMessage(string roomid, string wxid)
+{
+    int status = -1;
+
+    wstring wsRoomid = String2Wstring(roomid);
+    wstring wsWxid   = String2Wstring(wxid);
+    WxString wxRoomid(wsRoomid);
+    WxString wxWxid(wsWxid);
+
+    DWORD pmCall1 = g_WeChatWinDllAddr + g_WxCalls.pm.call1;
+    DWORD pmCall2 = g_WeChatWinDllAddr + g_WxCalls.pm.call2;
+    DWORD pmCall3 = g_WeChatWinDllAddr + g_WxCalls.pm.call3;
+
+    __asm {
+        pushad;
+        call  pmCall1;
+        push  pmCall2;
+        push  0x0;
+        push  eax;
+        lea   ecx, wxRoomid;
+        lea   edx, wxWxid;
+        call  pmCall3;
+        add   esp, 0xc;
+        movzx eax, al;
+        mov   status, eax;
+        popad;
+    }
+
+    return status;
+}

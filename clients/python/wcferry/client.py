@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.8.0"
+__version__ = "39.0.9.0"
 
 import atexit
 import base64
@@ -448,6 +448,24 @@ class Wcf():
         req.rt.url = url
         req.rt.thumburl = thumburl
         req.rt.receiver = receiver
+
+        rsp = self._send_request(req)
+        return rsp.status
+
+    def send_pat_msg(self, roomid: str, wxid: str) -> int:
+        """拍一拍群友
+
+        Args:
+            roomid (str): 群 id
+            wxid (str): 要拍的群友的 wxid
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SEND_PAT_MSG  # FUNC_SEND_PAT_MSG
+        req.pm.roomid = roomid
+        req.pm.wxid = wxid
 
         rsp = self._send_request(req)
         return rsp.status

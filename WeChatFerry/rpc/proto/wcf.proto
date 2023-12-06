@@ -19,6 +19,7 @@ enum Functions {
     FUNC_SEND_XML         = 0x23;
     FUNC_SEND_EMOTION     = 0x24;
     FUNC_SEND_RICH_TXT    = 0x25;
+    FUNC_SEND_PAT_MSG     = 0x26;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
@@ -53,6 +54,7 @@ message Request
         AttachMsg att  = 14;
         AudioMsg am    = 15;
         RichText rt    = 16;
+        PatMsg pm      = 17;
     }
 }
 
@@ -207,4 +209,10 @@ message RichText
     string url      = 5; // 链接
     string thumburl = 6; // 缩略图
     string receiver = 7; // 接收人
+}
+
+message PatMsg
+{
+    string roomid = 1; // 群 id
+    string wxid   = 2; // wxid
 }

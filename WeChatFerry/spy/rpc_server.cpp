@@ -361,6 +361,28 @@ bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_PAT_MSG;
+    rsp.which_msg = Response_status_tag;
+
+    if ((roomid == NULL) || (wxid == NULL)) {
+        rsp.msg.status = -1;
+    } else {
+        rsp.msg.status = SendPatMessage(roomid, wxid);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static void PushMessage()
 {
     static nng_socket msg_sock;
@@ -756,6 +778,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_SEND_RICH_TXT: {
             LOG_DEBUG("[Functions_FUNC_SEND_RICH_TXT]");
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
+            break;
+        }
+        case Functions_FUNC_SEND_PAT_MSG: {
+            LOG_DEBUG("[Functions_FUNC_SEND_PAT_MSG]");
+            ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
             break;
         }
         case Functions_FUNC_SEND_IMG: {
