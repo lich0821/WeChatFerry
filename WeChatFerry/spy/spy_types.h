@@ -145,6 +145,12 @@ typedef struct CallInviteCM {
     DWORD call8;
 } CallInviteCM_t;
 
+typedef struct CallOcr {
+    DWORD call1;
+    DWORD call2;
+    DWORD call3;
+} CallOcr_t;
+
 typedef struct WxCalls {
     DWORD login;         // 登录状态
     UserInfoCall_t ui;   // 用户信息
@@ -166,6 +172,7 @@ typedef struct WxCalls {
     CallRichText_t rt;   // 发送消息卡片
     CallPatMsg_t pm;     // 发送拍一拍消息
     CallInviteCM_t irm;  // 邀请群成员
+    CallOcr_t ocr;       // OCR
 } WxCalls_t;
 
 struct WxString {

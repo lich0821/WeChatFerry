@@ -30,6 +30,7 @@ enum Functions {
     FUNC_GET_CONTACT_INFO = 0x55;
     FUNC_REVOKE_MSG       = 0x56;
     FUNC_DECRYPT_IMAGE    = 0x60;
+    FUNC_EXEC_OCR         = 0x61;
     FUNC_ADD_ROOM_MEMBERS = 0x70;
     FUNC_DEL_ROOM_MEMBERS = 0x71;
     FUNC_INV_ROOM_MEMBERS = 0x72;
@@ -73,6 +74,7 @@ message Response
         DbTables tables      = 8;  // 表列表
         DbRows rows          = 9;  // 行列表
         UserInfo ui          = 10; // 个人信息
+        OcrMsg ocr           = 11; // OCR 结果
     };
 }
 
@@ -216,4 +218,10 @@ message PatMsg
 {
     string roomid = 1; // 群 id
     string wxid   = 2; // wxid
+}
+
+message OcrMsg
+{
+    int32 status  = 1; // 状态
+    string result = 2; // 结果
 }

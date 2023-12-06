@@ -688,6 +688,31 @@ bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
+{
+    Response rsp    = Response_init_default;
+    rsp.func        = Functions_FUNC_EXEC_OCR;
+    rsp.which_msg   = Response_ocr_tag;
+    OcrResult_t ret = { -1, "" };
+
+    if (path == NULL) {
+        LOG_ERROR("Empty path.");
+    } else {
+        ret = GetOcrResult(path);
+    }
+
+    rsp.msg.ocr.status = ret.status;
+    rsp.msg.ocr.result = (char *)ret.result.c_str();
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+    return true;
+}
+
 bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -899,6 +924,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         case Functions_FUNC_DECRYPT_IMAGE: {
             LOG_DEBUG("[FUNCTIONS_FUNC_DECRYPT_IMAGE]");
             ret = func_decrypt_image(req.msg.dec, out, out_len);
+            break;
+        }
+        case Functions_FUNC_EXEC_OCR: {
+            LOG_DEBUG("[Functions_FUNC_EXEC_OCR]");
+            ret = func_exec_ocr(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_ADD_ROOM_MEMBERS: {

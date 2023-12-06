@@ -50,6 +50,10 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 
 string DecryptImage(string src, string dir)
 {
+    if (!fs::exists(src)) {
+        return "";
+    }
+
     ifstream in(src.c_str(), ios::binary);
     if (!in.is_open()) {
         LOG_ERROR("Failed to read file {}", src);
@@ -334,4 +338,73 @@ string GetAudio(uint64_t id, string dir)
     Silk2Mp3(silk, mp3path, 24000);
 
     return mp3path;
+}
+
+OcrResult_t GetOcrResult(string path)
+{
+    OcrResult_t ret = { -1, "" };
+
+    if (!fs::exists(path)) {
+        LOG_ERROR("Can not find: {}", path);
+        return ret;
+    }
+
+    // 路径分隔符有要求，必须为 `\`
+    wstring wsPath = String2Wstring(fs::path(path).make_preferred().string());
+
+    WxString wxPath(wsPath);
+    WxString nullObj;
+    WxString ocrBuffer;
+
+    DWORD ocrCall1 = g_WeChatWinDllAddr + g_WxCalls.ocr.call1;
+    DWORD ocrCall2 = g_WeChatWinDllAddr + g_WxCalls.ocr.call2;
+    DWORD ocrCall3 = g_WeChatWinDllAddr + g_WxCalls.ocr.call3;
+
+    DWORD tmp  = 0;
+    int status = -1;
+    __asm {
+        pushad;
+        pushfd;
+        lea   ecx, ocrBuffer;
+        call  ocrCall1;
+        call  ocrCall2;
+        lea   ecx, nullObj;
+        push  ecx;
+        lea   ecx, tmp;
+        push  ecx;
+        lea   ecx, ocrBuffer;
+        push  ecx;
+        push  0x0;
+        lea   ecx, wxPath;
+        push  ecx;
+        mov   ecx, eax;
+        call  ocrCall3;
+        mov   status, eax;
+        popfd;
+        popad;
+    }
+
+    if (status != 0)
+    {
+        LOG_ERROR("OCR status: {}", to_string(status));
+        return ret; // 识别出错
+    }
+
+    ret.status = status;
+
+    DWORD addr   = (DWORD)&ocrBuffer;
+    DWORD header = GET_DWORD(addr);
+    DWORD num    = GET_DWORD(addr + 0x4);
+    if (num <= 0) {
+        return ret; // 识别内容为空
+    }
+
+    for (uint32_t i = 0; i < num; i++) {
+        DWORD content = GET_DWORD(header);
+        ret.result += Wstring2String(GET_WSTRING(content + 0x14));
+        ret.result += "\n";
+        header = content;
+    }
+
+    return ret;
 }

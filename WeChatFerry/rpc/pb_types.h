@@ -56,3 +56,8 @@ typedef struct {
     string mobile;
     string home;
 } UserInfo_t;
+
+typedef struct {
+    int32_t status;
+    string result;
+} OcrResult_t;

@@ -755,6 +755,40 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.str
 
+    def get_ocr_result(self, extra: str, timeout: int = 2) -> str:
+        """获取 OCR 结果。鸡肋，需要图片能自动下载；通过下载接口下载的图片无法识别。
+
+        Args:
+            extra (str): 待识别的图片路径，消息里的 extra
+
+        Returns:
+            str: OCR 结果
+        """
+        def _inner(extra):
+            req = wcf_pb2.Request()
+            req.func = wcf_pb2.FUNC_EXEC_OCR  # FUNC_EXEC_OCR
+            req.str = extra
+            rsp = self._send_request(req)
+            ocr = json_format.MessageToDict(rsp.ocr)
+            return ocr.get("status", 0), ocr.get("result", "")
+
+        cnt = 0
+        while True:
+            status, result = _inner(extra)
+            if status == 0:
+                break
+
+            cnt += 1
+            if cnt > timeout:
+                break
+
+            sleep(1)
+
+        if status != 0:
+            self.LOG.error(f"OCR failed, status: {status}")
+
+        return result
+
     def download_image(self, id: int, extra: str, dir: str, timeout: int = 30) -> str:
         """下载图片
 
