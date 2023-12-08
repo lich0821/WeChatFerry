@@ -411,7 +411,6 @@ static void PushMessage()
 
     char url[URL_SIZE + 1] = { 0 };
     sprintf_s(url, URL_SIZE, "%s:%d", BASE_URL, lport + 1);
-    LOG_ERROR("URL: {}", url);
     if ((rv = nng_pair1_open(&msg_sock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return;
