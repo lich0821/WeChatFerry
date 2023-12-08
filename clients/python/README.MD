@@ -43,8 +43,13 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 ```
 
 ## 版本更新
-### v39.0.7 (2023.12.03)
-* 保存语音
+
+### v39.0.10 (2023.12.08)
+* 代码优化
+* 发送卡片消息
+* 拍一拍群友
+* 邀请群成员
+* 图片 OCR
 
 <details><summary>点击查看更多</summary>
 
@@ -79,5 +84,9 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 获取朋友圈消息
 * 保存图片
 * 保存语音
+* 发送卡片消息
+* 拍一拍群友
+* 邀请群成员
+* 图片 OCR
 
 </details>
