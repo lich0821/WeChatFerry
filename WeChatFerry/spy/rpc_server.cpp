@@ -861,7 +861,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
 #endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
-            LOG_BUFFER(in, in_len);
             ret = func_enable_recv_txt(req.msg.flag, out, out_len);
             break;
         }
