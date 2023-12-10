@@ -50,9 +50,9 @@ class Http(FastAPI):
         self.add_api_route("/friends", self.get_friends, methods=["GET"], summary="获取好友列表")
         self.add_api_route("/dbs", self.get_dbs, methods=["GET"], summary="获取所有数据库")
         self.add_api_route("/{db}/tables", self.get_tables, methods=["GET"], summary="获取 db 中所有表")
-        self.add_api_route("/pyq/", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
-        self.add_api_route("/chatroom-member/", self.get_chatroom_members, methods=["GET"], summary="获取群成员")
-        self.add_api_route("/alias-in-chatroom/", self.get_alias_in_chatroom, methods=["GET"], summary="获取群成员名片")
+        self.add_api_route("/pyq", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
+        self.add_api_route("/chatroom-member", self.get_chatroom_members, methods=["GET"], summary="获取群成员")
+        self.add_api_route("/alias-in-chatroom", self.get_alias_in_chatroom, methods=["GET"], summary="获取群成员名片")
 
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
@@ -64,9 +64,9 @@ class Http(FastAPI):
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="（废弃）解密图片")
-        self.add_api_route("/attachment/", self.download_attachment, methods=["POST"], summary="（废弃）下载图片、文件和视频")
-        self.add_api_route("/save-image/", self.download_image, methods=["POST"], summary="下载图片")
-        self.add_api_route("/save-audio/", self.get_audio_msg, methods=["POST"], summary="保存语音")
+        self.add_api_route("/attachment", self.download_attachment, methods=["POST"], summary="（废弃）下载图片、文件和视频")
+        self.add_api_route("/save-image", self.download_image, methods=["POST"], summary="下载图片")
+        self.add_api_route("/save-audio", self.get_audio_msg, methods=["POST"], summary="保存语音")
 
         self.add_api_route("/chatroom-member", self.del_chatroom_members, methods=["DELETE"], summary="删除群成员")
 
