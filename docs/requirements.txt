@@ -4,5 +4,4 @@ myst_parser
 sphinx
 sphinx_copybutton
 sphinx_rtd_theme
-sphinxcontrib-openapi
 sphinxcontrib-napoleon

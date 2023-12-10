@@ -6,6 +6,4 @@ OpenAPI
 
 wcfhttp
 -------
-从 docs 中查看更详细（默认地址为：http://localhost:9999/docs ）。
-
-.. openapi:: _static/openapi-wcfhttp.json
+安装启动 wcfhttp 后，通过 http://localhost:9999/docs 查看。

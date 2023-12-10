@@ -34,7 +34,6 @@ master_doc = "index"
 extensions = [
     "myst_parser",
     "autoapi.extension",
-    "sphinxcontrib.openapi",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
