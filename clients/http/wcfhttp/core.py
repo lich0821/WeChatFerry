@@ -12,7 +12,7 @@ from fastapi import Body, FastAPI, Query
 from pydantic import BaseModel
 from wcferry import Wcf, WxMsg
 
-__version__ = "39.0.7.0"
+__version__ = "39.0.10.0"
 
 
 class Msg(BaseModel):
@@ -53,15 +53,19 @@ class Http(FastAPI):
         self.add_api_route("/pyq", self.refresh_pyq, methods=["GET"], summary="刷新朋友圈（数据从消息回调中查看）")
         self.add_api_route("/chatroom-member", self.get_chatroom_members, methods=["GET"], summary="获取群成员")
         self.add_api_route("/alias-in-chatroom", self.get_alias_in_chatroom, methods=["GET"], summary="获取群成员名片")
+        self.add_api_route("/ocr-result", self.get_ocr_result, methods=["GET"], summary="获取 OCR 结果")
 
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
         self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
         self.add_api_route("/file", self.send_file, methods=["POST"], summary="发送文件消息")
+        self.add_api_route("/rich-text", self.send_rich_text, methods=["POST"], summary="发送卡片消息")
+        self.add_api_route("/pat", self.send_pat_msg, methods=["POST"], summary="发送拍一拍消息")
         # self.add_api_route("/xml", self.send_xml, methods=["POST"], summary="发送 XML 消息")
         # self.add_api_route("/emotion", self.send_emotion, methods=["POST"], summary="发送表情消息")
         self.add_api_route("/sql", self.query_sql, methods=["POST"], summary="执行 SQL，如果数据量大注意分页，以免 OOM")
         self.add_api_route("/new-friend", self.accept_new_friend, methods=["POST"], summary="通过好友申请")
         self.add_api_route("/chatroom-member", self.add_chatroom_members, methods=["POST"], summary="添加群成员")
+        self.add_api_route("/cr-members", self.invite_chatroom_members, methods=["POST"], summary="邀请群成员")
         self.add_api_route("/transfer", self.receive_transfer, methods=["POST"], summary="接收转账")
         self.add_api_route("/dec-image", self.decrypt_image, methods=["POST"], summary="（废弃）解密图片")
         self.add_api_route("/attachment", self.download_attachment, methods=["POST"], summary="（废弃）下载图片、文件和视频")
@@ -174,6 +178,21 @@ class Http(FastAPI):
             return {"status": 0, "message": "成功", "data": {"ui": ret}}
         return {"status": -1, "message": "失败"}
 
+    def get_ocr_result(self, extra: str = Body("C:/...", description="消息中的 extra"),
+                       timeout: int = Body("30", description="超时时间（秒）")) -> dict:
+        """获取 OCR 结果。鸡肋，需要图片能自动下载；通过下载接口下载的图片无法识别。
+
+        Args:
+            extra (str): 待识别的图片路径，消息里的 extra
+
+        Returns:
+            str: OCR 结果
+        """
+        ret = self.wcf.get_ocr_result(extra, timeout)
+        if ret:
+            return {"status": 0, "message": "成功", "data": {"ocr": ret}}
+        return {"status": -1, "message": "可能失败，可以看看日志。这接口没啥用，别用了。"}
+
     def msg_cb(self, msg: Msg = Body(description="微信消息")):
         """示例回调方法，简单打印消息"""
         print(f"收到消息：{msg}")
@@ -225,6 +244,57 @@ class Http(FastAPI):
         """
         ret = self.wcf.send_file(path, receiver)
         return {"status": ret, "message": "成功"if ret == 0 else "失败"}
+
+    def send_rich_text(
+            self, name: str = Body("碲矿", description="左下显示的名字"),
+            account: str = Body("gh_75dea2d6c71f", description="填公众号 id 可以显示对应的头像"),
+            title: str = Body("【FAQ】WeChatFerry 机器人常见问题 v39.0.10", description="标题，最多两行"),
+            digest: str = Body("先看再问，少走弯路。", description="最多三行，会占位"),
+            url:
+            str = Body(
+                "http://mp.weixin.qq.com/s?__biz=MzI0MjI1OTk0OQ==&amp;mid=2247487601&amp;idx=1&amp;sn=1bf7a0d1c659f8bc78a00cba18d7b204&amp;chksm=e97e52f3de09dbe591fe23f335ce73bc468bd107a8c7bc5a458752a47f9d2d55a5fcdc5dd386&amp;mpshare=1&amp;scene=1&amp;srcid=1209eP4EsXnynxyRQHzCK2bY&amp;sharer_shareinfo=a12096ee76b4e3a9e72c9aedaf51a5ef&amp;sharer_shareinfo_first=a12096ee76b4e3a9e72c9aedaf51a5ef#rd",
+                description="点击后跳转的链接"),
+            thumburl: str = Body("https://mmbiz.qpic.cn/mmbiz_jpg/XaSOeHibHicMGIiaZsBeYYjcuS2KfBGXfm8ibb9QrKJqk0H0W3JHia9icVica9nlWMiaD0xWmA0pKHpMOWbeBCJaAQc2IQ/0?wx_fmt=jpeg", description="缩略图的链接"),
+            receiver: str = Body("filehelper", description="接收人, wxid 或者 roomid")) -> dict:
+        """发送卡片消息
+        卡片样式（格式乱了，看这里：https://github.com/lich0821/WeChatFerry/blob/master/clients/python/wcferry/client.py#L421）：
+            |-------------------------------------|
+            |title, 最长两行
+            |(长标题, 标题短的话这行没有)
+            |digest, 最多三行，会占位    |--------|
+            |digest, 最多三行，会占位    |thumburl|
+            |digest, 最多三行，会占位    |--------|
+            |(account logo) name
+            |-------------------------------------|
+        Args:
+            name (str): 左下显示的名字
+            account (str): 填公众号 id 可以显示对应的头像（gh_ 开头的）
+            title (str): 标题，最多两行
+            digest (str): 摘要，三行
+            url (str): 点击后跳转的链接
+            thumburl (str): 缩略图的链接
+            receiver (str): 接收人, wxid 或者 roomid
+
+        Returns:
+            int: 0 为成功，其他失败
+        """
+        ret = self.wcf.send_rich_text(name, account, title, digest, url, thumburl, receiver)
+        return {"status": ret, "message": "成功"if ret == 0 else "失败，原因见日志"}
+
+    def send_pat_msg(
+            self, roomid: str = Body(description="要发送的消息，换行用\\n表示"),
+            wxid: str = Body("filehelper", description="消息接收者，roomid 或者 wxid")) -> dict:
+        """拍一拍群友
+
+        Args:
+            roomid (str): 群友所在群 roomid
+            wxid (str): 要拍的群友的 wxid
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        ret = self.wcf.send_pat_msg(roomid, wxid)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败，原因见日志"}
 
     def send_xml(
             self, receiver: str = Body("filehelper", description="roomid 或者 wxid"),
@@ -315,6 +385,21 @@ class Http(FastAPI):
             int: 1 为成功，其他失败
         """
         ret = self.wcf.add_chatroom_members(roomid, wxids)
+        return {"status": ret, "message": "成功"if ret == 1 else "失败"}
+
+    def invite_chatroom_members(self,
+                                roomid: str = Body("xxxxxxxx@chatroom", description="待加群的 id"),
+                                wxids: str = Body("wxid_xxxxxxxxxxxxx", description="要加到群里的 wxid，多个用逗号分隔")) -> dict:
+        """邀请群成员
+
+        Args:
+            roomid (str): 待加群的 id
+            wxids (str): 要加到群里的 wxid，多个用逗号分隔
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        ret = self.wcf.invite_chatroom_members(roomid, wxids)
         return {"status": ret, "message": "成功"if ret == 1 else "失败"}
 
     def del_chatroom_members(self,
