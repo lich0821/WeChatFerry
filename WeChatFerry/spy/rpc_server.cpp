@@ -604,7 +604,7 @@ bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
     rsp.func      = Functions_FUNC_DOWNLOAD_ATTACH;
-    rsp.which_msg = Response_str_tag;
+    rsp.which_msg = Response_status_tag;
 
     uint64_t id  = att.id;
     string thumb = string(att.thumb ? att.thumb : "");
