@@ -93,7 +93,7 @@ int DelChatroomMember(string roomid, string wxids)
         vWxMembers.push_back(txtMember);
     }
 
-    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
+    LOG_DEBUG("Deleting {} members[{}] from {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
     __asm {
         pushad;
         pushfd;
