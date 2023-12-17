@@ -21,3 +21,4 @@ void SendXmlMessage(string receiver, string xml, string path, int type);
 void SendEmotionMessage(string wxid, string path);
 int SendRichTextMessage(RichText_t &rt);
 int SendPatMessage(string roomid, string wxid);
+int ForwardMessage(uint64_t msgid, string receiver);

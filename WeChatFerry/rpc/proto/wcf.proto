@@ -20,6 +20,7 @@ enum Functions {
     FUNC_SEND_EMOTION     = 0x24;
     FUNC_SEND_RICH_TXT    = 0x25;
     FUNC_SEND_PAT_MSG     = 0x26;
+    FUNC_FORWARD_MSG      = 0x27;
     FUNC_ENABLE_RECV_TXT  = 0x30;
     FUNC_DISABLE_RECV_TXT = 0x40;
     FUNC_EXEC_DB_QUERY    = 0x50;
@@ -57,6 +58,7 @@ message Request
         AudioMsg am    = 15;
         RichText rt    = 16;
         PatMsg pm      = 17;
+        ForwardMsg fm  = 18;
     }
 }
 
@@ -224,4 +226,10 @@ message OcrMsg
 {
     int32 status  = 1; // 状态
     string result = 2; // 结果
+}
+
+message ForwardMsg
+{
+    uint64 id       = 1; // 待转发消息 ID
+    string receiver = 2; // 转发接收目标，群为 roomId，个人为 wxid
 }

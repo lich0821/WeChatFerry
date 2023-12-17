@@ -397,6 +397,29 @@ bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_FORWARD_MSG;
+    rsp.which_msg = Response_status_tag;
+
+    if (receiver == NULL) {
+        LOG_ERROR("Empty roomid or wxid.");
+        rsp.msg.status = -1;
+    } else {
+        rsp.msg.status = ForwardMessage(id, receiver);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 static void PushMessage()
 {
     static nng_socket msg_sock;
@@ -848,6 +871,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_SEND_FILE: {
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
+            break;
+        }
+        case Functions_FUNC_FORWARD_MSG: {
+            ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
             break;
         }
 #if 0

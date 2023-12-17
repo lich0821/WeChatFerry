@@ -2,6 +2,8 @@
 #include <sstream>
 #include <vector>
 
+#include "exec_sql.h"
+#include "log.h"
 #include "send_msg.h"
 #include "spy_types.h"
 #include "util.h"
@@ -390,6 +392,47 @@ int SendPatMessage(string roomid, string wxid)
         add   esp, 0xc;
         movzx eax, al;
         mov   status, eax;
+        popad;
+    }
+
+    return status;
+}
+
+int ForwardMessage(uint64_t msgid, string receiver)
+{
+    int status       = -1;
+    uint32_t dbIdx   = 0;
+    uint64_t localId = 0;
+
+    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
+        return status;
+    }
+
+    wstring wsReceiver = String2Wstring(receiver);
+    WxString wxReceiver(wsReceiver);
+
+    DWORD fmCall1 = g_WeChatWinDllAddr + g_WxCalls.fm.call1;
+    DWORD fmCall2 = g_WeChatWinDllAddr + g_WxCalls.fm.call2;
+
+    __asm {
+        pushad;
+        pushfd;
+        mov        edx, dword ptr [dbIdx];
+        push       edx;
+        mov        eax, dword ptr [localId];
+        push       eax;
+        sub        esp, 0x14;
+        mov        ecx, esp;
+        lea        esi, wxReceiver;
+        push       esi;
+        call       fmCall1;
+        xor        ecx, ecx;
+        call       fmCall2;
+        movzx      eax, al;
+        mov        status, eax;
+        add        esp, 0x1c;
+        popfd;
         popad;
     }
 

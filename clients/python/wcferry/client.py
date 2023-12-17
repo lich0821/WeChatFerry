@@ -470,6 +470,25 @@ class Wcf():
         rsp = self._send_request(req)
         return rsp.status
 
+    def forward_msg(self, id: int, receiver: str) -> int:
+        """转发消息。可以转发文本、图片、表情、甚至各种 XML；
+        语音也行，不过效果嘛，自己验证吧。
+
+        Args:
+            id (str): 待转发消息的 id
+            receiver (str): 消息接收者，wxid 或者 roomid
+
+        Returns:
+            int: 1 为成功，其他失败
+        """
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_FORWARD_MSG  # FUNC_FORWARD_MSG
+        req.fm.id = id
+        req.fm.receiver = receiver
+
+        rsp = self._send_request(req)
+        return rsp.status
+
     def get_msg(self, block=True) -> WxMsg:
         """从消息队列中获取消息
 
