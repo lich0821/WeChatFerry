@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeChat Rest API</title>
+    <meta http-equiv="Content-Security-Policy" />
+    <link rel="shortcut icon" href="/assets/img/icon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.min.js"></script>
+</head>
+
+<body>
+    <div id="swagger-ui"></div>
+    <style type="text/css">
+        body {
+            margin: 0
+        }
+    </style>
+    <script type="text/javascript">
+        SwaggerUIBundle({
+            url: 'swagger.json',
+            dom_id: '#swagger-ui',
+            layout: 'BaseLayout',
+            deepLinking: true,
+            showExtensions: true,
+            showCommonExtensions: true,
+            presets: [
+                SwaggerUIBundle.presets.apis
+            ]
+        })
+    </script>
+</body>
+
+</html>
