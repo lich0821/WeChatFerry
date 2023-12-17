@@ -186,7 +186,7 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
                 continue;
             }
 
-            *localId = strtoul((const char *)(field.content.data()), NULL, 10);
+            *localId = strtoull((const char *)(field.content.data()), NULL, 10);
             *dbIdx   = GET_DWORD(GET_DWORD(dbAddr + 0x18) + 0x144);
 
             return 0;
