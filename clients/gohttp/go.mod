@@ -1,4 +1,4 @@
-module github.com/opentdp/wechat-rest
+module wechat-rest
 
 go 1.21
 

@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 
-	"github.com/opentdp/wechat-rest/args"
-	"github.com/opentdp/wechat-rest/httpd"
+	"wechat-rest/args"
+	"wechat-rest/httpd"
 )
 
 //go:embed public
