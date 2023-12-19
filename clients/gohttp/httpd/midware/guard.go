@@ -4,7 +4,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/opentdp/wechat-rest/args"
+
+	"wechat-rest/args"
 )
 
 func AuthGuard(c *gin.Context) {

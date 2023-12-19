@@ -3,9 +3,9 @@ package httpd
 import (
 	"github.com/opentdp/go-helper/httpd"
 
-	"github.com/opentdp/wechat-rest/args"
-	"github.com/opentdp/wechat-rest/httpd/midware"
-	"github.com/opentdp/wechat-rest/httpd/wcfrest"
+	"wechat-rest/args"
+	"wechat-rest/httpd/midware"
+	"wechat-rest/httpd/wcfrest"
 )
 
 // @title Wechat Rest API
