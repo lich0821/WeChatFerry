@@ -7,9 +7,9 @@ import (
 	"github.com/opentdp/go-helper/logman"
 	"github.com/opentdp/go-helper/request"
 	"github.com/opentdp/go-helper/strutil"
-
-	"github.com/opentdp/wechat-rest/args"
 	"github.com/opentdp/wechat-rest/wcferry"
+
+	"wechat-rest/args"
 )
 
 var wc *wcferry.Client
