@@ -44,12 +44,9 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.0.10 (2023.12.08)
-* 代码优化
-* 发送卡片消息
-* 拍一拍群友
-* 邀请群成员
-* 图片 OCR
+### v39.0.12 (2023.12.20)
+* 修复一个问题
+* 消息转发
 
 <details><summary>点击查看更多</summary>
 
@@ -72,8 +69,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 获取某数据库下的表
 * 获取用户信息
 * 发送文本消息（可 @）
-* 发送图片（Python 客户端支持网络路径）
-* 发送文件（Python 客户端支持网络路径）
+* 发送图片（支持网络路径）
+* 发送文件（支持网络路径）
 * 允许接收消息
 * 停止接收消息
 * 执行 SQL 查询
@@ -88,5 +85,6 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 拍一拍群友
 * 邀请群成员
 * 图片 OCR
+* 转发消息
 
 </details>
