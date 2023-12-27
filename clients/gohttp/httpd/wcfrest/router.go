@@ -30,6 +30,7 @@ func Route(rg *gin.RouterGroup) {
 	rg.POST("del_chatroom_members", delChatRoomMembers)
 
 	rg.GET("revoke_msg/:msgid", revokeMsg)
+	rg.POST("forward_msg", forwardMsg)
 	rg.POST("send_txt", sendTxt)
 	rg.POST("send_img", sendImg)
 	rg.POST("send_file", sendFile)
