@@ -274,7 +274,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "关闭消息转发",
+                "summary": "关闭转发消息到URL",
                 "parameters": [
                     {
                         "description": "消息转发请求参数",
@@ -355,7 +355,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "开启消息转发",
+                "summary": "开启转发消息到URL",
                 "parameters": [
                     {
                         "description": "消息转发请求参数",
@@ -364,6 +364,33 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/wcfrest.ForwardMsgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.RespPayload"
+                        }
+                    }
+                }
+            }
+        },
+        "/forward_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "转发消息",
+                "parameters": [
+                    {
+                        "description": "转发消息请求参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcferry.ForwardMsg"
                         }
                     }
                 ],
@@ -792,6 +819,19 @@
                 },
                 "sql": {
                     "description": "建表 SQL",
+                    "type": "string"
+                }
+            }
+        },
+        "wcferry.ForwardMsg": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "待转发消息 ID",
+                    "type": "integer"
+                },
+                "receiver": {
+                    "description": "转发接收目标，群为 roomId，个人为 wxid",
                     "type": "string"
                 }
             }

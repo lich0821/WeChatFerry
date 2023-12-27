@@ -1,6 +1,7 @@
 package wcfrest
 
 import (
+	"net"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,14 +14,18 @@ import (
 )
 
 var wc *wcferry.Client
+var forwardUrls = map[string]bool{}
 
 func initService() {
 
-	parts := strings.Split(args.Wcf.Address, ":")
+	host, port, err := net.SplitHostPort(args.Wcf.Address)
+	if err != nil {
+		logman.Fatal("failed to start wcf", "error", err)
+	}
 
 	wc = &wcferry.Client{
-		ListenAddr: parts[0],
-		ListenPort: strutil.ToInt(parts[1]),
+		ListenAddr: host,
+		ListenPort: strutil.ToInt(port),
 		SdkLibrary: args.Wcf.SdkLibrary,
 		WeChatAuto: args.Wcf.WeChatAuto,
 	}
@@ -283,6 +288,27 @@ func revokeMsg(c *gin.Context) {
 
 }
 
+// @Summary 转发消息
+// @Produce json
+// @Param body body wcferry.ForwardMsg true "转发消息请求参数"
+// @Success 200 {object} RespPayload
+// @Router /forward_msg [post]
+func forwardMsg(c *gin.Context) {
+
+	var req wcferry.ForwardMsg
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Set("Error", err)
+		return
+	}
+
+	status := wc.CmdClient.ForwardMsg(req.Id, req.Receiver)
+
+	c.Set("Payload", RespPayload{
+		Success: status == 1,
+	})
+
+}
+
 // @Summary 发送文本消息
 // @Produce json
 // @Param body body wcferry.TextMsg true "文本消息请求参数"
@@ -534,7 +560,7 @@ func receiveTransfer(c *gin.Context) {
 
 }
 
-// @Summary 开启消息转发
+// @Summary 开启转发消息到URL
 // @Produce json
 // @Param body body ForwardMsgRequest true "消息转发请求参数"
 // @Success 200 {object} RespPayload
@@ -552,10 +578,19 @@ func enableForwardMsg(c *gin.Context) {
 		return
 	}
 
+	if _, ok := forwardUrls[req.Url]; ok {
+		c.Set("Error", "url already exists")
+		return
+	}
+
 	err := wc.EnrollReceiver(true, func(msg *wcferry.WxMsg) {
 		logman.Info("forward msg", "url", req.Url, "Id", msg.Id)
 		request.JsonPost(req.Url, msg, request.H{})
 	})
+
+	if err == nil {
+		forwardUrls[req.Url] = true
+	}
 
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
@@ -564,7 +599,7 @@ func enableForwardMsg(c *gin.Context) {
 
 }
 
-// @Summary 关闭消息转发
+// @Summary 关闭转发消息到URL
 // @Produce json
 // @Param body body ForwardMsgRequest true "消息转发请求参数"
 // @Success 200 {object} RespPayload
