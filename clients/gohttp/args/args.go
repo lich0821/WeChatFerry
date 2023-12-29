@@ -29,8 +29,10 @@ var Logger = struct {
 var Httpd = struct {
 	Address string
 	Token   string
+	Swag    bool
 }{
 	Address: "127.0.0.1:7600",
+	Swag:    true,
 }
 
 // Wcf 服务参数
