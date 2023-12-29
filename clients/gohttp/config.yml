@@ -1,6 +1,7 @@
 httpd:
     address: 127.0.0.1:7600
     token: ""
+    swag: true
 logger:
     dir: logs
     level: info

@@ -104,6 +104,9 @@ wcfhttp --cb http://your_host:your_port/callback
 ### Go
 参考 [Go README.MD](clients/go/README.md)
 
+### GoHttp
+参考 [GoHttp README.MD](clients/gohttp/README.MD)
+
 ### Java
 参考 [Java README.MD](clients/java/README.MD)
 
@@ -174,6 +177,7 @@ WeChatFerry
 │   └── demo.gif            # 示例动图
 ├── clients
 │   ├── go                  # Go 客户端
+│   ├── gohttp              # HTTP 客户端
 │   ├── http                # HTTP 客户端
 │   ├── java                # Java 客户端
 │   ├── pyauto              # 群友封装的客户端
@@ -187,6 +191,9 @@ WeChatFerry
 
 ### go
 Go 客户端。
+
+### gohttp
+HTTP 客户端，二进制发布无依赖
 
 ### http
 HTTP 客户端。

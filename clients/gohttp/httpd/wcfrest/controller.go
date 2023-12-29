@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/opentdp/go-helper/logman"
-	"github.com/opentdp/go-helper/request"
 	"github.com/opentdp/go-helper/strutil"
 	"github.com/opentdp/wechat-rest/wcferry"
 
@@ -14,13 +13,12 @@ import (
 )
 
 var wc *wcferry.Client
-var forwardUrls = map[string]bool{}
 
 func initService() {
 
 	host, port, err := net.SplitHostPort(args.Wcf.Address)
 	if err != nil {
-		logman.Fatal("failed to start wcf", "error", err)
+		logman.Fatal("invalid address", "error", err)
 	}
 
 	wc = &wcferry.Client{
@@ -578,20 +576,7 @@ func enableForwardMsg(c *gin.Context) {
 		return
 	}
 
-	if _, ok := forwardUrls[req.Url]; ok {
-		c.Set("Error", "url already exists")
-		return
-	}
-
-	err := wc.EnrollReceiver(true, func(msg *wcferry.WxMsg) {
-		logman.Info("forward msg", "url", req.Url, "Id", msg.Id)
-		request.JsonPost(req.Url, msg, request.H{})
-	})
-
-	if err == nil {
-		forwardUrls[req.Url] = true
-	}
-
+	err := enableForwardToUrl(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,
@@ -606,8 +591,13 @@ func enableForwardMsg(c *gin.Context) {
 // @Router /disable_forward_msg [post]
 func disableForwardMsg(c *gin.Context) {
 
-	err := wc.DisableReceiver()
+	var req ForwardMsgRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Set("Error", err)
+		return
+	}
 
+	err := disableForwardToUrl(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,

@@ -8,7 +8,7 @@ import (
 	"wechat-rest/args"
 )
 
-func AuthGuard(c *gin.Context) {
+func ApiGuard(c *gin.Context) {
 
 	token := ""
 
@@ -19,8 +19,18 @@ func AuthGuard(c *gin.Context) {
 	}
 
 	if token != args.Httpd.Token {
-		c.Set("Error", gin.H{"Code": 401, "Message": "未授权的操作"})
+		c.Set("Error", gin.H{"Code": 401, "Message": "操作未授权"})
 		c.Set("ExitCode", 401)
+		c.Abort()
+	}
+
+}
+
+func SwagGuard(c *gin.Context) {
+
+	if !args.Httpd.Swag && strings.HasPrefix(c.Request.URL.Path, "/swag") {
+		c.Set("Error", gin.H{"Code": 403, "Message": "功能已禁用"})
+		c.Set("ExitCode", 403)
 		c.Abort()
 	}
 

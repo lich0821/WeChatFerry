@@ -4,13 +4,13 @@
 
 ## 使用方法
 
-1、下载 [WeChatSetup-3.9.2.23](https://github.com/opentdp/wechat-rest/releases/download/v0.0.1/WeChatSetup-3.9.2.23.exe) 和 [Wechat-rest](https://github.com/opentdp/wechat-rest/releases)
+1、下载并安装 [WeChatSetup-3.9.2.23](https://github.com/opentdp/wechat-rest/releases/download/v0.0.1/WeChatSetup-3.9.2.23.exe) 和 [Wechat-rest](https://github.com/opentdp/wechat-rest/releases)
 
-2、在一台 Windows 系统电脑上安装刚刚下载的微信
+2、双击 `wrest.exe` 将自动启动微信和接口服务，扫码登录即可
 
-3、同一台电脑上，解压 `Wechat-rest` ，双击 `wrest.exe` 启动接口服务
+3、浏览器打开 `http://localhost:7600` 查看支持的接口
 
-4、浏览器打开 `http://localhost:7600` 查看支持的接口
+> 接口使用范例请参考 <https://github.com/opentdp/wechat-robot>
 
 ## 配置说明
 
@@ -18,6 +18,7 @@
 httpd:
     address: 127.0.0.1:7600 # api 监听地址
     token: "" # 使用 token 验证请求
+    swag: true # 启用 OpenApi 文档
 logger:
     dir: logs # 日志目录
     level: info # 日志级别
@@ -28,6 +29,8 @@ wcf:
     wechatauto: true # 自动启动或停止微信
     msgprint: true # 打印收到的消息
 ```
+
+> 若设置了 `token`，请求时需携带 **header** 信息: `Authorization: Bearer $token`
 
 ## 功能清单
 
@@ -66,5 +69,5 @@ wcf:
 go get github.com/swaggo/swag/cmd/swag
 go install github.com/swaggo/swag/cmd/swag
 
-swag init --parseDependency -g httpd/server.go -o public -ot json
+swag init --parseDependency -g httpd/server.go -o public/swag -ot json
 ```
