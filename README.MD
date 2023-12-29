@@ -105,7 +105,7 @@ wcfhttp --cb http://your_host:your_port/callback
 参考 [Go README.MD](clients/go/README.md)
 
 ### GoHttp
-参考 [GoHttp README.MD](clients/gohttp/README.MD)
+参考 [GoHttp README.MD](clients/gohttp/README.md)
 
 ### Java
 参考 [Java README.MD](clients/java/README.MD)
