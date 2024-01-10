@@ -1,0 +1,3 @@
+[submodule "clients/node-wcferry"]
+	path = clients/node-wcferry
+	url = https://github.com/stkevintan/node-wcferry
