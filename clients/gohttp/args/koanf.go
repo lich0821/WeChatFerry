@@ -28,7 +28,11 @@ func (c *Config) Init() *Config {
 		Delim:       ".",
 	})
 	c.Parser = yaml.Parser()
+
 	c.File = "config.yml"
+	if len(os.Args) > 1 {
+		c.File = os.Args[1]
+	}
 
 	return c
 

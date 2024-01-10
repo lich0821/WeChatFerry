@@ -20,11 +20,10 @@ import (
 func Server() {
 
 	httpd.Engine(args.Debug)
-	httpd.Use(midware.OutputHandle)
 
 	// Api 守卫
 	api := httpd.Group("/api")
-	api.Use(midware.ApiGuard)
+	api.Use(midware.OutputHandle, midware.ApiGuard)
 
 	// Wcf 路由
 	wcfrest.Route(api)

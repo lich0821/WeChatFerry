@@ -12,8 +12,8 @@ func (c *Config) Unmarshal() {
 	// 读取默认配置
 
 	mp := map[string]any{
-		"logger": &Logger,
 		"httpd":  &Httpd,
+		"logger": &Logger,
 		"wcf":    &Wcf,
 	}
 	c.Koanf.Load(confmap.Provider(mp, "."), nil)
@@ -35,7 +35,7 @@ func (c *Config) Unmarshal() {
 		Level:    Logger.Level,
 		Target:   Logger.Target,
 		Storage:  Logger.Dir,
-		Filename: "rest",
+		Filename: "wrest",
 	})
 
 	// 写入配置文件
