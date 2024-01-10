@@ -56,6 +56,7 @@
 * Go
 * HTTP
 * Java
+* Node.js
 * Python
 * Rust
 </details>
@@ -111,7 +112,7 @@ wcfhttp --cb http://your_host:your_port/callback
 参考 [Java README.MD](clients/java/README.MD)
 
 ### Node.js
-参考 [Node.js README.MD](clients/node-wcferry/README.md)
+参考 [Node.js README.MD](https://github.com/stkevintan/node-wcferry/blob/main/README.md)
 
 ### Rust
 参考 [Rust README.MD](clients/rust/README.MD)
@@ -183,7 +184,7 @@ WeChatFerry
 │   ├── gohttp              # HTTP 客户端
 │   ├── http                # HTTP 客户端
 │   ├── java                # Java 客户端
-│   ├── node-wcferry        # Nodejs 客户端  
+│   ├── node                # Node.js 客户端  
 │   ├── pyauto              # 群友封装的客户端
 │   ├── python              # Python 客户端
 │   └── rust                # Rust 客户端
@@ -202,7 +203,7 @@ HTTP 客户端，二进制发布无依赖
 ### http
 HTTP 客户端。
 
-### node-wcferry
+### node
 Node.js 客户端.
 
 ### java
