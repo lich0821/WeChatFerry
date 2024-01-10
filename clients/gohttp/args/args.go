@@ -12,36 +12,36 @@ var Debug bool
 
 var Efs *embed.FS
 
+// Http 服务参数
+
+var Httpd = struct {
+	Address string `yaml:"address"`
+	Token   string `yaml:"token"`
+	Swag    bool   `yaml:"swag"`
+}{
+	Address: "127.0.0.1:7600",
+	Swag:    true,
+}
+
 // 日志参数
 
 var Logger = struct {
-	Dir    string
-	Level  string
-	Target string
+	Dir    string `yaml:"dir"`
+	Level  string `yaml:"level"`
+	Target string `yaml:"target"`
 }{
 	Dir:    "logs",
 	Level:  "info",
 	Target: "stdout",
 }
 
-// Http 服务参数
-
-var Httpd = struct {
-	Address string
-	Token   string
-	Swag    bool
-}{
-	Address: "127.0.0.1:7600",
-	Swag:    true,
-}
-
 // Wcf 服务参数
 
 var Wcf = struct {
-	Address    string
-	SdkLibrary string
-	WeChatAuto bool
-	MsgPrint   bool
+	Address    string `yaml:"address"`
+	SdkLibrary string `yaml:"sdkLibrary"`
+	WeChatAuto bool   `yaml:"wechatAuto"`
+	MsgPrinter bool   `yaml:"msgPrinter"`
 }{
 	Address:    "127.0.0.1:10080",
 	SdkLibrary: "sdk.dll",

@@ -1,13 +1,18 @@
+# REST 接口
 httpd:
-    address: 127.0.0.1:7600
-    token: ""
-    swag: true
+    address: 127.0.0.1:7600 # Api 监听地址
+    token: "" # 使用 Token 验证请求
+    swag: true # 是否启用 OpenApi 文档
+
+# 运行日志
 logger:
-    dir: logs
-    level: info
-    target: stdout
+    dir: logs # 日志目录
+    level: info # 日志级别
+    target: stdout # 日志输出方式
+
+# WeChat Ferry
 wcf:
-    address: 127.0.0.1:10080
-    sdklibrary: sdk.dll
-    wechatauto: true
-    msgprint: true
+    address: 127.0.0.1:10080 # Rpc 监听地址
+    sdkLibrary: wcferry/libs/sdk.dll # Sdk 路径
+    wechatAuto: true # 是否跟随启停微信
+    msgPrinter: false # 是否打印收到的消息

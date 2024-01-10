@@ -29,8 +29,8 @@ func ApiGuard(c *gin.Context) {
 func SwagGuard(c *gin.Context) {
 
 	if !args.Httpd.Swag && strings.HasPrefix(c.Request.URL.Path, "/swag") {
-		c.Set("Error", gin.H{"Code": 403, "Message": "功能已禁用"})
-		c.Set("ExitCode", 403)
+		c.Header("Content-Type", "text/html; charset=utf-8")
+		c.String(200, "功能已禁用")
 		c.Abort()
 	}
 

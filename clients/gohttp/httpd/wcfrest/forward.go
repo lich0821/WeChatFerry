@@ -12,13 +12,14 @@ import (
 var forwardToUrlStat = false
 var forwardToUrlList = map[string]bool{}
 
-func enableForwardToUrl(url string) error {
+func (wc *Controller) enableForwardToUrl(url string) error {
 
 	if !forwardToUrlStat {
 		err := wc.EnrollReceiver(true, func(msg *wcferry.WxMsg) {
+			ret := wcferry.WxMsgParser(msg)
 			for url := range forwardToUrlList {
-				logman.Info("forward msg", "url", url, "Id", msg.Id)
-				request.JsonPost(url, msg, request.H{})
+				logman.Info("forward msg", "url", url, "Id", ret.Id)
+				go request.JsonPost(url, ret, request.H{})
 			}
 		})
 		if err != nil {
@@ -37,7 +38,7 @@ func enableForwardToUrl(url string) error {
 
 }
 
-func disableForwardToUrl(url string) error {
+func (wc *Controller) disableForwardToUrl(url string) error {
 
 	if _, ok := forwardToUrlList[url]; !ok {
 		return errors.New("url not exists")

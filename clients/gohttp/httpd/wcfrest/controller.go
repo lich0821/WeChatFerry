@@ -1,50 +1,23 @@
 package wcfrest
 
 import (
-	"net"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/opentdp/go-helper/logman"
 	"github.com/opentdp/go-helper/strutil"
-	"github.com/opentdp/wechat-rest/wcferry"
 
-	"wechat-rest/args"
+	"github.com/opentdp/wechat-rest/wcferry"
 )
 
-var wc *wcferry.Client
-
-func initService() {
-
-	host, port, err := net.SplitHostPort(args.Wcf.Address)
-	if err != nil {
-		logman.Fatal("invalid address", "error", err)
-	}
-
-	wc = &wcferry.Client{
-		ListenAddr: host,
-		ListenPort: strutil.ToInt(port),
-		SdkLibrary: args.Wcf.SdkLibrary,
-		WeChatAuto: args.Wcf.WeChatAuto,
-	}
-
-	logman.Info("wcf starting ...")
-	if err := wc.Connect(); err != nil {
-		logman.Fatal("failed to start wcf", "error", err)
-	}
-
-	// 打印收到的消息
-	if args.Wcf.MsgPrint {
-		wc.EnrollReceiver(true, wcferry.MsgPrinter)
-	}
-
+type Controller struct {
+	*wcferry.Client
 }
 
 // @Summary 检查登录状态
 // @Produce json
 // @Success 200 {object} bool
 // @Router /is_login [get]
-func isLogin(c *gin.Context) {
+func (wc *Controller) isLogin(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.IsLogin())
 
@@ -54,7 +27,7 @@ func isLogin(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} string
 // @Router /self_wxid [get]
-func getSelfWxid(c *gin.Context) {
+func (wc *Controller) getSelfWxid(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetSelfWxid())
 
@@ -64,7 +37,7 @@ func getSelfWxid(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} wcferry.UserInfo
 // @Router /user_info [get]
-func getUserInfo(c *gin.Context) {
+func (wc *Controller) getUserInfo(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetUserInfo())
 
@@ -74,7 +47,7 @@ func getUserInfo(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} []wcferry.RpcContact
 // @Router /contacts [get]
-func getContacts(c *gin.Context) {
+func (wc *Controller) getContacts(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetContacts())
 
@@ -84,7 +57,7 @@ func getContacts(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} []wcferry.RpcContact
 // @Router /friends [get]
-func getFriends(c *gin.Context) {
+func (wc *Controller) getFriends(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetFriends())
 
@@ -95,7 +68,7 @@ func getFriends(c *gin.Context) {
 // @Param wxid path string true "wxid"
 // @Success 200 {object} wcferry.RpcContact
 // @Router /user_info/{wxid} [get]
-func getUserInfoByWxid(c *gin.Context) {
+func (wc *Controller) getUserInfoByWxid(c *gin.Context) {
 
 	wxid := c.Param("wxid")
 	c.Set("Payload", wc.CmdClient.GetInfoByWxid(wxid))
@@ -106,7 +79,7 @@ func getUserInfoByWxid(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} []string
 // @Router /db_names [get]
-func getDbNames(c *gin.Context) {
+func (wc *Controller) getDbNames(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetDbNames())
 
@@ -117,7 +90,7 @@ func getDbNames(c *gin.Context) {
 // @Param db path string true "数据库名"
 // @Success 200 {object} []wcferry.DbTable
 // @Router /db_tables/{db} [get]
-func getDbTables(c *gin.Context) {
+func (wc *Controller) getDbTables(c *gin.Context) {
 
 	db := c.Param("db")
 	c.Set("Payload", wc.CmdClient.GetDbTables(db))
@@ -129,7 +102,7 @@ func getDbTables(c *gin.Context) {
 // @Param body body DbSqlQueryRequest true "数据库查询请求参数"
 // @Success 200 {object} map[string]any
 // @Router /db_query_sql [post]
-func dbSqlQuery(c *gin.Context) {
+func (wc *Controller) dbSqlQuery(c *gin.Context) {
 
 	var req DbSqlQueryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -145,7 +118,7 @@ func dbSqlQuery(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} map[int32]string
 // @Router /msg_types [get]
-func getMsgTypes(c *gin.Context) {
+func (wc *Controller) getMsgTypes(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetMsgTypes())
 
@@ -156,7 +129,7 @@ func getMsgTypes(c *gin.Context) {
 // @Param id path int true "朋友圈id"
 // @Success 200 {object} RespPayload
 // @Router /refresh_pyq/{id} [get]
-func refreshPyq(c *gin.Context) {
+func (wc *Controller) refreshPyq(c *gin.Context) {
 
 	id := c.Param("id")
 	pyqid := uint64(strutil.ToUint(id))
@@ -173,7 +146,7 @@ func refreshPyq(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} []wcferry.RpcContact
 // @Router /chatrooms [get]
-func getChatRooms(c *gin.Context) {
+func (wc *Controller) getChatRooms(c *gin.Context) {
 
 	c.Set("Payload", wc.CmdClient.GetChatRooms())
 
@@ -184,7 +157,7 @@ func getChatRooms(c *gin.Context) {
 // @Param roomid path string true "群id"
 // @Success 200 {object} []wcferry.RpcContact
 // @Router /chatroom_members/{roomid} [get]
-func getChatRoomMembers(c *gin.Context) {
+func (wc *Controller) getChatRoomMembers(c *gin.Context) {
 
 	roomid := c.Param("roomid")
 	c.Set("Payload", wc.CmdClient.GetChatRoomMembers(roomid))
@@ -197,7 +170,7 @@ func getChatRoomMembers(c *gin.Context) {
 // @Param roomid path string true "群id"
 // @Success 200 {object} string
 // @Router /alias_in_chatroom/{wxid}/{roomid} [get]
-func getAliasInChatRoom(c *gin.Context) {
+func (wc *Controller) getAliasInChatRoom(c *gin.Context) {
 
 	wxid := c.Param("wxid")
 	roomid := c.Param("roomid")
@@ -210,7 +183,7 @@ func getAliasInChatRoom(c *gin.Context) {
 // @Param body body wcferry.MemberMgmt true "增删群成员请求参数"
 // @Success 200 {object} RespPayload
 // @Router /invite_chatroom_members [post]
-func inviteChatroomMembers(c *gin.Context) {
+func (wc *Controller) inviteChatroomMembers(c *gin.Context) {
 
 	var req wcferry.MemberMgmt
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -231,7 +204,7 @@ func inviteChatroomMembers(c *gin.Context) {
 // @Param body body wcferry.MemberMgmt true "增删群成员请求参数"
 // @Success 200 {object} RespPayload
 // @Router /add_chatroom_members [post]
-func addChatRoomMembers(c *gin.Context) {
+func (wc *Controller) addChatRoomMembers(c *gin.Context) {
 
 	var req wcferry.MemberMgmt
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -252,7 +225,7 @@ func addChatRoomMembers(c *gin.Context) {
 // @Param body body wcferry.MemberMgmt true "增删群成员请求参数"
 // @Success 200 {object} RespPayload
 // @Router /del_chatroom_members [post]
-func delChatRoomMembers(c *gin.Context) {
+func (wc *Controller) delChatRoomMembers(c *gin.Context) {
 
 	var req wcferry.MemberMgmt
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -273,7 +246,7 @@ func delChatRoomMembers(c *gin.Context) {
 // @Param msgid path int true "消息id"
 // @Success 200 {object} RespPayload
 // @Router /revoke_msg/{msgid} [get]
-func revokeMsg(c *gin.Context) {
+func (wc *Controller) revokeMsg(c *gin.Context) {
 
 	id := c.Param("msgid")
 	msgid := uint64(strutil.ToUint(id))
@@ -291,7 +264,7 @@ func revokeMsg(c *gin.Context) {
 // @Param body body wcferry.ForwardMsg true "转发消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /forward_msg [post]
-func forwardMsg(c *gin.Context) {
+func (wc *Controller) forwardMsg(c *gin.Context) {
 
 	var req wcferry.ForwardMsg
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -312,7 +285,7 @@ func forwardMsg(c *gin.Context) {
 // @Param body body wcferry.TextMsg true "文本消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /send_txt [post]
-func sendTxt(c *gin.Context) {
+func (wc *Controller) sendTxt(c *gin.Context) {
 
 	var req wcferry.TextMsg
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -333,7 +306,7 @@ func sendTxt(c *gin.Context) {
 // @Param body body wcferry.PathMsg true "图片消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /send_img [post]
-func sendImg(c *gin.Context) {
+func (wc *Controller) sendImg(c *gin.Context) {
 
 	var req wcferry.PathMsg
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -354,7 +327,7 @@ func sendImg(c *gin.Context) {
 // @Param body body wcferry.PathMsg true "文件消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /send_file [post]
-func sendFile(c *gin.Context) {
+func (wc *Controller) sendFile(c *gin.Context) {
 
 	var req wcferry.PathMsg
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -375,7 +348,7 @@ func sendFile(c *gin.Context) {
 // @Param body body wcferry.RichText true "卡片消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /send_rich_text [post]
-func sendRichText(c *gin.Context) {
+func (wc *Controller) sendRichText(c *gin.Context) {
 
 	var req wcferry.RichText
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -396,7 +369,7 @@ func sendRichText(c *gin.Context) {
 // @Param body body wcferry.PatMsg true "拍一拍请求参数"
 // @Success 200 {object} RespPayload
 // @Router /send_pat_msg [post]
-func sendPatMsg(c *gin.Context) {
+func (wc *Controller) sendPatMsg(c *gin.Context) {
 
 	var req wcferry.PatMsg
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -417,7 +390,7 @@ func sendPatMsg(c *gin.Context) {
 // @Param body body GetAudioMsgRequest true "语音消息请求参数"
 // @Success 200 {object} RespPayload
 // @Router /get_audio_msg [post]
-func getAudioMsg(c *gin.Context) {
+func (wc *Controller) getAudioMsg(c *gin.Context) {
 
 	var req GetAudioMsgRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -447,7 +420,7 @@ func getAudioMsg(c *gin.Context) {
 // @Param body body GetOcrRequest true "文本请求参数"
 // @Success 200 {object} RespPayload
 // @Router /get_ocr_result [post]
-func getOcrResult(c *gin.Context) {
+func (wc *Controller) getOcrResult(c *gin.Context) {
 
 	var req GetOcrRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -477,7 +450,7 @@ func getOcrResult(c *gin.Context) {
 // @Param body body DownloadImageRequest true "下载图片参数"
 // @Success 200 {object} RespPayload
 // @Router /download_image [post]
-func downloadImage(c *gin.Context) {
+func (wc *Controller) downloadImage(c *gin.Context) {
 
 	var req DownloadImageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -500,7 +473,7 @@ func downloadImage(c *gin.Context) {
 // @Param body body DownloadAttachRequest true "下载附件参数"
 // @Success 200 {object} RespPayload
 // @Router /download_attach [post]
-func downloadAttach(c *gin.Context) {
+func (wc *Controller) downloadAttach(c *gin.Context) {
 
 	var req DownloadAttachRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -521,7 +494,7 @@ func downloadAttach(c *gin.Context) {
 // @Param body body wcferry.Verification true "接受好友请求参数"
 // @Success 200 {object} RespPayload
 // @Router /accept_new_friend [post]
-func acceptNewFriend(c *gin.Context) {
+func (wc *Controller) acceptNewFriend(c *gin.Context) {
 
 	var req wcferry.Verification
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -542,7 +515,7 @@ func acceptNewFriend(c *gin.Context) {
 // @Param body body wcferry.Transfer true "接受转账请求参数"
 // @Success 200 {object} RespPayload
 // @Router /receive_transfer [post]
-func receiveTransfer(c *gin.Context) {
+func (wc *Controller) receiveTransfer(c *gin.Context) {
 
 	var req wcferry.Transfer
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -563,7 +536,7 @@ func receiveTransfer(c *gin.Context) {
 // @Param body body ForwardMsgRequest true "消息转发请求参数"
 // @Success 200 {object} RespPayload
 // @Router /enable_forward_msg [post]
-func enableForwardMsg(c *gin.Context) {
+func (wc *Controller) enableForwardMsg(c *gin.Context) {
 
 	var req ForwardMsgRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -576,7 +549,7 @@ func enableForwardMsg(c *gin.Context) {
 		return
 	}
 
-	err := enableForwardToUrl(req.Url)
+	err := wc.enableForwardToUrl(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,
@@ -589,7 +562,7 @@ func enableForwardMsg(c *gin.Context) {
 // @Param body body ForwardMsgRequest true "消息转发请求参数"
 // @Success 200 {object} RespPayload
 // @Router /disable_forward_msg [post]
-func disableForwardMsg(c *gin.Context) {
+func (wc *Controller) disableForwardMsg(c *gin.Context) {
 
 	var req ForwardMsgRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -597,7 +570,7 @@ func disableForwardMsg(c *gin.Context) {
 		return
 	}
 
-	err := disableForwardToUrl(req.Url)
+	err := wc.disableForwardToUrl(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,
