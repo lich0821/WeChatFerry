@@ -110,7 +110,7 @@ func (wc *Controller) dbSqlQuery(c *gin.Context) {
 		return
 	}
 
-	c.Set("Payload", wc.CmdClient.DbSqlQueryMap(req.Db, req.Sql))
+	c.Set("Payload", wc.CmdClient.DbSqlQuery(req.Db, req.Sql))
 
 }
 
@@ -531,14 +531,14 @@ func (wc *Controller) receiveTransfer(c *gin.Context) {
 
 }
 
-// @Summary 开启转发消息到URL
+// @Summary 开启推送消息到URL
 // @Produce json
-// @Param body body ForwardMsgRequest true "消息转发请求参数"
+// @Param body body ReceiverRequest true "消息推送请求参数"
 // @Success 200 {object} RespPayload
-// @Router /enable_forward_msg [post]
-func (wc *Controller) enableForwardMsg(c *gin.Context) {
+// @Router /enable_receiver [post]
+func (wc *Controller) enabledReceiver(c *gin.Context) {
 
-	var req ForwardMsgRequest
+	var req ReceiverRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Set("Error", err)
 		return
@@ -549,7 +549,7 @@ func (wc *Controller) enableForwardMsg(c *gin.Context) {
 		return
 	}
 
-	err := wc.enableForwardToUrl(req.Url)
+	err := wc.enableUrlReceiver(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,
@@ -557,20 +557,20 @@ func (wc *Controller) enableForwardMsg(c *gin.Context) {
 
 }
 
-// @Summary 关闭转发消息到URL
+// @Summary 关闭推送消息到URL
 // @Produce json
-// @Param body body ForwardMsgRequest true "消息转发请求参数"
+// @Param body body ReceiverRequest true "消息推送请求参数"
 // @Success 200 {object} RespPayload
-// @Router /disable_forward_msg [post]
-func (wc *Controller) disableForwardMsg(c *gin.Context) {
+// @Router /disable_receiver [post]
+func (wc *Controller) disableReceiver(c *gin.Context) {
 
-	var req ForwardMsgRequest
+	var req ReceiverRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Set("Error", err)
 		return
 	}
 
-	err := wc.disableForwardToUrl(req.Url)
+	err := wc.disableUrlReceiver(req.Url)
 	c.Set("Payload", RespPayload{
 		Success: err == nil,
 		Error:   err,

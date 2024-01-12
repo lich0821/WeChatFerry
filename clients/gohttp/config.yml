@@ -1,4 +1,4 @@
-# REST 接口
+# HTTP 接口
 httpd:
     address: 127.0.0.1:7600 # Api 监听地址
     token: "" # 使用 Token 验证请求
