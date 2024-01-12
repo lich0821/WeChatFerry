@@ -16,6 +16,6 @@ message RoomData {
   int32 field_4 = 4;
   int32 room_capacity = 5;
   int32 field_6 = 6;
-  int64 field_7 = 7;
-  int64 field_8 = 8;
+  int64 field_7 = 7 [jstype = JS_STRING];
+  int64 field_8 = 8 [jstype = JS_STRING];
 }
