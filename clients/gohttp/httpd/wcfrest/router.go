@@ -45,7 +45,7 @@ func Route(rg *gin.RouterGroup) {
 	rg.POST("accept_new_friend", ctrl.acceptNewFriend)
 	rg.POST("receive_transfer", ctrl.receiveTransfer)
 
-	rg.POST("enable_forward_msg", ctrl.enableForwardMsg)
-	rg.POST("disable_forward_msg", ctrl.disableForwardMsg)
+	rg.POST("enable_receiver", ctrl.enabledReceiver)
+	rg.POST("disable_receiver", ctrl.disableReceiver)
 
 }

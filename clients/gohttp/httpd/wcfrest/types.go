@@ -14,7 +14,7 @@ type DbSqlQueryRequest struct {
 }
 
 // 消息转发参数
-type ForwardMsgRequest struct {
+type ReceiverRequest struct {
 	Url string `json:"url"`
 }
 

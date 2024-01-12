@@ -9,15 +9,15 @@ import (
 	"github.com/opentdp/wechat-rest/wcferry"
 )
 
-var forwardToUrlStat = false
-var forwardToUrlList = map[string]bool{}
+var urlReceiverStat = false
+var urlReceiverList = map[string]bool{}
 
-func (wc *Controller) enableForwardToUrl(url string) error {
+func (wc *Controller) enableUrlReceiver(url string) error {
 
-	if !forwardToUrlStat {
+	if !urlReceiverStat {
 		err := wc.EnrollReceiver(true, func(msg *wcferry.WxMsg) {
-			ret := wcferry.WxMsgParser(msg)
-			for url := range forwardToUrlList {
+			ret := wcferry.ParseWxMsg(msg)
+			for url := range urlReceiverList {
 				logman.Info("forward msg", "url", url, "Id", ret.Id)
 				go request.JsonPost(url, ret, request.H{})
 			}
@@ -27,30 +27,30 @@ func (wc *Controller) enableForwardToUrl(url string) error {
 		}
 	}
 
-	if _, ok := forwardToUrlList[url]; ok {
+	if _, ok := urlReceiverList[url]; ok {
 		return errors.New("url already exists")
 	}
 
-	forwardToUrlStat = true
-	forwardToUrlList[url] = true
+	urlReceiverStat = true
+	urlReceiverList[url] = true
 
 	return nil
 
 }
 
-func (wc *Controller) disableForwardToUrl(url string) error {
+func (wc *Controller) disableUrlReceiver(url string) error {
 
-	if _, ok := forwardToUrlList[url]; !ok {
+	if _, ok := urlReceiverList[url]; !ok {
 		return errors.New("url not exists")
 	}
 
-	delete(forwardToUrlList, url)
+	delete(urlReceiverList, url)
 
-	if len(forwardToUrlList) == 0 {
+	if len(urlReceiverList) == 0 {
 		if err := wc.DisableReceiver(false); err != nil {
 			return err
 		}
-		forwardToUrlStat = false
+		urlReceiverStat = false
 	}
 
 	return nil

@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "基于 WeChatFerry RPC 实现的电脑版微信 REST API，使用 Go 语言编写，无第三方运行时依赖。基于 HTTP 提供操作接口，轻松对接任意编程语言。",
-        "title": "Wechat Rest API",
+        "description": "基于 WeChatFerry RPC 实现的微信接口，使用 Go 语言编写，无第三方运行时依赖，易于对接任意编程语言。",
+        "title": "WeChat Rest Api",
         "contact": {
             "name": "WeChatRest",
             "url": "https://github.com/opentdp/wechat-rest"
@@ -11,7 +11,7 @@
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "v0.4.6"
+        "version": "v0.5.0"
     },
     "basePath": "/api",
     "paths": {
@@ -269,20 +269,20 @@
                 }
             }
         },
-        "/disable_forward_msg": {
+        "/disable_receiver": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "关闭转发消息到URL",
+                "summary": "关闭推送消息到URL",
                 "parameters": [
                     {
-                        "description": "消息转发请求参数",
+                        "description": "消息推送请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/wcfrest.ForwardMsgRequest"
+                            "$ref": "#/definitions/wcfrest.ReceiverRequest"
                         }
                     }
                 ],
@@ -350,20 +350,20 @@
                 }
             }
         },
-        "/enable_forward_msg": {
+        "/enable_receiver": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "开启转发消息到URL",
+                "summary": "开启推送消息到URL",
                 "parameters": [
                     {
-                        "description": "消息转发请求参数",
+                        "description": "消息推送请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/wcfrest.ForwardMsgRequest"
+                            "$ref": "#/definitions/wcfrest.ReceiverRequest"
                         }
                     }
                 ],
@@ -1059,14 +1059,6 @@
                 }
             }
         },
-        "wcfrest.ForwardMsgRequest": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
         "wcfrest.GetAudioMsgRequest": {
             "type": "object",
             "properties": {
@@ -1089,6 +1081,14 @@
                 },
                 "timeout": {
                     "type": "integer"
+                }
+            }
+        },
+        "wcfrest.ReceiverRequest": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         },
