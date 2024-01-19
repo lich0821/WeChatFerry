@@ -1,0 +1,1701 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "基于 WeChatFerry RPC 实现的微信接口，使用 Go 语言编写，无第三方运行时依赖，易于对接任意编程语言。",
+        "title": "WeChat Rest Api",
+        "contact": {
+            "name": "WeChatRest",
+            "url": "https://github.com/opentdp/wechat-rest"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "v0.8.0"
+    },
+    "basePath": "/api",
+    "paths": {
+        "/accept_new_friend": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "接受好友请求",
+                "parameters": [
+                    {
+                        "description": "接受好友参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.AcceptNewFriendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/add_chatroom_members": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "添加群成员",
+                "parameters": [
+                    {
+                        "description": "管理群成员参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ChatroomMembersRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/alias_in_chatroom": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取群成员昵称",
+                "parameters": [
+                    {
+                        "description": "获取群成员昵称参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetAliasInChatRoomRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/avatars": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取头像列表",
+                "parameters": [
+                    {
+                        "description": "获取头像列表参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetAvatarsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.AvatarPayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chatroom_members": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取群成员列表",
+                "parameters": [
+                    {
+                        "description": "获取群成员列表参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetChatRoomMembersRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.ContactPayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chatrooms": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取群列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.ContactPayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/contacts": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取完整通讯录",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.ContactPayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/db_names": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取数据库列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/db_query_sql": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "执行数据库查询",
+                "parameters": [
+                    {
+                        "description": "数据库查询参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.DbSqlQueryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/db_tables": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取数据库表列表",
+                "parameters": [
+                    {
+                        "description": "获取数据库表列表参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetDbTablesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.DbTablePayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/del_chatroom_members": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "删除群成员",
+                "parameters": [
+                    {
+                        "description": "管理群成员参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ChatroomMembersRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/disable_receiver": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "关闭推送消息到URL",
+                "parameters": [
+                    {
+                        "description": "推送消息到URL参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ReceiverRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/download_attach": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "下载附件",
+                "parameters": [
+                    {
+                        "description": "下载附件参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.DownloadAttachRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/download_image": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "下载图片",
+                "parameters": [
+                    {
+                        "description": "下载图片参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.DownloadImageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/enable_receiver": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "开启推送消息到URL",
+                "parameters": [
+                    {
+                        "description": "推送消息到URL参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ReceiverRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/forward_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "转发消息",
+                "parameters": [
+                    {
+                        "description": "转发消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ForwardMsgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取好友列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/wcfrest.ContactPayload"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_audio_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取语音消息",
+                "parameters": [
+                    {
+                        "description": "获取语音消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetAudioMsgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_ocr_result": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取OCR识别结果",
+                "parameters": [
+                    {
+                        "description": "获取OCR识别结果参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetOcrRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite_chatroom_members": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "邀请群成员",
+                "parameters": [
+                    {
+                        "description": "管理群成员参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ChatroomMembersRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/is_login": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "检查登录状态",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/msg_types": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取所有消息类型",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/receive_transfer": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "接受转账",
+                "parameters": [
+                    {
+                        "description": "接受转账参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ReceiveTransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh_pyq": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "刷新朋友圈",
+                "parameters": [
+                    {
+                        "description": "刷新朋友圈参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.RefreshPyqRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/revoke_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "撤回消息",
+                "parameters": [
+                    {
+                        "description": "撤回消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.RevokeMsgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/self_info": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取登录账号个人信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.UserInfoPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/self_wxid": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取登录账号wxid",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_file": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "发送文件消息",
+                "parameters": [
+                    {
+                        "description": "发送文件消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.SendFileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_img": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "发送图片消息",
+                "parameters": [
+                    {
+                        "description": "发送图片消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.SendImgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_pat_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "拍一拍群友",
+                "parameters": [
+                    {
+                        "description": "拍一拍群友参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.SendPatMsgRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_rich_text": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "发送卡片消息",
+                "parameters": [
+                    {
+                        "description": "发送卡片消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.SendRichTextRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_txt": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "发送文本消息",
+                "parameters": [
+                    {
+                        "description": "发送文本消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.SendTxtRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/socket_receiver": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "推送消息到Socket",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols 响应",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_info": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "根据wxid获取个人信息",
+                "parameters": [
+                    {
+                        "description": "根据wxid获取个人信息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.GetInfoByWxidRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/wcfrest.ContactPayload"
+                        }
+                    },
+                    "400": {
+                        "description": "非法请求",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部服务器错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "wcfrest.AcceptNewFriendRequest": {
+            "type": "object",
+            "properties": {
+                "scene": {
+                    "description": "添加方式：17 名片，30 扫码",
+                    "type": "integer"
+                },
+                "v3": {
+                    "description": "加密的用户名",
+                    "type": "string"
+                },
+                "v4": {
+                    "description": "验证信息 Ticket",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.AvatarPayload": {
+            "type": "object",
+            "properties": {
+                "big_head_img_url": {
+                    "description": "大头像 url",
+                    "type": "string"
+                },
+                "small_head_img_url": {
+                    "description": "小头像 url",
+                    "type": "string"
+                },
+                "usr_name": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.ChatroomMembersRequest": {
+            "type": "object",
+            "properties": {
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                },
+                "wxids": {
+                    "description": "用户 id 列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "wcfrest.CommonPayload": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "错误信息"
+                },
+                "result": {
+                    "description": "返回结果",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean"
+                }
+            }
+        },
+        "wcfrest.ContactPayload": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "description": "城市",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "微信号",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "国家",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "性别",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "province": {
+                    "description": "省/州",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "wxid": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.DbSqlQueryRequest": {
+            "type": "object",
+            "properties": {
+                "db": {
+                    "description": "数据库名称",
+                    "type": "string"
+                },
+                "sql": {
+                    "description": "待执行的 SQL",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.DbTablePayload": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "表名",
+                    "type": "string"
+                },
+                "sql": {
+                    "description": "建表 SQL",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.DownloadAttachRequest": {
+            "type": "object",
+            "properties": {
+                "extra": {
+                    "description": "消息中的 extra 字段",
+                    "type": "string"
+                },
+                "msgid": {
+                    "description": "消息 id",
+                    "type": "integer"
+                },
+                "thumb": {
+                    "description": "消息中的 thumb 字段",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.DownloadImageRequest": {
+            "type": "object",
+            "properties": {
+                "dir": {
+                    "description": "存储路径",
+                    "type": "string"
+                },
+                "extra": {
+                    "description": "消息中的 extra 字段",
+                    "type": "string"
+                },
+                "msgid": {
+                    "description": "消息 id",
+                    "type": "integer"
+                },
+                "timeout": {
+                    "description": "超时重试次数",
+                    "type": "integer"
+                }
+            }
+        },
+        "wcfrest.ForwardMsgRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "待转发消息 id",
+                    "type": "integer"
+                },
+                "receiver": {
+                    "description": "转发接收人或群的 id 列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "wcfrest.GetAliasInChatRoomRequest": {
+            "type": "object",
+            "properties": {
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                },
+                "wxid": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.GetAudioMsgRequest": {
+            "type": "object",
+            "properties": {
+                "msgid": {
+                    "description": "消息 id",
+                    "type": "integer"
+                },
+                "path": {
+                    "description": "存储路径",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "超时重试次数",
+                    "type": "integer"
+                }
+            }
+        },
+        "wcfrest.GetAvatarsRequest": {
+            "type": "object",
+            "properties": {
+                "wxids": {
+                    "description": "用户 id 列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "wcfrest.GetChatRoomMembersRequest": {
+            "type": "object",
+            "properties": {
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.GetDbTablesRequest": {
+            "type": "object",
+            "properties": {
+                "db": {
+                    "description": "数据库名称",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.GetInfoByWxidRequest": {
+            "type": "object",
+            "properties": {
+                "wxid": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.GetOcrRequest": {
+            "type": "object",
+            "properties": {
+                "extra": {
+                    "description": "消息中的 extra 字段",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "超时重试次数",
+                    "type": "integer"
+                }
+            }
+        },
+        "wcfrest.ReceiveTransferRequest": {
+            "type": "object",
+            "properties": {
+                "taid": {
+                    "description": "Transaction id",
+                    "type": "string"
+                },
+                "tfid": {
+                    "description": "转账id transferid",
+                    "type": "string"
+                },
+                "wxid": {
+                    "description": "转账人",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.ReceiverRequest": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "description": "接收推送消息的 url",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.RefreshPyqRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "分页 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "wcfrest.RevokeMsgRequest": {
+            "type": "object",
+            "properties": {
+                "msgid": {
+                    "description": "消息 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "wcfrest.SendFileRequest": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "description": "文件路径",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "接收人或群的 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.SendImgRequest": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "description": "图片路径",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "接收人或群的 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.SendPatMsgRequest": {
+            "type": "object",
+            "properties": {
+                "roomid": {
+                    "description": "群 id",
+                    "type": "string"
+                },
+                "wxid": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.SendRichTextRequest": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "description": "填公众号 id 可以显示对应的头像（gh_ 开头的）",
+                    "type": "string"
+                },
+                "digest": {
+                    "description": "摘要，三行",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "左下显示的名字",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "接收人或群的 id",
+                    "type": "string"
+                },
+                "thumburl": {
+                    "description": "缩略图的链接",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题，最多两行",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "点击后跳转的链接",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.SendTxtRequest": {
+            "type": "object",
+            "properties": {
+                "aters": {
+                    "description": "需要 At 的用户 id 列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "msg": {
+                    "description": "消息内容",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "接收人或群的 id",
+                    "type": "string"
+                }
+            }
+        },
+        "wcfrest.UserInfoPayload": {
+            "type": "object",
+            "properties": {
+                "home": {
+                    "description": "文件/图片等父路径",
+                    "type": "string"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "wxid": {
+                    "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

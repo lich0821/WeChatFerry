@@ -18,3 +18,5 @@ if exist .local.yml (
 ) else (
     go run main.go
 )
+
+cmd /k

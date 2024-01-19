@@ -91,8 +91,8 @@ github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/o
 github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
 github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
-github.com/go-playground/validator/v10 v10.16.0 h1:x+plE831WK4vaKHO/jpgUGsvLKIqRRkz6M78GuJAfGE=
-github.com/go-playground/validator/v10 v10.16.0/go.mod h1:9iXMNT7sEkjXb0I+enO7QXmzG6QCsPWY4zveKFVRSyU=
+github.com/go-playground/validator/v10 v10.17.0 h1:SmVVlfAOtlZncTxRuinDPomC2DkXJ4E5T9gDA0AIH74=
+github.com/go-playground/validator/v10 v10.17.0/go.mod h1:9iXMNT7sEkjXb0I+enO7QXmzG6QCsPWY4zveKFVRSyU=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/go-test/deep v1.0.2-0.20181118220953-042da051cf31/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
@@ -248,10 +248,10 @@ github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRW
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/npillmayer/nestext v0.1.3/go.mod h1:h2lrijH8jpicr25dFY+oAJLyzlya6jhnuG+zWp9L0Uk=
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
-github.com/opentdp/go-helper v0.5.5-0.20240109013403-7323088c3f39 h1:qIzCCWpIPhzZq9ZXevYuqBV3w4F/D8/SK+W6UjKhSf0=
-github.com/opentdp/go-helper v0.5.5-0.20240109013403-7323088c3f39/go.mod h1:9m+t/2x1CmjZ9YQP37+xECCO84eqMnsxnRE/7y37GjE=
-github.com/opentdp/wechat-rest v0.8.1 h1:2M7BFYCotM3gJkGxJ3mOczmftByxqRNSj4Q2Ec96Dws=
-github.com/opentdp/wechat-rest v0.8.1/go.mod h1:F3rutIf4PahHxPGuAm3wlM6d1S7nznaU/ZNrk0dMEDA=
+github.com/opentdp/go-helper v0.5.7 h1:6NPodNpmc37qt7urS6n/mA2Jk3DQTHA0rlh2qXa8dKI=
+github.com/opentdp/go-helper v0.5.7/go.mod h1:9m+t/2x1CmjZ9YQP37+xECCO84eqMnsxnRE/7y37GjE=
+github.com/opentdp/wechat-rest v0.10.1 h1:P+yIKang4ckAOB10+7kbm/2V/0Punx2ElxDLL+Dp0Cw=
+github.com/opentdp/wechat-rest v0.10.1/go.mod h1:JCrwAaKhosZ9oyEhN6R09XA4ACP31xn/0VL3DOY5VF0=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pascaldekloe/goe v0.1.0/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pelletier/go-toml v1.7.0/go.mod h1:vwGMzjaWMwyfHwgIBhI2YUM4fB6nL6lVAvS1LBMMhTE=
