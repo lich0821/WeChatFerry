@@ -408,3 +408,18 @@ OcrResult_t GetOcrResult(string path)
 
     return ret;
 }
+
+void RefreshLoginQrcode() {
+    DWORD refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + g_WxCalls.rlq.call1;
+    DWORD refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + g_WxCalls.rlq.call2;
+
+    __asm {
+        pushad;
+        pushfd;
+        call refreshLoginQrcodeCall1;
+        mov ecx, eax;
+        call refreshLoginQrcodeCall2;
+        popfd;
+        popad;
+    }
+}
