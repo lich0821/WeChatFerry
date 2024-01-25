@@ -37,5 +37,9 @@
 go get github.com/swaggo/swag/cmd/swag
 go install github.com/swaggo/swag/cmd/swag
 
-swag init --parseDependency -g httpd/server.go -o public/swag -ot json
+swag init --parseDependency -g httpd/server.go -o public/swagger -ot json
 ```
+
+## 生成 OpenApi 客户端
+
+将生成的 `swagger.json` 上传至 `https://editor.swagger.io` 生成对应的客户端

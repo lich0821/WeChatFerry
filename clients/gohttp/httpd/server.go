@@ -9,7 +9,7 @@ import (
 )
 
 // @title WeChat Rest Api
-// @version v0.5.0
+// @version v0.10.0
 // @description 基于 WeChatFerry RPC 实现的微信接口，使用 Go 语言编写，无第三方运行时依赖，易于对接任意编程语言。
 // @contact.name WeChatRest
 // @contact.url https://github.com/opentdp/wechat-rest
@@ -29,12 +29,12 @@ func Server() {
 	wcfrest.Route(api)
 
 	// Swagger 守卫
-	httpd.Use(midware.SwagGuard)
+	httpd.Use(midware.SwaggerGuard)
 
 	// 前端文件路由
 	httpd.StaticEmbed("/", "public", args.Efs)
 
 	// 启动 HTTP 服务
-	httpd.Server(args.Httpd.Address)
+	httpd.Server(args.Web.Address)
 
 }

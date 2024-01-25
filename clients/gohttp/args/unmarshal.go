@@ -12,9 +12,9 @@ func (c *Config) Unmarshal() {
 	// 读取默认配置
 
 	mp := map[string]any{
-		"httpd":  &Httpd,
-		"logger": &Logger,
-		"wcf":    &Wcf,
+		"log": &Log,
+		"web": &Web,
+		"wcf": &Wcf,
 	}
 	c.Koanf.Load(confmap.Provider(mp, "."), nil)
 
@@ -27,14 +27,14 @@ func (c *Config) Unmarshal() {
 
 	// 初始化日志
 
-	if Logger.Dir != "" && Logger.Dir != "." {
-		os.MkdirAll(Logger.Dir, 0755)
+	if Log.Dir != "" && Log.Dir != "." {
+		os.MkdirAll(Log.Dir, 0755)
 	}
 
 	logman.SetDefault(&logman.Config{
-		Level:    Logger.Level,
-		Target:   Logger.Target,
-		Storage:  Logger.Dir,
+		Level:    Log.Level,
+		Target:   Log.Target,
+		Storage:  Log.Dir,
 		Filename: "wrest",
 	})
 
