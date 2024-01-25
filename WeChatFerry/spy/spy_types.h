@@ -159,6 +159,7 @@ typedef struct CallFm {
 typedef struct CallRfLoginQr {
     DWORD call1;
     DWORD call2;
+    DWORD url;
 } CallRfLoginQr_t;
 
 typedef struct WxCalls {

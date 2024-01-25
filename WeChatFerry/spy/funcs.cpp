@@ -423,3 +423,15 @@ void RefreshLoginQrcode() {
         popad;
     }
 }
+
+string GetLoginUrl() {
+    // 判断是否登录， 已登录直接返回空字符
+    int isLogin = (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login);
+    if (isLogin) {
+        return "";
+    }
+
+    DWORD loginUrlAddr = g_WeChatWinDllAddr + g_WxCalls.rlq.url;
+    string qrcodeLoginUrl = "http://weixin.qq.com/x/" + string(reinterpret_cast<char*>(*(DWORD*)loginUrlAddr));
+    return qrcodeLoginUrl;
+}
