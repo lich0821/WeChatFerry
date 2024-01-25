@@ -52,7 +52,7 @@ message Request
         XmlMsg xml     = 9;
         DecPath dec    = 10;
         Transfer tf    = 11;
-        uint64 ui64    = 12; // 64 位整数，通用
+        uint64 ui64    = 12 [jstype = JS_STRING]; // 64 位整数，通用
         bool flag      = 13;
         AttachMsg att  = 14;
         AudioMsg am    = 15;
@@ -86,7 +86,7 @@ message WxMsg
 {
     bool is_self   = 1;  // 是否自己发送的
     bool is_group  = 2;  // 是否群消息
-    uint64 id      = 3;  // 消息 id
+    uint64 id      = 3 [jstype = JS_STRING];  // 消息 id
     uint32 type    = 4;  // 消息类型
     uint32 ts      = 5;  // 消息类型
     string roomid  = 6;  // 群 id（如果是群消息的话）
@@ -194,14 +194,14 @@ message Transfer
 
 message AttachMsg
 {
-    uint64 id    = 1; // 消息 id
+    uint64 id    = 1 [jstype = JS_STRING]; // 消息 id
     string thumb = 2; // 消息中的 thumb
     string extra = 3; // 消息中的 extra
 }
 
 message AudioMsg
 {
-    uint64 id  = 1; // 语音消息 id
+    uint64 id  = 1 [jstype = JS_STRING]; // 语音消息 id
     string dir = 2; // 存放目录
 }
 
@@ -230,6 +230,6 @@ message OcrMsg
 
 message ForwardMsg
 {
-    uint64 id       = 1; // 待转发消息 ID
+    uint64 id       = 1 [jstype = JS_STRING]; // 待转发消息 ID
     string receiver = 2; // 转发接收目标，群为 roomId，个人为 wxid
 }

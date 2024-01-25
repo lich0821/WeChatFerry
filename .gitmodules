@@ -1,3 +1,4 @@
 [submodule "clients/node"]
 	path = clients/node
 	url = https://github.com/stkevintan/node-wcferry
+	branch = main
