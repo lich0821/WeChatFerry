@@ -673,6 +673,7 @@ pub fn accept_new_friend(
     };
 }
 
+/* 添加群成员 */
 pub fn add_chatroom_members(
     roomid: String,
     wxids: String,
@@ -680,7 +681,7 @@ pub fn add_chatroom_members(
 ) -> Result<bool, Box<dyn std::error::Error>> {
     let req = wcf::Request {
         func: wcf::Functions::FuncAddRoomMembers.into(),
-        msg: Some(wcf::request::Msg::M(wcf::AddMembers { roomid, wxids })),
+        msg: Some(wcf::request::Msg::M(wcf::MemberMgmt { roomid, wxids })),
     };
     let response = match send_cmd(wechat, req) {
         Ok(res) => res,
@@ -702,6 +703,37 @@ pub fn add_chatroom_members(
     };
 }
 
+/* 邀请群成员 */
+pub fn inv_chatroom_members(
+    roomid: String,
+    wxids: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncInvRoomMembers.into(),
+        msg: Some(wcf::request::Msg::M(wcf::MemberMgmt { roomid, wxids })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("邀请群成员失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status == 1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/* 删除群成员 */
 pub fn del_chatroom_members(
     roomid: String,
     wxids: String,
@@ -709,7 +741,7 @@ pub fn del_chatroom_members(
 ) -> Result<bool, Box<dyn std::error::Error>> {
     let req = wcf::Request {
         func: wcf::Functions::FuncDelRoomMembers.into(),
-        msg: Some(wcf::request::Msg::M(wcf::AddMembers { roomid, wxids })),
+        msg: Some(wcf::request::Msg::M(wcf::MemberMgmt { roomid, wxids })),
     };
     let response = match send_cmd(wechat, req) {
         Ok(res) => res,
@@ -820,6 +852,199 @@ pub fn refresh_pyq(id: u64, wechat: &mut WeChat) -> Result<bool, Box<dyn std::er
     };
 }
 
+/** 保存附件 */
+pub fn attach_msg(
+    id: u64,
+    thumb: String,
+    extra: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncDownloadAttach.into(),
+        msg: Some(wcf::request::Msg::Att(wcf::AttachMsg { id, thumb, extra })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("保存附件失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/** 获取语音 */
+pub fn get_audio_msg(
+    id: u64,
+    dir: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncGetAudioMsg.into(),
+        msg: Some(wcf::request::Msg::Am(wcf::AudioMsg { id, dir })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("获取语音失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/** 发送富文本 */
+pub fn sned_rich_text(
+    name: String,
+    account: String,
+    title: String,
+    digest: String,
+    url: String,
+    thumburl: String,
+    receiver: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncSendRichTxt.into(),
+        msg: Some(wcf::request::Msg::Rt(wcf::RichText {
+            name,
+            account,
+            title,
+            digest,
+            url,
+            thumburl,
+            receiver,
+        })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("发送富文本失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/** 发送拍一拍 */
+pub fn sned_pat_msg(
+    roomid: String,
+    wxid: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncSendPatMsg.into(),
+        msg: Some(wcf::request::Msg::Pm(wcf::PatMsg { roomid, wxid })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("发送拍一拍失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
+/** OCR */
+pub fn exec_ocr(
+    path: PathBuf,
+    wechat: &mut WeChat,
+) -> Result<Option<wcf::OcrMsg>, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncExecOcr.into(),
+        msg: Some(wcf::request::Msg::Str(String::from(path.to_str().unwrap()))),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("OCR失败".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(None);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Ocr(msg) => {
+            return Ok(Some(msg));
+        }
+        _ => {
+            return Ok(None);
+        }
+    };
+}
+
+/** 转发消息 */
+pub fn forward_msg(
+    id: u64,
+    receiver: String,
+    wechat: &mut WeChat,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let req = wcf::Request {
+        func: wcf::Functions::FuncForwardMsg.into(),
+        msg: Some(wcf::request::Msg::Fm(wcf::ForwardMsg { id, receiver })),
+    };
+    let response = match send_cmd(wechat, req) {
+        Ok(res) => res,
+        Err(e) => {
+            error!("命令发送失败: {}", e);
+            return Err("转发消息".into());
+        }
+    };
+    if response.is_none() {
+        return Ok(false);
+    }
+    match response.unwrap() {
+        wcf::response::Msg::Status(status) => {
+            return Ok(status != -1);
+        }
+        _ => {
+            return Ok(false);
+        }
+    };
+}
+
 mod test {
 
     #[test]
@@ -885,7 +1110,7 @@ mod test {
         let mut wechat = crate::wechat::WeChat::default();
         let mut socket = crate::wechat::enable_listen(&mut wechat).unwrap();
         for _index in 0..5 {
-            let _ = crate::wechat::refresh_pyq(0, &mut wechat);
+            // let _ = crate::wechat::refresh_pyq(0, &mut wechat);
             let msg = crate::wechat::recv_msg(&mut socket).unwrap();
             println!("WxMsg: {:?}", msg);
             println!("--------------------------------------------------");
@@ -959,6 +1184,61 @@ mod test {
         let status = crate::wechat::decrypt_image(
             String::from("C:\\Users\\Administrator\\Documents\\WeChat Files\\****\\FileStorage\\MsgAttach\\c963b851e0578c320c2966c6fc49e35c\\Image\\2023-05\\c66044e188c64452e236e53eff73324b.dat"),
             String::from("C:\\foo"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_attach_msg() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status =
+            crate::wechat::attach_msg(1, String::from(""), String::from(""), &mut wechat).unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_get_audio_msg() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status =
+            crate::wechat::get_audio_msg(7072630968956565993, String::from("C:/"), &mut wechat)
+                .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_send_pat_msg() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::sned_pat_msg(
+            String::from("21262247140@chatroom"),
+            String::from("jingmo0614"),
+            &mut wechat,
+        )
+        .unwrap();
+        println!("Status: {}", status);
+    }
+
+    #[test]
+    fn test_exec_ocr() {
+        use std::path::PathBuf;
+
+        let mut wechat = crate::wechat::WeChat::default();
+        let ocr_msg = crate::wechat::exec_ocr(
+            PathBuf::from("C:\\Users\\Administrator\\Pictures\\5.png"),
+            &mut wechat,
+        )
+        .unwrap()
+        .unwrap();
+        println!("ocr: {:?}", ocr_msg);
+    }
+
+    #[test]
+    fn test_forward_msg() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let status = crate::wechat::forward_msg(
+            5744142522200397761,
+            String::from("21262247140@chatroom"),
             &mut wechat,
         )
         .unwrap();
