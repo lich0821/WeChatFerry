@@ -15,7 +15,7 @@
 
 </details>
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/mFUwK2cJJrajVqYiM-GlDA)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/WOw26mKJG8Nq55cT6iG-yA)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
@@ -48,13 +48,15 @@
 * 邀请群成员
 * 图片 OCR
 * 转发消息
+* 撤回消息
+* 获取登录二维码
 
 </details>
 
 <details><summary>点击查看支持的客户端</summary>
 
 * Go
-* HTTP
+* HTTP (Python, Go, Rust)
 * Java
 * Node.js
 * Python
@@ -63,7 +65,7 @@
 
 |![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
 |:-:|:-:|
-|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
+|后台回复 `WCF` 加群交流|如果你觉得有用|
 
 ## 快速开始
 ### Python
@@ -77,6 +79,15 @@ pip install --upgrade wcferry
 * 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### HTTP
+#### [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
+开箱即用：[快速开始](https://github.com/lich0821/wcf-client-rust?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)。
+
+#### GoHttp（基于 Go）
+参考 [GoHttp README.MD](clients/gohttp/README.md)
+
+#### ~~wcfhttp（基于 Python）~~
+❗ **wcfhttp 不再维护，有需要可以使用 [WcfRust](https://github.com/lich0821/wcf-client-rust) 或者 [GoHttp](clients/gohttp/README.md)。**
+
 [![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
 * 安装
@@ -105,9 +116,6 @@ wcfhttp --cb http://your_host:your_port/callback
 ### Go
 参考 [Go README.MD](clients/go/README.md)
 
-### GoHttp
-参考 [GoHttp README.MD](clients/gohttp/README.md)
-
 ### Java
 参考 [Java README.MD](clients/java/README.MD)
 
@@ -118,7 +126,7 @@ wcfhttp --cb http://your_host:your_port/callback
 参考 [Rust README.MD](clients/rust/README.MD)
 
 ## 一起开发
-> 🛈 非开发用户不需要往下看。
+> 🈲 非开发用户不需要往下看。
 
 ### 安装开发环境
 <details><summary>点击查看</summary>
@@ -231,9 +239,10 @@ Rust 客户端。
 
 ## 版本更新
 
-### v39.0.12 (2023.12.20)
-* 修复一个问题
-* 消息转发
+### v39.0.13 (2024.02.14)
+* 修复若干问题
+* 撤回消息
+* 获取登录二维码
 
 <details><summary>点击查看更多</summary>
 
@@ -244,6 +253,10 @@ Rust 客户端。
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.0.12 (2023.12.20)
+* 修复一个问题
+* 消息转发
 
 ### v39.0.11 (2023.12.16)
 * 修复 PB 消息类型（可能会导致非 Python 客户端崩溃）
