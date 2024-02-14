@@ -1,5 +1,22 @@
 ﻿#include "injector.h"
 
+typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+
+static void ShowErrorMessage(DWORD dwError, HANDLE hProcess)
+{
+    BOOL bIsWow64             = FALSE;
+    WCHAR szErrorMessage[256] = { 0 };
+    LPFN_ISWOW64PROCESS fnIsWow64Process
+        = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+    if (fnIsWow64Process != NULL && fnIsWow64Process(hProcess, &bIsWow64)) {
+        if (bIsWow64) {
+            wsprintf(szErrorMessage, L"LoadLibrary 调用失败，请检查应用版本/位数。错误码: %lu", dwError);
+        }
+    }
+    wsprintf(szErrorMessage, L"LoadLibrary 调用失败。错误码: %lu", dwError);
+    MessageBox(NULL, szErrorMessage, L"InjectDll", 0);
+}
+
 HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
 {
     HANDLE hThread;
@@ -24,7 +41,10 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     // 3. 创建一个远程线程，让目标进程调用 LoadLibrary
     hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, pRemoteAddress, 0, NULL);
     if (hThread == NULL) {
-        MessageBox(NULL, L"LoadLibrary 调用失败", L"InjectDll", 0);
+        ShowErrorMessage(GetLastError(), hProcess);
+        VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
+        CloseHandle(hProcess);
+
         return NULL;
     }
 
