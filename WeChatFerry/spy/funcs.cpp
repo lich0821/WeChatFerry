@@ -409,10 +409,17 @@ OcrResult_t GetOcrResult(string path)
     return ret;
 }
 
-void RefreshLoginQrcode() {
+string GetLoginUrl()
+{
+    if (GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login) == 1) {
+        return ""; // 已登录直接返回空字符
+    }
+
     DWORD refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + g_WxCalls.rlq.call1;
     DWORD refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + g_WxCalls.rlq.call2;
+    DWORD loginUrlAddr            = g_WeChatWinDllAddr + g_WxCalls.rlq.url;
 
+    // 刷新二维码
     __asm {
         pushad;
         pushfd;
@@ -422,16 +429,8 @@ void RefreshLoginQrcode() {
         popfd;
         popad;
     }
-}
 
-string GetLoginUrl() {
-    // 判断是否登录， 已登录直接返回空字符
-    int isLogin = (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login);
-    if (isLogin) {
-        return "";
-    }
-
-    DWORD loginUrlAddr = g_WeChatWinDllAddr + g_WxCalls.rlq.url;
-    string qrcodeLoginUrl = "http://weixin.qq.com/x/" + string(reinterpret_cast<char*>(*(DWORD*)loginUrlAddr));
-    return qrcodeLoginUrl;
+    // 获取二维码链接
+    string url = "http://weixin.qq.com/x/" + string(reinterpret_cast<char *>(*(DWORD *)loginUrlAddr));
+    return url;
 }
