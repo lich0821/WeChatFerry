@@ -42,23 +42,23 @@ message Request
     Functions func = 1;
     oneof msg
     {
-        Empty empty    = 2;
-        string str     = 3;
-        TextMsg txt    = 4;
-        PathMsg file   = 5;
-        DbQuery query  = 6;
-        Verification v = 7;
-        MemberMgmt m   = 8;  // 群成员管理，添加、删除、邀请
-        XmlMsg xml     = 9;
-        DecPath dec    = 10;
-        Transfer tf    = 11;
-        uint64 ui64    = 12 [jstype = JS_STRING]; // 64 位整数，通用
-        bool flag      = 13;
-        AttachMsg att  = 14;
-        AudioMsg am    = 15;
-        RichText rt    = 16;
-        PatMsg pm      = 17;
-        ForwardMsg fm  = 18;
+        Empty empty    = 2;                         // 无参数
+        string str     = 3;                         // 字符串
+        TextMsg txt    = 4;                         // 发送文本消息结构
+        PathMsg file   = 5;                         // 发送图片、文件消息结构
+        DbQuery query  = 6;                         // 数据库查询参数结构
+        Verification v = 7;                         // 通过好友验证参数结构
+        MemberMgmt m   = 8;                         // 群成员管理，添加、删除、邀请
+        XmlMsg xml     = 9;                         // XML参数结构
+        DecPath dec    = 10;                        // 解密图片参数结构
+        Transfer tf    = 11;                        // 接收转账参数结构
+        uint64 ui64    = 12 [ jstype = JS_STRING ]; // 64 位整数，通用
+        bool flag      = 13;                        // 布尔值
+        AttachMsg att  = 14;                        // 下载图片、视频、文件参数结构
+        AudioMsg am    = 15;                        // 保存语音参数结构
+        RichText rt    = 16;                        // 发送卡片消息结构
+        PatMsg pm      = 17;                        // 发送拍一拍参数结构
+        ForwardMsg fm  = 18;                        // 转发消息参数结构
     }
 }
 
@@ -84,18 +84,18 @@ message Empty { }
 
 message WxMsg
 {
-    bool is_self   = 1;  // 是否自己发送的
-    bool is_group  = 2;  // 是否群消息
-    uint64 id      = 3 [jstype = JS_STRING];  // 消息 id
-    uint32 type    = 4;  // 消息类型
-    uint32 ts      = 5;  // 消息类型
-    string roomid  = 6;  // 群 id（如果是群消息的话）
-    string content = 7;  // 消息内容
-    string sender  = 8;  // 消息发送者
-    string sign    = 9;  // Sign
-    string thumb   = 10; // 缩略图
-    string extra   = 11; // 附加内容
-    string xml     = 12; // 消息 xml
+    bool is_self   = 1;                        // 是否自己发送的
+    bool is_group  = 2;                        // 是否群消息
+    uint64 id      = 3 [ jstype = JS_STRING ]; // 消息 id
+    uint32 type    = 4;                        // 消息类型
+    uint32 ts      = 5;                        // 消息类型
+    string roomid  = 6;                        // 群 id（如果是群消息的话）
+    string content = 7;                        // 消息内容
+    string sender  = 8;                        // 消息发送者
+    string sign    = 9;                        // Sign
+    string thumb   = 10;                       // 缩略图
+    string extra   = 11;                       // 附加内容
+    string xml     = 12;                       // 消息 xml
 }
 
 message TextMsg
@@ -194,15 +194,15 @@ message Transfer
 
 message AttachMsg
 {
-    uint64 id    = 1 [jstype = JS_STRING]; // 消息 id
-    string thumb = 2; // 消息中的 thumb
-    string extra = 3; // 消息中的 extra
+    uint64 id    = 1 [ jstype = JS_STRING ]; // 消息 id
+    string thumb = 2;                        // 消息中的 thumb
+    string extra = 3;                        // 消息中的 extra
 }
 
 message AudioMsg
 {
-    uint64 id  = 1 [jstype = JS_STRING]; // 语音消息 id
-    string dir = 2; // 存放目录
+    uint64 id  = 1 [ jstype = JS_STRING ]; // 语音消息 id
+    string dir = 2;                        // 存放目录
 }
 
 message RichText
@@ -230,6 +230,6 @@ message OcrMsg
 
 message ForwardMsg
 {
-    uint64 id       = 1 [jstype = JS_STRING]; // 待转发消息 ID
-    string receiver = 2; // 转发接收目标，群为 roomId，个人为 wxid
+    uint64 id       = 1 [ jstype = JS_STRING ]; // 待转发消息 ID
+    string receiver = 2;                        // 转发接收目标，群为 roomId，个人为 wxid
 }
