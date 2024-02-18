@@ -40,7 +40,7 @@ static char buf[BUF_SIZE] = { 0 };
 
 void log_buffer(uint8_t *buffer, size_t len)
 {
-    size_t j = sprintf_s(buf, BUF_SIZE, "BUF[%ld]: ", len);
+    size_t j = sprintf_s(buf, BUF_SIZE, "BUF@%08X[%ld]: ", (uint32_t)buffer, len);
     for (size_t i = 0; i < len; i++) {
         j += sprintf_s(buf + j, BUF_SIZE, "%02X ", buffer[i]);
         if (j > BUF_SIZE - 3) {
