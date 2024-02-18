@@ -412,12 +412,12 @@ OcrResult_t GetOcrResult(string path)
 string GetLoginUrl()
 {
     if (GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login) == 1) {
+        LOG_DEBUG("Already logined.");
         return ""; // 已登录直接返回空字符
     }
 
     DWORD refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + g_WxCalls.rlq.call1;
     DWORD refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + g_WxCalls.rlq.call2;
-    DWORD loginUrlAddr            = g_WeChatWinDllAddr + g_WxCalls.rlq.url;
 
     // 刷新二维码
     __asm {
@@ -431,6 +431,15 @@ string GetLoginUrl()
     }
 
     // 获取二维码链接
-    string url = "http://weixin.qq.com/x/" + string(reinterpret_cast<char *>(*(DWORD *)loginUrlAddr));
-    return url;
+    char *url   = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.rlq.url);
+    uint8_t cnt = 0;
+    while (url[0] == 0) { // 刷新需要时间，太快了会获取不到
+        if (cnt > 5) {
+            LOG_ERROR("Refresh QR Code timeout.");
+            return "";
+        }
+        Sleep(1000);
+        cnt++;
+    }
+    return "http://weixin.qq.com/x/" + string(url);
 }
