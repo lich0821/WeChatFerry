@@ -16,7 +16,7 @@ pip install --upgrade wcferry
 
 |![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg)|
 |:-:|:-:|
-|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
+|后台回复 `WCF` 加群交流|如果你觉得有用|
 
 ## 一起开发
 ### 配置环境
