@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.12.0"
+__version__ = "39.0.14.0"
 
 import atexit
 import base64
@@ -55,13 +55,13 @@ class Wcf():
         host (str): `wcferry` RPC 服务器地址，默认本地启动；也可以指定地址连接远程服务
         port (int): `wcferry` RPC 服务器端口，默认为 10086，接收消息会占用 `port+1` 端口
         debug (bool): 是否开启调试模式（仅本地启动有效）
+        block (bool): 是否阻塞等待微信登录，不阻塞的话可以手动获取登录二维码主动登录
 
     Attributes:
         contacts (list): 联系人缓存，调用 `get_contacts` 后更新
-        self_wxid (str): 登录账号 wxid
     """
 
-    def __init__(self, host: str = None, port: int = 10086, debug: bool = True) -> None:
+    def __init__(self, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
         self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
@@ -98,14 +98,15 @@ class Wcf():
         self.msg_url = self.cmd_url.replace(str(self.port), str(self.port + 1))
 
         atexit.register(self.cleanup)  # 退出的时候停止消息接收，防止资源占用
-        while not self.is_login():     # 等待微信登录成功
-            sleep(1)
 
         self._is_running = True
         self.contacts = []
         self.msgQ = Queue()
         self._SQL_TYPES = {1: int, 2: float, 3: lambda x: x.decode("utf-8"), 4: bytes, 5: lambda x: None}
-        self.self_wxid = self.get_self_wxid()
+        if block:
+            self.LOG.info("等待微信登录...")
+            while not self.is_login():     # 等待微信登录成功
+                sleep(1)
 
     def __del__(self) -> None:
         self.cleanup()
@@ -144,6 +145,14 @@ class Wcf():
     def is_receiving_msg(self) -> bool:
         """是否已启动接收消息功能"""
         return self._is_receiving_msg
+
+    def get_qrcode(self) -> str:
+        """获取登录二维码，已经登录则返回空字符串"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_REFRESH_QRCODE  # FUNC_REFRESH_QRCODE
+        rsp = self._send_request(req)
+
+        return rsp.str
 
     def is_login(self) -> bool:
         """是否已经登录"""

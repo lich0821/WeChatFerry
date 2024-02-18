@@ -44,9 +44,9 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.0.12 (2023.12.20)
-* 修复一个问题
-* 消息转发
+### v39.0.14.0 (2024.02.18)
+* 若干优化
+* 若干功能
 
 <details><summary>点击查看更多</summary>
 
@@ -86,5 +86,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 邀请群成员
 * 图片 OCR
 * 转发消息
+* 撤回消息
+* 获取登录二维码
 
 </details>
