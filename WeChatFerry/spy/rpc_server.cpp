@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <filesystem>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -36,6 +37,8 @@
 #define URL_SIZE   20
 #define BASE_URL   "tcp://0.0.0.0"
 #define G_BUF_SIZE (16 * 1024 * 1024)
+
+namespace fs = std::filesystem;
 
 extern int IsLogin(void); // Defined in spy.cpp
 
@@ -251,6 +254,9 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
     if ((path == NULL) || (receiver == NULL)) {
         LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
+    } else if (!fs::exists(path)) {
+        LOG_ERROR("Path does not exists: {}", path);
+        rsp.msg.status = -2;
     } else {
         SendImageMessage(receiver, path);
         rsp.msg.status = 0;
@@ -275,6 +281,9 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
     if ((path == NULL) || (receiver == NULL)) {
         LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
+    } else if (!fs::exists(path)) {
+        LOG_ERROR("Path does not exists: {}", path);
+        rsp.msg.status = -2;
     } else {
         SendImageMessage(receiver, path);
         rsp.msg.status = 0;
