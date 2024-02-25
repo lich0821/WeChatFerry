@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.14.0"
+__version__ = "39.0.14.1"
 
 import atexit
 import base64
@@ -103,10 +103,12 @@ class Wcf():
         self.contacts = []
         self.msgQ = Queue()
         self._SQL_TYPES = {1: int, 2: float, 3: lambda x: x.decode("utf-8"), 4: bytes, 5: lambda x: None}
+        self.self_wxid = ""
         if block:
             self.LOG.info("等待微信登录...")
             while not self.is_login():     # 等待微信登录成功
                 sleep(1)
+            self.self_wxid = self.get_self_wxid()
 
     def __del__(self) -> None:
         self.cleanup()
