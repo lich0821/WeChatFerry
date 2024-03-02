@@ -126,7 +126,7 @@ wcfhttp --cb http://your_host:your_port/callback
 参考 [Rust README.MD](clients/rust/README.MD)
 
 ## 一起开发
-> 🈲 非开发用户不需要往下看。
+> 🚫 非开发用户不需要往下看。
 
 ### 安装开发环境
 <details><summary>点击查看</summary>
