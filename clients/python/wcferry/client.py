@@ -14,6 +14,8 @@ from queue import Queue
 from threading import Thread
 from time import sleep
 from typing import Callable, Dict, List, Optional
+import subprocess
+
 
 import pynng
 import requests
@@ -65,7 +67,11 @@ class Wcf():
         self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
-        self._wcf_root = os.path.abspath(os.path.dirname(__file__))
+        if getattr(sys, 'frozen', False):
+            # 如果程序是被 PyInstaller 打包的，则使用这个路径
+            self._wcf_root = sys._MEIPASS
+        else:
+            self._wcf_root = os.path.abspath(os.path.dirname(__file__))
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
@@ -75,10 +81,19 @@ class Wcf():
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
-            cmd = fr'"{self._wcf_root}\wcf.exe" start {self.port} {"debug" if debug else ""}'
-            if os.system(cmd) != 0:
+            # 构建命令
+            cmd = [f"{self._wcf_root}\\wcf.exe", "start", str(port)]
+            if debug:
+                cmd.append("debug")
+            
+            # 使用 subprocess 执行命令
+            return_code = subprocess.call(cmd)
+            
+            # 检查返回码
+            if return_code != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
+
 
         self.cmd_url = f"tcp://{self.host}:{self.port}"
 
