@@ -56,7 +56,7 @@
 <details><summary>点击查看支持的客户端</summary>
 
 * Go
-* HTTP (Python, Go, Rust)
+* HTTP (Go, Rust)
 * Java
 * Node.js
 * Python
@@ -88,29 +88,6 @@ pip install --upgrade wcferry
 #### ~~wcfhttp（基于 Python）~~
 ❗ **wcfhttp 不再维护，有需要可以使用 [WcfRust](https://github.com/lich0821/wcf-client-rust) 或者 [GoHttp](clients/gohttp/README.md)。**
 
-[![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
-
-* 安装
-```sh
-pip install --upgrade wcfhttp
-```
-
-* 运行
-```sh
-# 查看版本
-wcfhttp -v
-
-# 查看帮助
-wcfhttp -h
-
-# 忽略新消息运行
-wcfhttp
-
-# 新消息转发到指定地址
-wcfhttp --cb http://your_host:your_port/callback
-```
-
----
 其余客户端，可下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)，根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
 
 ### Go
