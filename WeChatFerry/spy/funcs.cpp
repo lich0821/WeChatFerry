@@ -24,7 +24,7 @@ namespace fs = std::filesystem;
 extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
-
+#if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     // PNG?
@@ -443,3 +443,4 @@ string GetLoginUrl()
     }
     return "http://weixin.qq.com/x/" + string(url);
 }
+#endif

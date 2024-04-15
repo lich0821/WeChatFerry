@@ -11,7 +11,7 @@ using namespace std;
 
 extern WxCalls_t g_WxCalls;
 extern DWORD g_WeChatWinDllAddr;
-
+#if 0
 int AddChatroomMember(string roomid, string wxids)
 {
     if (roomid.empty() || wxids.empty()) {
@@ -178,3 +178,4 @@ int InviteChatroomMember(string roomid, string wxids)
     }
     return 1;
 }
+#endif
