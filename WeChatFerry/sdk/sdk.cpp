@@ -61,7 +61,6 @@ int WxInitSDK(bool debug, int port)
     pp.port       = port;
     sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    printf("process: %p, base: %p, path: %s\n", wcProcess, spyBase, pp.path);
     if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
         MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
         return -1;

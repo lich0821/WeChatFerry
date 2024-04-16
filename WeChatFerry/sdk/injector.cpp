@@ -1,13 +1,14 @@
 ﻿#include "framework.h"
 #include "psapi.h"
 #include <filesystem>
-#include <stdio.h>
 #include <string>
 
 #include "injector.h"
 #include "util.h"
 
-HMODULE GetTargetModuleBase(HANDLE process, std::string dll)
+using namespace std;
+
+HMODULE GetTargetModuleBase(HANDLE process, string dll)
 {
     DWORD cbNeeded;
     HMODULE moduleHandleList[512];
@@ -79,9 +80,7 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     WaitForSingleObject(hThread, -1);
     CloseHandle(hThread);
 
-    *injectedBase = GetTargetModuleBase(hProcess, std::filesystem::path(Wstring2String(dllPath)).filename().string());
-
-    printf("hProcess: %p, pRemoteAddress: %p, injectedBase: %p\n", hProcess, pRemoteAddress, *injectedBase);
+    *injectedBase = GetTargetModuleBase(hProcess, filesystem::path(Wstring2String(dllPath)).filename().string());
 
     VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
     // CloseHandle(hProcess); // Close when exit
@@ -93,8 +92,6 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
 {
     HANDLE hThread = NULL;
 
-    printf("process: %p, dllBase: %p\n", process, dllBase);
-
     // 使目标进程调用 FreeLibrary，卸载 DLL
     HMODULE k32 = GetModuleHandle(L"kernel32.dll");
     if (k32 == NULL) {
@@ -102,7 +99,6 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
         return NULL;
     }
 
-    // FARPROC libAddr = GetProcAddress(k32, "FreeLibrary");
     FARPROC libAddr = GetProcAddress(k32, "FreeLibraryAndExitThread");
     if (!libAddr) {
         MessageBox(NULL, L"获取 FreeLibrary 失败", L"InjectDll", 0);
@@ -118,16 +114,6 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
     CloseHandle(hThread);
     CloseHandle(process);
     return true;
-}
-
-static LPVOID GetFuncAddr(HMODULE dllBase, LPCSTR funcName)
-{
-    printf("dllBase: %p, funcName: %s\n", dllBase, funcName);
-    LPVOID absAddr = GetProcAddress(dllBase, funcName);
-    UINT64 offset  = (UINT64)absAddr - (UINT64)dllBase;
-
-    printf("absAddr: %p, offset: %lld\n", absAddr, offset);
-    return (LPVOID)((UINT64)dllBase + offset);
 }
 
 static UINT64 GetFuncOffset(LPCWSTR dllPath, LPCSTR funcName)
@@ -147,7 +133,6 @@ static UINT64 GetFuncOffset(LPCWSTR dllPath, LPCSTR funcName)
 
 bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPDWORD ret)
 {
-    // LPVOID pFunc = GetFuncAddr(dllBase, funcName);
     UINT64 offset = GetFuncOffset(dllPath, funcName);
     if (offset == 0) {
         return false;
@@ -156,7 +141,7 @@ bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcNa
     if (pFunc <= (UINT64)dllBase) {
         return false;
     }
-    printf("pFunc: %p\n", pFunc);
+
     HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, NULL, 0, NULL);
     if (hThread == NULL) {
         return false;
@@ -173,11 +158,6 @@ bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcNa
 bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPVOID parameter, size_t sz,
                    LPDWORD ret)
 {
-    // LPVOID pFunc = GetFuncAddr(dllBase, funcName);
-    // if (pFunc == NULL) {
-    //     return false;
-    // }
-
     UINT64 offset = GetFuncOffset(dllPath, funcName);
     if (offset == 0) {
         return false;
@@ -187,7 +167,6 @@ bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR func
         return false;
     }
 
-    printf("pFunc: %p\n", pFunc);
     LPVOID pRemoteAddress = VirtualAllocEx(process, NULL, sz, MEM_COMMIT, PAGE_READWRITE);
     if (pRemoteAddress == NULL) {
         MessageBox(NULL, L"申请内存失败", L"CallDllFuncEx", 0);
