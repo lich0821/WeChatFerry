@@ -10,11 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdk", "sdk\sdk.vcxproj", "{
 		{4DE80B82-5F6A-4C4C-9D16-1574308110FA} = {4DE80B82-5F6A-4C4C-9D16-1574308110FA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wcf", "wcf\wcf.vcxproj", "{02747CE0-AD9F-4812-B019-FCF9867F7514}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4DE80B82-5F6A-4C4C-9D16-1574308110FA} = {4DE80B82-5F6A-4C4C-9D16-1574308110FA}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -28,9 +23,6 @@ Global
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Debug|x64.ActiveCfg = Debug|x64
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x64.ActiveCfg = Release|x64
 		{ABFCB647-137F-478B-A73E-F0B1E3ADC215}.Release|x64.Build.0 = Release|x64
-		{02747CE0-AD9F-4812-B019-FCF9867F7514}.Debug|x64.ActiveCfg = Debug|x64
-		{02747CE0-AD9F-4812-B019-FCF9867F7514}.Release|x64.ActiveCfg = Release|x64
-		{02747CE0-AD9F-4812-B019-FCF9867F7514}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

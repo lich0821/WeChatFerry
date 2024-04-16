@@ -164,7 +164,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
       <SupportJustMyCode>true</SupportJustMyCode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -185,15 +185,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\spy\log.h" />
-    <ClInclude Include="..\spy\util.h" />
+    <ClInclude Include="..\com\log.h" />
+    <ClInclude Include="..\com\util.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="injector.h" />
     <ClInclude Include="sdk.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\spy\log.cpp" />
-    <ClCompile Include="..\spy\util.cpp" />
+    <ClCompile Include="..\com\log.cpp" />
+    <ClCompile Include="..\com\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="injector.cpp" />
     <ClCompile Include="sdk.cpp" />

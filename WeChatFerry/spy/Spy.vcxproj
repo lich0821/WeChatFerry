@@ -83,6 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -203,7 +204,7 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>false</OmitFramePointers>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -253,7 +254,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
       <OmitFramePointers>false</OmitFramePointers>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
@@ -271,8 +272,24 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Message>Generating PB files</Message>
+      <Command>cd $(SolutionDir)rpc\proto
+$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy spy.dll</Message>
+      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\com\log.h" />
+    <ClInclude Include="..\com\util.h" />
     <ClInclude Include="..\rpc\nanopb\pb.h" />
     <ClInclude Include="..\rpc\nanopb\pb_common.h" />
     <ClInclude Include="..\rpc\nanopb\pb_decode.h" />
@@ -287,7 +304,6 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="framework.h" />
     <ClInclude Include="contact_mgmt.h" />
     <ClInclude Include="load_calls.h" />
-    <ClInclude Include="log.h" />
     <ClInclude Include="receive_msg.h" />
     <ClInclude Include="receive_transfer.h" />
     <ClInclude Include="resource.h" />
@@ -297,9 +313,10 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="spy_types.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="user_info.h" />
-    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\com\log.cpp" />
+    <ClCompile Include="..\com\util.cpp" />
     <ClCompile Include="..\rpc\nanopb\pb_common.c" />
     <ClCompile Include="..\rpc\nanopb\pb_decode.c" />
     <ClCompile Include="..\rpc\nanopb\pb_encode.c" />
@@ -311,14 +328,12 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="contact_mgmt.cpp" />
     <ClCompile Include="load_calls.cpp" />
-    <ClCompile Include="log.cpp" />
     <ClCompile Include="receive_msg.cpp" />
     <ClCompile Include="receive_transfer.cpp" />
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />
     <ClCompile Include="spy.cpp" />
     <ClCompile Include="user_info.cpp" />
-    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\rpc\proto\wcf.proto" />

@@ -11,6 +11,8 @@ DWORD g_WeChatWinDllAddr = 0;
 
 void InitSpy(LPVOID args)
 {
+    MessageBox(NULL, L"InitSpy", L"InitSpy", 0);
+#if 0
     wchar_t version[16] = { 0 };
     PortPath_t *pp      = (PortPath_t *)args;
     int port            = pp->port;
@@ -35,8 +37,9 @@ void InitSpy(LPVOID args)
     }
 
     RpcStartServer(port);
+#endif
 }
 
-void CleanupSpy() { RpcStopServer(); }
+void CleanupSpy() { /*RpcStopServer();*/ }
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }

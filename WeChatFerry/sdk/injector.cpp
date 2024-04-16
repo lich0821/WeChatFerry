@@ -1,22 +1,5 @@
 ﻿#include "injector.h"
 
-typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
-
-static void ShowErrorMessage(DWORD dwError, HANDLE hProcess)
-{
-    BOOL bIsWow64             = FALSE;
-    WCHAR szErrorMessage[256] = { 0 };
-    LPFN_ISWOW64PROCESS fnIsWow64Process
-        = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
-    if (fnIsWow64Process != NULL && fnIsWow64Process(hProcess, &bIsWow64)) {
-        if (bIsWow64) {
-            wsprintf(szErrorMessage, L"LoadLibrary 调用失败，请检查应用版本/位数。错误码: %lu", dwError);
-        }
-    }
-    wsprintf(szErrorMessage, L"LoadLibrary 调用失败。错误码: %lu", dwError);
-    MessageBox(NULL, szErrorMessage, L"InjectDll", 0);
-}
-
 HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
 {
     HANDLE hThread;
@@ -39,9 +22,20 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     WriteProcessMemory(hProcess, pRemoteAddress, dllPath, cszDLL, NULL);
 
     // 3. 创建一个远程线程，让目标进程调用 LoadLibrary
-    hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, pRemoteAddress, 0, NULL);
+    HMODULE k32 = GetModuleHandle(L"kernel32.dll");
+    if (k32 == NULL) {
+        MessageBox(NULL, L"获取 kernel32 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    FARPROC libAddr = GetProcAddress(k32, "LoadLibraryW");
+    if (!libAddr) {
+        MessageBox(NULL, L"获取 LoadLibrary 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)libAddr, pRemoteAddress, 0, NULL);
     if (hThread == NULL) {
-        ShowErrorMessage(GetLastError(), hProcess);
         VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
         CloseHandle(hProcess);
 
@@ -49,7 +43,7 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     }
 
     WaitForSingleObject(hThread, -1);
-    GetExitCodeThread(hThread, (LPDWORD)injectedBase);
+    // GetExitCodeThread(hThread, (LPDWORD)injectedBase);
     CloseHandle(hThread);
     VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
     // CloseHandle(hProcess); // Close when exit
@@ -62,7 +56,18 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
     HANDLE hThread = NULL;
 
     // 使目标进程调用 FreeLibrary，卸载 DLL
-    hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)FreeLibrary, (LPVOID)dllBase, 0, NULL);
+    HMODULE k32 = GetModuleHandle(L"kernel32.dll");
+    if (k32 == NULL) {
+        MessageBox(NULL, L"获取 kernel32 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    FARPROC libAddr = GetProcAddress(k32, "FreeLibrary");
+    if (!libAddr) {
+        MessageBox(NULL, L"获取 FreeLibrary 失败", L"InjectDll", 0);
+        return NULL;
+    }
+    hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)libAddr, (LPVOID)dllBase, 0, NULL);
     if (hThread == NULL) {
         MessageBox(NULL, L"FreeLibrary 调用失败!", L"EjectDll", 0);
         return false;
@@ -81,8 +86,8 @@ static void *GetFuncAddr(LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName)
         return NULL;
     }
 
-    void *absAddr = GetProcAddress(hLoaded, funcName);
-    DWORD offset  = (DWORD)absAddr - (DWORD)hLoaded;
+    void *absAddr  = GetProcAddress(hLoaded, funcName);
+    DWORD offset = (DWORD)absAddr - (DWORD)hLoaded;
 
     FreeLibrary(hLoaded);
 
@@ -102,7 +107,7 @@ bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcNa
     }
     WaitForSingleObject(hThread, INFINITE);
     if (ret != NULL) {
-        GetExitCodeThread(hThread, ret);
+        GetExitCodeThread(hThread, (LPDWORD)ret);
     }
 
     CloseHandle(hThread);
@@ -134,7 +139,7 @@ bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR func
     WaitForSingleObject(hThread, INFINITE);
     VirtualFree(pRemoteAddress, 0, MEM_RELEASE);
     if (ret != NULL) {
-        GetExitCodeThread(hThread, ret);
+        GetExitCodeThread(hThread, (LPDWORD)ret);
     }
 
     CloseHandle(hThread);

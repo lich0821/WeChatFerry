@@ -17,16 +17,16 @@ static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
 static int GetDllPath(bool debug, wchar_t *dllPath)
 {
-    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), spyDllPath, MAX_PATH);
-    PathRemoveFileSpec(spyDllPath);
+    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), dllPath, MAX_PATH);
+    PathRemoveFileSpec(dllPath);
     if (debug) {
-        PathAppend(spyDllPath, WECHATINJECTDLL_DEBUG);
+        PathAppend(dllPath, WECHATINJECTDLL_DEBUG);
     } else {
-        PathAppend(spyDllPath, WECHATINJECTDLL);
+        PathAppend(dllPath, WECHATINJECTDLL);
     }
 
-    if (!PathFileExists(spyDllPath)) {
-        MessageBox(NULL, spyDllPath, L"文件不存在", 0);
+    if (!PathFileExists(dllPath)) {
+        MessageBox(NULL, dllPath, L"文件不存在", 0);
         return ERROR_FILE_NOT_FOUND;
     }
 
@@ -56,14 +56,17 @@ int WxInitSDK(bool debug, int port)
         return -1;
     }
 
+    return 0;
+
     PortPath_t pp = { 0 };
     pp.port       = port;
     sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
-        MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
-        return -1;
-    }
+    MessageBoxA(NULL, pp.path, "WxInitSDK", 0);
+    // if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+    //     MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
+    //     return -1;
+    // }
 
 #ifdef WCF
     FILE *fd = fopen(WCF_LOCK, "wb");
