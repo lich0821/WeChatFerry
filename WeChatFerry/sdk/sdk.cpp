@@ -10,19 +10,19 @@
 
 #define WCF_LOCK ".wcf.lock"
 
-static bool debugMode             = false;
+static bool dbg                   = false;
 static HANDLE wcProcess           = NULL;
 static HMODULE spyBase            = NULL;
 static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
 static int GetDllPath(bool debug, wchar_t *dllPath)
 {
-    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), dllPath, MAX_PATH);
+    GetModuleFileName(GetModuleHandle(WCFSDKDLL), dllPath, MAX_PATH);
     PathRemoveFileSpec(dllPath);
     if (debug) {
-        PathAppend(dllPath, WECHATINJECTDLL_DEBUG);
+        PathAppend(dllPath, WCFSPYDLL_DEBUG);
     } else {
-        PathAppend(dllPath, WECHATINJECTDLL);
+        PathAppend(dllPath, WCFSPYDLL);
     }
 
     if (!PathFileExists(dllPath)) {
@@ -35,6 +35,7 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
 
 int WxInitSDK(bool debug, int port)
 {
+    dbg         = debug;
     int status  = 0;
     DWORD wcPid = 0;
 
@@ -56,67 +57,22 @@ int WxInitSDK(bool debug, int port)
         return -1;
     }
 
-    return 0;
-
     PortPath_t pp = { 0 };
     pp.port       = port;
     sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    MessageBoxA(NULL, pp.path, "WxInitSDK", 0);
-    // if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
-    //     MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
-    //     return -1;
-    // }
-
-#ifdef WCF
-    FILE *fd = fopen(WCF_LOCK, "wb");
-    if (fd == NULL) {
-        MessageBox(NULL, L"无法打开lock文件", L"WxInitSDK", 0);
-        return -2;
+    printf("process: %p, base: %p, path: %s\n", wcProcess, spyBase, pp.path);
+    if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+        MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
+        return -1;
     }
-    fwrite((uint8_t *)&debug, sizeof(debug), 1, fd);
-    fwrite((uint8_t *)&spyBase, sizeof(spyBase), 1, fd);
-    fclose(fd);
-#endif
-    debugMode = debug;
+
     return 0;
 }
 
 int WxDestroySDK()
 {
-    int status = 0;
-#ifdef WCF
-    bool debug;
-    DWORD pid = GetWeChatPid();
-    if (pid == 0) {
-        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
-        return status;
-    }
-
-    wcProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
-    if (wcProcess == NULL) {
-        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
-        return -1;
-    }
-
-    FILE *fd = fopen(WCF_LOCK, "rb");
-    if (fd == NULL) {
-        MessageBox(NULL, L"无法打开lock文件", L"WxDestroySDK", 0);
-        return -2;
-    }
-    fread((uint8_t *)&debug, sizeof(debug), 1, fd);
-    fread((uint8_t *)&spyBase, sizeof(spyBase), 1, fd);
-    fclose(fd);
-    status = GetDllPath(debug, spyDllPath);
-#else
-    status = GetDllPath(debugMode, spyDllPath);
-#endif
-
-    if (status != 0) {
-        return status;
-    }
-
-    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL, NULL)) {
+    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL)) {
         return -1;
     }
 

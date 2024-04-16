@@ -2,11 +2,11 @@
 
 #include <string>
 
-#define WECHAREXE             L"WeChat.exe"
-#define WECHATWINDLL          L"WeChatWin.dll"
-#define WECHATSDKDLL          L"sdk.dll"
-#define WECHATINJECTDLL       L"spy.dll"
-#define WECHATINJECTDLL_DEBUG L"spy_debug.dll"
+#define WECHAREXE       L"WeChat.exe"
+#define WECHATWINDLL    L"WeChatWin.dll"
+#define WCFSDKDLL       L"sdk.dll"
+#define WCFSPYDLL       L"spy.dll"
+#define WCFSPYDLL_DEBUG L"spy_debug.dll"
 
 #define GET_DWORD(addr)          ((DWORD) * (DWORD *)(addr))
 #define GET_QWORD(addr)          ((uint64_t) * (uint64_t *)(addr))

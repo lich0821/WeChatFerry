@@ -12,7 +12,7 @@ DWORD g_WeChatWinDllAddr = 0;
 void InitSpy(LPVOID args)
 {
     MessageBox(NULL, L"InitSpy", L"InitSpy", 0);
-#if 0
+#if 1
     wchar_t version[16] = { 0 };
     PortPath_t *pp      = (PortPath_t *)args;
     int port            = pp->port;
@@ -21,7 +21,7 @@ void InitSpy(LPVOID args)
     InitLogger(path);
     g_WeChatWinDllAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
     if (g_WeChatWinDllAddr == 0) {
-        LOG_ERROR("获取wechatWin.dll模块地址失败");
+        LOG_ERROR("获取 wechatWin.dll 模块地址失败");
         return;
     }
 
@@ -36,10 +36,10 @@ void InitSpy(LPVOID args)
         return;
     }
 
-    RpcStartServer(port);
+    // RpcStartServer(port);
 #endif
 }
 
-void CleanupSpy() { /*RpcStopServer();*/ }
+void CleanupSpy() { /*RpcStopServer();*/ MessageBox(NULL, L"CleanupSpy", L"CleanupSpy", 0);}
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
