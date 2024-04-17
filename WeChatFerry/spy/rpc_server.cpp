@@ -850,8 +850,9 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     }
 
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
-#if 0
+
     switch (req.func) {
+#if 0
         case Functions_FUNC_IS_LOGIN: {
             ret = func_is_login(out, out_len);
             break;
@@ -978,12 +979,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
+#endif
         default: {
             LOG_ERROR("[UNKNOW FUNCTION]");
             break;
         }
     }
-#endif
+
     pb_release(Request_fields, &req);
     return ret;
 }

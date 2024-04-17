@@ -26,20 +26,20 @@ void InitSpy(LPVOID args)
         LOG_ERROR("获取微信版本失败");
         return;
     }
-    LOG_DEBUG("WeChat version: {}", Wstring2String(version).c_str());
+    LOG_INFO("WeChat version: {}", Wstring2String(version).c_str());
     if (LoadCalls(version, &g_WxCalls) != 0) { // 加载微信版本对应的Call地址
         LOG_ERROR("不支持当前版本");
         MessageBox(NULL, L"不支持当前版本", L"错误", 0);
         return;
     }
 
-    // RpcStartServer(pp->port);
+    RpcStartServer(pp->port);
 }
 
 void CleanupSpy()
 {
     LOG_DEBUG("CleanupSpy");
-    // RpcStopServer();
+    RpcStopServer();
 }
 
 int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }

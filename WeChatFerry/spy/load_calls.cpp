@@ -3,7 +3,8 @@
 
 #include "load_calls.h"
 
-#define SUPPORT_VERSION L"3.9.2.23"
+#define SUPPORT_VERSION L"3.9.10.19"
+
 WxCalls_t wxCalls = {
     0x2FFD638,                                      // Login Status
     { 0x2FFD484, 0x2FFD590, 0x2FFD500, 0x30238CC }, // User Info: wxid, nickname, mobile, home
