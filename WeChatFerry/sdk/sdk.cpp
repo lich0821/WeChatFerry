@@ -8,9 +8,7 @@
 #include "sdk.h"
 #include "util.h"
 
-#define WCF_LOCK ".wcf.lock"
-
-static bool dbg                   = false;
+static BOOL injected              = false;
 static HANDLE wcProcess           = NULL;
 static HMODULE spyBase            = NULL;
 static WCHAR spyDllPath[MAX_PATH] = { 0 };
@@ -35,7 +33,6 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
 
 int WxInitSDK(bool debug, int port)
 {
-    dbg         = debug;
     int status  = 0;
     DWORD wcPid = 0;
 
@@ -66,17 +63,22 @@ int WxInitSDK(bool debug, int port)
         return -1;
     }
 
+    injected = true;
     return 0;
 }
 
 int WxDestroySDK()
 {
-    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL)) {
+    if (!injected) {
         return -1;
     }
 
+    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL)) {
+        return -2;
+    }
+
     if (!EjectDll(wcProcess, spyBase)) {
-        return -1; // TODO: Unify error codes
+        return -3; // TODO: Unify error codes
     }
 
     return 0;
