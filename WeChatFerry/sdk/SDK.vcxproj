@@ -178,7 +178,8 @@
       <ModuleDefinitionFile>sdk.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out</Command>
+      <Command>xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy files</Message>
