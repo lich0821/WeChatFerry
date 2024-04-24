@@ -12,6 +12,10 @@ pub mod wcf {
     include!("proto/wcf.rs");
 }
 
+pub mod roomdata {
+    include!("proto/roomdata.rs");
+}
+
 #[derive(Clone, Debug)]
 pub struct WeChat {
     pub url: String,
@@ -28,6 +32,46 @@ pub struct UserInfo {
     pub name: String,
     pub mobile: String,
     pub home: String,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct ChatRoom {
+    /// 群聊ID
+    pub room_id: String,
+    /// 群聊成员
+    pub room_data: roomdata::RoomData,
+    /// 群聊头像
+    pub room_head_img_url: Option<String>,
+    /// 公告
+    pub room_announcement: Option<String>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct ContactInfo {
+    /// 微信ID
+    pub wxid: String,
+    /// 微信号
+    pub alias: Option<String>,
+    /// 删除标记
+    pub del_flag: u8,
+    /// 类型
+    pub contact_type: u8,
+    /// 备注
+    pub remark: Option<String>,
+    /// 昵称
+    pub nick_name: Option<String>,
+    /// 昵称拼音首字符
+    pub py_initial: Option<String>,
+    /// 昵称全拼
+    pub quan_pin: Option<String>,
+    /// 备注拼音首字母
+    pub remark_py_initial: Option<String>,
+    /// 备注全拼
+    pub remark_quan_pin: Option<String>,
+    /// 小头像
+    pub small_head_url: Option<String>,
+    /// 大头像
+    pub big_head_url: Option<String>,
 }
 
 impl Default for WeChat {
@@ -266,6 +310,218 @@ pub fn get_contacts(
             return Ok(None);
         }
     };
+}
+
+pub fn query_all_contact_info(
+    wechat: &mut WeChat,
+) -> Result<Vec<ContactInfo>, Box<dyn std::error::Error>> {
+    let contacts = crate::wechat::exec_db_query(
+        wechat,
+        String::from("MicroMsg.db"),
+        String::from("select * from Contact"),
+    )
+    .unwrap();
+    if contacts.len() == 0 {
+        return Ok(vec![]);
+    } else {
+        let mut contact_list: Vec<ContactInfo> = vec![];
+        for contact in contacts.into_iter() {
+            let mut contact_info = ContactInfo::default();
+            let fields = &contact.fields;
+            for field in fields.into_iter() {
+                if field.column.eq("UserName") {
+                    contact_info.wxid = String::from_utf8(field.content.clone()).unwrap();
+                } else if field.column.eq("Alias") {
+                    contact_info.alias = Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("DelFlag") {
+                    contact_info.del_flag = *field.content.get(0).unwrap();
+                } else if field.column.eq("Type") {
+                    contact_info.contact_type = *field.content.get(0).unwrap();
+                } else if field.column.eq("Remark") {
+                    contact_info.remark = Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("NickName") {
+                    contact_info.nick_name =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("PYInitial") {
+                    contact_info.py_initial =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("QuanPin") {
+                    contact_info.quan_pin = Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("RemarkPYInitial") {
+                    contact_info.remark_py_initial =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("RemarkQuanPin") {
+                    contact_info.remark_quan_pin =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                }
+            }
+            if !contact_info.wxid.is_empty() {
+                let contact_heads = crate::wechat::exec_db_query(
+                    wechat,
+                    String::from("MicroMsg.db"),
+                    String::from(format!(
+                        "select * from ContactHeadImgUrl where usrName = '{}'",
+                        contact_info.wxid
+                    )),
+                )
+                .unwrap();
+                if contact_heads.len() > 0 {
+                    let contact_head = contact_heads.get(0).unwrap();
+                    let head_fields = &contact_head.fields;
+                    for field in head_fields.into_iter() {
+                        if field.column.eq("smallHeadImgUrl") {
+                            contact_info.small_head_url =
+                                Some(String::from_utf8(field.content.clone()).unwrap());
+                        } else if field.column.eq("bigHeadImgUrl") {
+                            contact_info.big_head_url =
+                                Some(String::from_utf8(field.content.clone()).unwrap());
+                        }
+                    }
+                }
+            }
+            contact_list.push(contact_info);
+        }
+
+        Ok(contact_list)
+    }
+}
+
+pub fn query_contact_info(
+    wechat: &mut WeChat,
+    wxid: String,
+) -> Result<Option<ContactInfo>, Box<dyn std::error::Error>> {
+    let contacts = crate::wechat::exec_db_query(
+        wechat,
+        String::from("MicroMsg.db"),
+        String::from(format!(
+            "select * from Contact where UserName = '{}'",
+            wxid.clone()
+        )),
+    )
+    .unwrap();
+    if contacts.len() == 0 {
+        return Ok(None);
+    } else {
+        let contact = contacts.get(0).unwrap();
+        let mut contact_info = ContactInfo::default();
+        let fields = &contact.fields;
+        for field in fields.into_iter() {
+            if field.column.eq("UserName") {
+                contact_info.wxid = String::from_utf8(field.content.clone()).unwrap();
+            } else if field.column.eq("Alias") {
+                contact_info.alias = Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("DelFlag") {
+                contact_info.del_flag = *field.content.get(0).unwrap();
+            } else if field.column.eq("Type") {
+                contact_info.contact_type = *field.content.get(0).unwrap();
+            } else if field.column.eq("Remark") {
+                contact_info.remark = Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("NickName") {
+                contact_info.nick_name = Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("PYInitial") {
+                contact_info.py_initial = Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("QuanPin") {
+                contact_info.quan_pin = Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("RemarkPYInitial") {
+                contact_info.remark_py_initial =
+                    Some(String::from_utf8(field.content.clone()).unwrap());
+            } else if field.column.eq("RemarkQuanPin") {
+                contact_info.remark_quan_pin =
+                    Some(String::from_utf8(field.content.clone()).unwrap());
+            }
+        }
+        let contact_heads = crate::wechat::exec_db_query(
+            wechat,
+            String::from("MicroMsg.db"),
+            String::from(format!(
+                "select * from ContactHeadImgUrl where usrName = '{}'",
+                wxid
+            )),
+        )
+        .unwrap();
+        if contact_heads.len() > 0 {
+            let contact_head = contact_heads.get(0).unwrap();
+            let head_fields = &contact_head.fields;
+            for field in head_fields.into_iter() {
+                if field.column.eq("smallHeadImgUrl") {
+                    contact_info.small_head_url =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                } else if field.column.eq("bigHeadImgUrl") {
+                    contact_info.big_head_url =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                }
+            }
+        }
+        Ok(Some(contact_info))
+    }
+}
+
+pub fn query_chat_room_info(
+    wechat: &mut WeChat,
+    wxid: String,
+) -> Result<Option<ChatRoom>, Box<dyn std::error::Error>> {
+    let contacts = crate::wechat::exec_db_query(
+        wechat,
+        String::from("MicroMsg.db"),
+        String::from(format!(
+            "select * from ChatRoom where ChatRoomName = '{}'",
+            wxid.clone()
+        )),
+    )
+    .unwrap();
+    if contacts.len() == 0 {
+        return Ok(None);
+    } else {
+        let contact = contacts.get(0).unwrap();
+        let mut chat_room = ChatRoom::default();
+        let fields = &contact.fields;
+        for field in fields.into_iter() {
+            if field.column.eq("ChatRoomName") {
+                chat_room.room_id = String::from_utf8(field.content.clone()).unwrap();
+            } else if field.column.eq("RoomData") {
+                chat_room.room_data = roomdata::RoomData::decode(field.content.as_slice()).unwrap();
+            }
+        }
+        let contact_heads = crate::wechat::exec_db_query(
+            wechat,
+            String::from("MicroMsg.db"),
+            String::from(format!(
+                "select * from ContactHeadImgUrl where usrName = '{}'",
+                wxid
+            )),
+        )
+        .unwrap();
+        if contact_heads.len() > 0 {
+            let contact_head = contact_heads.get(0).unwrap();
+            let head_fields = &contact_head.fields;
+            for field in head_fields.into_iter() {
+                if field.column.eq("smallHeadImgUrl") {
+                    chat_room.room_head_img_url =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                }
+            }
+        }
+        let contact_heads = crate::wechat::exec_db_query(
+            wechat,
+            String::from("MicroMsg.db"),
+            String::from(format!(
+                "select * from ChatRoomInfo where ChatRoomName = '{}'",
+                wxid
+            )),
+        )
+        .unwrap();
+        if contact_heads.len() > 0 {
+            let contact_head = contact_heads.get(0).unwrap();
+            let head_fields = &contact_head.fields;
+            for field in head_fields.into_iter() {
+                if field.column.eq("Announcement") {
+                    chat_room.room_announcement =
+                        Some(String::from_utf8(field.content.clone()).unwrap());
+                }
+            }
+        }
+        Ok(Some(chat_room))
+    }
 }
 
 pub fn get_db_names(wechat: &mut WeChat) -> Result<Vec<String>, Box<dyn std::error::Error>> {
@@ -1065,6 +1321,170 @@ mod test {
     }
 
     #[test]
+    fn test_get_db_names() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let dbs = crate::wechat::get_db_names(&mut wechat).unwrap();
+        println!("dbs: {:?}", dbs);
+    }
+
+    #[test]
+    fn test_get_db_tables() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let tables: Vec<crate::wechat::wcf::DbTable> =
+            crate::wechat::get_db_tables(&mut wechat, String::from("MicroMsg.db")).unwrap();
+        println!("tables: {:?}", tables);
+    }
+
+    #[test]
+    fn test_exec_db_query_contact() {
+        use hex;
+        pub mod roomdata {
+            include!("proto/roomdata.rs");
+        }
+
+        let mut wechat = crate::wechat::WeChat::default();
+        let chat_rooms = crate::wechat::exec_db_query(
+            &mut wechat,
+            String::from("MicroMsg.db"),
+            String::from("select * from Contact"),
+        )
+        .unwrap();
+        for item in chat_rooms.into_iter() {
+            let fields = item.fields;
+            println!("-------分割线-------");
+            for field in fields.into_iter() {
+                if field.column.eq("Reserved7") || field.column.eq("ExtraBuf") {
+                    let c = hex::encode(&field.content);
+                    print!("{}: {:?}, ", field.column, c);
+                } else {
+                    print!(
+                        "{}: {}, ",
+                        field.column,
+                        String::from_utf8(field.content).unwrap()
+                    );
+                }
+            }
+            println!();
+        }
+    }
+
+    #[test]
+    fn test_exec_db_query_chatroom() {
+        pub mod roomdata {
+            include!("proto/roomdata.rs");
+        }
+        use prost::Message;
+
+        let mut wechat = crate::wechat::WeChat::default();
+        let chat_rooms = crate::wechat::exec_db_query(
+            &mut wechat,
+            String::from("MicroMsg.db"),
+            String::from("select * from ChatRoom where ChatRoomName = '21262247140@chatroom'"),
+        )
+        .unwrap();
+        for item in chat_rooms.into_iter() {
+            let fields = item.fields;
+            for field in fields.into_iter() {
+                if field.column.eq("RoomData") {
+                    let c = roomdata::RoomData::decode(field.content.as_slice()).unwrap();
+                    println!("{}: {:?}", field.column, c);
+                } else {
+                    println!(
+                        "{}: {}",
+                        field.column,
+                        String::from_utf8(field.content).unwrap()
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_query_chat_room_info() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let chat_room =
+            crate::wechat::query_chat_room_info(&mut wechat, String::from("48585852775@chatroom"))
+                .unwrap();
+        print!("chat_room: {:?}", chat_room);
+    }
+
+    #[test]
+    fn test_exec_db_query_chatroom_info() {
+        pub mod roomdata {
+            include!("proto/roomdata.rs");
+        }
+        use prost::Message;
+
+        let mut wechat = crate::wechat::WeChat::default();
+        let chat_rooms = crate::wechat::exec_db_query(
+            &mut wechat,
+            String::from("MicroMsg.db"),
+            String::from("select * from ChatRoomInfo where ChatRoomName = '21262247140@chatroom'"),
+        )
+        .unwrap();
+        for item in chat_rooms.into_iter() {
+            let fields = item.fields;
+            for field in fields.into_iter() {
+                if field.column.eq("RoomData") {
+                    let c = roomdata::RoomData::decode(field.content.as_slice()).unwrap();
+                    println!("{}: {:?}", field.column, c);
+                } else {
+                    println!(
+                        "{}: {}",
+                        field.column,
+                        String::from_utf8(field.content).unwrap()
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_exec_db_query_contact_head_img_url() {
+        pub mod roomdata {
+            include!("proto/roomdata.rs");
+        }
+        use prost::Message;
+
+        let mut wechat = crate::wechat::WeChat::default();
+        let chat_rooms = crate::wechat::exec_db_query(
+            &mut wechat,
+            String::from("MicroMsg.db"),
+            String::from(
+                "select * from ContactHeadImgUrl where usrName = '25984981691552386@openim'",
+            ),
+        )
+        .unwrap();
+        for item in chat_rooms.into_iter() {
+            println!("-------分割线-------");
+            let fields = item.fields;
+            for field in fields.into_iter() {
+                if field.column.eq("RoomData") {
+                    let c = roomdata::RoomData::decode(field.content.as_slice()).unwrap();
+                    println!("{}: {:?}", field.column, c);
+                } else {
+                    println!(
+                        "{}: {}",
+                        field.column,
+                        String::from_utf8(field.content).unwrap()
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_query_contact_info() {
+        let mut wechat = crate::wechat::WeChat::default();
+        let contact_info = crate::wechat::query_contact_info(
+            &mut wechat,
+            String::from("25984981691552386@openim"),
+        )
+        .unwrap();
+        println!("contact_info: {:?}", contact_info);
+    }
+
+    #[test]
     fn test_get_self_wx_id() {
         let mut wechat = crate::wechat::WeChat::default();
         let wx_id = crate::wechat::get_self_wx_id(&mut wechat).unwrap().unwrap();
@@ -1083,9 +1503,9 @@ mod test {
         let mut wechat = crate::wechat::WeChat::default();
         let status = crate::wechat::send_text(
             &mut wechat,
-            String::from("Hello, wcferry!"),
-            String::from("filehelper"),
-            String::from(""),
+            String::from("艾特测试"),
+            String::from("21262247140@chatroom"),
+            String::from("@jingmo0614"),
         )
         .unwrap();
         println!("Success: {}", status);
