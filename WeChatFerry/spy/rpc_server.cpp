@@ -40,8 +40,6 @@
 
 namespace fs = std::filesystem;
 
-extern int IsLogin(void); // Defined in spy.cpp
-
 bool gIsListening    = false;
 bool gIsListeningPyq = false;
 mutex gMutex;
