@@ -48,6 +48,7 @@ vcpkg install protobuf[zlib]:x64-windows-static
 vcpkg install spdlog:x64-windows-static
 vcpkg install nng:x64-windows-static
 vcpkg install magic-enum:x64-windows-static
+vcpkg install minhook:x64-windows-static
 vcpkg integrate install
 ```
 
