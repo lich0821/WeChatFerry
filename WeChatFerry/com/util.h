@@ -8,10 +8,10 @@
 #define WCFSPYDLL       L"spy.dll"
 #define WCFSPYDLL_DEBUG L"spy_debug.dll"
 
-#define GET_DWORD(addr)          ((DWORD) * (DWORD *)(addr))
-#define GET_QWORD(addr)          ((uint64_t) * (uint64_t *)(addr))
-#define GET_STRING(addr)         ((CHAR *)(*(DWORD *)(addr)))
-#define GET_WSTRING(addr)        ((WCHAR *)(*(DWORD *)(addr)))
+#define GET_UINT64(addr)         ((UINT64) * (UINT64 *)(addr))
+#define GET_QWORD(addr)          ((UINT64) * (UINT64 *)(addr))
+#define GET_STRING(addr)         ((CHAR *)(*(UINT64 *)(addr)))
+#define GET_WSTRING(addr)        ((WCHAR *)(*(UINT64 *)(addr)))
 #define GET_STRING_FROM_P(addr)  ((CHAR *)(addr))
 #define GET_WSTRING_FROM_P(addr) ((WCHAR *)(addr))
 
@@ -20,16 +20,16 @@ typedef struct PortPath {
     char path[MAX_PATH];
 } PortPath_t;
 
-DWORD GetWeChatPid();
-int OpenWeChat(DWORD *pid);
+UINT64 GetWeChatPid();
+int OpenWeChat(UINT64 *pid);
 int GetWeChatVersion(wchar_t *version);
-int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size);
-DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address);
-std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address);
+size_t GetWstringByAddress(UINT64 address, wchar_t *buffer, UINT64 buffer_size);
+UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 address);
+std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, UINT64 address);
 std::wstring String2Wstring(std::string s);
 std::string Wstring2String(std::wstring ws);
 std::string GB2312ToUtf8(const char *gb2312);
-std::string GetStringByAddress(DWORD address);
-std::string GetStringByStrAddr(DWORD addr);
-std::string GetStringByWstrAddr(DWORD addr);
+std::string GetStringByAddress(UINT64 address);
+std::string GetStringByStrAddr(UINT64 addr);
+std::string GetStringByWstrAddr(UINT64 addr);
 void DbgMsg(const char *zcFormat, ...);

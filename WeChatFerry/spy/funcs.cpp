@@ -23,9 +23,9 @@ namespace fs = std::filesystem;
 
 extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 
-int IsLogin(void) { return (int)GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
+int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.login); }
 
 #if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)

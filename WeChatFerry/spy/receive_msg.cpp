@@ -19,7 +19,7 @@ extern queue<WxMsg_t> gMsgQueue;
 
 // Defined in spy.cpp
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 
 static DWORD reg_buffer          = 0;
 static DWORD recvMsgHookAddr     = 0;

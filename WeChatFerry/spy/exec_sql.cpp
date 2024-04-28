@@ -16,7 +16,7 @@
 #define OFFSET_DB_NAME         0x14
 #define OFFSET_DB_MSG_MGR      0x30403B8
 
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 
 typedef map<string, DWORD> dbMap_t;
 static dbMap_t dbMap;

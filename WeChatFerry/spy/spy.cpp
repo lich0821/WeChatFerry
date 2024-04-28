@@ -7,7 +7,7 @@
 #include "util.h"
 
 WxCalls_t g_WxCalls      = { 0 };
-DWORD g_WeChatWinDllAddr = 0;
+UINT64 g_WeChatWinDllAddr = 0;
 
 void InitSpy(LPVOID args)
 {
@@ -16,7 +16,7 @@ void InitSpy(LPVOID args)
     PortPath_t *pp      = (PortPath_t *)args;
 
     InitLogger(pp->path);
-    g_WeChatWinDllAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
+    g_WeChatWinDllAddr = (UINT64)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
     if (g_WeChatWinDllAddr == 0) {
         LOG_ERROR("获取 wechatWin.dll 模块地址失败");
         return;
