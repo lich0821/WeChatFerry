@@ -51,7 +51,7 @@ static DWORD lThreadId = 0;
 static bool lIsRunning = false;
 static nng_socket cmdSock, msgSock; // TODO: 断开检测
 static uint8_t gBuffer[G_BUF_SIZE] = { 0 };
-#if 0
+
 bool func_is_login(uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -68,7 +68,7 @@ bool func_is_login(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -850,11 +850,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
 
     switch (req.func) {
-#if 0
         case Functions_FUNC_IS_LOGIN: {
             ret = func_is_login(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_SELF_WXID: {
             ret = func_get_self_wxid(out, out_len);
             break;
