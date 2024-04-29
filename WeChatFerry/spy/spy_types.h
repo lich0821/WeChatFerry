@@ -206,8 +206,8 @@ struct WxString {
     WxString(std::wstring &ws)
     {
         wptr     = ws.c_str();
-        size     = ws.size();
-        capacity = ws.capacity();
+        size     = (DWORD)ws.size();
+        capacity = (DWORD)ws.capacity();
         ptr      = NULL;
         clen     = 0;
     }

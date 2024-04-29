@@ -19,7 +19,7 @@ extern queue<WxMsg_t> gMsgQueue;
 
 // Defined in spy.cpp
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 
 static DWORD reg_buffer          = 0;
 static DWORD recvMsgHookAddr     = 0;
@@ -31,7 +31,7 @@ static DWORD recvPyqHookAddr     = 0;
 static DWORD recvPyqCallAddr     = 0;
 static DWORD recvPyqJumpBackAddr = 0;
 static CHAR recvPyqBackupCode[5] = { 0 };
-
+#if 0
 MsgTypes_t GetMsgTypes()
 {
     const MsgTypes_t m = {
@@ -259,3 +259,4 @@ void UnListenPyq()
     UnHookAddress(recvPyqHookAddr, recvPyqBackupCode);
     gIsListeningPyq = false;
 }
+#endif

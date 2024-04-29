@@ -3,6 +3,7 @@
 #include "stdint.h"
 #include <string>
 
+int IsLogin(void);
 std::string GetAudio(uint64_t id, std::string dir);
 std::string DecryptImage(std::string src, std::string dst);
 int RefreshPyq(uint64_t id);

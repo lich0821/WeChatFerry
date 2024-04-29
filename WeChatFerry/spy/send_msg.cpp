@@ -10,9 +10,9 @@
 
 extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
-
+#if 0
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
     int success        = 0;
@@ -438,3 +438,4 @@ int ForwardMessage(uint64_t msgid, string receiver)
 
     return status;
 }
+#endif

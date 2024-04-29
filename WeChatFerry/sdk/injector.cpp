@@ -1,26 +1,44 @@
-﻿#include "injector.h"
+﻿#include "framework.h"
+#include "psapi.h"
+#include <filesystem>
+#include <string>
 
-typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+#include "injector.h"
+#include "util.h"
 
-static void ShowErrorMessage(DWORD dwError, HANDLE hProcess)
+using namespace std;
+
+HMODULE GetTargetModuleBase(HANDLE process, string dll)
 {
-    BOOL bIsWow64             = FALSE;
-    WCHAR szErrorMessage[256] = { 0 };
-    LPFN_ISWOW64PROCESS fnIsWow64Process
-        = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
-    if (fnIsWow64Process != NULL && fnIsWow64Process(hProcess, &bIsWow64)) {
-        if (bIsWow64) {
-            wsprintf(szErrorMessage, L"LoadLibrary 调用失败，请检查应用版本/位数。错误码: %lu", dwError);
+    DWORD cbNeeded;
+    HMODULE moduleHandleList[512];
+    BOOL ret = EnumProcessModulesEx(process, moduleHandleList, sizeof(moduleHandleList), &cbNeeded, LIST_MODULES_64BIT);
+    if (!ret) {
+        MessageBox(NULL, L"获取模块失败", L"GetTargetModuleBase", 0);
+        return NULL;
+    }
+
+    if (cbNeeded > sizeof(moduleHandleList)) {
+        MessageBox(NULL, L"模块数量过多", L"GetTargetModuleBase", 0);
+        return NULL;
+    }
+    DWORD processCount = cbNeeded / sizeof(HMODULE);
+
+    char moduleName[32];
+    for (DWORD i = 0; i < processCount; i++) {
+        GetModuleBaseNameA(process, moduleHandleList[i], moduleName, 32);
+        if (!strncmp(dll.c_str(), moduleName, dll.size())) {
+            return moduleHandleList[i];
         }
     }
-    wsprintf(szErrorMessage, L"LoadLibrary 调用失败。错误码: %lu", dwError);
-    MessageBox(NULL, szErrorMessage, L"InjectDll", 0);
+    return NULL;
 }
 
 HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
 {
     HANDLE hThread;
     SIZE_T cszDLL = (wcslen(dllPath) + 1) * sizeof(WCHAR);
+
     // 1. 打开目标进程
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
     if (hProcess == NULL) {
@@ -39,18 +57,31 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     WriteProcessMemory(hProcess, pRemoteAddress, dllPath, cszDLL, NULL);
 
     // 3. 创建一个远程线程，让目标进程调用 LoadLibrary
-    hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, pRemoteAddress, 0, NULL);
+    HMODULE k32 = GetModuleHandle(L"kernel32.dll");
+    if (k32 == NULL) {
+        MessageBox(NULL, L"获取 kernel32 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    FARPROC libAddr = GetProcAddress(k32, "LoadLibraryW");
+    if (!libAddr) {
+        MessageBox(NULL, L"获取 LoadLibrary 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)libAddr, pRemoteAddress, 0, NULL);
     if (hThread == NULL) {
-        ShowErrorMessage(GetLastError(), hProcess);
         VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
         CloseHandle(hProcess);
-
+        MessageBox(NULL, L"CreateRemoteThread 失败", L"InjectDll", 0);
         return NULL;
     }
 
     WaitForSingleObject(hThread, -1);
-    GetExitCodeThread(hThread, (LPDWORD)injectedBase);
     CloseHandle(hThread);
+
+    *injectedBase = GetTargetModuleBase(hProcess, filesystem::path(Wstring2String(dllPath)).filename().string());
+
     VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
     // CloseHandle(hProcess); // Close when exit
 
@@ -62,7 +93,18 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
     HANDLE hThread = NULL;
 
     // 使目标进程调用 FreeLibrary，卸载 DLL
-    hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)FreeLibrary, (LPVOID)dllBase, 0, NULL);
+    HMODULE k32 = GetModuleHandle(L"kernel32.dll");
+    if (k32 == NULL) {
+        MessageBox(NULL, L"获取 kernel32 失败", L"InjectDll", 0);
+        return NULL;
+    }
+
+    FARPROC libAddr = GetProcAddress(k32, "FreeLibraryAndExitThread");
+    if (!libAddr) {
+        MessageBox(NULL, L"获取 FreeLibrary 失败", L"InjectDll", 0);
+        return NULL;
+    }
+    hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)libAddr, (LPVOID)dllBase, 0, NULL);
     if (hThread == NULL) {
         MessageBox(NULL, L"FreeLibrary 调用失败!", L"EjectDll", 0);
         return false;
@@ -74,29 +116,33 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
     return true;
 }
 
-static void *GetFuncAddr(LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName)
+static UINT64 GetFuncOffset(LPCWSTR dllPath, LPCSTR funcName)
 {
-    HMODULE hLoaded = LoadLibrary(dllPath);
-    if (hLoaded == NULL) {
-        return NULL;
+    HMODULE dll = LoadLibrary(dllPath);
+    if (dll == NULL) {
+        MessageBox(NULL, L"获取 DLL 失败", L"GetFuncOffset", 0);
+        return 0;
     }
 
-    void *absAddr = GetProcAddress(hLoaded, funcName);
-    DWORD offset  = (DWORD)absAddr - (DWORD)hLoaded;
+    LPVOID absAddr = GetProcAddress(dll, funcName);
+    UINT64 offset  = (UINT64)absAddr - (UINT64)dll;
+    FreeLibrary(dll);
 
-    FreeLibrary(hLoaded);
-
-    return (void *)((DWORD)dllBase + offset);
+    return offset;
 }
 
-bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPVOID parameter, DWORD *ret)
+bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPDWORD ret)
 {
-    void *pFunc = GetFuncAddr(dllPath, dllBase, funcName);
-    if (pFunc == NULL) {
+    UINT64 offset = GetFuncOffset(dllPath, funcName);
+    if (offset == 0) {
+        return false;
+    }
+    UINT64 pFunc = (UINT64)dllBase + GetFuncOffset(dllPath, funcName);
+    if (pFunc <= (UINT64)dllBase) {
         return false;
     }
 
-    HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, parameter, 0, NULL);
+    HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, NULL, 0, NULL);
     if (hThread == NULL) {
         return false;
     }
@@ -110,10 +156,14 @@ bool CallDllFunc(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcNa
 }
 
 bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR funcName, LPVOID parameter, size_t sz,
-                   DWORD *ret)
+                   LPDWORD ret)
 {
-    void *pFunc = GetFuncAddr(dllPath, dllBase, funcName);
-    if (pFunc == NULL) {
+    UINT64 offset = GetFuncOffset(dllPath, funcName);
+    if (offset == 0) {
+        return false;
+    }
+    UINT64 pFunc = (UINT64)dllBase + GetFuncOffset(dllPath, funcName);
+    if (pFunc <= (UINT64)dllBase) {
         return false;
     }
 

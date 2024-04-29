@@ -40,8 +40,6 @@
 
 namespace fs = std::filesystem;
 
-extern int IsLogin(void); // Defined in spy.cpp
-
 bool gIsListening    = false;
 bool gIsListeningPyq = false;
 mutex gMutex;
@@ -70,7 +68,7 @@ bool func_is_login(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -837,7 +835,7 @@ bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *l
 
     return true;
 }
-
+#endif
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -850,11 +848,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     }
 
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
+
     switch (req.func) {
         case Functions_FUNC_IS_LOGIN: {
             ret = func_is_login(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_SELF_WXID: {
             ret = func_get_self_wxid(out, out_len);
             break;
@@ -977,11 +977,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
+#endif
         default: {
             LOG_ERROR("[UNKNOW FUNCTION]");
             break;
         }
     }
+
     pb_release(Request_fields, &req);
     return ret;
 }
@@ -1065,7 +1067,7 @@ int RpcStopServer()
     if (lIsRunning) {
         nng_close(cmdSock);
         nng_close(msgSock);
-        UnListenMessage();
+        // UnListenMessage();
         lIsRunning = false;
         Sleep(1000);
         LOG_INFO("Server stoped.");
