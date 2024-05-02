@@ -20,8 +20,8 @@ typedef struct PortPath {
     char path[MAX_PATH];
 } PortPath_t;
 
-UINT64 GetWeChatPid();
-int OpenWeChat(UINT64 *pid);
+DWORD GetWeChatPid();
+int OpenWeChat(DWORD *pid);
 int GetWeChatVersion(wchar_t *version);
 size_t GetWstringByAddress(UINT64 address, wchar_t *buffer, UINT64 buffer_size);
 UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 address);

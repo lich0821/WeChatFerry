@@ -163,9 +163,9 @@ int GetWeChatVersion(wchar_t *version)
     return ret;
 }
 
-UINT64 GetWeChatPid()
+DWORD GetWeChatPid()
 {
-    UINT64 pid          = 0;
+    DWORD pid          = 0;
     HANDLE hSnapshot    = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
     while (Process32Next(hSnapshot, &pe32)) {
@@ -179,7 +179,7 @@ UINT64 GetWeChatPid()
     return pid;
 }
 
-int OpenWeChat(UINT64 *pid)
+int OpenWeChat(DWORD *pid)
 {
     *pid = GetWeChatPid();
     if (*pid) {
