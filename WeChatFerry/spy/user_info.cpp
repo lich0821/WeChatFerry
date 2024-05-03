@@ -22,7 +22,7 @@ string GetSelfWxid()
 {
     UINT64 wxidType = 0;
     try {
-        wxidType = GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.ui.wxid + 0x14);
+        wxidType = GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.ui.wxid + 0x18);
         if (wxidType == 0xF) {
             return GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.wxid);
         } else {
@@ -41,7 +41,7 @@ UserInfo_t GetUserInfo()
 
     ui.wxid = GetSelfWxid();
 
-    UINT64 nameType = GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.ui.nickName + 0x14);
+    UINT64 nameType = GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.ui.nickName + 0x18);
     if (nameType == 0xF) {
         ui.name = GET_STRING_FROM_P(g_WeChatWinDllAddr + g_WxCalls.ui.nickName);
     } else { // 0x1F

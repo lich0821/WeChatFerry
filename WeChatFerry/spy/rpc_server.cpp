@@ -68,7 +68,7 @@ bool func_is_login(uint8_t *out, size_t *len)
 
     return true;
 }
-#if 0
+
 bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -87,7 +87,7 @@ bool func_get_self_wxid(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_get_msg_types(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -854,11 +854,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_is_login(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_GET_SELF_WXID: {
             ret = func_get_self_wxid(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_MSG_TYPES: {
             ret = func_get_msg_types(out, out_len);
             break;
