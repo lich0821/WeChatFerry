@@ -31,7 +31,7 @@ static DWORD recvPyqHookAddr     = 0;
 static DWORD recvPyqCallAddr     = 0;
 static DWORD recvPyqJumpBackAddr = 0;
 static CHAR recvPyqBackupCode[5] = { 0 };
-#if 0
+
 MsgTypes_t GetMsgTypes()
 {
     const MsgTypes_t m = {
@@ -72,7 +72,7 @@ MsgTypes_t GetMsgTypes()
 
     return m;
 }
-
+#if 0
 void HookAddress(DWORD hookAddr, LPVOID funcAddr, CHAR recvMsgBackupCode[5])
 {
     // 组装跳转数据

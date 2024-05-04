@@ -109,7 +109,7 @@ bool func_get_user_info(uint8_t *out, size_t *len)
 
     return true;
 }
-#if 0
+
 bool func_get_msg_types(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -129,7 +129,7 @@ bool func_get_msg_types(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_get_contacts(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -862,11 +862,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_user_info(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_GET_MSG_TYPES: {
             ret = func_get_msg_types(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_CONTACTS: {
             ret = func_get_contacts(out, out_len);
             break;
