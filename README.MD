@@ -88,6 +88,13 @@ sdk.WxDestroySDK()
 # 注意关闭 Python 进程
 ```
 
+### 调试日志
+```c
+    DbgMsg("ListenMessage"); // 封装的 OutputDebugString
+    OutputDebugString(L"ListenMessage\n");
+    MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
+```
+
 ## 项目结构
 
 ```sh
