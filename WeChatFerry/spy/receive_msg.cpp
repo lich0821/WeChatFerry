@@ -110,7 +110,7 @@ void UnListenMessage()
         return;
     }
 
-    status = MH_DisableHook(&recvMsgCallAddr);
+    status = MH_DisableHook(&funcRecvMsg);
     if (status != MH_OK) {
         LOG_ERROR("MH_DisableHook failed: {}", to_string(status));
         return;
