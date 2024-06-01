@@ -1,5 +1,6 @@
 ﻿#pragma execution_character_set("utf-8")
 
+#include "MinHook.h"
 #include "framework.h"
 #include <condition_variable>
 #include <mutex>
@@ -21,16 +22,9 @@ extern queue<WxMsg_t> gMsgQueue;
 extern WxCalls_t g_WxCalls;
 extern UINT64 g_WeChatWinDllAddr;
 
-static DWORD reg_buffer          = 0;
-static DWORD recvMsgHookAddr     = 0;
-static DWORD recvMsgCallAddr     = 0;
-static DWORD recvMsgJumpBackAddr = 0;
-static CHAR recvMsgBackupCode[5] = { 0 };
-
-static DWORD recvPyqHookAddr     = 0;
-static DWORD recvPyqCallAddr     = 0;
-static DWORD recvPyqJumpBackAddr = 0;
-static CHAR recvPyqBackupCode[5] = { 0 };
+typedef UINT64 (*funcRecvMsg_t)(UINT64, UINT64);
+static funcRecvMsg_t funcRecvMsg = nullptr;
+static funcRecvMsg_t realRecvMsg = nullptr;
 
 MsgTypes_t GetMsgTypes()
 {
@@ -72,7 +66,77 @@ MsgTypes_t GetMsgTypes()
 
     return m;
 }
+
+static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
+{
+    LOG_INFO("DispatchMsg");
+    return realRecvMsg(arg1, arg2);
+}
+
+void ListenMessage()
+{
+    MH_STATUS status = MH_UNKNOWN;
+    if (gIsListening || (g_WeChatWinDllAddr == 0)) {
+        LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
+        return;
+    }
+    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
+
+    status = MH_Initialize();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Initialize failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_CreateHook(&funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg));
+    if (status != MH_OK) {
+        LOG_ERROR("MH_CreateHook failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_EnableHook(&funcRecvMsg);
+    if (status != MH_OK) {
+        LOG_ERROR("MH_EnableHook failed: {}", to_string(status));
+        return;
+    }
+
+    gIsListening = true;
+}
+
+void UnListenMessage()
+{
+    MH_STATUS status = MH_UNKNOWN;
+    if (!gIsListening) {
+        return;
+    }
+
+    status = MH_DisableHook(&recvMsgCallAddr);
+    if (status != MH_OK) {
+        LOG_ERROR("MH_DisableHook failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_Uninitialize();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
+        return;
+    }
+
+    gIsListening = false;
+}
+
 #if 0
+// static DWORD reg_buffer          = 0;
+// static DWORD recvMsgHookAddr     = 0;
+// static DWORD recvMsgCallAddr     = 0;
+// static DWORD recvMsgJumpBackAddr = 0;
+// static CHAR recvMsgBackupCode[5] = { 0 };
+
+// static DWORD recvPyqHookAddr     = 0;
+// static DWORD recvPyqCallAddr     = 0;
+// static DWORD recvPyqJumpBackAddr = 0;
+// static CHAR recvPyqBackupCode[5] = { 0 };
+
 void HookAddress(DWORD hookAddr, LPVOID funcAddr, CHAR recvMsgBackupCode[5])
 {
     // 组装跳转数据
