@@ -80,7 +80,7 @@ void ListenMessage()
         LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
         return;
     }
-    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
+    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + 0x2206570); // TODO: Fix me
 
     status = MH_Initialize();
     if (status != MH_OK) {
@@ -88,13 +88,13 @@ void ListenMessage()
         return;
     }
 
-    status = MH_CreateHook(&funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg));
+    status = MH_CreateHook(funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg));
     if (status != MH_OK) {
         LOG_ERROR("MH_CreateHook failed: {}", to_string(status));
         return;
     }
 
-    status = MH_EnableHook(&funcRecvMsg);
+    status = MH_EnableHook(funcRecvMsg);
     if (status != MH_OK) {
         LOG_ERROR("MH_EnableHook failed: {}", to_string(status));
         return;
@@ -110,7 +110,7 @@ void UnListenMessage()
         return;
     }
 
-    status = MH_DisableHook(&funcRecvMsg);
+    status = MH_DisableHook(funcRecvMsg);
     if (status != MH_OK) {
         LOG_ERROR("MH_DisableHook failed: {}", to_string(status));
         return;
@@ -124,6 +124,10 @@ void UnListenMessage()
 
     gIsListening = false;
 }
+
+void ListenPyq() { }
+
+void UnListenPyq() { }
 
 #if 0
 // static DWORD reg_buffer          = 0;
