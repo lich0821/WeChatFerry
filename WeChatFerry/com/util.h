@@ -9,6 +9,7 @@
 #define WCFSPYDLL_DEBUG L"spy_debug.dll"
 
 #define GET_UINT64(addr)         ((UINT64) * (UINT64 *)(addr))
+#define GET_DWORD(addr)          ((DWORD) * (UINT64 *)(addr))
 #define GET_QWORD(addr)          ((UINT64) * (UINT64 *)(addr))
 #define GET_STRING(addr)         ((CHAR *)(*(UINT64 *)(addr)))
 #define GET_WSTRING(addr)        ((WCHAR *)(*(UINT64 *)(addr)))

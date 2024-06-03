@@ -165,7 +165,7 @@ int GetWeChatVersion(wchar_t *version)
 
 DWORD GetWeChatPid()
 {
-    DWORD pid          = 0;
+    DWORD pid           = 0;
     HANDLE hSnapshot    = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
     while (Process32Next(hSnapshot, &pe32)) {
@@ -208,44 +208,44 @@ int OpenWeChat(DWORD *pid)
     return ERROR_SUCCESS;
 }
 
-size_t GetWstringByAddress(UINT64 address, wchar_t *buffer, UINT64 buffer_size)
+size_t GetWstringByAddress(UINT64 addr, wchar_t *buffer, UINT64 buffer_size)
 {
-    size_t strLength = GET_UINT64(address + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     if (strLength == 0) {
         return 0;
     } else if (strLength > buffer_size) {
         strLength = buffer_size - 1;
     }
 
-    wmemcpy_s(buffer, strLength + 1, GET_WSTRING(address), strLength + 1);
+    wmemcpy_s(buffer, strLength + 1, GET_WSTRING(addr), strLength + 1);
 
     return strLength;
 }
 
-string GetStringByAddress(UINT64 address)
+string GetStringByAddress(UINT64 addr)
 {
-    UINT64 strLength = GET_UINT64(address + 4);
-    return Wstring2String(wstring(GET_WSTRING(address), strLength));
+    size_t strLength = GET_DWORD(addr + 8);
+    return Wstring2String(wstring(GET_WSTRING(addr), strLength));
 }
 
 string GetStringByStrAddr(UINT64 addr)
 {
-    UINT64 strLength = GET_UINT64(addr + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     return strLength ? string(GET_STRING(addr), strLength) : string();
 }
 
 string GetStringByWstrAddr(UINT64 addr)
 {
-    UINT64 strLength = GET_UINT64(addr + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     return strLength ? Wstring2String(wstring(GET_WSTRING(addr), strLength)) : string();
 }
 
-UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 address)
+UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 addr)
 {
     UINT32 value = 0;
 
     unsigned char data[4] = { 0 };
-    if (ReadProcessMemory(hProcess, (LPVOID)address, data, 4, 0)) {
+    if (ReadProcessMemory(hProcess, (LPVOID)addr, data, 4, 0)) {
         value = data[0] & 0xFF;
         value |= ((data[1] << 8) & 0xFF00);
         value |= ((data[2] << 16) & 0xFF0000);
