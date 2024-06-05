@@ -69,7 +69,57 @@ MsgTypes_t GetMsgTypes()
 
 static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
 {
-    LOG_INFO("DispatchMsg");
+    WxMsg_t wxMsg = { 0 };
+    try {
+        wxMsg.id      = GET_QWORD(arg2 + g_WxCalls.recvMsg.msgId);
+        wxMsg.type    = GET_DWORD(arg2 + g_WxCalls.recvMsg.type);
+        wxMsg.is_self = GET_DWORD(arg2 + g_WxCalls.recvMsg.isSelf);
+        wxMsg.ts      = GET_DWORD(arg2 + g_WxCalls.recvMsg.ts);
+        wxMsg.content = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.content);
+        wxMsg.sign    = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.sign);
+        wxMsg.xml     = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.msgXml);
+
+        string roomid = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.roomId);
+        if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
+            wxMsg.is_group = true;
+            wxMsg.roomid   = roomid;
+            if (wxMsg.is_self) {
+                wxMsg.sender = GetSelfWxid();
+            } else {
+                wxMsg.sender = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.wxid);
+            }
+        } else {
+            wxMsg.is_group = false;
+            if (wxMsg.is_self) {
+                wxMsg.sender = GetSelfWxid();
+            } else {
+                wxMsg.sender = roomid;
+            }
+        }
+
+        wxMsg.thumb = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.thumb);
+        if (!wxMsg.thumb.empty()) {
+            wxMsg.thumb = GetHomePath() + wxMsg.thumb;
+            replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
+        }
+
+        wxMsg.extra = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.extra);
+        if (!wxMsg.extra.empty()) {
+            wxMsg.extra = GetHomePath() + wxMsg.extra;
+            replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
+        }
+    } catch (const std::exception &e) {
+        LOG_ERROR(GB2312ToUtf8(e.what()));
+    } catch (...) {
+        LOG_ERROR("Unknow exception.");
+    }
+
+    {
+        unique_lock<mutex> lock(gMutex);
+        gMsgQueue.push(wxMsg); // 推送到队列
+    }
+
+    gCV.notify_all(); // 通知各方消息就绪
     return realRecvMsg(arg1, arg2);
 }
 
@@ -80,7 +130,7 @@ void ListenMessage()
         LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
         return;
     }
-    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + 0x2206570); // TODO: Fix me
+    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
 
     status = MH_Initialize();
     if (status != MH_OK) {
