@@ -855,6 +855,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_is_login(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_SELF_WXID: {
             ret = func_get_self_wxid(out, out_len);
             break;
@@ -863,6 +864,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_user_info(out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_GET_MSG_TYPES: {
             ret = func_get_msg_types(out, out_len);
             break;
@@ -916,7 +918,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
             ret = func_enable_recv_txt(req.msg.flag, out, out_len);
             break;
@@ -925,7 +926,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_EXEC_DB_QUERY: {
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;

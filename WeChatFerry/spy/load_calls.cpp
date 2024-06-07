@@ -6,7 +6,7 @@
 #define SUPPORT_VERSION L"3.9.10.19"
 
 WxCalls_t wxCalls = {
-    0x5AB9184,                                      // Login Status
+    0x5AB8A2C,                                      // Login Status
     { 0x5AB8FC8, 0x5AB90A8, 0x5AB8FE8, 0x5A7F170 }, // User Info: wxid, nickname, mobile, home
     { 0x768140, 0xCE6C80, 0x756960 },               // Send Message
     /* Receive Message:
