@@ -3,7 +3,7 @@
 
 #include "load_calls.h"
 
-#define SUPPORT_VERSION L"3.9.10.19"
+#define SUPPORT_VERSION L"3.9.10.27"
 
 WxCalls_t wxCalls = {
     0x5AB8A2C,                                      // Login Status
