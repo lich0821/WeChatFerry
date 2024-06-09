@@ -214,7 +214,7 @@ bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#endif
 bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -242,7 +242,7 @@ bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -884,10 +884,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_SEND_TXT: {
             ret = func_send_txt(req.msg.txt, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_RICH_TXT: {
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;

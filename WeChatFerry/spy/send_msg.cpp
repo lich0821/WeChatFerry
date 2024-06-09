@@ -12,25 +12,22 @@ extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
 extern UINT64 g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
-#if 0
+
+typedef UINT64 (*funcSendMsgMgr_t)();
+typedef UINT64 (*funcSendTextMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64);
+typedef UINT64 (*funcFree_t)(UINT64);
+
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    int success        = 0;
-    char buffer[0x2D8] = { 0 };
-
-    // 发送消息Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendText.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendText.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendText.call3;
-
-    wstring wsWxid = String2Wstring(wxid);
-    wstring wsMsg  = String2Wstring(msg);
+    uint64_t success = 0;
+    wstring wsWxid   = String2Wstring(wxid);
+    wstring wsMsg    = String2Wstring(msg);
     WxString wxMsg(wsMsg);
     WxString wxWxid(wsWxid);
 
+    vector<wstring> vAtWxids;
     vector<WxString> vWxAtWxids;
     if (!atWxids.empty()) {
-        vector<wstring> vAtWxids;
         wstringstream wss(String2Wstring(atWxids));
         while (wss.good()) {
             wstring wstr;
@@ -39,31 +36,23 @@ void SendTextMessage(string wxid, string msg, string atWxids)
             WxString wxAtWxid(vAtWxids.back());
             vWxAtWxids.push_back(wxAtWxid);
         }
+    } else {
+        WxString wxEmpty = WxString();
+        vWxAtWxids.push_back(wxEmpty);
     }
 
-    __asm
-    {
-        pushad;
-        call sendCall1;
-        push 0x0;
-        push 0x0;
-        push 0x0;
-        push 0x1;
-        lea eax, vWxAtWxids;
-        push eax;
-        lea eax, wxMsg;
-        push eax;
-        lea edx, wxWxid;
-        lea ecx, buffer;
-        call sendCall2;
-        mov success, eax;
-        add esp, 0x18;
-        lea ecx, buffer;
-        call sendCall3;
-        popad;
-    }
+    uint64_t wxAters = (uint64_t) & ((RawVector_t *)&vWxAtWxids)->start;
+
+    char buffer[0x460]                = { 0 };
+    funcSendMsgMgr_t funcSendMsgMgr   = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + 0x1C1E690);
+    funcSendTextMsg_t funcSendTextMsg = (funcSendTextMsg_t)(g_WeChatWinDllAddr + 0x238DDD0);
+    funcFree_t funcFree               = (funcFree_t)(g_WeChatWinDllAddr + 0x1C1FF10);
+    funcSendMsgMgr();
+    success = funcSendTextMsg((uint64_t)(&buffer), (uint64_t)(&wxWxid), (uint64_t)(&wxMsg), wxAters, 1, 1, 0, 0);
+    funcFree((uint64_t)(&buffer));
 }
 
+#if 0
 void SendImageMessage(string wxid, string path)
 {
     if (g_WeChatWinDllAddr == 0) {
