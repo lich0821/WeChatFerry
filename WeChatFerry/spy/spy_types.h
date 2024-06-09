@@ -3,6 +3,7 @@
 #include "framework.h"
 #include <string>
 
+typedef uint64_t QWORD;
 typedef struct UserInfoCall {
     DWORD wxid;
     DWORD nickName;
@@ -214,7 +215,10 @@ struct WxString {
 };
 
 typedef struct RawVector {
-    DWORD start;
-    DWORD finish;
-    DWORD end;
+#ifdef _DEBUG
+    QWORD head;
+#endif
+    QWORD start;
+    QWORD finish;
+    QWORD end;
 } RawVector_t;
