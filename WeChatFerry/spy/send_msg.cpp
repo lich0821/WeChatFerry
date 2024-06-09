@@ -44,9 +44,9 @@ void SendTextMessage(string wxid, string msg, string atWxids)
     uint64_t wxAters = (uint64_t) & ((RawVector_t *)&vWxAtWxids)->start;
 
     char buffer[0x460]                = { 0 };
-    funcSendMsgMgr_t funcSendMsgMgr   = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + 0x1C1E690);
-    funcSendTextMsg_t funcSendTextMsg = (funcSendTextMsg_t)(g_WeChatWinDllAddr + 0x238DDD0);
-    funcFree_t funcFree               = (funcFree_t)(g_WeChatWinDllAddr + 0x1C1FF10);
+    funcSendMsgMgr_t funcSendMsgMgr   = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call1);
+    funcSendTextMsg_t funcSendTextMsg = (funcSendTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call2);
+    funcFree_t funcFree               = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call3);
     funcSendMsgMgr();
     success = funcSendTextMsg((uint64_t)(&buffer), (uint64_t)(&wxWxid), (uint64_t)(&wxMsg), wxAters, 1, 1, 0, 0);
     funcFree((uint64_t)(&buffer));
