@@ -16,9 +16,12 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 typedef QWORD (*funcNew_t)(QWORD);
 typedef QWORD (*funcFree_t)(QWORD);
 typedef QWORD (*funcSendMsgMgr_t)();
+typedef QWORD (*funcGetAppMsgMgr_t)();
 
 typedef QWORD (*funcSendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*funcSendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*funcSendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
+                                   QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -85,16 +88,8 @@ void SendImageMessage(string wxid, string path)
     funcFree(pMsgTmp);
 }
 
-#if 0
 void SendFileMessage(string wxid, string path)
 {
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-    int success        = 0;
-    DWORD tmpEAX       = 0;
-    char buffer[0x2D8] = { 0 };
-
     wstring wsWxid = String2Wstring(wxid);
     wstring wsPath = String2Wstring(path);
 
@@ -102,54 +97,22 @@ void SendFileMessage(string wxid, string path)
     WxString wxPath(wsPath);
     WxString nullbuffer;
 
-    // 发送文件Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
-    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call4;
+    funcNew_t funcNew                   = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call1);
+    funcFree_t funcFree                 = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call2);
+    funcGetAppMsgMgr_t funcGetAppMsgMgr = (funcGetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call3);
+    funcSendFileMsg_t funcSendFile      = (funcSendFileMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call4);
 
-    __asm {
-        pushad;
-        pushfd;
-        call sendCall1;
-        sub esp, 0x14;
-        mov tmpEAX, eax;
-        lea eax, nullbuffer;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        push 0x0;
-        sub esp, 0x14;
-        mov edi, esp;
-        mov dword ptr[edi], 0;
-        mov dword ptr[edi + 0x4], 0;
-        mov dword ptr[edi + 0x8], 0;
-        mov dword ptr[edi + 0xc], 0;
-        mov dword ptr[edi + 0x10], 0;
-        sub esp, 0x14;
-        lea eax, wxPath;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        sub esp, 0x14;
-        lea eax, wxWxid;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        mov ecx, dword ptr[tmpEAX];
-        lea eax, buffer;
-        push eax;
-        call sendCall3;
-        mov al, byte ptr[eax + 0x38];
-        movzx eax, al;
-        mov success, eax;
-        lea ecx, buffer;
-        call sendCall4;
-        popfd;
-        popad;
-    }
+    char msg[0x460] = { 0 };
+    QWORD tmp1[4]   = { 0 };
+    QWORD tmp2[4]   = { 0 };
+    QWORD tmp3[4]   = { 0 };
+
+    QWORD pMsg   = funcNew((QWORD)(&msg));
+    QWORD appMgr = funcGetAppMsgMgr();
+    funcSendFile(appMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), 1, tmp1, 0, tmp2, 0, tmp3, 0, 0);
+    funcFree(pMsg);
 }
-
+#if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {

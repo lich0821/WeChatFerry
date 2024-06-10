@@ -269,7 +269,7 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
-#if 0
+
 bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -296,7 +296,7 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -893,6 +893,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
+        case Functions_FUNC_SEND_FILE: {
+            ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
+            break;
+        }
 #if 0
         case Functions_FUNC_SEND_RICH_TXT: {
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
@@ -900,10 +904,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_SEND_PAT_MSG: {
             ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_FILE: {
-            ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
         case Functions_FUNC_FORWARD_MSG: {
