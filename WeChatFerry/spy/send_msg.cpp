@@ -13,9 +13,12 @@ extern WxCalls_t g_WxCalls;
 extern UINT64 g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
 
-typedef UINT64 (*funcSendMsgMgr_t)();
-typedef UINT64 (*funcSendTextMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64);
+typedef UINT64 (*funcNew_t)(UINT64);
 typedef UINT64 (*funcFree_t)(UINT64);
+typedef UINT64 (*funcSendMsgMgr_t)();
+
+typedef UINT64 (*funcSendTextMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64);
+typedef UINT64 (*funcSendImageMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -52,53 +55,37 @@ void SendTextMessage(string wxid, string msg, string atWxids)
     funcFree((uint64_t)(&buffer));
 }
 
-#if 0
 void SendImageMessage(string wxid, string path)
 {
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-    int success     = 0;
-    DWORD tmpEAX    = 0;
-    char buf[0x2D8] = { 0 };
-
     wstring wsWxid = String2Wstring(wxid);
     wstring wsPath = String2Wstring(path);
 
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
-    WxString nullbuffer;
 
-    // 发送图片Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call3;
-    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call4;
+    funcNew_t funcNew                = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.sendImage.call1);
+    funcFree_t funcFree              = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendImage.call2);
+    funcSendMsgMgr_t funcSendMsgMgr  = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendImage.call3);
+    funcSendImageMsg_t funcSendImage = (funcSendImageMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendImage.call4);
 
-    __asm {
-        pushad;
-        call       sendCall1;
-        sub        esp,0x14;
-        mov        tmpEAX,eax;
-        lea        eax,nullbuffer;
-        mov        ecx,esp;
-        lea        edi,wxPath;
-        push       eax;
-        call       sendCall2;
-        mov        ecx,dword ptr [tmpEAX];
-        lea        eax,wxWxid;
-        push       edi;
-        push       eax;
-        lea        eax,buf;
-        push       eax;
-        call       sendCall3;
-        mov        success,eax;
-        lea        ecx,buf;
-        call       sendCall4;
-        popad;
-    }
+    char msg[0x460]    = { 0 };
+    char msgTmp[0x460] = { 0 };
+    QWORD *flag[10]    = { 0 };
+
+    QWORD tmp1 = 0, tmp2 = 0;
+    QWORD pMsgTmp = funcNew((QWORD)(&msgTmp));
+    flag[8]       = &tmp1;
+    flag[9]       = &tmp2;
+    flag[1]       = (QWORD *)(pMsgTmp);
+
+    QWORD pMsg    = funcNew((QWORD)(&msg));
+    QWORD sendMgr = funcSendMsgMgr();
+    funcSendImage(sendMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), (QWORD)(&flag));
+    funcFree(pMsg);
+    funcFree(pMsgTmp);
 }
 
+#if 0
 void SendFileMessage(string wxid, string path)
 {
     if (g_WeChatWinDllAddr == 0) {
