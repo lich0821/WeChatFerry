@@ -10,21 +10,21 @@
 
 extern HANDLE g_hEvent;
 extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
+extern QWORD g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
 
-typedef UINT64 (*funcNew_t)(UINT64);
-typedef UINT64 (*funcFree_t)(UINT64);
-typedef UINT64 (*funcSendMsgMgr_t)();
+typedef QWORD (*funcNew_t)(QWORD);
+typedef QWORD (*funcFree_t)(QWORD);
+typedef QWORD (*funcSendMsgMgr_t)();
 
-typedef UINT64 (*funcSendTextMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64, UINT64);
-typedef UINT64 (*funcSendImageMsg_t)(UINT64, UINT64, UINT64, UINT64, UINT64);
+typedef QWORD (*funcSendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*funcSendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    uint64_t success = 0;
-    wstring wsWxid   = String2Wstring(wxid);
-    wstring wsMsg    = String2Wstring(msg);
+    QWORD success  = 0;
+    wstring wsWxid = String2Wstring(wxid);
+    wstring wsMsg  = String2Wstring(msg);
     WxString wxMsg(wsMsg);
     WxString wxWxid(wsWxid);
 
@@ -44,15 +44,15 @@ void SendTextMessage(string wxid, string msg, string atWxids)
         vWxAtWxids.push_back(wxEmpty);
     }
 
-    uint64_t wxAters = (uint64_t) & ((RawVector_t *)&vWxAtWxids)->start;
+    QWORD wxAters = (QWORD) & ((RawVector_t *)&vWxAtWxids)->start;
 
     char buffer[0x460]                = { 0 };
     funcSendMsgMgr_t funcSendMsgMgr   = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call1);
     funcSendTextMsg_t funcSendTextMsg = (funcSendTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call2);
     funcFree_t funcFree               = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call3);
     funcSendMsgMgr();
-    success = funcSendTextMsg((uint64_t)(&buffer), (uint64_t)(&wxWxid), (uint64_t)(&wxMsg), wxAters, 1, 1, 0, 0);
-    funcFree((uint64_t)(&buffer));
+    success = funcSendTextMsg((QWORD)(&buffer), (QWORD)(&wxWxid), (QWORD)(&wxMsg), wxAters, 1, 1, 0, 0);
+    funcFree((QWORD)(&buffer));
 }
 
 void SendImageMessage(string wxid, string path)
@@ -374,11 +374,11 @@ int SendPatMessage(string roomid, string wxid)
     return status;
 }
 
-int ForwardMessage(uint64_t msgid, string receiver)
+int ForwardMessage(QWORD msgid, string receiver)
 {
     int status       = -1;
     uint32_t dbIdx   = 0;
-    uint64_t localId = 0;
+    QWORD localId = 0;
 
     if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
