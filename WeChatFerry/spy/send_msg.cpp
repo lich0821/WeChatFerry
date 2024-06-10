@@ -95,7 +95,6 @@ void SendFileMessage(string wxid, string path)
 
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
-    WxString nullbuffer;
 
     funcNew_t funcNew                   = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call1);
     funcFree_t funcFree                 = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call2);
