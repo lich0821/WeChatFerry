@@ -130,8 +130,6 @@ typedef struct CallRichText {
 
 typedef struct CallPatMsg {
     DWORD call1;
-    DWORD call2;
-    DWORD call3;
 } CallPatMsg_t;
 
 typedef struct CallInviteCM {
