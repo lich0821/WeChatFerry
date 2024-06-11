@@ -23,6 +23,7 @@ typedef QWORD (*funcSendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*funcSendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
                                    QWORD);
 typedef QWORD (*funcSendRichTextMsg_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*funcSendPatMsg_t)(QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -179,6 +180,21 @@ int SendRichTextMessage(RichText_t &rt)
     return (int)status;
 }
 
+int SendPatMessage(string roomid, string wxid)
+{
+    QWORD status = -1;
+
+    wstring wsRoomid = String2Wstring(roomid);
+    wstring wsWxid   = String2Wstring(wxid);
+    WxString wxRoomid(wsRoomid);
+    WxString wxWxid(wsWxid);
+
+    funcSendPatMsg_t funcSendPatMsg = (funcSendPatMsg_t)(g_WeChatWinDllAddr + g_WxCalls.pm.call1);
+
+    status = funcSendPatMsg((QWORD)(&wxRoomid), (QWORD)(&wxWxid));
+    return (int)status;
+}
+
 #if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
@@ -302,106 +318,6 @@ void SendEmotionMessage(string wxid, string path)
         popfd;
         popad;
     }
-}
-
-int SendRichTextMessage(RichText_t &rt)
-{
-    int status       = -1;
-    char buff[0x238] = { 0 };
-
-    DWORD rtCall3 = g_WeChatWinDllAddr + g_WxCalls.rt.call3;
-    DWORD rtCall2 = g_WeChatWinDllAddr + g_WxCalls.rt.call2;
-    DWORD rtCall1 = g_WeChatWinDllAddr + g_WxCalls.rt.call1;
-    DWORD rtCall5 = g_WeChatWinDllAddr + g_WxCalls.rt.call5;
-    DWORD rtCall4 = g_WeChatWinDllAddr + g_WxCalls.rt.call4;
-
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx,buff;
-        call rtCall1;
-        popfd;
-        popad;
-    }
-
-    wstring receiver = String2Wstring(rt.receiver);
-    wstring title    = String2Wstring(rt.title);
-    wstring url      = String2Wstring(rt.url);
-    wstring thumburl = String2Wstring(rt.thumburl);
-    wstring account  = String2Wstring(rt.account);
-    wstring name     = String2Wstring(rt.name);
-    wstring digest   = String2Wstring(rt.digest);
-
-    WxString wxReceiver(receiver);
-    WxString wxTitle(title);
-    WxString wxUrl(url);
-    WxString wxThumburl(thumburl);
-    WxString wxAccount(account);
-    WxString wxName(name);
-    WxString wxDigest(digest);
-
-    memcpy(&buff[0x4], &wxTitle, sizeof(wxTitle));
-    memcpy(&buff[0x2C], &wxUrl, sizeof(wxUrl));
-    memcpy(&buff[0x6C], &wxThumburl, sizeof(wxThumburl));
-    memcpy(&buff[0x94], &wxDigest, sizeof(wxDigest));
-    memcpy(&buff[0x1A0], &wxAccount, sizeof(wxAccount));
-    memcpy(&buff[0x1B4], &wxName, sizeof(wxName));
-
-    __asm {
-        pushad;
-        pushfd;
-        call rtCall2;
-        lea ecx, buff;
-        push ecx;
-        sub esp, 0x14;
-        mov edi, eax;
-        mov ecx, esp;
-        lea ebx, wxReceiver;
-        push ebx;
-        call rtCall3;
-        mov ecx, edi;
-        call rtCall4;
-        mov status, eax;
-        add ebx, 0x14;
-        lea ecx, buff;
-        push 0x0;
-        call rtCall5;
-        popfd;
-        popad;
-    }
-
-    return status;
-}
-
-int SendPatMessage(string roomid, string wxid)
-{
-    int status = -1;
-
-    wstring wsRoomid = String2Wstring(roomid);
-    wstring wsWxid   = String2Wstring(wxid);
-    WxString wxRoomid(wsRoomid);
-    WxString wxWxid(wsWxid);
-
-    DWORD pmCall1 = g_WeChatWinDllAddr + g_WxCalls.pm.call1;
-    DWORD pmCall2 = g_WeChatWinDllAddr + g_WxCalls.pm.call2;
-    DWORD pmCall3 = g_WeChatWinDllAddr + g_WxCalls.pm.call3;
-
-    __asm {
-        pushad;
-        call  pmCall1;
-        push  pmCall2;
-        push  0x0;
-        push  eax;
-        lea   ecx, wxRoomid;
-        lea   edx, wxWxid;
-        call  pmCall3;
-        add   esp, 0xc;
-        movzx eax, al;
-        mov   status, eax;
-        popad;
-    }
-
-    return status;
 }
 
 int ForwardMessage(QWORD msgid, string receiver)

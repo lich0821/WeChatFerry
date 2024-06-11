@@ -383,7 +383,6 @@ bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -407,6 +406,7 @@ bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -904,11 +904,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_PAT_MSG: {
             ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_FORWARD_MSG: {
             ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
             break;
