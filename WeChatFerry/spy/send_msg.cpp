@@ -22,6 +22,7 @@ typedef QWORD (*funcSendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWO
 typedef QWORD (*funcSendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*funcSendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
                                    QWORD);
+typedef QWORD (*funcSendRichTextMsg_t)(QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -111,6 +112,73 @@ void SendFileMessage(string wxid, string path)
     funcSendFile(appMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), 1, tmp1, 0, tmp2, 0, tmp3, 0, 0);
     funcFree(pMsg);
 }
+
+WxString *NewWxString(const std::wstring &ws)
+{
+    WxString *p       = (WxString *)HeapAlloc(GetProcessHeap(), 0, sizeof(WxString));
+    wchar_t *pWstring = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, (ws.size() + 1) * 2);
+    if (p == NULL || pWstring == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return NULL;
+    }
+
+    wmemcpy(pWstring, ws.c_str(), ws.size() + 1);
+    p->wptr     = pWstring;
+    p->size     = (DWORD)ws.size();
+    p->capacity = (DWORD)ws.size();
+    p->ptr      = 0;
+    p->clen     = 0;
+    return p;
+}
+
+int SendRichTextMessage(RichText_t &rt)
+{ // TODO: Fix memory leak
+#define SRTM_SIZE 0x3F0
+    QWORD status = -1;
+
+    wstring receiver = String2Wstring(rt.receiver);
+    wstring title    = String2Wstring(rt.title);
+    wstring url      = String2Wstring(rt.url);
+    wstring thumburl = String2Wstring(rt.thumburl);
+    wstring account  = String2Wstring(rt.account);
+    wstring name     = String2Wstring(rt.name);
+    wstring digest   = String2Wstring(rt.digest);
+
+    funcNew_t funcNew                          = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call1);
+    funcFree_t funcFree                        = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call2);
+    funcGetAppMsgMgr_t funcGetAppMsgMgr        = (funcGetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call3);
+    funcSendRichTextMsg_t funcForwordPublicMsg = (funcSendRichTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call4);
+
+    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE);
+    if (buff == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return -1;
+    }
+
+    memset(buff, 0, SRTM_SIZE);
+    funcNew((QWORD)buff);
+    WxString *pReceiver = NewWxString(receiver);
+    WxString *pTitle    = NewWxString(title);
+    WxString *pUrl      = NewWxString(url);
+    WxString *pThumburl = NewWxString(thumburl);
+    WxString *pDigest   = NewWxString(digest);
+    WxString *pAccount  = NewWxString(account);
+    WxString *pName     = NewWxString(name);
+
+    memcpy(buff + 0x8, pTitle, sizeof(WxString));
+    memcpy(buff + 0x48, pUrl, sizeof(WxString));
+    memcpy(buff + 0xB0, pThumburl, sizeof(WxString));
+    memcpy(buff + 0xF0, pDigest, sizeof(WxString));
+    memcpy(buff + 0x2C0, pAccount, sizeof(WxString));
+    memcpy(buff + 0x2E0, pName, sizeof(WxString));
+
+    QWORD mgr = funcGetAppMsgMgr();
+    status    = funcForwordPublicMsg(mgr, (QWORD)(pReceiver), (QWORD)(buff));
+    funcFree((QWORD)buff);
+
+    return (int)status;
+}
+
 #if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {

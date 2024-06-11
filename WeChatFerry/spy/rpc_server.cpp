@@ -296,6 +296,7 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
+
 #if 0
 bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
@@ -348,6 +349,7 @@ bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
+#endif
 
 bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
 {
@@ -381,6 +383,7 @@ bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -897,11 +900,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_RICH_TXT: {
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_PAT_MSG: {
             ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
             break;
@@ -1045,6 +1048,7 @@ static int RunServer()
         }
         nng_free(in, in_len);
     }
+    lIsRunning = false;
     LOG_DEBUG("Leave RunServer");
     return rv;
 }
