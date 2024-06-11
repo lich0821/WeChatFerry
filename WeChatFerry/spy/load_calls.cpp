@@ -33,8 +33,7 @@ WxCalls_t wxCalls = {
     { 0x76F010, 0x792700, 0xBC0370, 0x80F110, 0x82BB40, 0x756E30},
     /*  call1,    call2,    call3,    call4,    call5*/
     {0x76F010, 0x792700, 0xBC0370, 0xBB5F70, 0x756E30},
-    /*  call1,    call2,    call3,    call4,    call5*/
-    {0x76E630, 0x76AE20, 0xF59E40, 0xB73000, 0x76E350},
+    {0x1C27D50, 0x1C27120, 0x1C23630, 0x21A09C0},  // Send Rich Text Message
     /*  call1,    call2,    call3 */
     {0x931730, 0x1D58751, 0x1421940},
     /*  call1,    call2,    call3,    call4,    call5,    call6,    call7,    call8*/

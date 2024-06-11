@@ -126,7 +126,6 @@ typedef struct CallRichText {
     DWORD call2;
     DWORD call3;
     DWORD call4;
-    DWORD call5;
 } CallRichText_t;
 
 typedef struct CallPatMsg {
