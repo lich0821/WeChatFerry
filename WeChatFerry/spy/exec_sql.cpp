@@ -5,45 +5,44 @@
 #include "sqlite3.h"
 #include "util.h"
 
-#define OFFSET_DB_INSTANCE     0x2FFDDC8
-#define OFFSET_DB_MICROMSG     0x68
-#define OFFSET_DB_CHAT_MSG     0x1C0
-#define OFFSET_DB_MISC         0x3D8
-#define OFFSET_DB_EMOTION      0x558
-#define OFFSET_DB_MEDIA        0x9B8
-#define OFFSET_DB_BIZCHAT_MSG  0x1120
-#define OFFSET_DB_FUNCTION_MSG 0x11B0
-#define OFFSET_DB_NAME         0x14
-#define OFFSET_DB_MSG_MGR      0x30403B8
+#define OFFSET_DB_INSTANCE     0x5A40598
+#define OFFSET_DB_MICROMSG     0xb8
+#define OFFSET_DB_CHAT_MSG     0x2c8
+#define OFFSET_DB_MISC         0x5f0
+#define OFFSET_DB_EMOTION      0x15f0
+#define OFFSET_DB_MEDIA        0xF48
+#define OFFSET_DB_BIZCHAT_MSG  0x1A70
+#define OFFSET_DB_FUNCTION_MSG 0x1b98
+#define OFFSET_DB_NAME         0x28
+#define OFFSET_DB_MSG_MGR      0x5ABB5D8
 
 extern UINT64 g_WeChatWinDllAddr;
 
-typedef map<string, DWORD> dbMap_t;
+typedef map<string, QWORD> dbMap_t;
 static dbMap_t dbMap;
-#if 0
-static void GetDbHandle(DWORD base, DWORD offset)
+
+static void GetDbHandle(QWORD base, QWORD offset)
 {
-    wchar_t *wsp;
-    wsp           = (wchar_t *)(*(DWORD *)(base + offset + OFFSET_DB_NAME));
+    wchar_t *wsp  = (wchar_t *)(*(QWORD *)(base + offset + OFFSET_DB_NAME));
     string dbname = Wstring2String(wstring(wsp));
-    dbMap[dbname] = GET_DWORD(base + offset);
+    dbMap[dbname] = GET_QWORD(base + offset);
 }
 
-static void GetMsgDbHandle(DWORD msgMgrAddr)
+static void GetMsgDbHandle(QWORD msgMgrAddr)
 {
-    DWORD dbIndex = GET_DWORD(msgMgrAddr + 0x38);
-    DWORD pStart  = GET_DWORD(msgMgrAddr + 0x2C);
+    QWORD dbIndex = GET_QWORD(msgMgrAddr + 0x68);
+    QWORD pStart  = GET_QWORD(msgMgrAddr + 0x50);
     for (uint32_t i = 0; i < dbIndex; i++) {
-        DWORD dbAddr = GET_DWORD(pStart + i * 0x04);
+        QWORD dbAddr = GET_QWORD(pStart + i * 0x08);
         if (dbAddr) {
             // MSGi.db
             string dbname = Wstring2String(GET_WSTRING(dbAddr));
-            dbMap[dbname] = GET_DWORD(dbAddr + 0x60);
+            dbMap[dbname] = GET_QWORD(dbAddr + 0x78);
 
             // MediaMsgi.db
-            DWORD mmdbAddr  = GET_DWORD(dbAddr + 0x14);
-            string mmdbname = Wstring2String(GET_WSTRING(mmdbAddr + 0x4C));
-            dbMap[mmdbname] = GET_DWORD(mmdbAddr + 0x38);
+            // QWORD mmdbAddr  = GET_QWORD(dbAddr + 0x14);
+            // string mmdbname = Wstring2String(GET_WSTRING(mmdbAddr + 0x4C));
+            // dbMap[mmdbname] = GET_QWORD(mmdbAddr + 0x38);
         }
     }
 }
@@ -52,7 +51,7 @@ dbMap_t GetDbHandles()
 {
     dbMap.clear();
 
-    DWORD dbInstanceAddr = GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
+    QWORD dbInstanceAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
 
     GetDbHandle(dbInstanceAddr, OFFSET_DB_MICROMSG);     // MicroMsg.db
     GetDbHandle(dbInstanceAddr, OFFSET_DB_CHAT_MSG);     // ChatMsg.db
@@ -61,7 +60,7 @@ dbMap_t GetDbHandles()
     GetDbHandle(dbInstanceAddr, OFFSET_DB_MEDIA);        // Media.db
     GetDbHandle(dbInstanceAddr, OFFSET_DB_FUNCTION_MSG); // Function.db
 
-    GetMsgDbHandle(GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR)); // MSGi.db & MediaMsgi.db
+    GetMsgDbHandle(GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR)); // MSGi.db & MediaMsgi.db
 
     return dbMap;
 }
@@ -133,7 +132,7 @@ DbRows_t ExecDbQuery(const string db, const string sql)
         dbMap = GetDbHandles();
     }
 
-    DWORD *stmt;
+    QWORD *stmt;
     int rc = func_prepare(dbMap[db], sql.c_str(), -1, &stmt, 0);
     if (rc != SQLITE_OK) {
         return rows;
@@ -162,16 +161,16 @@ DbRows_t ExecDbQuery(const string db, const string sql)
 
 int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
 {
-    DWORD msgMgrAddr = GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    DWORD dbIndex    = GET_DWORD(msgMgrAddr + 0x38);
-    DWORD pStart     = GET_DWORD(msgMgrAddr + 0x2C);
+    QWORD msgMgrAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    QWORD dbIndex    = GET_QWORD(msgMgrAddr + 0x68);
+    QWORD pStart     = GET_QWORD(msgMgrAddr + 0x50);
 
     *dbIdx = 0;
     for (int i = dbIndex - 1; i >= 0; i--) { // 从后往前遍历
-        DWORD dbAddr = GET_DWORD(pStart + i * 0x04);
+        QWORD dbAddr = GET_QWORD(pStart + i * 0x08);
         if (dbAddr) {
             string dbname = Wstring2String(GET_WSTRING(dbAddr));
-            dbMap[dbname] = GET_DWORD(dbAddr + 0x60);
+            dbMap[dbname] = GET_QWORD(dbAddr + 0x78);
             string sql    = "SELECT localId FROM MSG WHERE MsgSvrID=" + to_string(id) + ";";
             DbRows_t rows = ExecDbQuery(dbname, sql);
             if (rows.empty()) {
@@ -187,7 +186,7 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
             }
 
             *localId = strtoull((const char *)(field.content.data()), NULL, 10);
-            *dbIdx   = GET_DWORD(GET_DWORD(dbAddr + 0x18) + 0x144);
+            *dbIdx   = GET_QWORD(GET_QWORD(dbAddr + 0x28) + 0x1E8);
 
             return 0;
         }
@@ -198,8 +197,8 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
 
 vector<uint8_t> GetAudioData(uint64_t id)
 {
-    DWORD msgMgrAddr = GET_DWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    DWORD dbIndex    = GET_DWORD(msgMgrAddr + 0x38);
+    QWORD msgMgrAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    QWORD dbIndex    = GET_QWORD(msgMgrAddr + 0x68);
 
     string sql = "SELECT Buf from Media  WHERE Reserved0=" + to_string(id) + ";";
     for (int i = dbIndex - 1; i >= 0; i--) {
@@ -225,4 +224,3 @@ vector<uint8_t> GetAudioData(uint64_t id)
 
     return vector<uint8_t>();
 }
-#endif
