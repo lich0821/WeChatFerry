@@ -2,6 +2,7 @@
 
 #include "exec_sql.h"
 #include "load_calls.h"
+#include "log.h"
 #include "sqlite3.h"
 #include "util.h"
 
@@ -40,9 +41,9 @@ static void GetMsgDbHandle(QWORD msgMgrAddr)
             dbMap[dbname] = GET_QWORD(dbAddr + 0x78);
 
             // MediaMsgi.db
-            // QWORD mmdbAddr  = GET_QWORD(dbAddr + 0x14);
-            // string mmdbname = Wstring2String(GET_WSTRING(mmdbAddr + 0x4C));
-            // dbMap[mmdbname] = GET_QWORD(mmdbAddr + 0x38);
+            QWORD mmdbAddr  = GET_QWORD(dbAddr + 0x20);
+            string mmdbname = Wstring2String(GET_WSTRING(mmdbAddr + 0x78));
+            dbMap[mmdbname] = GET_QWORD(mmdbAddr + 0x50);
         }
     }
 }
@@ -133,6 +134,12 @@ DbRows_t ExecDbQuery(const string db, const string sql)
     }
 
     QWORD *stmt;
+    QWORD handle = dbMap[db];
+    if (handle == 0){
+        LOG_WARN("Empty handle, retrying...");
+        dbMap = GetDbHandles();
+    }
+
     int rc = func_prepare(dbMap[db], sql.c_str(), -1, &stmt, 0);
     if (rc != SQLITE_OK) {
         return rows;
@@ -200,7 +207,7 @@ vector<uint8_t> GetAudioData(uint64_t id)
     QWORD msgMgrAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
     QWORD dbIndex    = GET_QWORD(msgMgrAddr + 0x68);
 
-    string sql = "SELECT Buf from Media  WHERE Reserved0=" + to_string(id) + ";";
+    string sql = "SELECT Buf FROM Media WHERE Reserved0=" + to_string(id) + ";";
     for (int i = dbIndex - 1; i >= 0; i--) {
         string dbname = "MediaMSG" + to_string(i) + ".db";
         DbRows_t rows = ExecDbQuery(dbname, sql);
