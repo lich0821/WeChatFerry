@@ -149,7 +149,7 @@ bool func_get_contacts(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#endif
 bool func_get_db_names(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -214,7 +214,7 @@ bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
+
 bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -546,7 +546,6 @@ bool func_disable_recv_txt(uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -573,6 +572,7 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -840,6 +840,7 @@ bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *l
     return true;
 }
 #endif
+
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -875,6 +876,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_contacts(out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_GET_DB_NAMES: {
             ret = func_get_db_names(out, out_len);
             break;
@@ -887,7 +889,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_SEND_TXT: {
             ret = func_send_txt(req.msg.txt, out, out_len);
             break;
@@ -930,11 +931,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_EXEC_DB_QUERY: {
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_ACCEPT_FRIEND: {
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;

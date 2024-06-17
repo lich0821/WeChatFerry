@@ -322,6 +322,7 @@ int RevokeMsg(uint64_t id)
 
     return status;
 }
+#endif
 
 string GetAudio(uint64_t id, string dir)
 {
@@ -343,6 +344,7 @@ string GetAudio(uint64_t id, string dir)
     return mp3path;
 }
 
+#if 0
 OcrResult_t GetOcrResult(string path)
 {
     OcrResult_t ret = { -1, "" };
