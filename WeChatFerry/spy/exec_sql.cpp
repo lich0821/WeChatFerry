@@ -193,7 +193,7 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
             }
 
             *localId = strtoull((const char *)(field.content.data()), NULL, 10);
-            *dbIdx   = (uint32_t)GET_QWORD(GET_QWORD(dbAddr + 0x28) + 0x1E8);
+            *dbIdx   = (uint32_t)(GET_QWORD(GET_QWORD(dbAddr + 0x28) + 0x1E8) >> 32);
 
             return 0;
         }
