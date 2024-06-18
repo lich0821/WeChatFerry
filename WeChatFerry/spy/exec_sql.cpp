@@ -135,7 +135,7 @@ DbRows_t ExecDbQuery(const string db, const string sql)
 
     QWORD *stmt;
     QWORD handle = dbMap[db];
-    if (handle == 0){
+    if (handle == 0) {
         LOG_WARN("Empty handle, retrying...");
         dbMap = GetDbHandles();
     }
@@ -169,7 +169,7 @@ DbRows_t ExecDbQuery(const string db, const string sql)
 int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
 {
     QWORD msgMgrAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    QWORD dbIndex    = GET_QWORD(msgMgrAddr + 0x68);
+    int dbIndex      = (int)GET_QWORD(msgMgrAddr + 0x68); // 总不能 int 还不够吧？
     QWORD pStart     = GET_QWORD(msgMgrAddr + 0x50);
 
     *dbIdx = 0;
@@ -193,7 +193,7 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
             }
 
             *localId = strtoull((const char *)(field.content.data()), NULL, 10);
-            *dbIdx   = GET_QWORD(GET_QWORD(dbAddr + 0x28) + 0x1E8);
+            *dbIdx   = (uint32_t)GET_QWORD(GET_QWORD(dbAddr + 0x28) + 0x1E8);
 
             return 0;
         }
@@ -205,7 +205,7 @@ int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx)
 vector<uint8_t> GetAudioData(uint64_t id)
 {
     QWORD msgMgrAddr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    QWORD dbIndex    = GET_QWORD(msgMgrAddr + 0x68);
+    int dbIndex      = (int)GET_QWORD(msgMgrAddr + 0x68);
 
     string sql = "SELECT Buf FROM Media WHERE Reserved0=" + to_string(id) + ";";
     for (int i = dbIndex - 1; i >= 0; i--) {
