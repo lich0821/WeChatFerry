@@ -151,7 +151,6 @@ typedef struct CallOcr {
 
 typedef struct CallFm {
     DWORD call1;
-    DWORD call2;
 } CallFm_t;
 
 typedef struct CallRfLoginQr {

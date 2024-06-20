@@ -39,8 +39,7 @@ WxCalls_t wxCalls = {
     {0x78CB40, 0x7F99D0, 0x78CF20, 0x78CEF0, 0xF59E40, 0xBD1A00, 0x7FA980, 0x755060},
     /*  call1,    call2,    call3 */
     {0x80A800, 0x80F270, 0x13DA3E0},
-    /*  call1,   call2 */
-    {0xF59E40, 0xCE6730},
+    {0x238D350},  // Forward message
     /*  call1,   call2,     url */
     {0xAE9DB0, 0xCDA6F0, 0x3040DE8}
 };
