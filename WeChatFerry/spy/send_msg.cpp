@@ -24,6 +24,7 @@ typedef QWORD (*funcSendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, Q
                                    QWORD);
 typedef QWORD (*funcSendRichTextMsg_t)(QWORD, QWORD, QWORD);
 typedef QWORD (*funcSendPatMsg_t)(QWORD, QWORD);
+typedef QWORD (*funcForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -195,6 +196,30 @@ int SendPatMessage(string roomid, string wxid)
     return (int)status;
 }
 
+int ForwardMessage(QWORD msgid, string receiver)
+{
+    int status     = -1;
+    uint32_t dbIdx = 0;
+    QWORD localId  = 0;
+
+    funcForwardMsg_t funcForwardMsg = (funcForwardMsg_t)(g_WeChatWinDllAddr + g_WxCalls.fm.call1);
+    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
+        return status;
+    }
+
+    wstring wsReceiver  = String2Wstring(receiver);
+    WxString *pReceiver = NewWxString(wsReceiver);
+
+    LARGE_INTEGER l;
+    l.HighPart = dbIdx;
+    l.LowPart  = (DWORD)localId;
+
+    status = (int)funcForwardMsg((QWORD)pReceiver, l.QuadPart, 0x4, 0x0);
+
+    return status;
+}
+
 #if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
@@ -318,46 +343,5 @@ void SendEmotionMessage(string wxid, string path)
         popfd;
         popad;
     }
-}
-
-int ForwardMessage(QWORD msgid, string receiver)
-{
-    int status       = -1;
-    uint32_t dbIdx   = 0;
-    QWORD localId = 0;
-
-    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
-        return status;
-    }
-
-    wstring wsReceiver = String2Wstring(receiver);
-    WxString wxReceiver(wsReceiver);
-
-    DWORD fmCall1 = g_WeChatWinDllAddr + g_WxCalls.fm.call1;
-    DWORD fmCall2 = g_WeChatWinDllAddr + g_WxCalls.fm.call2;
-
-    __asm {
-        pushad;
-        pushfd;
-        mov        edx, dword ptr [dbIdx];
-        push       edx;
-        mov        eax, dword ptr [localId];
-        push       eax;
-        sub        esp, 0x14;
-        mov        ecx, esp;
-        lea        esi, wxReceiver;
-        push       esi;
-        call       fmCall1;
-        xor        ecx, ecx;
-        call       fmCall2;
-        movzx      eax, al;
-        mov        status, eax;
-        add        esp, 0x1c;
-        popfd;
-        popad;
-    }
-
-    return status;
 }
 #endif
