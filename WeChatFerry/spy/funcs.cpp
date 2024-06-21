@@ -27,7 +27,6 @@ extern UINT64 g_WeChatWinDllAddr;
 
 int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.login); }
 
-#if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     // PNG?
@@ -54,6 +53,7 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 string DecryptImage(string src, string dir)
 {
     if (!fs::exists(src)) {
+        LOG_ERROR("File not exists: {}", src);
         return "";
     }
 
@@ -114,6 +114,7 @@ string DecryptImage(string src, string dir)
     return dst;
 }
 
+#if 0
 static int GetFirstPage()
 {
     int rv         = -1;

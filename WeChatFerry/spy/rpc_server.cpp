@@ -716,6 +716,7 @@ bool func_refresh_qrcode(uint8_t *out, size_t *len)
 
     return true;
 }
+#endif
 
 bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
 {
@@ -742,6 +743,7 @@ bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
 {
     Response rsp    = Response_init_default;
@@ -963,10 +965,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_refresh_qrcode(out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_EXEC_OCR: {
             ret = func_exec_ocr(req.msg.str, out, out_len);
             break;
