@@ -149,7 +149,7 @@ bool func_get_contacts(uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
+
 bool func_get_db_names(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -214,7 +214,7 @@ bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#endif
 bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -383,6 +383,7 @@ bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -428,7 +429,7 @@ bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#endif
 static void PushMessage()
 {
     static uint8_t buffer[G_BUF_SIZE] = { 0 };
@@ -545,6 +546,7 @@ bool func_disable_recv_txt(uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -571,7 +573,6 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -716,7 +717,6 @@ bool func_refresh_qrcode(uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
 
 bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
 {
@@ -743,7 +743,6 @@ bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
 {
     Response rsp    = Response_init_default;
@@ -841,7 +840,6 @@ bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *l
     return true;
 }
 #endif
-
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -877,7 +875,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_contacts(out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_GET_DB_NAMES: {
             ret = func_get_db_names(out, out_len);
             break;
@@ -890,6 +887,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_SEND_TXT: {
             ret = func_send_txt(req.msg.txt, out, out_len);
             break;
@@ -906,6 +904,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_rich_txt(req.msg.rt, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_SEND_PAT_MSG: {
             ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
             break;
@@ -914,7 +913,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_XML: {
             ret = func_send_xml(req.msg.xml, out, out_len);
             break;
@@ -932,11 +930,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_EXEC_DB_QUERY: {
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_ACCEPT_FRIEND: {
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
@@ -965,12 +963,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_refresh_qrcode(out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_EXEC_OCR: {
             ret = func_exec_ocr(req.msg.str, out, out_len);
             break;

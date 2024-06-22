@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string>
+#include <minwindef.h>
 
 #define WECHAREXE       L"WeChat.exe"
 #define WECHATWINDLL    L"WeChatWin.dll"
