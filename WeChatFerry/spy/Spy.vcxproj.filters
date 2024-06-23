@@ -93,6 +93,9 @@
     <ClInclude Include="..\com\util.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="wechat_function.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

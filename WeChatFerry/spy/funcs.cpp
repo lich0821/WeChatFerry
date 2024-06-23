@@ -10,6 +10,7 @@
 #include "log.h"
 #include "spy_types.h"
 #include "util.h"
+#include "wechat_function.h"
 
 #define HEADER_PNG1 0x89
 #define HEADER_PNG2 0x50
@@ -25,8 +26,9 @@ extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
 extern UINT64 g_WeChatWinDllAddr;
 
-int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.login); }
+int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + offset::wcf_kLoginStatu); }
 
+#if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     // PNG?
@@ -53,7 +55,6 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 string DecryptImage(string src, string dir)
 {
     if (!fs::exists(src)) {
-        LOG_ERROR("File not exists: {}", src);
         return "";
     }
 
@@ -114,7 +115,6 @@ string DecryptImage(string src, string dir)
     return dst;
 }
 
-#if 0
 static int GetFirstPage()
 {
     int rv         = -1;
@@ -323,7 +323,6 @@ int RevokeMsg(uint64_t id)
 
     return status;
 }
-#endif
 
 string GetAudio(uint64_t id, string dir)
 {
@@ -345,7 +344,6 @@ string GetAudio(uint64_t id, string dir)
     return mp3path;
 }
 
-#if 0
 OcrResult_t GetOcrResult(string path)
 {
     OcrResult_t ret = { -1, "" };

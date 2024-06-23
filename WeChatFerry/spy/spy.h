@@ -2,5 +2,5 @@
 
 #include "framework.h"
 
-void InitSpy(int port);
+void InitSpy(LPVOID port);
 void CleanupSpy();

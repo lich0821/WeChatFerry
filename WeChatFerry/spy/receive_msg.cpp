@@ -11,6 +11,7 @@
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
+#include "wechat_function.h"
 
 // Defined in rpc_server.cpp
 extern bool gIsListening, gIsListeningPyq;
@@ -71,22 +72,22 @@ static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
 {
     WxMsg_t wxMsg = { 0 };
     try {
-        wxMsg.id      = GET_QWORD(arg2 + g_WxCalls.recvMsg.msgId);
-        wxMsg.type    = GET_DWORD(arg2 + g_WxCalls.recvMsg.type);
-        wxMsg.is_self = GET_DWORD(arg2 + g_WxCalls.recvMsg.isSelf);
-        wxMsg.ts      = GET_DWORD(arg2 + g_WxCalls.recvMsg.ts);
-        wxMsg.content = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.content);
-        wxMsg.sign    = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.sign);
-        wxMsg.xml     = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.msgXml);
+        wxMsg.id      = GET_QWORD(arg2 + offset::wcf_msgId);
+        wxMsg.type    = GET_DWORD(arg2 + offset::wcf_type);
+        wxMsg.is_self = GET_DWORD(arg2 + offset::wcf_isSelf);
+        wxMsg.ts      = GET_DWORD(arg2 + offset::wcf_ts);
+        wxMsg.content = GetStringByWstrAddr(arg2 + offset::wcf_content);
+        wxMsg.sign    = GetStringByWstrAddr(arg2 + offset::wcf_sign);
+        wxMsg.xml     = GetStringByWstrAddr(arg2 + offset::wcf_msgXml);
 
-        string roomid = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.roomId);
+        string roomid = GetStringByWstrAddr(arg2 + offset::wcf_roomId);
         if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
             wxMsg.is_group = true;
             wxMsg.roomid   = roomid;
             if (wxMsg.is_self) {
                 wxMsg.sender = GetSelfWxid();
             } else {
-                wxMsg.sender = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.wxid);
+                wxMsg.sender = GetStringByWstrAddr(arg2 + offset::wcf_wxid);
             }
         } else {
             wxMsg.is_group = false;
@@ -97,13 +98,13 @@ static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
             }
         }
 
-        wxMsg.thumb = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.thumb);
+        wxMsg.thumb = GetStringByWstrAddr(arg2 + offset::wcf_thumb);
         if (!wxMsg.thumb.empty()) {
             wxMsg.thumb = GetHomePath() + wxMsg.thumb;
             replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
         }
 
-        wxMsg.extra = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.extra);
+        wxMsg.extra = GetStringByWstrAddr(arg2 + offset::wcf_extra);
         if (!wxMsg.extra.empty()) {
             wxMsg.extra = GetHomePath() + wxMsg.extra;
             replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
@@ -130,7 +131,7 @@ void ListenMessage()
         LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
         return;
     }
-    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
+    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + offset::wcf_HookCall);
 
     status = MH_Initialize();
     if (status != MH_OK) {
@@ -215,22 +216,22 @@ void DispatchMsg(DWORD reg)
 {
     WxMsg_t wxMsg;
     try {
-        wxMsg.id      = GET_QWORD(reg + g_WxCalls.recvMsg.msgId);
-        wxMsg.type    = GET_DWORD(reg + g_WxCalls.recvMsg.type);
-        wxMsg.is_self = GET_DWORD(reg + g_WxCalls.recvMsg.isSelf);
-        wxMsg.ts      = GET_DWORD(reg + g_WxCalls.recvMsg.ts);
-        wxMsg.content = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.content);
-        wxMsg.sign    = GetStringByStrAddr(reg + g_WxCalls.recvMsg.sign);
-        wxMsg.xml     = GetStringByStrAddr(reg + g_WxCalls.recvMsg.msgXml);
+        wxMsg.id      = GET_QWORD(reg + offset::wcf_msgId);
+        wxMsg.type    = GET_DWORD(reg + offset::wcf_type);
+        wxMsg.is_self = GET_DWORD(reg + offset::wcf_isSelf);
+        wxMsg.ts      = GET_DWORD(reg + offset::wcf_ts);
+        wxMsg.content = GetStringByWstrAddr(reg + offset::wcf_content);
+        wxMsg.sign    = GetStringByStrAddr(reg + offset::wcf_sign);
+        wxMsg.xml     = GetStringByStrAddr(reg + offset::wcf_msgXml);
 
-        string roomid = GetStringByWstrAddr(reg + g_WxCalls.recvMsg.roomId);
+        string roomid = GetStringByWstrAddr(reg + offset::wcf_roomId);
         if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
             wxMsg.is_group = true;
             wxMsg.roomid   = roomid;
             if (wxMsg.is_self) {
                 wxMsg.sender = GetSelfWxid();
             } else {
-                wxMsg.sender = GetStringByStrAddr(reg + g_WxCalls.recvMsg.wxid);
+                wxMsg.sender = GetStringByStrAddr(reg + offset::wcf_wxid);
             }
         } else {
             wxMsg.is_group = false;
@@ -241,13 +242,13 @@ void DispatchMsg(DWORD reg)
             }
         }
 
-        wxMsg.thumb = GetStringByStrAddr(reg + g_WxCalls.recvMsg.thumb);
+        wxMsg.thumb = GetStringByStrAddr(reg + offset::wcf_thumb);
         if (!wxMsg.thumb.empty()) {
             wxMsg.thumb = GetHomePath() + wxMsg.thumb;
             replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
         }
 
-        wxMsg.extra = GetStringByStrAddr(reg + g_WxCalls.recvMsg.extra);
+        wxMsg.extra = GetStringByStrAddr(reg + offset::wcf_extra);
         if (!wxMsg.extra.empty()) {
             wxMsg.extra = GetHomePath() + wxMsg.extra;
             replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
@@ -290,8 +291,8 @@ void ListenMessage()
         return;
     }
 
-    recvMsgHookAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.hook;
-    recvMsgCallAddr     = g_WeChatWinDllAddr + g_WxCalls.recvMsg.call;
+    recvMsgHookAddr     = g_WeChatWinDllAddr + offset::wcf_hook;
+    recvMsgCallAddr     = g_WeChatWinDllAddr + offset::wcf_call;
     recvMsgJumpBackAddr = recvMsgHookAddr + 5;
 
     HookAddress(recvMsgHookAddr, RecieveMsgFunc, recvMsgBackupCode);

@@ -6,7 +6,7 @@
 
 #include "injector.h"
 #include "sdk.h"
-#include "util.h"
+#include "../com/util.h"
 
 static BOOL injected              = false;
 static HANDLE wcProcess           = NULL;
