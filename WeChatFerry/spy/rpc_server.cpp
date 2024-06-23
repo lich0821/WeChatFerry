@@ -129,7 +129,7 @@ bool func_get_msg_types(uint8_t *out, size_t *len)
 
     return true;
 }
-#if 0
+
 bool func_get_contacts(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -149,7 +149,7 @@ bool func_get_contacts(uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
+
 bool func_get_db_names(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -872,12 +872,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_msg_types(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_GET_CONTACTS: {
             ret = func_get_contacts(out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_GET_DB_NAMES: {
             ret = func_get_db_names(out, out_len);
             break;

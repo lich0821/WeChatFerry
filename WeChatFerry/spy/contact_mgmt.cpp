@@ -7,19 +7,22 @@
 
 using namespace std;
 extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
-#if 0
+extern QWORD g_WeChatWinDllAddr;
+
+typedef QWORD (*funcGetContactMgr_t)();
+typedef QWORD (*funcGetContactList_t)(QWORD, QWORD);
+
 #define FEAT_LEN 5
 static const uint8_t FEAT_COUNTRY[FEAT_LEN]  = { 0xA4, 0xD9, 0x02, 0x4A, 0x18 };
 static const uint8_t FEAT_PROVINCE[FEAT_LEN] = { 0xE2, 0xEA, 0xA8, 0xD1, 0x18 };
 static const uint8_t FEAT_CITY[FEAT_LEN]     = { 0x1D, 0x02, 0x5B, 0xBF, 0x18 };
 
-static DWORD FindMem(DWORD start, DWORD end, const void *target, size_t len)
+static QWORD FindMem(QWORD start, QWORD end, const void *target, size_t len)
 {
     uint8_t *p = (uint8_t *)start;
-    while ((DWORD)p < end) {
+    while ((QWORD)p < end) {
         if (memcmp((void *)p, target, len) == 0) {
-            return (DWORD)p;
+            return (QWORD)p;
         }
         p++;
     }
@@ -27,9 +30,9 @@ static DWORD FindMem(DWORD start, DWORD end, const void *target, size_t len)
     return 0;
 }
 
-static string GetCntString(DWORD start, DWORD end, const uint8_t *feat, size_t len)
+static string GetCntString(QWORD start, QWORD end, const uint8_t *feat, size_t len)
 {
-    DWORD pfeat = FindMem(start, end, feat, len);
+    QWORD pfeat = FindMem(start, end, feat, len);
     if (pfeat == 0) {
         return "";
     }
@@ -45,34 +48,27 @@ static string GetCntString(DWORD start, DWORD end, const uint8_t *feat, size_t l
 vector<RpcContact_t> GetContacts()
 {
     vector<RpcContact_t> contacts;
-    DWORD call1 = g_WeChatWinDllAddr + g_WxCalls.contact.base;
-    DWORD call2 = g_WeChatWinDllAddr + g_WxCalls.contact.head;
+    funcGetContactMgr_t funcGetContactMgr   = (funcGetContactMgr_t)(g_WeChatWinDllAddr + 0x1C0BDE0);
+    funcGetContactList_t funcGetContactList = (funcGetContactList_t)(g_WeChatWinDllAddr + 0x2265540);
 
-    int success    = 0;
-    DWORD *addr[3] = { 0, 0, 0 };
-    __asm {
-        pushad
-        call       call1
-        lea        ecx,addr
-        push       ecx
-        mov        ecx,eax
-        call       call2
-        mov        success,eax
-        popad
+    QWORD mgr     = funcGetContactMgr();
+    QWORD addr[3] = { 0 };
+    if (funcGetContactList(mgr, (QWORD)addr) != 1) {
+        LOG_ERROR("GetContacts failed");
+        return contacts;
     }
 
-    DWORD pstart = (DWORD)addr[0];
-    DWORD pend   = (DWORD)addr[2];
-
+    QWORD pstart = (QWORD)addr[0];
+    QWORD pend   = (QWORD)addr[2];
     while (pstart < pend) {
         RpcContact_t cnt;
-        DWORD pbin   = GET_DWORD(pstart + 0x150);
-        DWORD lenbin = GET_DWORD(pstart + 0x154);
+        QWORD pbin   = GET_QWORD(pstart + 0x200);
+        QWORD lenbin = GET_DWORD(pstart + 0x208);
 
-        cnt.wxid   = GetStringByAddress(pstart + g_WxCalls.contact.wxId);
-        cnt.code   = GetStringByAddress(pstart + g_WxCalls.contact.wxCode);
-        cnt.remark = GetStringByAddress(pstart + g_WxCalls.contact.wxRemark);
-        cnt.name   = GetStringByAddress(pstart + g_WxCalls.contact.wxName);
+        cnt.wxid   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxId);     // 0x10
+        cnt.code   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxCode);   // 0x30
+        cnt.remark = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxRemark); // 0x80
+        cnt.name   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxName);   // 0xA0
 
         cnt.country  = GetCntString(pbin, pbin + lenbin, FEAT_COUNTRY, FEAT_LEN);
         cnt.province = GetCntString(pbin, pbin + lenbin, FEAT_PROVINCE, FEAT_LEN);
@@ -81,16 +77,17 @@ vector<RpcContact_t> GetContacts()
         if (pbin == 0) {
             cnt.gender = 0;
         } else {
-            cnt.gender = (DWORD) * (uint8_t *)(pbin + g_WxCalls.contact.wxGender);
+            cnt.gender = (DWORD) * (uint8_t *)(pbin + g_WxCalls.contact.wxGender); // 0x0E
         }
 
         contacts.push_back(cnt);
-        pstart += 0x438;
+        pstart += 0x6A8; // 0x6A8
     }
 
     return contacts;
 }
 
+#if 0
 int AcceptNewFriend(string v3, string v4, int scene)
 {
     int success = 0;
