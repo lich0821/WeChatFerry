@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "spy_types.h"
+
 #define WECHAREXE       L"WeChat.exe"
 #define WECHATWINDLL    L"WeChatWin.dll"
 #define WCFSDKDLL       L"sdk.dll"
@@ -34,3 +36,5 @@ std::string GetStringByAddress(UINT64 address);
 std::string GetStringByStrAddr(UINT64 addr);
 std::string GetStringByWstrAddr(UINT64 addr);
 void DbgMsg(const char *zcFormat, ...);
+WxString *NewWxStringFromStr(const std::string &str);
+WxString *NewWxStringFromWstr(const std::wstring &ws);
