@@ -115,36 +115,10 @@ void SendFileMessage(string wxid, string path)
     funcFree(pMsg);
 }
 
-WxString *NewWxString(const std::wstring &ws)
-{
-    WxString *p       = (WxString *)HeapAlloc(GetProcessHeap(), 0, sizeof(WxString));
-    wchar_t *pWstring = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, (ws.size() + 1) * 2);
-    if (p == NULL || pWstring == NULL) {
-        LOG_ERROR("Out of Memory...");
-        return NULL;
-    }
-
-    wmemcpy(pWstring, ws.c_str(), ws.size() + 1);
-    p->wptr     = pWstring;
-    p->size     = (DWORD)ws.size();
-    p->capacity = (DWORD)ws.size();
-    p->ptr      = 0;
-    p->clen     = 0;
-    return p;
-}
-
 int SendRichTextMessage(RichText_t &rt)
 { // TODO: Fix memory leak
 #define SRTM_SIZE 0x3F0
     QWORD status = -1;
-
-    wstring receiver = String2Wstring(rt.receiver);
-    wstring title    = String2Wstring(rt.title);
-    wstring url      = String2Wstring(rt.url);
-    wstring thumburl = String2Wstring(rt.thumburl);
-    wstring account  = String2Wstring(rt.account);
-    wstring name     = String2Wstring(rt.name);
-    wstring digest   = String2Wstring(rt.digest);
 
     funcNew_t funcNew                          = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call1);
     funcFree_t funcFree                        = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call2);
@@ -159,13 +133,13 @@ int SendRichTextMessage(RichText_t &rt)
 
     memset(buff, 0, SRTM_SIZE);
     funcNew((QWORD)buff);
-    WxString *pReceiver = NewWxString(receiver);
-    WxString *pTitle    = NewWxString(title);
-    WxString *pUrl      = NewWxString(url);
-    WxString *pThumburl = NewWxString(thumburl);
-    WxString *pDigest   = NewWxString(digest);
-    WxString *pAccount  = NewWxString(account);
-    WxString *pName     = NewWxString(name);
+    WxString *pReceiver = NewWxStringFromStr(rt.receiver);
+    WxString *pTitle    = NewWxStringFromStr(rt.title);
+    WxString *pUrl      = NewWxStringFromStr(rt.url);
+    WxString *pThumburl = NewWxStringFromStr(rt.thumburl);
+    WxString *pDigest   = NewWxStringFromStr(rt.digest);
+    WxString *pAccount  = NewWxStringFromStr(rt.account);
+    WxString *pName     = NewWxStringFromStr(rt.name);
 
     memcpy(buff + 0x8, pTitle, sizeof(WxString));
     memcpy(buff + 0x48, pUrl, sizeof(WxString));
@@ -208,8 +182,7 @@ int ForwardMessage(QWORD msgid, string receiver)
         return status;
     }
 
-    wstring wsReceiver  = String2Wstring(receiver);
-    WxString *pReceiver = NewWxString(wsReceiver);
+    WxString *pReceiver = NewWxStringFromStr(receiver);
 
     LARGE_INTEGER l;
     l.HighPart = dbIdx;
