@@ -768,6 +768,7 @@ bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
     *len = stream.bytes_written;
     return true;
 }
+#endif
 
 bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
@@ -793,6 +794,7 @@ bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
     Response rsp   = Response_init_default;
@@ -973,10 +975,12 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_exec_ocr(req.msg.str, out, out_len);
             break;
         }
+#endif
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_DEL_ROOM_MEMBERS: {
             ret = func_del_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;

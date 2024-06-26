@@ -10,23 +10,22 @@
 using namespace std;
 
 extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
-#if 0
+extern QWORD g_WeChatWinDllAddr;
+
+typedef QWORD (*funcGetChatRoomMgr_t)();
+typedef QWORD (*funcAddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
+
 int AddChatroomMember(string roomid, string wxids)
 {
+    int status = -1;
+
     if (roomid.empty() || wxids.empty()) {
         LOG_ERROR("Empty roomid or wxids.");
-        return -1;
+        return status;
     }
 
-    int rv         = 0;
-    DWORD armCall1 = g_WeChatWinDllAddr + g_WxCalls.arm.call1;
-    DWORD armCall2 = g_WeChatWinDllAddr + g_WxCalls.arm.call2;
-    DWORD armCall3 = g_WeChatWinDllAddr + g_WxCalls.arm.call3;
-
-    DWORD temp       = 0;
-    wstring wsRoomid = String2Wstring(roomid);
-    WxString wxRoomid(wsRoomid);
+    funcGetChatRoomMgr_t funcGetChatRoomMgr           = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
+    funcAddMemberToChatRoom_t funcAddMemberToChatRoom = (funcAddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -35,37 +34,20 @@ int AddChatroomMember(string roomid, string wxids)
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
-        WxString txtMember(vMembers.back());
-        vWxMembers.push_back(txtMember);
+        WxString wxMember(vMembers.back());
+        vWxMembers.push_back(wxMember);
     }
 
-    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
-    __asm {
-        pushad;
-        pushfd;
-        call armCall1;
-        sub esp, 0x8;
-        mov temp, eax;
-        mov ecx, esp;
-        mov dword ptr[ecx], 0x0;
-        mov dword ptr[ecx + 4], 0x0;
-        test esi, esi;
-        sub esp, 0x14;
-        mov ecx, esp;
-        lea eax, wxRoomid;
-        push eax;
-        call armCall2;
-        mov ecx, temp;
-        lea eax, vWxMembers;
-        push eax;
-        call armCall3;
-        mov rv, eax;
-        popfd;
-        popad;
-    }
-    return rv;
+    QWORD temp[2]       = { 0 };
+    WxString *pWxRoomid = NewWxStringFromStr(roomid);
+    QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
+
+    QWORD mgr = funcGetChatRoomMgr();
+    status    = (int)funcAddMemberToChatRoom(mgr, pMembers, (QWORD)pWxRoomid, (QWORD)temp);
+    return status;
 }
 
+#if 0
 int DelChatroomMember(string roomid, string wxids)
 {
     if (roomid.empty() || wxids.empty()) {
