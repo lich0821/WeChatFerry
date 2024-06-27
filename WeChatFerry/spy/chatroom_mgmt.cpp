@@ -47,22 +47,17 @@ int AddChatroomMember(string roomid, string wxids)
     return status;
 }
 
-#if 0
 int DelChatroomMember(string roomid, string wxids)
 {
+    int status = -1;
+
     if (roomid.empty() || wxids.empty()) {
         LOG_ERROR("Empty roomid or wxids.");
-        return -1;
+        return status;
     }
 
-    int rv         = 0;
-    DWORD drmCall1 = g_WeChatWinDllAddr + g_WxCalls.drm.call1;
-    DWORD drmCall2 = g_WeChatWinDllAddr + g_WxCalls.drm.call2;
-    DWORD drmCall3 = g_WeChatWinDllAddr + g_WxCalls.drm.call3;
-
-    DWORD temp       = 0;
-    wstring wsRoomid = String2Wstring(roomid);
-    WxString wxRoomid(wsRoomid);
+    funcGetChatRoomMgr_t GetChatRoomMgr    = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call1);
+    funcDelMemberFromChatRoom_t DelMembers = (funcDelMemberFromChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call2);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -71,32 +66,19 @@ int DelChatroomMember(string roomid, string wxids)
         wstring wstr;
         getline(wss, wstr, L',');
         vMembers.push_back(wstr);
-        WxString txtMember(vMembers.back());
-        vWxMembers.push_back(txtMember);
+        WxString wxMember(vMembers.back());
+        vWxMembers.push_back(wxMember);
     }
 
-    LOG_DEBUG("Deleting {} members[{}] from {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
-    __asm {
-        pushad;
-        pushfd;
-        call drmCall1;
-        sub esp, 0x14;
-        mov esi, eax;
-        mov ecx, esp;
-        lea edi, wxRoomid;
-        push edi;
-        call drmCall2;
-        mov ecx, esi;
-        lea eax, vWxMembers;
-        push eax;
-        call drmCall3;
-        mov rv, eax;
-        popfd;
-        popad;
-    }
-    return rv;
+    WxString *pWxRoomid = NewWxStringFromStr(roomid);
+    QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
+
+    QWORD mgr = GetChatRoomMgr();
+    status    = (int)DelMembers(mgr, pMembers, (QWORD)pWxRoomid);
+    return status;
 }
 
+#if 0
 int InviteChatroomMember(string roomid, string wxids)
 {
     wstring wsRoomid = String2Wstring((roomid));
