@@ -35,8 +35,7 @@ WxCalls_t wxCalls = {
     {0x76F010, 0x792700, 0xBC0370, 0xBB5F70, 0x756E30},
     {0x1C27D50, 0x1C27120, 0x1C23630, 0x21A09C0},   // Send Rich Text Message
     {0x2D669B0},                                    // Send Pat Message
-    /*  call1,    call2,    call3,    call4,    call5,    call6,    call7,    call8*/
-    {0x78CB40, 0x7F99D0, 0x78CF20, 0x78CEF0, 0xF59E40, 0xBD1A00, 0x7FA980, 0x755060},
+    {0x221B280, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},  // Invite chatroom members
     /*  call1,    call2,    call3 */
     {0x80A800, 0x80F270, 0x13DA3E0},
     {0x238D350},  // Forward message
