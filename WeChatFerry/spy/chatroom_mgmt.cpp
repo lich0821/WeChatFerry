@@ -14,6 +14,8 @@ extern QWORD g_WeChatWinDllAddr;
 
 typedef QWORD (*funcGetChatRoomMgr_t)();
 typedef QWORD (*funcAddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*funcDelMemberFromChatRoom_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*funcInviteMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
 
 int AddChatroomMember(string roomid, string wxids)
 {
