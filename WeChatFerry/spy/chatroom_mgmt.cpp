@@ -24,8 +24,8 @@ int AddChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    funcGetChatRoomMgr_t funcGetChatRoomMgr           = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
-    funcAddMemberToChatRoom_t funcAddMemberToChatRoom = (funcAddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
+    funcGetChatRoomMgr_t GetChatRoomMgr  = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
+    funcAddMemberToChatRoom_t AddMembers = (funcAddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -42,8 +42,8 @@ int AddChatroomMember(string roomid, string wxids)
     WxString *pWxRoomid = NewWxStringFromStr(roomid);
     QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
 
-    QWORD mgr = funcGetChatRoomMgr();
-    status    = (int)funcAddMemberToChatRoom(mgr, pMembers, (QWORD)pWxRoomid, (QWORD)temp);
+    QWORD mgr = GetChatRoomMgr();
+    status    = (int)AddMembers(mgr, pMembers, (QWORD)pWxRoomid, (QWORD)temp);
     return status;
 }
 
