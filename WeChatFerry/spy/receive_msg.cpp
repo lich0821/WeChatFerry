@@ -13,18 +13,22 @@
 #include "util.h"
 
 // Defined in rpc_server.cpp
-extern bool gIsListening, gIsListeningPyq;
+extern bool gIsLogging, gIsListening, gIsListeningPyq;
 extern mutex gMutex;
 extern condition_variable gCV;
 extern queue<WxMsg_t> gMsgQueue;
 
 // Defined in spy.cpp
 extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
+extern QWORD g_WeChatWinDllAddr;
 
-typedef UINT64 (*funcRecvMsg_t)(UINT64, UINT64);
+typedef QWORD (*funcRecvMsg_t)(QWORD, QWORD);
+typedef QWORD (*funcWxLog_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+
 static funcRecvMsg_t funcRecvMsg = nullptr;
 static funcRecvMsg_t realRecvMsg = nullptr;
+static funcWxLog_t funcWxLog     = nullptr;
+static funcWxLog_t realWxLog     = nullptr;
 
 MsgTypes_t GetMsgTypes()
 {
@@ -67,7 +71,7 @@ MsgTypes_t GetMsgTypes()
     return m;
 }
 
-static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
+static QWORD DispatchMsg(QWORD arg1, QWORD arg2)
 {
     WxMsg_t wxMsg = { 0 };
     try {
@@ -121,6 +125,70 @@ static UINT64 DispatchMsg(UINT64 arg1, UINT64 arg2)
 
     gCV.notify_all(); // 通知各方消息就绪
     return realRecvMsg(arg1, arg2);
+}
+
+static QWORD PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWORD a6, QWORD a7, QWORD a8, QWORD a9,
+                        QWORD a10, QWORD a11, QWORD a12)
+{
+    QWORD p = realWxLog(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+    if (p == 0 || p == 1) {
+        return p;
+    }
+
+    LOG_INFO("【WX】\n{}", GB2312ToUtf8((char *)p));
+
+    return p;
+}
+
+void EnableLog()
+{
+    MH_STATUS status = MH_UNKNOWN;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_WARN("g_WeChatWinDllAddr == 0");
+        return;
+    }
+    funcWxLog_t funcWxLog = (funcWxLog_t)(g_WeChatWinDllAddr + 0x26DA2D0);
+
+    status = MH_Initialize();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Initialize failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog));
+    if (status != MH_OK) {
+        LOG_ERROR("MH_CreateHook failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_EnableHook(funcWxLog);
+    if (status != MH_OK) {
+        LOG_ERROR("MH_EnableHook failed: {}", to_string(status));
+        return;
+    }
+    gIsLogging = true;
+}
+
+void DisableLog()
+{
+    MH_STATUS status = MH_UNKNOWN;
+    if (!gIsLogging) {
+        return;
+    }
+
+    status = MH_DisableHook(funcWxLog);
+    if (status != MH_OK) {
+        LOG_ERROR("MH_DisableHook failed: {}", to_string(status));
+        return;
+    }
+
+    status = MH_Uninitialize();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
+        return;
+    }
+
+    gIsLogging = false;
 }
 
 void ListenMessage()

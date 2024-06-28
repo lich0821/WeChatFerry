@@ -40,6 +40,7 @@
 
 namespace fs = std::filesystem;
 
+bool gIsLogging      = false;
 bool gIsListening    = false;
 bool gIsListeningPyq = false;
 mutex gMutex;
@@ -1067,7 +1068,9 @@ int RpcStartServer(int port)
     if (rpcThread != 0) {
         CloseHandle(rpcThread);
     }
-
+#if ENABLE_WX_LOG
+    EnableLog();
+#endif
     return 0;
 }
 
@@ -1081,5 +1084,8 @@ int RpcStopServer()
         Sleep(1000);
         LOG_INFO("Server stoped.");
     }
+#if ENABLE_WX_LOG
+    DisableLog();
+#endif
     return 0;
 }
