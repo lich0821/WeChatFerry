@@ -78,9 +78,6 @@
     <ClInclude Include="funcs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="receive_transfer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="sqlite3.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="funcs.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="receive_transfer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\com\log.cpp">

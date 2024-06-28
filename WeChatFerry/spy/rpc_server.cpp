@@ -26,7 +26,6 @@
 #include "pb_types.h"
 #include "pb_util.h"
 #include "receive_msg.h"
-#include "receive_transfer.h"
 #include "rpc_server.h"
 #include "send_msg.h"
 #include "spy.h"
