@@ -1051,7 +1051,7 @@ static int RunServer()
         }
         nng_free(in, in_len);
     }
-    lIsRunning = false;
+    RpcStopServer();
     LOG_DEBUG("Leave RunServer");
     return rv;
 }
