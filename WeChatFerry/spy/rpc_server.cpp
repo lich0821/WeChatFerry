@@ -571,6 +571,24 @@ bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_REFRESH_PYQ;
+    rsp.which_msg = Response_status_tag;
+
+    rsp.msg.status = RefreshPyq(id);
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 #if 0
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
@@ -607,24 +625,6 @@ bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, siz
     } else {
         rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
     }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REFRESH_PYQ;
-    rsp.which_msg = Response_status_tag;
-
-    rsp.msg.status = RefreshPyq(id);
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -934,6 +934,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
         }
+        case Functions_FUNC_REFRESH_PYQ: {
+            ret = func_refresh_pyq(req.msg.ui64, out, out_len);
+            break;
+        }
 #if 0
         case Functions_FUNC_ACCEPT_FRIEND: {
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
@@ -941,10 +945,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_RECV_TRANSFER: {
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
-            break;
-        }
-        case Functions_FUNC_REFRESH_PYQ: {
-            ret = func_refresh_pyq(req.msg.ui64, out, out_len);
             break;
         }
         case Functions_FUNC_DOWNLOAD_ATTACH: {

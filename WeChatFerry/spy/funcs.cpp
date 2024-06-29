@@ -23,9 +23,14 @@ namespace fs = std::filesystem;
 
 extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
+extern QWORD g_WeChatWinDllAddr;
 
-int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.login); }
+typedef QWORD (*funcGetSNSDataMgr_t)();
+typedef QWORD (*funcGetSnsTimeLineMgr_t)();
+typedef QWORD (*funcGetSNSFirstPage_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*funcGetSNSNextPageScene_t)(QWORD, QWORD);
+
+int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
 
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
@@ -114,56 +119,34 @@ string DecryptImage(string src, string dir)
     return dst;
 }
 
-#if 0
 static int GetFirstPage()
 {
-    int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
-    DWORD pyqCall2 = g_WeChatWinDllAddr + g_WxCalls.pyq.call2;
+    int status = -1;
 
-    char buf[0xB44] = { 0 };
-    __asm {
-        pushad;
-        call pyqCall1;
-        push 0x1;
-        lea ecx, buf;
-        push ecx;
-        mov ecx, eax;
-        call pyqCall2;
-        mov rv, eax;
-        popad;
-    }
+    funcGetSNSDataMgr_t GetSNSDataMgr     = (funcGetSNSDataMgr_t)(g_WeChatWinDllAddr + 0x22A91C0);
+    funcGetSNSFirstPage_t GetSNSFirstPage = (funcGetSNSFirstPage_t)(g_WeChatWinDllAddr + 0x2ED9080);
 
-    return rv;
+    QWORD buff[16] = { 0 };
+    QWORD mgr      = GetSNSDataMgr();
+    status         = (int)GetSNSFirstPage(mgr, (QWORD)buff, 1);
+
+    return status;
 }
 
-static int GetNextPage(uint64_t id)
+static int GetNextPage(QWORD id)
 {
-    int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
-    DWORD pyqCall3 = g_WeChatWinDllAddr + g_WxCalls.pyq.call3;
+    int status = -1;
 
-    RawVector_t tmp = { 0 };
+    funcGetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (funcGetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + 0x2E6B110);
+    funcGetSNSNextPageScene_t GetSNSNextPageScene = (funcGetSNSNextPageScene_t)(g_WeChatWinDllAddr + 0x2EFEC00);
 
-    __asm {
-        pushad;
-        call pyqCall1;
-        lea ecx, tmp;
-        push ecx;
-        mov ebx, dword ptr [id + 0x04];
-        push ebx;
-        mov edi, dword ptr [id]
-        push edi;
-        mov ecx, eax;
-        call pyqCall3;
-        mov rv, eax;
-        popad;
-    }
+    QWORD mgr = GetSnsTimeLineMgr();
+    status    = (int)GetSNSNextPageScene(mgr, id);
 
-    return rv;
+    return status;
 }
 
-int RefreshPyq(uint64_t id)
+int RefreshPyq(QWORD id)
 {
     if (!gIsListeningPyq) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
@@ -177,10 +160,11 @@ int RefreshPyq(uint64_t id)
     return GetNextPage(id);
 }
 
-int DownloadAttach(uint64_t id, string thumb, string extra)
+#if 0
+int DownloadAttach(QWORD id, string thumb, string extra)
 {
     int status = -1;
-    uint64_t localId;
+    QWORD localId;
     uint32_t dbIdx;
 
     if (fs::exists(extra)) { // 第一道，不重复下载
@@ -279,10 +263,10 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
     return status;
 }
 
-int RevokeMsg(uint64_t id)
+int RevokeMsg(QWORD id)
 {
     int status = -1;
-    uint64_t localId;
+    QWORD localId;
     uint32_t dbIdx;
     if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
@@ -325,7 +309,7 @@ int RevokeMsg(uint64_t id)
 }
 #endif
 
-string GetAudio(uint64_t id, string dir)
+string GetAudio(QWORD id, string dir)
 {
     string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
     mp3path += to_string(id) + ".mp3";
