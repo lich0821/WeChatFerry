@@ -35,6 +35,8 @@ typedef QWORD (*FreeChatMsg_t)(QWORD);
 typedef QWORD (*GetPreDownLoadMgr_t)();
 typedef QWORD (*GetMgrByPrefixLocalId_t)(QWORD, QWORD);
 typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*GetOCRManager_t)();
+typedef QWORD (*DoOCRTask_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
 int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
 
@@ -257,53 +259,6 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     return status;
 }
 
-#if 0
-int RevokeMsg(QWORD id)
-{
-    int status = -1;
-    QWORD localId;
-    uint32_t dbIdx;
-    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
-        return status;
-    }
-
-    char chat_msg[0x2D8] = { 0 };
-
-    DWORD rmCall1 = g_WeChatWinDllAddr + g_WxCalls.rm.call1;
-    DWORD rmCall2 = g_WeChatWinDllAddr + g_WxCalls.rm.call2;
-    DWORD rmCall3 = g_WeChatWinDllAddr + g_WxCalls.rm.call3;
-    DWORD rmCall4 = g_WeChatWinDllAddr + g_WxCalls.rm.call4;
-    DWORD rmCall5 = g_WeChatWinDllAddr + g_WxCalls.rm.call5;
-
-    __asm {
-        pushad;
-        pushfd;
-        lea        ecx, chat_msg;
-        call       rmCall1;
-        call       rmCall2;
-        push       dword ptr [dbIdx];
-        lea        ecx, chat_msg;
-        push       dword ptr [localId];
-        call       rmCall3;
-        add        esp, 0x8;
-        call       rmCall2;
-        lea        ecx, chat_msg;
-        push       ecx;
-        mov        ecx, eax;
-        call       rmCall4;
-        mov        status, eax;
-        lea        ecx, chat_msg;
-        push       0x0;
-        call       rmCall5;
-        popfd;
-        popad;
-    }
-
-    return status;
-}
-#endif
-
 string GetAudio(QWORD id, string dir)
 {
     string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
@@ -324,154 +279,69 @@ string GetAudio(QWORD id, string dir)
     return mp3path;
 }
 
-#if 0
 OcrResult_t GetOcrResult(string path)
 {
     OcrResult_t ret = { -1, "" };
-
+#if 0 // 参数没调好，会抛异常，看看有没有好心人来修复
     if (!fs::exists(path)) {
         LOG_ERROR("Can not find: {}", path);
         return ret;
     }
 
+    GetOCRManager_t GetOCRManager = (GetOCRManager_t)(g_WeChatWinDllAddr + 0x1D6C3C0);
+    DoOCRTask_t DoOCRTask         = (DoOCRTask_t)(g_WeChatWinDllAddr + 0x2D10BC0);
+
+    QWORD unk1 = 0, unk2 = 0, unused = 0;
+    QWORD *pUnk1 = &unk1;
+    QWORD *pUnk2 = &unk2;
     // 路径分隔符有要求，必须为 `\`
     wstring wsPath = String2Wstring(fs::path(path).make_preferred().string());
-
     WxString wxPath(wsPath);
-    WxString nullObj;
-    WxString ocrBuffer;
+    vector<QWORD> *pv = (vector<QWORD> *)HeapAlloc(GetProcessHeap(), 0, 0x20);
+    RawVector_t *pRv  = (RawVector_t *)pv;
+    pRv->finish       = pRv->start;
+    char buff[0x98]   = { 0 };
+    memcpy(buff, &pRv->start, sizeof(QWORD));
 
-    DWORD ocrCall1 = g_WeChatWinDllAddr + g_WxCalls.ocr.call1;
-    DWORD ocrCall2 = g_WeChatWinDllAddr + g_WxCalls.ocr.call2;
-    DWORD ocrCall3 = g_WeChatWinDllAddr + g_WxCalls.ocr.call3;
+    QWORD mgr  = GetOCRManager();
+    ret.status = (int)DoOCRTask(mgr, (QWORD)&wxPath, unused, (QWORD)buff, (QWORD)&pUnk1, (QWORD)&pUnk2);
 
-    DWORD tmp  = 0;
-    int status = -1;
-    __asm {
-        pushad;
-        pushfd;
-        lea   ecx, ocrBuffer;
-        call  ocrCall1;
-        call  ocrCall2;
-        lea   ecx, nullObj;
-        push  ecx;
-        lea   ecx, tmp;
-        push  ecx;
-        lea   ecx, ocrBuffer;
-        push  ecx;
-        push  0x0;
-        lea   ecx, wxPath;
-        push  ecx;
-        mov   ecx, eax;
-        call  ocrCall3;
-        mov   status, eax;
-        popfd;
-        popad;
+    QWORD count = GET_QWORD(buff + 0x8);
+    if (count > 0) {
+        QWORD header = GET_QWORD(buff);
+        for (QWORD i = 0; i < count; i++) {
+            QWORD content = GET_QWORD(header);
+            ret.result += Wstring2String(GET_WSTRING(content + 0x28));
+            ret.result += "\n";
+            header = content;
+        }
     }
-
-    if (status != 0)
-    {
-        LOG_ERROR("OCR status: {}", to_string(status));
-        return ret; // 识别出错
-    }
-
-    ret.status = status;
-
-    DWORD addr   = (DWORD)&ocrBuffer;
-    DWORD header = GET_DWORD(addr);
-    DWORD num    = GET_DWORD(addr + 0x4);
-    if (num <= 0) {
-        return ret; // 识别内容为空
-    }
-
-    for (uint32_t i = 0; i < num; i++) {
-        DWORD content = GET_DWORD(header);
-        ret.result += Wstring2String(GET_WSTRING(content + 0x14));
-        ret.result += "\n";
-        header = content;
-    }
-
+#endif
     return ret;
+}
+
+int RevokeMsg(QWORD id)
+{
+    int status = -1;
+#if 0 // 这个挺鸡肋的，因为自己发的消息没法直接获得 msgid，就这样吧
+    QWORD localId;
+    uint32_t dbIdx;
+    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
+        return status;
+    }
+#endif
+    return status;
 }
 
 string GetLoginUrl()
 {
-    if (GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login) == 1) {
-        LOG_DEBUG("Already logined.");
-        return ""; // 已登录直接返回空字符
-    }
-
-    DWORD refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + g_WxCalls.rlq.call1;
-    DWORD refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + g_WxCalls.rlq.call2;
-
-    // 刷新二维码
-    __asm {
-        pushad;
-        pushfd;
-        call refreshLoginQrcodeCall1;
-        mov ecx, eax;
-        call refreshLoginQrcodeCall2;
-        popfd;
-        popad;
-    }
-
-    // 获取二维码链接
-    char *url   = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.rlq.url);
-    uint8_t cnt = 0;
-    while (url[0] == 0) { // 刷新需要时间，太快了会获取不到
-        if (cnt > 5) {
-            LOG_ERROR("Refresh QR Code timeout.");
-            return "";
-        }
-        Sleep(1000);
-        cnt++;
-    }
+    char url[] = "方法还没实现";
     return "http://weixin.qq.com/x/" + string(url);
 }
 
 int ReceiveTransfer(string wxid, string transferid, string transactionid)
 {
-    int rv                  = 0;
-    DWORD recvTransferCall1 = g_WeChatWinDllAddr + g_WxCalls.tf.call1;
-    DWORD recvTransferCall2 = g_WeChatWinDllAddr + g_WxCalls.tf.call2;
-    DWORD recvTransferCall3 = g_WeChatWinDllAddr + g_WxCalls.tf.call3;
-
-    char payInfo[0x134] = { 0 };
-    wstring wsWxid      = String2Wstring(wxid);
-    wstring wsTfid      = String2Wstring(transferid);
-    wstring wsTaid      = String2Wstring(transactionid);
-
-    WxString wxWxid(wsWxid);
-    WxString wxTfid(wsTfid);
-    WxString wxTaid(wsTaid);
-
-    LOG_DEBUG("Receiving transfer, from: {}, transferid: {}, transactionid: {}", wxid, transferid, transactionid);
-    __asm {
-        pushad;
-        lea ecx, payInfo;
-        call recvTransferCall1;
-        mov dword ptr[payInfo + 0x4], 0x1;
-        mov dword ptr[payInfo + 0x4C], 0x1;
-        popad;
-    }
-    memcpy(&payInfo[0x1C], &wxTaid, sizeof(wxTaid));
-    memcpy(&payInfo[0x38], &wxTfid, sizeof(wxTfid));
-
-    __asm {
-        pushad;
-        push 0x1;
-        sub esp, 0x8;
-        lea edx, wxWxid;
-        lea ecx, payInfo;
-        call recvTransferCall2;
-        mov rv, eax;
-        add esp, 0xC;
-        push 0x0;
-        lea ecx, payInfo;
-        call recvTransferCall3;
-        popad;
-    }
-
-    return rv;
+    // 别想了，这个不实现了
+    return -1;
 }
-#endif

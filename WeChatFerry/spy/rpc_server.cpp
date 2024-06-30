@@ -611,19 +611,31 @@ bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
-bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
+bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_ACCEPT_FRIEND;
+    rsp.func      = Functions_FUNC_REVOKE_MSG;
     rsp.which_msg = Response_status_tag;
 
-    if ((v3 == NULL) || (v4 == NULL)) {
-        rsp.msg.status = -1;
-        LOG_ERROR("Empty V3 or V4.");
-    } else {
-        rsp.msg.status = AcceptNewFriend(v3, v4, scene);
+    rsp.msg.status = RevokeMsg(id);
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
     }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
+bool func_refresh_qrcode(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_REFRESH_QRCODE;
+    rsp.which_msg = Response_str_tag;
+
+    rsp.msg.str = (char *)GetLoginUrl().c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -658,6 +670,30 @@ bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, siz
     return true;
 }
 
+#if 0
+bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_ACCEPT_FRIEND;
+    rsp.which_msg = Response_status_tag;
+
+    if ((v3 == NULL) || (v4 == NULL)) {
+        rsp.msg.status = -1;
+        LOG_ERROR("Empty V3 or V4.");
+    } else {
+        rsp.msg.status = AcceptNewFriend(v3, v4, scene);
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
 {
     /*借用 Functions_FUNC_GET_CONTACTS */
@@ -670,42 +706,6 @@ bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
 
     rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
     rsp.msg.contacts.contacts.arg          = &contacts;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REVOKE_MSG;
-    rsp.which_msg = Response_status_tag;
-
-    rsp.msg.status = RevokeMsg(id);
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_refresh_qrcode(uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REFRESH_QRCODE;
-    rsp.which_msg = Response_str_tag;
-
-    rsp.msg.str = (char *)GetLoginUrl().c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -743,7 +743,6 @@ bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
 {
     Response rsp    = Response_init_default;
@@ -768,7 +767,6 @@ bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
     *len = stream.bytes_written;
     return true;
 }
-#endif
 
 bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
@@ -942,17 +940,8 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_download_attach(req.msg.att, out, out_len);
             break;
         }
-#if 0
-        case Functions_FUNC_ACCEPT_FRIEND: {
-            ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
-            break;
-        }
         case Functions_FUNC_RECV_TRANSFER: {
             ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_CONTACT_INFO: {
-            ret = func_get_contact_info(req.msg.str, out, out_len);
             break;
         }
         case Functions_FUNC_REVOKE_MSG: {
@@ -963,17 +952,24 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_refresh_qrcode(out, out_len);
             break;
         }
+#if 0
+        case Functions_FUNC_ACCEPT_FRIEND: {
+            ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
+            break;
+        }
+        case Functions_FUNC_GET_CONTACT_INFO: {
+            ret = func_get_contact_info(req.msg.str, out, out_len);
+            break;
+        }
 #endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_EXEC_OCR: {
             ret = func_exec_ocr(req.msg.str, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_ADD_ROOM_MEMBERS: {
             ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
