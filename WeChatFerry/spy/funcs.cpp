@@ -29,6 +29,12 @@ typedef QWORD (*funcGetSNSDataMgr_t)();
 typedef QWORD (*funcGetSnsTimeLineMgr_t)();
 typedef QWORD (*funcGetSNSFirstPage_t)(QWORD, QWORD, QWORD);
 typedef QWORD (*funcGetSNSNextPageScene_t)(QWORD, QWORD);
+typedef QWORD (*GetChatMgr_t)();
+typedef QWORD (*NewChatMsg_t)(QWORD);
+typedef QWORD (*FreeChatMsg_t)(QWORD);
+typedef QWORD (*GetPreDownLoadMgr_t)();
+typedef QWORD (*GetMgrByPrefixLocalId_t)(QWORD, QWORD);
+typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
 
 int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
 
@@ -160,14 +166,21 @@ int RefreshPyq(QWORD id)
     return GetNextPage(id);
 }
 
-#if 0
+/*******************************************************************************
+ * 都说我不写注释，写一下吧
+ * 其实也没啥好写的，就是下载资源
+ * 主要介绍一下几个参数：
+ * id：好理解，消息 id
+ * thumb：图片或者视频的缩略图路径；如果是视频，后缀为 mp4 后就是存在路径了
+ * extra：图片、文件的路径
+ *******************************************************************************/
 int DownloadAttach(QWORD id, string thumb, string extra)
 {
     int status = -1;
     QWORD localId;
     uint32_t dbIdx;
 
-    if (fs::exists(extra)) { // 第一道，不重复下载
+    if (fs::exists(extra)) { // 第一道，不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
@@ -176,30 +189,28 @@ int DownloadAttach(QWORD id, string thumb, string extra)
         return status;
     }
 
-    char buff[0x2D8] = { 0 };
-    DWORD dlCall1    = g_WeChatWinDllAddr + g_WxCalls.da.call1;
-    DWORD dlCall2    = g_WeChatWinDllAddr + g_WxCalls.da.call2;
-    DWORD dlCall3    = g_WeChatWinDllAddr + g_WxCalls.da.call3;
-    DWORD dlCall4    = g_WeChatWinDllAddr + g_WxCalls.da.call4;
-    DWORD dlCall5    = g_WeChatWinDllAddr + g_WxCalls.da.call5;
-    DWORD dlCall6    = g_WeChatWinDllAddr + g_WxCalls.da.call6;
+    NewChatMsg_t NewChatMsg                       = (NewChatMsg_t)(g_WeChatWinDllAddr + 0x1C28800);
+    FreeChatMsg_t FreeChatMsg                     = (FreeChatMsg_t)(g_WeChatWinDllAddr + 0x1C1FF10);
+    GetChatMgr_t GetChatMgr                       = (GetChatMgr_t)(g_WeChatWinDllAddr + 0x1C51CF0);
+    GetMgrByPrefixLocalId_t GetMgrByPrefixLocalId = (GetMgrByPrefixLocalId_t)(g_WeChatWinDllAddr + 0x2206280);
+    GetPreDownLoadMgr_t GetPreDownLoadMgr         = (GetPreDownLoadMgr_t)(g_WeChatWinDllAddr + 0x1CD87E0);
+    PushAttachTask_t PushAttachTask               = (PushAttachTask_t)(g_WeChatWinDllAddr + 0x1DA69C0);
 
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx, buff;
-        call dlCall1;
-        call dlCall2;
-        push dword ptr [dbIdx];
-        lea ecx, buff;
-        push dword ptr [localId];
-        call dlCall3;
-        add esp, 0x8;
-        popfd;
-        popad;
+    LARGE_INTEGER l;
+    l.HighPart = dbIdx;
+    l.LowPart  = (DWORD)localId;
+
+    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, 0x460);
+    if (buff == nullptr) {
+        LOG_ERROR("Failed to allocate memory.");
+        return status;
     }
 
-    DWORD type = GET_DWORD(buff + 0x38);
+    QWORD pChatMsg = NewChatMsg((QWORD)buff);
+    GetChatMgr();
+    GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
+
+    QWORD type = GET_QWORD(buff + 0x38);
 
     string save_path  = "";
     string thumb_path = "";
@@ -223,7 +234,7 @@ int DownloadAttach(QWORD id, string thumb, string extra)
             break;
     }
 
-    if (fs::exists(save_path)) { // 不重复下载
+    if (fs::exists(save_path)) { // 不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
@@ -231,38 +242,22 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     // 创建父目录，由于路径来源于微信，不做检查
     fs::create_directory(fs::path(save_path).parent_path().string());
 
-    wstring wsSavePath  = String2Wstring(save_path);
-    wstring wsThumbPath = String2Wstring(thumb_path);
+    int temp             = 1;
+    WxString *pSavePath  = NewWxStringFromStr(save_path);
+    WxString *pThumbPath = NewWxStringFromStr(thumb_path);
 
-    WxString wxSavePath(wsSavePath);
-    WxString wxThumbPath(wsThumbPath);
+    memcpy(&buff[0x280], pThumbPath, sizeof(WxString));
+    memcpy(&buff[0x2A0], pSavePath, sizeof(WxString));
+    memcpy(&buff[0x40C], &temp, sizeof(temp));
 
-    int temp = 1;
-    memcpy(&buff[0x19C], &wxThumbPath, sizeof(wxThumbPath));
-    memcpy(&buff[0x1B0], &wxSavePath, sizeof(wxSavePath));
-    memcpy(&buff[0x29C], &temp, sizeof(temp));
-
-    __asm {
-        pushad;
-        pushfd;
-        call dlCall4;
-        push 0x1;
-        push 0x0;
-        lea ecx, buff;
-        push ecx;
-        mov ecx, eax;
-        call dlCall5;
-        mov status, eax;
-        lea ecx, buff;
-        push 0x0;
-        call dlCall6;
-        popfd;
-        popad;
-    }
+    QWORD mgr = GetPreDownLoadMgr();
+    status    = (int)PushAttachTask(mgr, pChatMsg, 0, 1);
+    FreeChatMsg(pChatMsg);
 
     return status;
 }
 
+#if 0
 int RevokeMsg(QWORD id)
 {
     int status = -1;
