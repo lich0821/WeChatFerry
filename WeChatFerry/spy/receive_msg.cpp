@@ -222,7 +222,7 @@ void DisableLog()
     }
 
     gIsLogging = false;
-    if (isMH_Initialized and !gIsLogging and !gIsListening and !gIsListeningPyq) {
+    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
         status = MH_Uninitialize();
         if (status != MH_OK) {
             LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
@@ -284,7 +284,7 @@ void UnListenMessage()
     }
 
     gIsListening = false;
-    if (isMH_Initialized and !gIsLogging and !gIsListening and !gIsListeningPyq) {
+    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
         status = MH_Uninitialize();
         if (status != MH_OK) {
             LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
@@ -346,7 +346,7 @@ void UnListenPyq()
     }
 
     gIsListeningPyq = false;
-    if (isMH_Initialized and !gIsLogging and !gIsListening and !gIsListeningPyq) {
+    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
         status = MH_Uninitialize();
         if (status != MH_OK) {
             LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
