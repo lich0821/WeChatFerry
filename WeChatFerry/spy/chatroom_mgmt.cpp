@@ -12,10 +12,10 @@ using namespace std;
 extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
 
-typedef QWORD (*funcGetChatRoomMgr_t)();
-typedef QWORD (*funcAddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*funcDelMemberFromChatRoom_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*funcInviteMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*GetChatRoomMgr_t)();
+typedef QWORD (*AddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*DelMemberFromChatRoom_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*InviteMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
 
 int AddChatroomMember(string roomid, string wxids)
 {
@@ -26,8 +26,8 @@ int AddChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    funcGetChatRoomMgr_t GetChatRoomMgr  = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
-    funcAddMemberToChatRoom_t AddMembers = (funcAddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
+    GetChatRoomMgr_t GetChatRoomMgr  = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
+    AddMemberToChatRoom_t AddMembers = (AddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -58,8 +58,8 @@ int DelChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    funcGetChatRoomMgr_t GetChatRoomMgr    = (funcGetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call1);
-    funcDelMemberFromChatRoom_t DelMembers = (funcDelMemberFromChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call2);
+    GetChatRoomMgr_t GetChatRoomMgr    = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call1);
+    DelMemberFromChatRoom_t DelMembers = (DelMemberFromChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call2);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -89,8 +89,7 @@ int InviteChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    funcInviteMemberToChatRoom_t InviteMembers
-        = (funcInviteMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.irm.call1);
+    InviteMemberToChatRoom_t InviteMembers = (InviteMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.irm.call1);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;

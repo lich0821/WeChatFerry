@@ -22,17 +22,17 @@ extern queue<WxMsg_t> gMsgQueue;
 extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
 
-typedef QWORD (*funcRecvMsg_t)(QWORD, QWORD);
-typedef QWORD (*funcWxLog_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*funcRecvPyq_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*RecvMsg_t)(QWORD, QWORD);
+typedef QWORD (*WxLog_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*RecvPyq_t)(QWORD, QWORD, QWORD);
 
-static funcRecvMsg_t funcRecvMsg = nullptr;
-static funcRecvMsg_t realRecvMsg = nullptr;
-static funcWxLog_t funcWxLog     = nullptr;
-static funcWxLog_t realWxLog     = nullptr;
-static funcRecvPyq_t funcRecvPyq = nullptr;
-static funcRecvPyq_t realRecvPyq = nullptr;
-static bool isMH_Initialized     = false;
+static RecvMsg_t funcRecvMsg = nullptr;
+static RecvMsg_t realRecvMsg = nullptr;
+static WxLog_t funcWxLog     = nullptr;
+static WxLog_t realWxLog     = nullptr;
+static RecvPyq_t funcRecvPyq = nullptr;
+static RecvPyq_t realRecvPyq = nullptr;
+static bool isMH_Initialized = false;
 
 MsgTypes_t GetMsgTypes()
 {
@@ -183,7 +183,7 @@ void EnableLog()
         LOG_WARN("g_WeChatWinDllAddr == 0");
         return;
     }
-    funcWxLog_t funcWxLog = (funcWxLog_t)(g_WeChatWinDllAddr + 0x26DA2D0);
+    WxLog_t funcWxLog = (WxLog_t)(g_WeChatWinDllAddr + 0x26DA2D0);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();
@@ -238,7 +238,7 @@ void ListenMessage()
         LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
         return;
     }
-    funcRecvMsg = (funcRecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
+    funcRecvMsg = (RecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();
@@ -300,7 +300,7 @@ void ListenPyq()
         LOG_WARN("gIsListeningPyq || (g_WeChatWinDllAddr == 0)");
         return;
     }
-    funcRecvPyq = (funcRecvPyq_t)(g_WeChatWinDllAddr + 0x2EFAA10);
+    funcRecvPyq = (RecvPyq_t)(g_WeChatWinDllAddr + 0x2EFAA10);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();

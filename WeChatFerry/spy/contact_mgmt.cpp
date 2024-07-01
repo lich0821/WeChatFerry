@@ -9,8 +9,8 @@ using namespace std;
 extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
 
-typedef QWORD (*funcGetContactMgr_t)();
-typedef QWORD (*funcGetContactList_t)(QWORD, QWORD);
+typedef QWORD (*GetContactMgr_t)();
+typedef QWORD (*GetContactList_t)(QWORD, QWORD);
 
 #define FEAT_LEN 5
 static const uint8_t FEAT_COUNTRY[FEAT_LEN]  = { 0xA4, 0xD9, 0x02, 0x4A, 0x18 };
@@ -48,8 +48,8 @@ static string GetCntString(QWORD start, QWORD end, const uint8_t *feat, size_t l
 vector<RpcContact_t> GetContacts()
 {
     vector<RpcContact_t> contacts;
-    funcGetContactMgr_t funcGetContactMgr   = (funcGetContactMgr_t)(g_WeChatWinDllAddr + 0x1C0BDE0);
-    funcGetContactList_t funcGetContactList = (funcGetContactList_t)(g_WeChatWinDllAddr + 0x2265540);
+    GetContactMgr_t funcGetContactMgr   = (GetContactMgr_t)(g_WeChatWinDllAddr + 0x1C0BDE0);
+    GetContactList_t funcGetContactList = (GetContactList_t)(g_WeChatWinDllAddr + 0x2265540);
 
     QWORD mgr     = funcGetContactMgr();
     QWORD addr[3] = { 0 };

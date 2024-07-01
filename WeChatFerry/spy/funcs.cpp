@@ -25,10 +25,10 @@ extern bool gIsListeningPyq;
 extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
 
-typedef QWORD (*funcGetSNSDataMgr_t)();
-typedef QWORD (*funcGetSnsTimeLineMgr_t)();
-typedef QWORD (*funcGetSNSFirstPage_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*funcGetSNSNextPageScene_t)(QWORD, QWORD);
+typedef QWORD (*GetSNSDataMgr_t)();
+typedef QWORD (*GetSnsTimeLineMgr_t)();
+typedef QWORD (*GetSNSFirstPage_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*GetSNSNextPageScene_t)(QWORD, QWORD);
 typedef QWORD (*GetChatMgr_t)();
 typedef QWORD (*NewChatMsg_t)(QWORD);
 typedef QWORD (*FreeChatMsg_t)(QWORD);
@@ -131,8 +131,8 @@ static int GetFirstPage()
 {
     int status = -1;
 
-    funcGetSNSDataMgr_t GetSNSDataMgr     = (funcGetSNSDataMgr_t)(g_WeChatWinDllAddr + 0x22A91C0);
-    funcGetSNSFirstPage_t GetSNSFirstPage = (funcGetSNSFirstPage_t)(g_WeChatWinDllAddr + 0x2ED9080);
+    GetSNSDataMgr_t GetSNSDataMgr     = (GetSNSDataMgr_t)(g_WeChatWinDllAddr + 0x22A91C0);
+    GetSNSFirstPage_t GetSNSFirstPage = (GetSNSFirstPage_t)(g_WeChatWinDllAddr + 0x2ED9080);
 
     QWORD buff[16] = { 0 };
     QWORD mgr      = GetSNSDataMgr();
@@ -145,8 +145,8 @@ static int GetNextPage(QWORD id)
 {
     int status = -1;
 
-    funcGetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (funcGetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + 0x2E6B110);
-    funcGetSNSNextPageScene_t GetSNSNextPageScene = (funcGetSNSNextPageScene_t)(g_WeChatWinDllAddr + 0x2EFEC00);
+    GetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (GetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + 0x2E6B110);
+    GetSNSNextPageScene_t GetSNSNextPageScene = (GetSNSNextPageScene_t)(g_WeChatWinDllAddr + 0x2EFEC00);
 
     QWORD mgr = GetSnsTimeLineMgr();
     status    = (int)GetSNSNextPageScene(mgr, id);

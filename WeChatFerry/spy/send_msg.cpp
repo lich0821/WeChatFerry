@@ -13,18 +13,18 @@ extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
 
-typedef QWORD (*funcNew_t)(QWORD);
-typedef QWORD (*funcFree_t)(QWORD);
-typedef QWORD (*funcSendMsgMgr_t)();
-typedef QWORD (*funcGetAppMsgMgr_t)();
+typedef QWORD (*New_t)(QWORD);
+typedef QWORD (*Free_t)(QWORD);
+typedef QWORD (*SendMsgMgr_t)();
+typedef QWORD (*GetAppMsgMgr_t)();
 
-typedef QWORD (*funcSendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*funcSendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*funcSendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
-                                   QWORD);
-typedef QWORD (*funcSendRichTextMsg_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*funcSendPatMsg_t)(QWORD, QWORD);
-typedef QWORD (*funcForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*SendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*SendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*SendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
+                               QWORD);
+typedef QWORD (*SendRichTextMsg_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*SendPatMsg_t)(QWORD, QWORD);
+typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -52,10 +52,10 @@ void SendTextMessage(string wxid, string msg, string atWxids)
 
     QWORD wxAters = (QWORD) & ((RawVector_t *)&vWxAtWxids)->start;
 
-    char buffer[0x460]                = { 0 };
-    funcSendMsgMgr_t funcSendMsgMgr   = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call1);
-    funcSendTextMsg_t funcSendTextMsg = (funcSendTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call2);
-    funcFree_t funcFree               = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call3);
+    char buffer[0x460]            = { 0 };
+    SendMsgMgr_t funcSendMsgMgr   = (SendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call1);
+    SendTextMsg_t funcSendTextMsg = (SendTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call2);
+    Free_t funcFree               = (Free_t)(g_WeChatWinDllAddr + g_WxCalls.sendText.call3);
     funcSendMsgMgr();
     success = funcSendTextMsg((QWORD)(&buffer), (QWORD)(&wxWxid), (QWORD)(&wxMsg), wxAters, 1, 1, 0, 0);
     funcFree((QWORD)(&buffer));
@@ -69,10 +69,10 @@ void SendImageMessage(string wxid, string path)
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
 
-    funcNew_t funcNew                = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call1);
-    funcFree_t funcFree              = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call2);
-    funcSendMsgMgr_t funcSendMsgMgr  = (funcSendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call3);
-    funcSendImageMsg_t funcSendImage = (funcSendImageMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call4);
+    New_t funcNew                = (New_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call1);
+    Free_t funcFree              = (Free_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call2);
+    SendMsgMgr_t funcSendMsgMgr  = (SendMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call3);
+    SendImageMsg_t funcSendImage = (SendImageMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendImg.call4);
 
     char msg[0x460]    = { 0 };
     char msgTmp[0x460] = { 0 };
@@ -99,10 +99,10 @@ void SendFileMessage(string wxid, string path)
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
 
-    funcNew_t funcNew                   = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call1);
-    funcFree_t funcFree                 = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call2);
-    funcGetAppMsgMgr_t funcGetAppMsgMgr = (funcGetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call3);
-    funcSendFileMsg_t funcSendFile      = (funcSendFileMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call4);
+    New_t funcNew                   = (New_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call1);
+    Free_t funcFree                 = (Free_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call2);
+    GetAppMsgMgr_t funcGetAppMsgMgr = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call3);
+    SendFileMsg_t funcSendFile      = (SendFileMsg_t)(g_WeChatWinDllAddr + g_WxCalls.sendFile.call4);
 
     char msg[0x460] = { 0 };
     QWORD tmp1[4]   = { 0 };
@@ -120,10 +120,10 @@ int SendRichTextMessage(RichText_t &rt)
 #define SRTM_SIZE 0x3F0
     QWORD status = -1;
 
-    funcNew_t funcNew                          = (funcNew_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call1);
-    funcFree_t funcFree                        = (funcFree_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call2);
-    funcGetAppMsgMgr_t funcGetAppMsgMgr        = (funcGetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call3);
-    funcSendRichTextMsg_t funcForwordPublicMsg = (funcSendRichTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call4);
+    New_t funcNew                          = (New_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call1);
+    Free_t funcFree                        = (Free_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call2);
+    GetAppMsgMgr_t funcGetAppMsgMgr        = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call3);
+    SendRichTextMsg_t funcForwordPublicMsg = (SendRichTextMsg_t)(g_WeChatWinDllAddr + g_WxCalls.rt.call4);
 
     char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE);
     if (buff == NULL) {
@@ -164,7 +164,7 @@ int SendPatMessage(string roomid, string wxid)
     WxString wxRoomid(wsRoomid);
     WxString wxWxid(wsWxid);
 
-    funcSendPatMsg_t funcSendPatMsg = (funcSendPatMsg_t)(g_WeChatWinDllAddr + g_WxCalls.pm.call1);
+    SendPatMsg_t funcSendPatMsg = (SendPatMsg_t)(g_WeChatWinDllAddr + g_WxCalls.pm.call1);
 
     status = funcSendPatMsg((QWORD)(&wxRoomid), (QWORD)(&wxWxid));
     return (int)status;
@@ -176,7 +176,7 @@ int ForwardMessage(QWORD msgid, string receiver)
     uint32_t dbIdx = 0;
     QWORD localId  = 0;
 
-    funcForwardMsg_t funcForwardMsg = (funcForwardMsg_t)(g_WeChatWinDllAddr + g_WxCalls.fm.call1);
+    ForwardMsg_t funcForwardMsg = (ForwardMsg_t)(g_WeChatWinDllAddr + g_WxCalls.fm.call1);
     if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
         return status;
