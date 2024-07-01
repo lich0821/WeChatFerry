@@ -88,9 +88,9 @@ static QWORD DispatchMsg(QWORD arg1, QWORD arg2)
         wxMsg.xml     = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.msgXml);
 
         string roomid = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.roomId);
+        wxMsg.roomid  = roomid;
         if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
             wxMsg.is_group = true;
-            wxMsg.roomid   = roomid;
             if (wxMsg.is_self) {
                 wxMsg.sender = GetSelfWxid();
             } else {
