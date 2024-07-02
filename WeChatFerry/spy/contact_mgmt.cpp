@@ -1,13 +1,22 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "contact_mgmt.h"
-#include "load_calls.h"
 #include "log.h"
 #include "util.h"
 
 using namespace std;
-extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
+
+#define OS_GET_CONTACT_MGR  0x1C0BDE0
+#define OS_GET_CONTACT_LIST 0x2265540
+#define OS_CONTACT_BIN      0x200
+#define OS_CONTACT_BIN_LEN  0x208
+#define OS_CONTACT_WXID     0x10
+#define OS_CONTACT_CODE     0x30
+#define OS_CONTACT_REMARK   0x80
+#define OS_CONTACT_NAME     0xA0
+#define OS_CONTACT_GENDER   0x0E
+#define OS_CONTACT_STEP     0x6A8
 
 typedef QWORD (*GetContactMgr_t)();
 typedef QWORD (*GetContactList_t)(QWORD, QWORD);
@@ -48,8 +57,8 @@ static string GetCntString(QWORD start, QWORD end, const uint8_t *feat, size_t l
 vector<RpcContact_t> GetContacts()
 {
     vector<RpcContact_t> contacts;
-    GetContactMgr_t funcGetContactMgr   = (GetContactMgr_t)(g_WeChatWinDllAddr + 0x1C0BDE0);
-    GetContactList_t funcGetContactList = (GetContactList_t)(g_WeChatWinDllAddr + 0x2265540);
+    GetContactMgr_t funcGetContactMgr   = (GetContactMgr_t)(g_WeChatWinDllAddr + OS_GET_CONTACT_MGR);
+    GetContactList_t funcGetContactList = (GetContactList_t)(g_WeChatWinDllAddr + OS_GET_CONTACT_LIST);
 
     QWORD mgr     = funcGetContactMgr();
     QWORD addr[3] = { 0 };
@@ -62,13 +71,13 @@ vector<RpcContact_t> GetContacts()
     QWORD pend   = (QWORD)addr[2];
     while (pstart < pend) {
         RpcContact_t cnt;
-        QWORD pbin   = GET_QWORD(pstart + 0x200);
-        QWORD lenbin = GET_DWORD(pstart + 0x208);
+        QWORD pbin   = GET_QWORD(pstart + OS_CONTACT_BIN);
+        QWORD lenbin = GET_DWORD(pstart + OS_CONTACT_BIN_LEN);
 
-        cnt.wxid   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxId);     // 0x10
-        cnt.code   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxCode);   // 0x30
-        cnt.remark = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxRemark); // 0x80
-        cnt.name   = GetStringByWstrAddr(pstart + g_WxCalls.contact.wxName);   // 0xA0
+        cnt.wxid   = GetStringByWstrAddr(pstart + OS_CONTACT_WXID);
+        cnt.code   = GetStringByWstrAddr(pstart + OS_CONTACT_CODE);
+        cnt.remark = GetStringByWstrAddr(pstart + OS_CONTACT_REMARK);
+        cnt.name   = GetStringByWstrAddr(pstart + OS_CONTACT_NAME);
 
         cnt.country  = GetCntString(pbin, pbin + lenbin, FEAT_COUNTRY, FEAT_LEN);
         cnt.province = GetCntString(pbin, pbin + lenbin, FEAT_PROVINCE, FEAT_LEN);
@@ -77,11 +86,11 @@ vector<RpcContact_t> GetContacts()
         if (pbin == 0) {
             cnt.gender = 0;
         } else {
-            cnt.gender = (DWORD) * (uint8_t *)(pbin + g_WxCalls.contact.wxGender); // 0x0E
+            cnt.gender = (DWORD) * (uint8_t *)(pbin + OS_CONTACT_GENDER);
         }
 
         contacts.push_back(cnt);
-        pstart += 0x6A8; // 0x6A8
+        pstart += OS_CONTACT_STEP;
     }
 
     return contacts;

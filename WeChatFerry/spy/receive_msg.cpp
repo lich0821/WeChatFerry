@@ -6,7 +6,6 @@
 #include <mutex>
 #include <queue>
 
-#include "load_calls.h"
 #include "log.h"
 #include "receive_msg.h"
 #include "user_info.h"
@@ -19,8 +18,28 @@ extern condition_variable gCV;
 extern queue<WxMsg_t> gMsgQueue;
 
 // Defined in spy.cpp
-extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
+
+#define OS_RECV_MSG_ID      0x30
+#define OS_RECV_MSG_TYPE    0x38
+#define OS_RECV_MSG_SELF    0x3C
+#define OS_RECV_MSG_TS      0x44
+#define OS_RECV_MSG_ROOMID  0x48
+#define OS_RECV_MSG_CONTENT 0x88
+#define OS_RECV_MSG_WXID    0x240
+#define OS_RECV_MSG_SIGN    0x260
+#define OS_RECV_MSG_THUMB   0x280
+#define OS_RECV_MSG_EXTRA   0x2A0
+#define OS_RECV_MSG_XML     0x308
+#define OS_RECV_MSG_CALL    0x2205510
+#define OS_PYQ_MSG_START    0x30
+#define OS_PYQ_MSG_END      0x38
+#define OS_PYQ_MSG_TS       0x38
+#define OS_PYQ_MSG_XML      0x9B8
+#define OS_PYQ_MSG_SENDER   0x18
+#define OS_PYQ_MSG_CONTENT  0x48
+#define OS_PYQ_MSG_CALL     0x2EFAA10
+#define OS_WXLOG            0x26DA2D0
 
 typedef QWORD (*RecvMsg_t)(QWORD, QWORD);
 typedef QWORD (*WxLog_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
@@ -79,22 +98,22 @@ static QWORD DispatchMsg(QWORD arg1, QWORD arg2)
 {
     WxMsg_t wxMsg = { 0 };
     try {
-        wxMsg.id      = GET_QWORD(arg2 + g_WxCalls.recvMsg.msgId);
-        wxMsg.type    = GET_DWORD(arg2 + g_WxCalls.recvMsg.type);
-        wxMsg.is_self = GET_DWORD(arg2 + g_WxCalls.recvMsg.isSelf);
-        wxMsg.ts      = GET_DWORD(arg2 + g_WxCalls.recvMsg.ts);
-        wxMsg.content = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.content);
-        wxMsg.sign    = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.sign);
-        wxMsg.xml     = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.msgXml);
+        wxMsg.id      = GET_QWORD(arg2 + OS_RECV_MSG_ID);
+        wxMsg.type    = GET_DWORD(arg2 + OS_RECV_MSG_TYPE);
+        wxMsg.is_self = GET_DWORD(arg2 + OS_RECV_MSG_SELF);
+        wxMsg.ts      = GET_DWORD(arg2 + OS_RECV_MSG_TS);
+        wxMsg.content = GetStringByWstrAddr(arg2 + OS_RECV_MSG_CONTENT);
+        wxMsg.sign    = GetStringByWstrAddr(arg2 + OS_RECV_MSG_SIGN);
+        wxMsg.xml     = GetStringByWstrAddr(arg2 + OS_RECV_MSG_XML);
 
-        string roomid = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.roomId);
+        string roomid = GetStringByWstrAddr(arg2 + OS_RECV_MSG_ROOMID);
         wxMsg.roomid  = roomid;
         if (roomid.find("@chatroom") != string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
             wxMsg.is_group = true;
             if (wxMsg.is_self) {
                 wxMsg.sender = GetSelfWxid();
             } else {
-                wxMsg.sender = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.wxid);
+                wxMsg.sender = GetStringByWstrAddr(arg2 + OS_RECV_MSG_WXID);
             }
         } else {
             wxMsg.is_group = false;
@@ -105,13 +124,13 @@ static QWORD DispatchMsg(QWORD arg1, QWORD arg2)
             }
         }
 
-        wxMsg.thumb = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.thumb);
+        wxMsg.thumb = GetStringByWstrAddr(arg2 + OS_RECV_MSG_THUMB);
         if (!wxMsg.thumb.empty()) {
             wxMsg.thumb = GetHomePath() + wxMsg.thumb;
             replace(wxMsg.thumb.begin(), wxMsg.thumb.end(), '\\', '/');
         }
 
-        wxMsg.extra = GetStringByWstrAddr(arg2 + g_WxCalls.recvMsg.extra);
+        wxMsg.extra = GetStringByWstrAddr(arg2 + OS_RECV_MSG_EXTRA);
         if (!wxMsg.extra.empty()) {
             wxMsg.extra = GetHomePath() + wxMsg.extra;
             replace(wxMsg.extra.begin(), wxMsg.extra.end(), '\\', '/');
@@ -146,8 +165,8 @@ static QWORD PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWORD 
 
 static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
 {
-    QWORD startAddr = *(QWORD *)(arg2 + 0x30);
-    QWORD endAddr   = *(QWORD *)(arg2 + 0x38);
+    QWORD startAddr = *(QWORD *)(arg2 + OS_PYQ_MSG_START);
+    QWORD endAddr   = *(QWORD *)(arg2 + OS_PYQ_MSG_END);
 
     if (startAddr == 0) {
         return;
@@ -160,10 +179,10 @@ static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
         wxMsg.is_self  = false;
         wxMsg.is_group = false;
         wxMsg.id       = GET_QWORD(startAddr);
-        wxMsg.ts       = GET_DWORD(startAddr + 0x38);
-        wxMsg.xml      = GetStringByWstrAddr(startAddr + 0x9B8);
-        wxMsg.sender   = GetStringByWstrAddr(startAddr + 0x18);
-        wxMsg.content  = GetStringByWstrAddr(startAddr + 0x48);
+        wxMsg.ts       = GET_DWORD(startAddr + OS_PYQ_MSG_TS);
+        wxMsg.xml      = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_XML);
+        wxMsg.sender   = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_SENDER);
+        wxMsg.content  = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_CONTENT);
 
         {
             unique_lock<mutex> lock(gMutex);
@@ -179,11 +198,11 @@ static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
 void EnableLog()
 {
     MH_STATUS status = MH_UNKNOWN;
-    if (g_WeChatWinDllAddr == 0) {
-        LOG_WARN("g_WeChatWinDllAddr == 0");
+    if (gIsLogging) {
+        LOG_WARN("gIsLogging");
         return;
     }
-    WxLog_t funcWxLog = (WxLog_t)(g_WeChatWinDllAddr + 0x26DA2D0);
+    WxLog_t funcWxLog = (WxLog_t)(g_WeChatWinDllAddr + OS_WXLOG);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();
@@ -234,11 +253,11 @@ void DisableLog()
 void ListenMessage()
 {
     MH_STATUS status = MH_UNKNOWN;
-    if (gIsListening || (g_WeChatWinDllAddr == 0)) {
-        LOG_WARN("gIsListening || (g_WeChatWinDllAddr == 0)");
+    if (gIsListening) {
+        LOG_WARN("gIsListening");
         return;
     }
-    funcRecvMsg = (RecvMsg_t)(g_WeChatWinDllAddr + g_WxCalls.recvMsg.call);
+    funcRecvMsg = (RecvMsg_t)(g_WeChatWinDllAddr + OS_RECV_MSG_CALL);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();
@@ -296,11 +315,11 @@ void UnListenMessage()
 void ListenPyq()
 {
     MH_STATUS status = MH_UNKNOWN;
-    if (gIsListeningPyq || (g_WeChatWinDllAddr == 0)) {
-        LOG_WARN("gIsListeningPyq || (g_WeChatWinDllAddr == 0)");
+    if (gIsListeningPyq) {
+        LOG_WARN("gIsListeningPyq");
         return;
     }
-    funcRecvPyq = (RecvPyq_t)(g_WeChatWinDllAddr + 0x2EFAA10);
+    funcRecvPyq = (RecvPyq_t)(g_WeChatWinDllAddr + OS_PYQ_MSG_CALL);
 
     if (!isMH_Initialized) {
         status = MH_Initialize();

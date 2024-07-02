@@ -3,14 +3,16 @@
 #include <vector>
 
 #include "chatroom_mgmt.h"
-#include "load_calls.h"
 #include "log.h"
 #include "util.h"
 
 using namespace std;
-
-extern WxCalls_t g_WxCalls;
 extern QWORD g_WeChatWinDllAddr;
+
+#define OS_GET_CHATROOM_MGR 0x1C4E200
+#define OS_ADD_MEMBERS      0x221B8A0
+#define OS_DELETE_MEMBERS   0x221BEE0
+#define OS_INVITE_MEMBERS   0x221B280
 
 typedef QWORD (*GetChatRoomMgr_t)();
 typedef QWORD (*AddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
@@ -26,8 +28,8 @@ int AddChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    GetChatRoomMgr_t GetChatRoomMgr  = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call1);
-    AddMemberToChatRoom_t AddMembers = (AddMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.arm.call2);
+    GetChatRoomMgr_t GetChatRoomMgr  = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
+    AddMemberToChatRoom_t AddMembers = (AddMemberToChatRoom_t)(g_WeChatWinDllAddr + OS_ADD_MEMBERS);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -58,8 +60,8 @@ int DelChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    GetChatRoomMgr_t GetChatRoomMgr    = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call1);
-    DelMemberFromChatRoom_t DelMembers = (DelMemberFromChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.drm.call2);
+    GetChatRoomMgr_t GetChatRoomMgr    = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
+    DelMemberFromChatRoom_t DelMembers = (DelMemberFromChatRoom_t)(g_WeChatWinDllAddr + OS_DELETE_MEMBERS);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;
@@ -89,7 +91,7 @@ int InviteChatroomMember(string roomid, string wxids)
         return status;
     }
 
-    InviteMemberToChatRoom_t InviteMembers = (InviteMemberToChatRoom_t)(g_WeChatWinDllAddr + g_WxCalls.irm.call1);
+    InviteMemberToChatRoom_t InviteMembers = (InviteMemberToChatRoom_t)(g_WeChatWinDllAddr + OS_INVITE_MEMBERS);
 
     vector<wstring> vMembers;
     vector<WxString> vWxMembers;

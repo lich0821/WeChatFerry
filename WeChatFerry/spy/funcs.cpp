@@ -11,6 +11,12 @@
 #include "spy_types.h"
 #include "util.h"
 
+using namespace std;
+namespace fs = std::filesystem;
+
+extern bool gIsListeningPyq;
+extern QWORD g_WeChatWinDllAddr;
+
 #define HEADER_PNG1 0x89
 #define HEADER_PNG2 0x50
 #define HEADER_JPG1 0xFF
@@ -18,12 +24,16 @@
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-using namespace std;
-namespace fs = std::filesystem;
-
-extern bool gIsListeningPyq;
-extern WxCalls_t g_WxCalls;
-extern QWORD g_WeChatWinDllAddr;
+#define OS_GET_SNS_DATA_MGR           0x22A91C0
+#define OS_GET_SNS_FIRST_PAGE         0x2ED9080
+#define OS_GET_SNS_TIMELINE_MGR       0x2E6B110
+#define OS_GET_SNS_NEXT_PAGE          0x2EFEC00
+#define OS_NEW_CHAT_MSG               0x1C28800
+#define OS_FREE_CHAT_MSG              0x1C1FF10
+#define OS_GET_CHAT_MGR               0x1C51CF0
+#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x2206280
+#define OS_GET_PRE_DOWNLOAD_MGR       0x1CD87E0
+#define OS_PUSH_ATTACH_TASK           0x1DA69C0
 
 typedef QWORD (*GetSNSDataMgr_t)();
 typedef QWORD (*GetSnsTimeLineMgr_t)();
@@ -131,8 +141,8 @@ static int GetFirstPage()
 {
     int status = -1;
 
-    GetSNSDataMgr_t GetSNSDataMgr     = (GetSNSDataMgr_t)(g_WeChatWinDllAddr + 0x22A91C0);
-    GetSNSFirstPage_t GetSNSFirstPage = (GetSNSFirstPage_t)(g_WeChatWinDllAddr + 0x2ED9080);
+    GetSNSDataMgr_t GetSNSDataMgr     = (GetSNSDataMgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_DATA_MGR);
+    GetSNSFirstPage_t GetSNSFirstPage = (GetSNSFirstPage_t)(g_WeChatWinDllAddr + OS_GET_SNS_FIRST_PAGE);
 
     QWORD buff[16] = { 0 };
     QWORD mgr      = GetSNSDataMgr();
@@ -145,8 +155,8 @@ static int GetNextPage(QWORD id)
 {
     int status = -1;
 
-    GetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (GetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + 0x2E6B110);
-    GetSNSNextPageScene_t GetSNSNextPageScene = (GetSNSNextPageScene_t)(g_WeChatWinDllAddr + 0x2EFEC00);
+    GetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (GetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_TIMELINE_MGR);
+    GetSNSNextPageScene_t GetSNSNextPageScene = (GetSNSNextPageScene_t)(g_WeChatWinDllAddr + OS_GET_SNS_NEXT_PAGE);
 
     QWORD mgr = GetSnsTimeLineMgr();
     status    = (int)GetSNSNextPageScene(mgr, id);
@@ -191,12 +201,13 @@ int DownloadAttach(QWORD id, string thumb, string extra)
         return status;
     }
 
-    NewChatMsg_t NewChatMsg                       = (NewChatMsg_t)(g_WeChatWinDllAddr + 0x1C28800);
-    FreeChatMsg_t FreeChatMsg                     = (FreeChatMsg_t)(g_WeChatWinDllAddr + 0x1C1FF10);
-    GetChatMgr_t GetChatMgr                       = (GetChatMgr_t)(g_WeChatWinDllAddr + 0x1C51CF0);
-    GetMgrByPrefixLocalId_t GetMgrByPrefixLocalId = (GetMgrByPrefixLocalId_t)(g_WeChatWinDllAddr + 0x2206280);
-    GetPreDownLoadMgr_t GetPreDownLoadMgr         = (GetPreDownLoadMgr_t)(g_WeChatWinDllAddr + 0x1CD87E0);
-    PushAttachTask_t PushAttachTask               = (PushAttachTask_t)(g_WeChatWinDllAddr + 0x1DA69C0);
+    NewChatMsg_t NewChatMsg               = (NewChatMsg_t)(g_WeChatWinDllAddr + OS_NEW_CHAT_MSG);
+    FreeChatMsg_t FreeChatMsg             = (FreeChatMsg_t)(g_WeChatWinDllAddr + OS_FREE_CHAT_MSG);
+    GetChatMgr_t GetChatMgr               = (GetChatMgr_t)(g_WeChatWinDllAddr + OS_GET_CHAT_MGR);
+    GetPreDownLoadMgr_t GetPreDownLoadMgr = (GetPreDownLoadMgr_t)(g_WeChatWinDllAddr + OS_GET_PRE_DOWNLOAD_MGR);
+    PushAttachTask_t PushAttachTask       = (PushAttachTask_t)(g_WeChatWinDllAddr + OS_PUSH_ATTACH_TASK);
+    GetMgrByPrefixLocalId_t GetMgrByPrefixLocalId
+        = (GetMgrByPrefixLocalId_t)(g_WeChatWinDllAddr + OS_GET_MGR_BY_PREFIX_LOCAL_ID);
 
     LARGE_INTEGER l;
     l.HighPart = dbIdx;
