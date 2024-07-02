@@ -237,7 +237,6 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="contact_mgmt.h" />
-    <ClInclude Include="load_calls.h" />
     <ClInclude Include="receive_msg.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rpc_server.h" />
@@ -260,7 +259,6 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="contact_mgmt.cpp" />
-    <ClCompile Include="load_calls.cpp" />
     <ClCompile Include="receive_msg.cpp" />
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />

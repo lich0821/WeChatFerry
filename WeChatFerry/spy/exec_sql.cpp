@@ -1,7 +1,6 @@
 ﻿#include <iterator>
 
 #include "exec_sql.h"
-#include "load_calls.h"
 #include "log.h"
 #include "sqlite3.h"
 #include "util.h"

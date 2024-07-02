@@ -24,6 +24,7 @@ extern QWORD g_WeChatWinDllAddr;
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
+#define OS_LOGIN_STATUS               0x5AB86A8
 #define OS_GET_SNS_DATA_MGR           0x22A91C0
 #define OS_GET_SNS_FIRST_PAGE         0x2ED9080
 #define OS_GET_SNS_TIMELINE_MGR       0x2E6B110
@@ -48,7 +49,7 @@ typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*GetOCRManager_t)();
 typedef QWORD (*DoOCRTask_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + g_WxCalls.login); }
+int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + OS_LOGIN_STATUS); }
 
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
