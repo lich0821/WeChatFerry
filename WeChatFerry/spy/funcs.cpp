@@ -11,6 +11,12 @@
 #include "spy_types.h"
 #include "util.h"
 
+using namespace std;
+namespace fs = std::filesystem;
+
+extern bool gIsListeningPyq;
+extern QWORD g_WeChatWinDllAddr;
+
 #define HEADER_PNG1 0x89
 #define HEADER_PNG2 0x50
 #define HEADER_JPG1 0xFF
@@ -18,16 +24,33 @@
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-using namespace std;
-namespace fs = std::filesystem;
+#define OS_LOGIN_STATUS               0x5AB86A8
+#define OS_GET_SNS_DATA_MGR           0x22A91C0
+#define OS_GET_SNS_FIRST_PAGE         0x2ED9080
+#define OS_GET_SNS_TIMELINE_MGR       0x2E6B110
+#define OS_GET_SNS_NEXT_PAGE          0x2EFEC00
+#define OS_NEW_CHAT_MSG               0x1C28800
+#define OS_FREE_CHAT_MSG              0x1C1FF10
+#define OS_GET_CHAT_MGR               0x1C51CF0
+#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x2206280
+#define OS_GET_PRE_DOWNLOAD_MGR       0x1CD87E0
+#define OS_PUSH_ATTACH_TASK           0x1DA69C0
 
-extern bool gIsListeningPyq;
-extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
+typedef QWORD (*GetSNSDataMgr_t)();
+typedef QWORD (*GetSnsTimeLineMgr_t)();
+typedef QWORD (*GetSNSFirstPage_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*GetSNSNextPageScene_t)(QWORD, QWORD);
+typedef QWORD (*GetChatMgr_t)();
+typedef QWORD (*NewChatMsg_t)(QWORD);
+typedef QWORD (*FreeChatMsg_t)(QWORD);
+typedef QWORD (*GetPreDownLoadMgr_t)();
+typedef QWORD (*GetMgrByPrefixLocalId_t)(QWORD, QWORD);
+typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*GetOCRManager_t)();
+typedef QWORD (*DoOCRTask_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + g_WxCalls.login); }
+int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + OS_LOGIN_STATUS); }
 
-#if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     // PNG?
@@ -54,6 +77,7 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 string DecryptImage(string src, string dir)
 {
     if (!fs::exists(src)) {
+        LOG_ERROR("File not exists: {}", src);
         return "";
     }
 
@@ -116,53 +140,32 @@ string DecryptImage(string src, string dir)
 
 static int GetFirstPage()
 {
-    int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
-    DWORD pyqCall2 = g_WeChatWinDllAddr + g_WxCalls.pyq.call2;
+    int status = -1;
 
-    char buf[0xB44] = { 0 };
-    __asm {
-        pushad;
-        call pyqCall1;
-        push 0x1;
-        lea ecx, buf;
-        push ecx;
-        mov ecx, eax;
-        call pyqCall2;
-        mov rv, eax;
-        popad;
-    }
+    GetSNSDataMgr_t GetSNSDataMgr     = (GetSNSDataMgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_DATA_MGR);
+    GetSNSFirstPage_t GetSNSFirstPage = (GetSNSFirstPage_t)(g_WeChatWinDllAddr + OS_GET_SNS_FIRST_PAGE);
 
-    return rv;
+    QWORD buff[16] = { 0 };
+    QWORD mgr      = GetSNSDataMgr();
+    status         = (int)GetSNSFirstPage(mgr, (QWORD)buff, 1);
+
+    return status;
 }
 
-static int GetNextPage(uint64_t id)
+static int GetNextPage(QWORD id)
 {
-    int rv         = -1;
-    DWORD pyqCall1 = g_WeChatWinDllAddr + g_WxCalls.pyq.call1;
-    DWORD pyqCall3 = g_WeChatWinDllAddr + g_WxCalls.pyq.call3;
+    int status = -1;
 
-    RawVector_t tmp = { 0 };
+    GetSnsTimeLineMgr_t GetSnsTimeLineMgr     = (GetSnsTimeLineMgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_TIMELINE_MGR);
+    GetSNSNextPageScene_t GetSNSNextPageScene = (GetSNSNextPageScene_t)(g_WeChatWinDllAddr + OS_GET_SNS_NEXT_PAGE);
 
-    __asm {
-        pushad;
-        call pyqCall1;
-        lea ecx, tmp;
-        push ecx;
-        mov ebx, dword ptr [id + 0x04];
-        push ebx;
-        mov edi, dword ptr [id]
-        push edi;
-        mov ecx, eax;
-        call pyqCall3;
-        mov rv, eax;
-        popad;
-    }
+    QWORD mgr = GetSnsTimeLineMgr();
+    status    = (int)GetSNSNextPageScene(mgr, id);
 
-    return rv;
+    return status;
 }
 
-int RefreshPyq(uint64_t id)
+int RefreshPyq(QWORD id)
 {
     if (!gIsListeningPyq) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
@@ -176,13 +179,21 @@ int RefreshPyq(uint64_t id)
     return GetNextPage(id);
 }
 
-int DownloadAttach(uint64_t id, string thumb, string extra)
+/*******************************************************************************
+ * 都说我不写注释，写一下吧
+ * 其实也没啥好写的，就是下载资源
+ * 主要介绍一下几个参数：
+ * id：好理解，消息 id
+ * thumb：图片或者视频的缩略图路径；如果是视频，后缀为 mp4 后就是存在路径了
+ * extra：图片、文件的路径
+ *******************************************************************************/
+int DownloadAttach(QWORD id, string thumb, string extra)
 {
     int status = -1;
-    uint64_t localId;
+    QWORD localId;
     uint32_t dbIdx;
 
-    if (fs::exists(extra)) { // 第一道，不重复下载
+    if (fs::exists(extra)) { // 第一道，不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
@@ -191,30 +202,29 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
         return status;
     }
 
-    char buff[0x2D8] = { 0 };
-    DWORD dlCall1    = g_WeChatWinDllAddr + g_WxCalls.da.call1;
-    DWORD dlCall2    = g_WeChatWinDllAddr + g_WxCalls.da.call2;
-    DWORD dlCall3    = g_WeChatWinDllAddr + g_WxCalls.da.call3;
-    DWORD dlCall4    = g_WeChatWinDllAddr + g_WxCalls.da.call4;
-    DWORD dlCall5    = g_WeChatWinDllAddr + g_WxCalls.da.call5;
-    DWORD dlCall6    = g_WeChatWinDllAddr + g_WxCalls.da.call6;
+    NewChatMsg_t NewChatMsg               = (NewChatMsg_t)(g_WeChatWinDllAddr + OS_NEW_CHAT_MSG);
+    FreeChatMsg_t FreeChatMsg             = (FreeChatMsg_t)(g_WeChatWinDllAddr + OS_FREE_CHAT_MSG);
+    GetChatMgr_t GetChatMgr               = (GetChatMgr_t)(g_WeChatWinDllAddr + OS_GET_CHAT_MGR);
+    GetPreDownLoadMgr_t GetPreDownLoadMgr = (GetPreDownLoadMgr_t)(g_WeChatWinDllAddr + OS_GET_PRE_DOWNLOAD_MGR);
+    PushAttachTask_t PushAttachTask       = (PushAttachTask_t)(g_WeChatWinDllAddr + OS_PUSH_ATTACH_TASK);
+    GetMgrByPrefixLocalId_t GetMgrByPrefixLocalId
+        = (GetMgrByPrefixLocalId_t)(g_WeChatWinDllAddr + OS_GET_MGR_BY_PREFIX_LOCAL_ID);
 
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx, buff;
-        call dlCall1;
-        call dlCall2;
-        push dword ptr [dbIdx];
-        lea ecx, buff;
-        push dword ptr [localId];
-        call dlCall3;
-        add esp, 0x8;
-        popfd;
-        popad;
+    LARGE_INTEGER l;
+    l.HighPart = dbIdx;
+    l.LowPart  = (DWORD)localId;
+
+    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, 0x460);
+    if (buff == nullptr) {
+        LOG_ERROR("Failed to allocate memory.");
+        return status;
     }
 
-    DWORD type = GET_DWORD(buff + 0x38);
+    QWORD pChatMsg = NewChatMsg((QWORD)buff);
+    GetChatMgr();
+    GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
+
+    QWORD type = GET_QWORD(buff + 0x38);
 
     string save_path  = "";
     string thumb_path = "";
@@ -238,7 +248,7 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
             break;
     }
 
-    if (fs::exists(save_path)) { // 不重复下载
+    if (fs::exists(save_path)) { // 不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
@@ -246,84 +256,22 @@ int DownloadAttach(uint64_t id, string thumb, string extra)
     // 创建父目录，由于路径来源于微信，不做检查
     fs::create_directory(fs::path(save_path).parent_path().string());
 
-    wstring wsSavePath  = String2Wstring(save_path);
-    wstring wsThumbPath = String2Wstring(thumb_path);
+    int temp             = 1;
+    WxString *pSavePath  = NewWxStringFromStr(save_path);
+    WxString *pThumbPath = NewWxStringFromStr(thumb_path);
 
-    WxString wxSavePath(wsSavePath);
-    WxString wxThumbPath(wsThumbPath);
+    memcpy(&buff[0x280], pThumbPath, sizeof(WxString));
+    memcpy(&buff[0x2A0], pSavePath, sizeof(WxString));
+    memcpy(&buff[0x40C], &temp, sizeof(temp));
 
-    int temp = 1;
-    memcpy(&buff[0x19C], &wxThumbPath, sizeof(wxThumbPath));
-    memcpy(&buff[0x1B0], &wxSavePath, sizeof(wxSavePath));
-    memcpy(&buff[0x29C], &temp, sizeof(temp));
-
-    __asm {
-        pushad;
-        pushfd;
-        call dlCall4;
-        push 0x1;
-        push 0x0;
-        lea ecx, buff;
-        push ecx;
-        mov ecx, eax;
-        call dlCall5;
-        mov status, eax;
-        lea ecx, buff;
-        push 0x0;
-        call dlCall6;
-        popfd;
-        popad;
-    }
+    QWORD mgr = GetPreDownLoadMgr();
+    status    = (int)PushAttachTask(mgr, pChatMsg, 0, 1);
+    FreeChatMsg(pChatMsg);
 
     return status;
 }
 
-int RevokeMsg(uint64_t id)
-{
-    int status = -1;
-    uint64_t localId;
-    uint32_t dbIdx;
-    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
-        return status;
-    }
-
-    char chat_msg[0x2D8] = { 0 };
-
-    DWORD rmCall1 = g_WeChatWinDllAddr + g_WxCalls.rm.call1;
-    DWORD rmCall2 = g_WeChatWinDllAddr + g_WxCalls.rm.call2;
-    DWORD rmCall3 = g_WeChatWinDllAddr + g_WxCalls.rm.call3;
-    DWORD rmCall4 = g_WeChatWinDllAddr + g_WxCalls.rm.call4;
-    DWORD rmCall5 = g_WeChatWinDllAddr + g_WxCalls.rm.call5;
-
-    __asm {
-        pushad;
-        pushfd;
-        lea        ecx, chat_msg;
-        call       rmCall1;
-        call       rmCall2;
-        push       dword ptr [dbIdx];
-        lea        ecx, chat_msg;
-        push       dword ptr [localId];
-        call       rmCall3;
-        add        esp, 0x8;
-        call       rmCall2;
-        lea        ecx, chat_msg;
-        push       ecx;
-        mov        ecx, eax;
-        call       rmCall4;
-        mov        status, eax;
-        lea        ecx, chat_msg;
-        push       0x0;
-        call       rmCall5;
-        popfd;
-        popad;
-    }
-
-    return status;
-}
-
-string GetAudio(uint64_t id, string dir)
+string GetAudio(QWORD id, string dir)
 {
     string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
     mp3path += to_string(id) + ".mp3";
@@ -346,104 +294,66 @@ string GetAudio(uint64_t id, string dir)
 OcrResult_t GetOcrResult(string path)
 {
     OcrResult_t ret = { -1, "" };
-
+#if 0 // 参数没调好，会抛异常，看看有没有好心人来修复
     if (!fs::exists(path)) {
         LOG_ERROR("Can not find: {}", path);
         return ret;
     }
 
+    GetOCRManager_t GetOCRManager = (GetOCRManager_t)(g_WeChatWinDllAddr + 0x1D6C3C0);
+    DoOCRTask_t DoOCRTask         = (DoOCRTask_t)(g_WeChatWinDllAddr + 0x2D10BC0);
+
+    QWORD unk1 = 0, unk2 = 0, unused = 0;
+    QWORD *pUnk1 = &unk1;
+    QWORD *pUnk2 = &unk2;
     // 路径分隔符有要求，必须为 `\`
     wstring wsPath = String2Wstring(fs::path(path).make_preferred().string());
-
     WxString wxPath(wsPath);
-    WxString nullObj;
-    WxString ocrBuffer;
+    vector<QWORD> *pv = (vector<QWORD> *)HeapAlloc(GetProcessHeap(), 0, 0x20);
+    RawVector_t *pRv  = (RawVector_t *)pv;
+    pRv->finish       = pRv->start;
+    char buff[0x98]   = { 0 };
+    memcpy(buff, &pRv->start, sizeof(QWORD));
 
-    DWORD ocrCall1 = g_WeChatWinDllAddr + g_WxCalls.ocr.call1;
-    DWORD ocrCall2 = g_WeChatWinDllAddr + g_WxCalls.ocr.call2;
-    DWORD ocrCall3 = g_WeChatWinDllAddr + g_WxCalls.ocr.call3;
+    QWORD mgr  = GetOCRManager();
+    ret.status = (int)DoOCRTask(mgr, (QWORD)&wxPath, unused, (QWORD)buff, (QWORD)&pUnk1, (QWORD)&pUnk2);
 
-    DWORD tmp  = 0;
-    int status = -1;
-    __asm {
-        pushad;
-        pushfd;
-        lea   ecx, ocrBuffer;
-        call  ocrCall1;
-        call  ocrCall2;
-        lea   ecx, nullObj;
-        push  ecx;
-        lea   ecx, tmp;
-        push  ecx;
-        lea   ecx, ocrBuffer;
-        push  ecx;
-        push  0x0;
-        lea   ecx, wxPath;
-        push  ecx;
-        mov   ecx, eax;
-        call  ocrCall3;
-        mov   status, eax;
-        popfd;
-        popad;
+    QWORD count = GET_QWORD(buff + 0x8);
+    if (count > 0) {
+        QWORD header = GET_QWORD(buff);
+        for (QWORD i = 0; i < count; i++) {
+            QWORD content = GET_QWORD(header);
+            ret.result += Wstring2String(GET_WSTRING(content + 0x28));
+            ret.result += "\n";
+            header = content;
+        }
     }
-
-    if (status != 0)
-    {
-        LOG_ERROR("OCR status: {}", to_string(status));
-        return ret; // 识别出错
-    }
-
-    ret.status = status;
-
-    DWORD addr   = (DWORD)&ocrBuffer;
-    DWORD header = GET_DWORD(addr);
-    DWORD num    = GET_DWORD(addr + 0x4);
-    if (num <= 0) {
-        return ret; // 识别内容为空
-    }
-
-    for (uint32_t i = 0; i < num; i++) {
-        DWORD content = GET_DWORD(header);
-        ret.result += Wstring2String(GET_WSTRING(content + 0x14));
-        ret.result += "\n";
-        header = content;
-    }
-
+#endif
     return ret;
+}
+
+int RevokeMsg(QWORD id)
+{
+    int status = -1;
+#if 0 // 这个挺鸡肋的，因为自己发的消息没法直接获得 msgid，就这样吧
+    QWORD localId;
+    uint32_t dbIdx;
+    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
+        return status;
+    }
+#endif
+    return status;
 }
 
 string GetLoginUrl()
 {
-    if (GET_DWORD(g_WeChatWinDllAddr + g_WxCalls.login) == 1) {
-        LOG_DEBUG("Already logined.");
-        return ""; // 已登录直接返回空字符
-    }
-
-    DWORD refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + g_WxCalls.rlq.call1;
-    DWORD refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + g_WxCalls.rlq.call2;
-
-    // 刷新二维码
-    __asm {
-        pushad;
-        pushfd;
-        call refreshLoginQrcodeCall1;
-        mov ecx, eax;
-        call refreshLoginQrcodeCall2;
-        popfd;
-        popad;
-    }
-
-    // 获取二维码链接
-    char *url   = GET_STRING(g_WeChatWinDllAddr + g_WxCalls.rlq.url);
-    uint8_t cnt = 0;
-    while (url[0] == 0) { // 刷新需要时间，太快了会获取不到
-        if (cnt > 5) {
-            LOG_ERROR("Refresh QR Code timeout.");
-            return "";
-        }
-        Sleep(1000);
-        cnt++;
-    }
+    char url[] = "方法还没实现";
     return "http://weixin.qq.com/x/" + string(url);
 }
-#endif
+
+int ReceiveTransfer(string wxid, string transferid, string transactionid)
+{
+    // 别想了，这个不实现了
+    return -1;
+}

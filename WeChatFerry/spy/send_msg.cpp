@@ -9,28 +9,47 @@
 #include "util.h"
 
 extern HANDLE g_hEvent;
-extern WxCalls_t g_WxCalls;
-extern UINT64 g_WeChatWinDllAddr;
+extern QWORD g_WeChatWinDllAddr;
 extern string GetSelfWxid(); // Defined in spy.cpp
-#if 0
+
+#define SRTM_SIZE 0x3F0
+
+#define OS_NEW             0x1C28800
+#define OS_FREE            0x1C1FF10
+#define OS_SEND_MSG_MGR    0x1C1E690
+#define OS_SEND_TEXT       0x238DDD0
+#define OS_SEND_IMAGE      0x2383560
+#define OS_GET_APP_MSG_MGR 0x1C23630
+#define OS_SEND_FILE       0x21969E0
+#define OS_RTM_NEW         0x1C27D50
+#define OS_RTM_FREE        0x1C27120
+#define OS_SEND_RICH_TEXT  0x21A09C0
+#define OS_SEND_PAT_MSG    0x2D669B0
+#define OS_FORWARD_MSG     0x238D350
+
+typedef QWORD (*New_t)(QWORD);
+typedef QWORD (*Free_t)(QWORD);
+typedef QWORD (*SendMsgMgr_t)();
+typedef QWORD (*GetAppMsgMgr_t)();
+typedef QWORD (*SendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*SendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*SendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
+                               QWORD);
+typedef QWORD (*SendRichTextMsg_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*SendPatMsg_t)(QWORD, QWORD);
+typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
+
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
-    int success        = 0;
-    char buffer[0x2D8] = { 0 };
-
-    // 发送消息Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendText.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendText.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendText.call3;
-
+    QWORD success  = 0;
     wstring wsWxid = String2Wstring(wxid);
     wstring wsMsg  = String2Wstring(msg);
     WxString wxMsg(wsMsg);
     WxString wxWxid(wsWxid);
 
+    vector<wstring> vAtWxids;
     vector<WxString> vWxAtWxids;
     if (!atWxids.empty()) {
-        vector<wstring> vAtWxids;
         wstringstream wss(String2Wstring(atWxids));
         while (wss.good()) {
             wstring wstr;
@@ -39,141 +58,154 @@ void SendTextMessage(string wxid, string msg, string atWxids)
             WxString wxAtWxid(vAtWxids.back());
             vWxAtWxids.push_back(wxAtWxid);
         }
+    } else {
+        WxString wxEmpty = WxString();
+        vWxAtWxids.push_back(wxEmpty);
     }
 
-    __asm
-    {
-        pushad;
-        call sendCall1;
-        push 0x0;
-        push 0x0;
-        push 0x0;
-        push 0x1;
-        lea eax, vWxAtWxids;
-        push eax;
-        lea eax, wxMsg;
-        push eax;
-        lea edx, wxWxid;
-        lea ecx, buffer;
-        call sendCall2;
-        mov success, eax;
-        add esp, 0x18;
-        lea ecx, buffer;
-        call sendCall3;
-        popad;
-    }
+    QWORD wxAters = (QWORD) & ((RawVector_t *)&vWxAtWxids)->start;
+
+    char buffer[0x460]            = { 0 };
+    SendMsgMgr_t funcSendMsgMgr   = (SendMsgMgr_t)(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
+    SendTextMsg_t funcSendTextMsg = (SendTextMsg_t)(g_WeChatWinDllAddr + OS_SEND_TEXT);
+    Free_t funcFree               = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
+    funcSendMsgMgr();
+    success = funcSendTextMsg((QWORD)(&buffer), (QWORD)(&wxWxid), (QWORD)(&wxMsg), wxAters, 1, 1, 0, 0);
+    funcFree((QWORD)(&buffer));
 }
 
 void SendImageMessage(string wxid, string path)
 {
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-    int success     = 0;
-    DWORD tmpEAX    = 0;
-    char buf[0x2D8] = { 0 };
-
     wstring wsWxid = String2Wstring(wxid);
     wstring wsPath = String2Wstring(path);
 
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
-    WxString nullbuffer;
 
-    // 发送图片Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call3;
-    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendImg.call4;
+    New_t funcNew                = (New_t)(g_WeChatWinDllAddr + OS_NEW);
+    Free_t funcFree              = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
+    SendMsgMgr_t funcSendMsgMgr  = (SendMsgMgr_t)(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
+    SendImageMsg_t funcSendImage = (SendImageMsg_t)(g_WeChatWinDllAddr + OS_SEND_IMAGE);
 
-    __asm {
-        pushad;
-        call       sendCall1;
-        sub        esp,0x14;
-        mov        tmpEAX,eax;
-        lea        eax,nullbuffer;
-        mov        ecx,esp;
-        lea        edi,wxPath;
-        push       eax;
-        call       sendCall2;
-        mov        ecx,dword ptr [tmpEAX];
-        lea        eax,wxWxid;
-        push       edi;
-        push       eax;
-        lea        eax,buf;
-        push       eax;
-        call       sendCall3;
-        mov        success,eax;
-        lea        ecx,buf;
-        call       sendCall4;
-        popad;
-    }
+    char msg[0x460]    = { 0 };
+    char msgTmp[0x460] = { 0 };
+    QWORD *flag[10]    = { 0 };
+
+    QWORD tmp1 = 0, tmp2 = 0;
+    QWORD pMsgTmp = funcNew((QWORD)(&msgTmp));
+    flag[8]       = &tmp1;
+    flag[9]       = &tmp2;
+    flag[1]       = (QWORD *)(pMsgTmp);
+
+    QWORD pMsg    = funcNew((QWORD)(&msg));
+    QWORD sendMgr = funcSendMsgMgr();
+    funcSendImage(sendMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), (QWORD)(&flag));
+    funcFree(pMsg);
+    funcFree(pMsgTmp);
 }
 
 void SendFileMessage(string wxid, string path)
 {
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-    int success        = 0;
-    DWORD tmpEAX       = 0;
-    char buffer[0x2D8] = { 0 };
-
     wstring wsWxid = String2Wstring(wxid);
     wstring wsPath = String2Wstring(path);
 
     WxString wxWxid(wsWxid);
     WxString wxPath(wsPath);
-    WxString nullbuffer;
 
-    // 发送文件Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call3;
-    DWORD sendCall4 = g_WeChatWinDllAddr + g_WxCalls.sendFile.call4;
+    New_t funcNew                   = (New_t)(g_WeChatWinDllAddr + OS_NEW);
+    Free_t funcFree                 = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
+    GetAppMsgMgr_t funcGetAppMsgMgr = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + OS_GET_APP_MSG_MGR);
+    SendFileMsg_t funcSendFile      = (SendFileMsg_t)(g_WeChatWinDllAddr + OS_SEND_FILE);
 
-    __asm {
-        pushad;
-        pushfd;
-        call sendCall1;
-        sub esp, 0x14;
-        mov tmpEAX, eax;
-        lea eax, nullbuffer;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        push 0x0;
-        sub esp, 0x14;
-        mov edi, esp;
-        mov dword ptr[edi], 0;
-        mov dword ptr[edi + 0x4], 0;
-        mov dword ptr[edi + 0x8], 0;
-        mov dword ptr[edi + 0xc], 0;
-        mov dword ptr[edi + 0x10], 0;
-        sub esp, 0x14;
-        lea eax, wxPath;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        sub esp, 0x14;
-        lea eax, wxWxid;
-        mov ecx, esp;
-        push eax;
-        call sendCall2;
-        mov ecx, dword ptr[tmpEAX];
-        lea eax, buffer;
-        push eax;
-        call sendCall3;
-        mov al, byte ptr[eax + 0x38];
-        movzx eax, al;
-        mov success, eax;
-        lea ecx, buffer;
-        call sendCall4;
-        popfd;
-        popad;
-    }
+    char msg[0x460] = { 0 };
+    QWORD tmp1[4]   = { 0 };
+    QWORD tmp2[4]   = { 0 };
+    QWORD tmp3[4]   = { 0 };
+
+    QWORD pMsg   = funcNew((QWORD)(&msg));
+    QWORD appMgr = funcGetAppMsgMgr();
+    funcSendFile(appMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), 1, tmp1, 0, tmp2, 0, tmp3, 0, 0);
+    funcFree(pMsg);
 }
 
+int SendRichTextMessage(RichText_t &rt)
+{ // TODO: Fix memory leak
+    QWORD status = -1;
+
+    New_t funcNew                          = (New_t)(g_WeChatWinDllAddr + OS_RTM_NEW);
+    Free_t funcFree                        = (Free_t)(g_WeChatWinDllAddr + OS_RTM_FREE);
+    GetAppMsgMgr_t funcGetAppMsgMgr        = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + OS_GET_APP_MSG_MGR);
+    SendRichTextMsg_t funcForwordPublicMsg = (SendRichTextMsg_t)(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
+
+    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE);
+    if (buff == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return -1;
+    }
+
+    memset(buff, 0, SRTM_SIZE);
+    funcNew((QWORD)buff);
+    WxString *pReceiver = NewWxStringFromStr(rt.receiver);
+    WxString *pTitle    = NewWxStringFromStr(rt.title);
+    WxString *pUrl      = NewWxStringFromStr(rt.url);
+    WxString *pThumburl = NewWxStringFromStr(rt.thumburl);
+    WxString *pDigest   = NewWxStringFromStr(rt.digest);
+    WxString *pAccount  = NewWxStringFromStr(rt.account);
+    WxString *pName     = NewWxStringFromStr(rt.name);
+
+    memcpy(buff + 0x8, pTitle, sizeof(WxString));
+    memcpy(buff + 0x48, pUrl, sizeof(WxString));
+    memcpy(buff + 0xB0, pThumburl, sizeof(WxString));
+    memcpy(buff + 0xF0, pDigest, sizeof(WxString));
+    memcpy(buff + 0x2C0, pAccount, sizeof(WxString));
+    memcpy(buff + 0x2E0, pName, sizeof(WxString));
+
+    QWORD mgr = funcGetAppMsgMgr();
+    status    = funcForwordPublicMsg(mgr, (QWORD)(pReceiver), (QWORD)(buff));
+    funcFree((QWORD)buff);
+
+    return (int)status;
+}
+
+int SendPatMessage(string roomid, string wxid)
+{
+    QWORD status = -1;
+
+    wstring wsRoomid = String2Wstring(roomid);
+    wstring wsWxid   = String2Wstring(wxid);
+    WxString wxRoomid(wsRoomid);
+    WxString wxWxid(wsWxid);
+
+    SendPatMsg_t funcSendPatMsg = (SendPatMsg_t)(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
+
+    status = funcSendPatMsg((QWORD)(&wxRoomid), (QWORD)(&wxWxid));
+    return (int)status;
+}
+
+int ForwardMessage(QWORD msgid, string receiver)
+{
+    int status     = -1;
+    uint32_t dbIdx = 0;
+    QWORD localId  = 0;
+
+    ForwardMsg_t funcForwardMsg = (ForwardMsg_t)(g_WeChatWinDllAddr + OS_FORWARD_MSG);
+    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
+        return status;
+    }
+
+    WxString *pReceiver = NewWxStringFromStr(receiver);
+
+    LARGE_INTEGER l;
+    l.HighPart = dbIdx;
+    l.LowPart  = (DWORD)localId;
+
+    status = (int)funcForwardMsg((QWORD)pReceiver, l.QuadPart, 0x4, 0x0);
+
+    return status;
+}
+
+#if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {
@@ -296,146 +328,5 @@ void SendEmotionMessage(string wxid, string path)
         popfd;
         popad;
     }
-}
-
-int SendRichTextMessage(RichText_t &rt)
-{
-    int status       = -1;
-    char buff[0x238] = { 0 };
-
-    DWORD rtCall3 = g_WeChatWinDllAddr + g_WxCalls.rt.call3;
-    DWORD rtCall2 = g_WeChatWinDllAddr + g_WxCalls.rt.call2;
-    DWORD rtCall1 = g_WeChatWinDllAddr + g_WxCalls.rt.call1;
-    DWORD rtCall5 = g_WeChatWinDllAddr + g_WxCalls.rt.call5;
-    DWORD rtCall4 = g_WeChatWinDllAddr + g_WxCalls.rt.call4;
-
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx,buff;
-        call rtCall1;
-        popfd;
-        popad;
-    }
-
-    wstring receiver = String2Wstring(rt.receiver);
-    wstring title    = String2Wstring(rt.title);
-    wstring url      = String2Wstring(rt.url);
-    wstring thumburl = String2Wstring(rt.thumburl);
-    wstring account  = String2Wstring(rt.account);
-    wstring name     = String2Wstring(rt.name);
-    wstring digest   = String2Wstring(rt.digest);
-
-    WxString wxReceiver(receiver);
-    WxString wxTitle(title);
-    WxString wxUrl(url);
-    WxString wxThumburl(thumburl);
-    WxString wxAccount(account);
-    WxString wxName(name);
-    WxString wxDigest(digest);
-
-    memcpy(&buff[0x4], &wxTitle, sizeof(wxTitle));
-    memcpy(&buff[0x2C], &wxUrl, sizeof(wxUrl));
-    memcpy(&buff[0x6C], &wxThumburl, sizeof(wxThumburl));
-    memcpy(&buff[0x94], &wxDigest, sizeof(wxDigest));
-    memcpy(&buff[0x1A0], &wxAccount, sizeof(wxAccount));
-    memcpy(&buff[0x1B4], &wxName, sizeof(wxName));
-
-    __asm {
-        pushad;
-        pushfd;
-        call rtCall2;
-        lea ecx, buff;
-        push ecx;
-        sub esp, 0x14;
-        mov edi, eax;
-        mov ecx, esp;
-        lea ebx, wxReceiver;
-        push ebx;
-        call rtCall3;
-        mov ecx, edi;
-        call rtCall4;
-        mov status, eax;
-        add ebx, 0x14;
-        lea ecx, buff;
-        push 0x0;
-        call rtCall5;
-        popfd;
-        popad;
-    }
-
-    return status;
-}
-
-int SendPatMessage(string roomid, string wxid)
-{
-    int status = -1;
-
-    wstring wsRoomid = String2Wstring(roomid);
-    wstring wsWxid   = String2Wstring(wxid);
-    WxString wxRoomid(wsRoomid);
-    WxString wxWxid(wsWxid);
-
-    DWORD pmCall1 = g_WeChatWinDllAddr + g_WxCalls.pm.call1;
-    DWORD pmCall2 = g_WeChatWinDllAddr + g_WxCalls.pm.call2;
-    DWORD pmCall3 = g_WeChatWinDllAddr + g_WxCalls.pm.call3;
-
-    __asm {
-        pushad;
-        call  pmCall1;
-        push  pmCall2;
-        push  0x0;
-        push  eax;
-        lea   ecx, wxRoomid;
-        lea   edx, wxWxid;
-        call  pmCall3;
-        add   esp, 0xc;
-        movzx eax, al;
-        mov   status, eax;
-        popad;
-    }
-
-    return status;
-}
-
-int ForwardMessage(uint64_t msgid, string receiver)
-{
-    int status       = -1;
-    uint32_t dbIdx   = 0;
-    uint64_t localId = 0;
-
-    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
-        return status;
-    }
-
-    wstring wsReceiver = String2Wstring(receiver);
-    WxString wxReceiver(wsReceiver);
-
-    DWORD fmCall1 = g_WeChatWinDllAddr + g_WxCalls.fm.call1;
-    DWORD fmCall2 = g_WeChatWinDllAddr + g_WxCalls.fm.call2;
-
-    __asm {
-        pushad;
-        pushfd;
-        mov        edx, dword ptr [dbIdx];
-        push       edx;
-        mov        eax, dword ptr [localId];
-        push       eax;
-        sub        esp, 0x14;
-        mov        ecx, esp;
-        lea        esi, wxReceiver;
-        push       esi;
-        call       fmCall1;
-        xor        ecx, ecx;
-        call       fmCall2;
-        movzx      eax, al;
-        mov        status, eax;
-        add        esp, 0x1c;
-        popfd;
-        popad;
-    }
-
-    return status;
 }
 #endif

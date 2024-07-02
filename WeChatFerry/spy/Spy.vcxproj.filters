@@ -30,9 +30,6 @@
     <ClInclude Include="contact_mgmt.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="load_calls.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="receive_msg.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -78,9 +75,6 @@
     <ClInclude Include="funcs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="receive_transfer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="sqlite3.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -105,9 +99,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="contact_mgmt.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="load_calls.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="receive_msg.cpp">
@@ -141,9 +132,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="funcs.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="receive_transfer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\com\log.cpp">

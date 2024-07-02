@@ -8,6 +8,7 @@
 #include <vector>
 #include <wchar.h>
 
+#include "log.h"
 #include "util.h"
 
 #pragma comment(lib, "shlwapi")
@@ -295,4 +296,24 @@ void DbgMsg(const char *zcFormat, ...)
     std::string strText(zc.data(), iLen);
 
     OutputDebugStringA(strText.c_str());
+}
+
+WxString *NewWxStringFromStr(const string &str) { return NewWxStringFromWstr(String2Wstring(str)); }
+
+WxString *NewWxStringFromWstr(const wstring &ws)
+{
+    WxString *p       = (WxString *)HeapAlloc(GetProcessHeap(), 0, sizeof(WxString));
+    wchar_t *pWstring = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, (ws.size() + 1) * 2);
+    if (p == NULL || pWstring == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return NULL;
+    }
+
+    wmemcpy(pWstring, ws.c_str(), ws.size() + 1);
+    p->wptr     = pWstring;
+    p->size     = (DWORD)ws.size();
+    p->capacity = (DWORD)ws.size();
+    p->ptr      = 0;
+    p->clen     = 0;
+    return p;
 }

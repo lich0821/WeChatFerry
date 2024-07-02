@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "Windows.h"
+
+#include "spy_types.h"
 
 #define SQLITE_OK 0 /* Successful result */
 
@@ -136,9 +138,9 @@
 #define SQLITE_NULL    5
 #define SQLITE_TEXT    3
 
-#define SQLITE3_EXEC_OFFSET             0x1E24F70
+#define SQLITE3_EXEC_OFFSET             0x3AFBCE0
 #define SQLITE3_BACKUP_INIT_OFFSET      0x1DEA900
-#define SQLITE3_PREPARE_OFFSET          0x1E2B8C0
+#define SQLITE3_PREPARE_OFFSET          0x3B03990
 #define SQLITE3_OPEN_OFFSET             0x1E598B0
 #define SQLITE3_BACKUP_STEP_OFFSET      0x1DEAD00
 #define SQLITE3_BACKUP_REMAINING_OFFSET 0x1DEB440
@@ -147,46 +149,46 @@
 #define SQLITE3_SLEEP_OFFSET            0x1E5A0F0
 #define SQLITE3_ERRCODE_OFFSET          0x1E58550
 #define SQLITE3_CLOSE_OFFSET            0x1E56CD0
-#define SQLITE3_STEP_OFFSET             0x1DF3770
-#define SQLITE3_COLUMN_COUNT_OFFSET     0x1DF3C80
-#define SQLITE3_COLUMN_NAME_OFFSET      0x1DF4570
-#define SQLITE3_COLUMN_TYPE_OFFSET      0x1DF4410
-#define SQLITE3_COLUMN_BLOB_OFFSET      0x1DF3CC0
-#define SQLITE3_COLUMN_BYTES_OFFSET     0x1DF3DA0
-#define SQLITE3_FINALIZE_OFFSET         0x1DF2740
+#define SQLITE3_STEP_OFFSET             0x3ABFCE0
+#define SQLITE3_COLUMN_COUNT_OFFSET     0x3AC0500
+#define SQLITE3_COLUMN_NAME_OFFSET      0x3AC0F00
+#define SQLITE3_COLUMN_TYPE_OFFSET      0x3AC0D50
+#define SQLITE3_COLUMN_BLOB_OFFSET      0x3AC0530
+#define SQLITE3_COLUMN_BYTES_OFFSET     0x3AC0620
+#define SQLITE3_FINALIZE_OFFSET         0x3ABED90
 
 typedef int (*Sqlite3_callback)(void *, int, char **, char **);
 
-typedef int(__cdecl *Sqlite3_exec)(DWORD,                           /* An open database */
+typedef int(__cdecl *Sqlite3_exec)(QWORD,                           /* An open database */
                                    const char *sql,                 /* SQL to be evaluated */
                                    Sqlite3_callback,                /* Callback function */
                                    void *,                          /* 1st argument to callback */
                                    char **errmsg                    /* Error msg written here */
 );
-typedef DWORD(__cdecl *Sqlite3_backup_init)(DWORD *pDest,           /* Destination database handle */
+typedef QWORD(__cdecl *Sqlite3_backup_init)(QWORD *pDest,           /* Destination database handle */
                                             const char *zDestName,  /* Destination database name */
-                                            DWORD *pSource,         /* Source database handle */
+                                            QWORD *pSource,         /* Source database handle */
                                             const char *zSourceName /* Source database name */
 );
-typedef int(__cdecl *Sqlite3_prepare)(DWORD db,                     /* Database handle */
+typedef int(__cdecl *Sqlite3_prepare)(QWORD db,                     /* Database handle */
                                       const char *zSql,             /* SQL statement, UTF-8 encoded */
                                       int nByte,                    /* Maximum length of zSql in bytes. */
-                                      DWORD **ppStmt,               /* OUT: Statement handle */
+                                      QWORD **ppStmt,               /* OUT: Statement handle */
                                       const char **pzTail           /* OUT: Pointer to unused portion of zSql */
 );
-typedef int(__cdecl *Sqlite3_open)(const char *filename, DWORD **ppDb);
-typedef int(__cdecl *Sqlite3_backup_step)(DWORD *p, int nPage);
-typedef int(__cdecl *Sqlite3_backup_remaining)(DWORD *p);
-typedef int(__cdecl *Sqlite3_backup_pagecount)(DWORD *p);
-typedef int(__cdecl *Sqlite3_backup_finish)(DWORD *p);
+typedef int(__cdecl *Sqlite3_open)(const char *filename, QWORD **ppDb);
+typedef int(__cdecl *Sqlite3_backup_step)(QWORD *p, int nPage);
+typedef int(__cdecl *Sqlite3_backup_remaining)(QWORD *p);
+typedef int(__cdecl *Sqlite3_backup_pagecount)(QWORD *p);
+typedef int(__cdecl *Sqlite3_backup_finish)(QWORD *p);
 typedef int(__cdecl *Sqlite3_sleep)(int);
-typedef int(__cdecl *Sqlite3_errcode)(DWORD *db);
-typedef int(__cdecl *Sqlite3_close)(DWORD *);
+typedef int(__cdecl *Sqlite3_errcode)(QWORD *db);
+typedef int(__cdecl *Sqlite3_close)(QWORD *);
 
-typedef int(__cdecl *Sqlite3_step)(DWORD *);
-typedef int(__cdecl *Sqlite3_column_count)(DWORD *pStmt);
-typedef const char *(__cdecl *Sqlite3_column_name)(DWORD *, int N);
-typedef int(__cdecl *Sqlite3_column_type)(DWORD *, int iCol);
-typedef const void *(__cdecl *Sqlite3_column_blob)(DWORD *, int iCol);
-typedef int(__cdecl *Sqlite3_column_bytes)(DWORD *, int iCol);
-typedef int(__cdecl *Sqlite3_finalize)(DWORD *pStmt);
+typedef int(__cdecl *Sqlite3_step)(QWORD *);
+typedef int(__cdecl *Sqlite3_column_count)(QWORD *pStmt);
+typedef const char *(__cdecl *Sqlite3_column_name)(QWORD *, int N);
+typedef int(__cdecl *Sqlite3_column_type)(QWORD *, int iCol);
+typedef const void *(__cdecl *Sqlite3_column_blob)(QWORD *, int iCol);
+typedef int(__cdecl *Sqlite3_column_bytes)(QWORD *, int iCol);
+typedef int(__cdecl *Sqlite3_finalize)(QWORD *pStmt);

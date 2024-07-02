@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Dev|x64">
+      <Configuration>Dev</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
@@ -24,24 +20,16 @@
     <ProjectGuid>{4de80b82-5f6a-4c4c-9d16-1574308110fa}</ProjectGuid>
     <RootNamespace>spy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
     <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
@@ -59,141 +47,38 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_debug</TargetName>
-    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
     <VcpkgConfiguration>Release</VcpkgConfiguration>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'" Label="Vcpkg">
     <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgConfiguration>Release</VcpkgConfiguration>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;SPY_EXPORTS;_WINDOWS;_USRDLL;ENABLE_DEBUG_LOG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy spy.dll</Message>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>cd $(SolutionDir)rpc\proto
-$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating PB files</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;SPY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile />
-      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <PostBuildEvent>
-      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy spy.dll</Message>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>cd $(SolutionDir)rpc\proto
-$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating PB files</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -207,9 +92,58 @@ $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
       <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>false</OmitFramePointers>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderOutputFile />
+      <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
+      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
+      <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)rpc\proto
+$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating PB files</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>if not exist $(SolutionDir)Out md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy spy.dll</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;SPY_EXPORTS;_WINDOWS;_USRDLL;ENABLE_DEBUG_LOG;ENABLE_WX_LOG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -303,9 +237,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="exec_sql.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="contact_mgmt.h" />
-    <ClInclude Include="load_calls.h" />
     <ClInclude Include="receive_msg.h" />
-    <ClInclude Include="receive_transfer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rpc_server.h" />
     <ClInclude Include="send_msg.h" />
@@ -327,9 +259,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="exec_sql.cpp" />
     <ClCompile Include="contact_mgmt.cpp" />
-    <ClCompile Include="load_calls.cpp" />
     <ClCompile Include="receive_msg.cpp" />
-    <ClCompile Include="receive_transfer.cpp" />
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="send_msg.cpp" />
     <ClCompile Include="spy.cpp" />
