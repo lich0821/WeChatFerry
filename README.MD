@@ -16,20 +16,35 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/eMQgP1TiEqAxmpxYljSgeg)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/I6n_6fuQa60CrROWSgq0TA)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
 
 <details><summary>点击查看功能清单</summary>
 
-* 检查登录状态
-* 获取登录账号信息（wxid、昵称、手机号、数据目录）
+* 查询登录状态
+* 获取登录账号信息
 * 获取消息类型
+* 获取联系人
+* 获取可查询数据库
+* 获取数据库所有表
+* 获取语音消息
 * 发送文本消息（可 @）
-* 发送图片
-* 允许接收消息
-* 停止接收消息
+* 发送图片消息
+* 发送文件消息
+* 发送卡片消息
+* 拍一拍群友
+* 转发消息
+* 开启接收消息
+* 关闭接收消息
+* 查询数据库
+* 获取朋友圈消息
+* 下载图片、视频、文件
+* 解密图片
+* 添加群成员
+* 删除群成员
+* 邀请群成员
 
 </details>
 
@@ -46,6 +61,7 @@
 ## 一起开发
 
 > 🚫 非开发用户不需要往下看。
+> **开发用户**：可以根据文档和错误提示，自行解决编译错误的人员。
 
 ### 安装开发环境
 
@@ -150,16 +166,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.2.0
+### v39.2.1
 
-* 开始适配 `3.9.10.27`
-* 实现检查登录状态
-* 实现获取登录账号信息（wxid、昵称、手机号、数据目录）
-* 实现获取消息类型
-* 实现开启接收消息
-* 实现停止接收消息
-* 实现发送文本消息（可 @）
-* 实现发送图片消息
+* 实现了好多功能（见功能清单）
 
 <details><summary>点击查看更多</summary>
 
@@ -170,6 +179,17 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.2.0
+
+* 开始适配 `3.9.10.27`
+* 实现检查登录状态
+* 实现获取登录账号信息（wxid、昵称、手机号、数据目录）
+* 实现获取消息类型
+* 实现开启接收消息
+* 实现停止接收消息
+* 实现发送文本消息（可 @）
+* 实现发送图片消息
 
 ### v39.1.0 (2024.04.19)
 
