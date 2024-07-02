@@ -133,12 +133,12 @@ static bool GetFileVersion(const wchar_t *filePath, wchar_t *version)
             return false;
         }
 
-        DWORD verMS    = pVerInfo->dwFileVersionMS;
-        DWORD verLS    = pVerInfo->dwFileVersionLS;
-        DWORD major    = HIWORD(verMS);
-        DWORD minor    = LOWORD(verMS);
-        DWORD build    = HIWORD(verLS);
-        DWORD revision = LOWORD(verLS);
+        UINT64 verMS    = pVerInfo->dwFileVersionMS;
+        UINT64 verLS    = pVerInfo->dwFileVersionLS;
+        UINT64 major    = HIWORD(verMS);
+        UINT64 minor    = LOWORD(verMS);
+        UINT64 build    = HIWORD(verLS);
+        UINT64 revision = LOWORD(verLS);
         delete[] pData;
 
         StringCbPrintf(version, 0x20, TEXT("%d.%d.%d.%d"), major, minor, build, revision);
@@ -208,44 +208,44 @@ int OpenWeChat(DWORD *pid)
     return ERROR_SUCCESS;
 }
 
-int GetWstringByAddress(DWORD address, wchar_t *buffer, DWORD buffer_size)
+size_t GetWstringByAddress(UINT64 addr, wchar_t *buffer, UINT64 buffer_size)
 {
-    DWORD strLength = GET_DWORD(address + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     if (strLength == 0) {
         return 0;
     } else if (strLength > buffer_size) {
         strLength = buffer_size - 1;
     }
 
-    wmemcpy_s(buffer, strLength + 1, GET_WSTRING(address), strLength + 1);
+    wmemcpy_s(buffer, strLength + 1, GET_WSTRING(addr), strLength + 1);
 
     return strLength;
 }
 
-string GetStringByAddress(DWORD address)
+string GetStringByAddress(UINT64 addr)
 {
-    DWORD strLength = GET_DWORD(address + 4);
-    return Wstring2String(wstring(GET_WSTRING(address), strLength));
+    size_t strLength = GET_DWORD(addr + 8);
+    return Wstring2String(wstring(GET_WSTRING(addr), strLength));
 }
 
-string GetStringByStrAddr(DWORD addr)
+string GetStringByStrAddr(UINT64 addr)
 {
-    DWORD strLength = GET_DWORD(addr + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     return strLength ? string(GET_STRING(addr), strLength) : string();
 }
 
-string GetStringByWstrAddr(DWORD addr)
+string GetStringByWstrAddr(UINT64 addr)
 {
-    DWORD strLength = GET_DWORD(addr + 4);
+    size_t strLength = GET_DWORD(addr + 8);
     return strLength ? Wstring2String(wstring(GET_WSTRING(addr), strLength)) : string();
 }
 
-DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address)
+UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 addr)
 {
-    DWORD value = 0;
+    UINT32 value = 0;
 
     unsigned char data[4] = { 0 };
-    if (ReadProcessMemory(hProcess, (LPVOID)address, data, 4, 0)) {
+    if (ReadProcessMemory(hProcess, (LPVOID)addr, data, 4, 0)) {
         value = data[0] & 0xFF;
         value |= ((data[1] << 8) & 0xFF00);
         value |= ((data[2] << 16) & 0xFF0000);
@@ -255,12 +255,12 @@ DWORD GetMemoryIntByAddress(HANDLE hProcess, DWORD address)
     return value;
 }
 
-wstring GetUnicodeInfoByAddress(HANDLE hProcess, DWORD address)
+wstring GetUnicodeInfoByAddress(HANDLE hProcess, UINT64 address)
 {
     wstring value = L"";
 
-    DWORD strAddress = GetMemoryIntByAddress(hProcess, address);
-    DWORD strLen     = GetMemoryIntByAddress(hProcess, address + 0x4);
+    UINT64 strAddress = GetMemoryIntByAddress(hProcess, address);
+    UINT64 strLen     = GetMemoryIntByAddress(hProcess, address + 0x4);
     if (strLen > 500)
         return value;
 

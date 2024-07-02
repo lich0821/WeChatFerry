@@ -40,8 +40,6 @@
 
 namespace fs = std::filesystem;
 
-extern int IsLogin(void); // Defined in spy.cpp
-
 bool gIsListening    = false;
 bool gIsListeningPyq = false;
 mutex gMutex;
@@ -90,6 +88,28 @@ bool func_get_self_wxid(uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_get_user_info(uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_GET_USER_INFO;
+    rsp.which_msg = Response_ui_tag;
+
+    UserInfo_t ui     = GetUserInfo();
+    rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
+    rsp.msg.ui.name   = (char *)ui.name.c_str();
+    rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
+    rsp.msg.ui.home   = (char *)ui.home.c_str();
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 bool func_get_msg_types(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -109,7 +129,7 @@ bool func_get_msg_types(uint8_t *out, size_t *len)
 
     return true;
 }
-
+#if 0
 bool func_get_contacts(uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -159,28 +179,6 @@ bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
     DbTables_t tables                  = GetDbTables(db);
     rsp.msg.tables.tables.funcs.encode = encode_tables;
     rsp.msg.tables.tables.arg          = &tables;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_get_user_info(uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_USER_INFO;
-    rsp.which_msg = Response_ui_tag;
-
-    UserInfo_t ui     = GetUserInfo();
-    rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
-    rsp.msg.ui.name   = (char *)ui.name.c_str();
-    rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
-    rsp.msg.ui.home   = (char *)ui.home.c_str();
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -428,7 +426,7 @@ bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
 
     return true;
 }
-
+#endif
 static void PushMessage()
 {
     static uint8_t buffer[G_BUF_SIZE] = { 0 };
@@ -545,6 +543,7 @@ bool func_disable_recv_txt(uint8_t *out, size_t *len)
     return true;
 }
 
+#if 0
 bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -837,7 +836,7 @@ bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *l
 
     return true;
 }
-
+#endif
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -850,6 +849,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
     }
 
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
+
     switch (req.func) {
         case Functions_FUNC_IS_LOGIN: {
             ret = func_is_login(out, out_len);
@@ -859,10 +859,15 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_self_wxid(out, out_len);
             break;
         }
+        case Functions_FUNC_GET_USER_INFO: {
+            ret = func_get_user_info(out, out_len);
+            break;
+        }
         case Functions_FUNC_GET_MSG_TYPES: {
             ret = func_get_msg_types(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_GET_CONTACTS: {
             ret = func_get_contacts(out, out_len);
             break;
@@ -873,10 +878,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
         }
         case Functions_FUNC_GET_DB_TABLES: {
             ret = func_get_db_tables(req.msg.str, out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_USER_INFO: {
-            ret = func_get_user_info(out, out_len);
             break;
         }
         case Functions_FUNC_GET_AUDIO_MSG: {
@@ -907,7 +908,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_XML: {
             ret = func_send_xml(req.msg.xml, out, out_len);
             break;
@@ -925,6 +925,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_disable_recv_txt(out, out_len);
             break;
         }
+#if 0
         case Functions_FUNC_EXEC_DB_QUERY: {
             ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
             break;
@@ -977,11 +978,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
             break;
         }
+#endif
         default: {
             LOG_ERROR("[UNKNOW FUNCTION]");
             break;
         }
     }
+
     pb_release(Request_fields, &req);
     return ret;
 }
@@ -1065,7 +1068,7 @@ int RpcStopServer()
     if (lIsRunning) {
         nng_close(cmdSock);
         nng_close(msgSock);
-        UnListenMessage();
+        // UnListenMessage();
         lIsRunning = false;
         Sleep(1000);
         LOG_INFO("Server stoped.");

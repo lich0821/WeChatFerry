@@ -16,11 +16,11 @@
 #define OFFSET_DB_NAME         0x14
 #define OFFSET_DB_MSG_MGR      0x30403B8
 
-extern DWORD g_WeChatWinDllAddr;
+extern UINT64 g_WeChatWinDllAddr;
 
 typedef map<string, DWORD> dbMap_t;
 static dbMap_t dbMap;
-
+#if 0
 static void GetDbHandle(DWORD base, DWORD offset)
 {
     wchar_t *wsp;
@@ -225,3 +225,4 @@ vector<uint8_t> GetAudioData(uint64_t id)
 
     return vector<uint8_t>();
 }
+#endif

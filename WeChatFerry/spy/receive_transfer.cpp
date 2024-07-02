@@ -6,8 +6,8 @@
 using namespace std;
 
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
-
+extern UINT64 g_WeChatWinDllAddr;
+#if 0
 int ReceiveTransfer(string wxid, string transferid, string transactionid)
 {
     int rv                  = 0;
@@ -53,3 +53,4 @@ int ReceiveTransfer(string wxid, string transferid, string transactionid)
 
     return rv;
 }
+#endif

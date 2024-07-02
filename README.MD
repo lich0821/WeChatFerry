@@ -1,7 +1,8 @@
 # WeChatFerry
+
 一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/s/CGLfSaNDy8MyuyPWGjGJ7w)。
 
-<details><summary><font color="#FF0000" size="5">免责声明【必读】</font></summary>
+<details><summary><font color="red" size="12">免责声明【必读】</font></summary>
 
 本工具仅供学习和技术研究使用，不得用于任何商业或非法行为，否则后果自负。
 
@@ -15,101 +16,22 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/WOw26mKJG8Nq55cT6iG-yA)|
-|:-:|:-:|:-:|
-
-👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
-
-<details><summary>点击查看功能清单</summary>
-
-* 检查登录状态
-* 获取登录账号的 wxid
-* 获取消息类型
-* 获取所有联系人
-* 获取所有好友
-* 获取数据库
-* 获取某数据库下的表
-* 获取用户信息
-* 发送文本消息（可 @）
-* 发送图片
-* 发送文件
-* 允许接收消息
-* 停止接收消息
-* 执行 SQL 查询
-* 接受好友申请
-* 添加群成员
-* 删除群成员
-* 解密图片
-* 获取朋友圈消息
-* 保存图片
-* 保存语音
-* 发送卡片消息
-* 拍一拍群友
-* 邀请群成员
-* 图片 OCR
-* 转发消息
-* 撤回消息
-* 获取登录二维码
-
-</details>
-
-<details><summary>点击查看支持的客户端</summary>
-
-* Go
-* HTTP (Go, Rust)
-* Java
-* Node.js
-* Python
-* Rust
-</details>
-
 |![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
 |:-:|:-:|
 |后台回复 `WCF` 加群交流|如果你觉得有用|
 
-## 快速开始
-### Python
-[![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
-
-* 安装
-```sh
-pip install --upgrade wcferry
-```
-
-* 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
-
-### HTTP
-#### [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
-开箱即用：[快速开始](https://github.com/lich0821/wcf-client-rust?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)。
-
-#### GoHttp（基于 Go）
-参考 [GoHttp README.MD](clients/gohttp/README.md)
-
-#### ~~wcfhttp（基于 Python）~~
-❗ **wcfhttp 不再维护，有需要可以使用 [WcfRust](https://github.com/lich0821/wcf-client-rust) 或者 [GoHttp](clients/gohttp/README.md)。**
-
-其余客户端，可下载 [最新发布的版本](https://github.com/lich0821/WeChatFerry/releases/latest)，根据技术栈，选择客户端，将相应 `dll` 和 `exe` 文件放到对应位置。
-
-### Go
-参考 [Go README.MD](clients/go/README.md)
-
-### Java
-参考 [Java README.MD](clients/java/README.MD)
-
-### Node.js
-参考 [Node.js README.MD](https://github.com/stkevintan/node-wcferry/blob/main/README.md)
-
-### Rust
-参考 [Rust README.MD](clients/rust/README.MD)
-
 ## 一起开发
+
 > 🚫 非开发用户不需要往下看。
 
 ### 安装开发环境
+
 <details><summary>点击查看</summary>
 
 #### 安装 vcpkg
+
 * 安装，参考[Vcpkg: 总览](https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md)。
+
 ```sh
 cd C:\Tools
 git clone https://github.com/microsoft/vcpkg
@@ -117,14 +39,16 @@ git clone https://github.com/microsoft/vcpkg
 ```
 
 * 添加全局配置：
-环境变量增加 `vcpkg` 所在路径（本文为：`C:\Tools\vcpkg`）。
+环境变量增加 `vcpkg` 所在路径（本项目为：`C:\Tools\vcpkg`）。
 
 #### 安装相关组件
+
 ```sh
-vcpkg install protobuf[zlib]:x86-windows-static
-vcpkg install spdlog:x86-windows-static
-vcpkg install nng:x86-windows-static
-vcpkg install magic-enum:x86-windows-static
+vcpkg install protobuf[zlib]:x64-windows-static
+vcpkg install spdlog:x64-windows-static
+vcpkg install nng:x64-windows-static
+vcpkg install magic-enum:x64-windows-static
+vcpkg install minhook:x64-windows-static
 vcpkg integrate install
 ```
 
@@ -134,32 +58,56 @@ vcpkg integrate install
 
 #### 安装 Python3
 
-通过微软商店或者 python.org 自行下载均可，注意配置好环境变量，确保 `python3` 在命令行下可用
+通过微软商店或者 python.org 自行下载均可，注意配置好环境变量，确保 `python3` 在命令行下可用。
+
+安装依赖：
+```sh
+pip install grpcio-tools==1.48.2
+```
 
 </details>
 
 ### 编译
-使用 VS2019 打开工程，编译即可。
+
+使用 VS2019 打开工程，编译即可。编译成功后，在 `WeChatFerry\WeChatFerry\Out` 目录中会看到相应的 DLL 文件。
 
 **注**：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
 
 ### 运行
-运行 `wcf.exe` 启动
-```sh
-wcf.exe --help
+```py
+import ctypes
+# 加载 sdk.dll （需要绝对路径）
+sdk = ctypes.cdll.LoadLibrary("C:/Projs/WeChatFerry/WeChatFerry/Out/sdk.dll")
+
+# 初始化
+sdk.WxInitSDK(False, 10086)
+
+# 退出 SDK
+sdk.WxDestroySDK()
+
+# 注意关闭 Python 进程
+```
+
+### 调试日志
+```c
+    DbgMsg("ListenMessage"); // 封装的 OutputDebugString
+    OutputDebugString(L"ListenMessage\n");
+    MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
 ```
 
 ## 项目结构
+
 ```sh
 WeChatFerry
 ├── LICENSE                 # LICENSE
 ├── README.MD               # 说明
 ├── WeChatFerry
 │   ├── WeChatFerry.sln     # VS2019 工程文件
+│   ├── com                 # 公共模块
 │   ├── rpc                 # RPC 模块
 │   ├── sdk                 # 注入及启动模块
-│   ├── spy                 # 核心功能实现模块
-│   └── wcf                 # 命令行版启动器
+│   ├── smc                 # Silk-Mp3 转换模块
+│   └── spy                 # 核心功能实现模块
 ├── assets
 │   ├── QR.jpeg             # 二维码，测试用图
 │   ├── TEQuant.jpg         # 二维码，测试用图
@@ -169,7 +117,7 @@ WeChatFerry
 │   ├── gohttp              # HTTP 客户端
 │   ├── http                # HTTP 客户端
 │   ├── java                # Java 客户端
-│   ├── node                # Node.js 客户端  
+│   ├── node                # Node.js 客户端
 │   ├── pyauto              # 群友封装的客户端
 │   ├── python              # Python 客户端
 │   └── rust                # Rust 客户端
@@ -177,47 +125,13 @@ WeChatFerry
 
 ```
 
-<details><summary>点击查看</summary>
-
-### go
-Go 客户端。
-
-### gohttp
-HTTP 客户端，二进制发布无依赖
-
-### http
-HTTP 客户端。
-
-### node
-Node.js 客户端.
-
-### java
-Java 客户端。
-
-### python
-Python 客户端。
-
-### rpc
-RPC 的通信部分和序列化 / 反序列化部分。
-
-### rust
-Rust 客户端。
-
-### sdk
-负责将 `spy` 注入微信进程，并启动 RPC 服务。
-
-### spy
-间谍模块，注入到微信中，通过 RPC 做消息转发工作。
-
-### wcf
-命令行版启动器，调用 `sdk` 将 `spy` 注入微信。其他客户端可通过 RPC 连接到 `spy` 进行消息传递。默认监听的地址为 `tcp://0.0.0.0:10086` 和 `tcp://0.0.0.0:10087`。一般情况不需要显式运行，各客户端自动调用。
-
-</details>
-
 ## 版本更新
 
-### v39.0.14 (2024.02.18)
-* 修复获取登录二维码问题
+### v39.1.0 (2024.04.19)
+
+* 适配 x64 环境
+* 重构项目
+* 开始适配 `3.9.10.19`
 
 <details><summary>点击查看更多</summary>
 
@@ -229,21 +143,29 @@ Rust 客户端。
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
 
+### v39.0.14 (2024.02.18)
+
+* 修复获取登录二维码问题
+
 ### v39.0.13 (2024.02.14)
+
 * 修复若干问题
 * 撤回消息
 * 获取登录二维码
 
 ### v39.0.12 (2023.12.20)
+
 * 修复一个问题
 * 消息转发
 
 ### v39.0.11 (2023.12.16)
+
 * 修复 PB 消息类型（可能会导致非 Python 客户端崩溃）
 * 修复日志错误
 * 移除非必要依赖
 
 ### v39.0.10 (2023.12.08)
+
 * 代码优化
 * 发送卡片消息
 * 拍一拍群友
@@ -251,30 +173,39 @@ Rust 客户端。
 * 图片 OCR
 
 ### v39.0.7 (2023.12.03)
+
 * 保存语音
 
 ### v39.0.6 (2023.11.26)
+
 * 修复下载图片退出问题
 
 ### v39.0.5 (2023.11.22)
+
 * 修复收到某些文件崩溃问题
 
 ### v39.0.4 (2023.11.21)
+
 * 下载图片、文件和视频
 
 ### v39.0.3 (2023.09.28)
+
 * 修复登录账号昵称超长报错问题
 
 ### v39.0.2 (2023.07.16)
+
 * 修复朋友圈消息 `is_group` 为 `True` 问题
 
 ### v39.0.1 (2023.07.16)
+
 * 获取朋友圈消息
 
 ### v39.0.0 (2023.07.14)
+
 升级到 `3.9.2.23`。
 
 ### v37.1.25 (2023.05.07)
+
 更新版本编码。
 
 根据新版本编码规则：
@@ -283,6 +214,7 @@ Rust 客户端。
 * HTTP 客户端 `wcfhttp` 的 `v3.7.0.30.25` 应该调整为 `v37.1.25.0`
 
 ### v3.7.0.30.25 (2023.05.05)
+
 * 修复群消息判断错误
 * 修复名片添加好友问题
 * 修复获取数据库多余字符问题
@@ -290,105 +222,136 @@ Rust 客户端。
 * Python 客户端发送图片支持网络路径
 
 ### v3.7.0.30.24 (2023.04.19)
+
 实现了一个功能。
 
 ### v3.7.0.30.23 (2023.04.13)
+
 * 解密图片
 * 获取登录账号信息
 * 获取联系人备注
 
 ### v3.7.0.30.22（2023.04.09）
+
 将监听端口调整为可配置。
 
 ### v3.7.0.30.21（2023.03.15）
+
 * 发送表情
 
 ### v3.7.0.30.20（2023.03.12）
+
 修复 wxid 获取问题。
 
 ### v3.7.0.30.19（2023.03.06）
+
 修复重复消息问题。
 
 ### v3.7.0.30.18（2023.03.05）
+
 修复添加好友问题。
 
 ### v3.7.0.30.17（2023.03.05）
+
 修复获取登录账号 wxid 问题。
 
 ### v3.7.0.30.16（2023.03.04）
+
 将错误码改成错误消息，方便调试。
 
 ### v3.7.0.30.15（2023.03.01）
+
 * 发送 xml
 
 ### v3.7.0.30.14（2023.02.28）
+
 * 添加群成员
 
 ### v3.7.0.30.13（2023.02.27）
+
 去除 gRPC 框架，自定义更轻量的 RPC 轮子 `nnprc`。
 
 ### v3.7.0.30.12（2023.01.20）
+
 * 更新 Python 客户端
 * 修改监听地址为 `0.0.0.0:10086`
 * 增加 `Launcher`，直接注入 `spy`
 
 ### v3.7.0.30.11（2022.10.19）
+
 更新 Python 客户端。
 
 ### v3.7.0.30-gRPC-2（2022.10.18）
+
 增加 Java 客户端。
 
 ### v3.7.0.30-gRPC-1（2022.10.16）
+
 将 RPC 框架切换为 gRPC！
 
 ### v3.7.0.30-8（2022.09.25）
+
 * 获取登录账号微信 ID
 
 ### v3.7.0.30-7（2022.09.24）
+
 修复群聊有系统消息时会崩溃 bug。后续考虑把消息来源交还给客户端自己区别。
 
 ### v3.7.0.30-6（2022.08.21）
+
 * 通过好友验证
 
 ### v3.7.0.30-5（2022.08.20）
+
 * 执行 SQL 语句
 
 ### v3.7.0.30-4（2022.08.20）
+
 修复群消息 @人 功能。有几点注意事项：
 1. `vAtWxids` 是要 `@` 的 `wxid` 清单，以 `,` 分隔。
 2. 只有群主才能 `@所有人`，非群主硬发 `@所有人` 会导致消息发不出去；`@所有人` 对应 `vAtWxids` 为 `"notify@all"`。
 3. 消息体里 `@` 的数量必须与 `vAtWxids` 里的数量一致，否则消息能发出但 `@` 功能失效。
 
 ### v3.7.0.30-3（2022.08.20）
+
 修复可重入 bug。
 
 ### v3.7.0.30-2（2022.08.14）
+
 优化 Hook 和 Inject 代码，实现可重入。
 
 ### v3.7.0.30-1（2022.08.12）
+
 适配微信 `3.7.0.30`。
 
 ### v3.7.0.29-3（2022.08.7）
+
 * 查询数据库，获取库、表。
 
 ### v3.7.0.29-2（2022.08.7）
+
 优化 RPC。
 
 ### v3.7.0.29-1（2022.08.7）
+
 适配微信 `3.7.0.29`。
 
 ### v3.3.0.115-3（2021.08.28）
+
 适配微信 `3.3.0.115`，新增功能：
 * 获取所有联系人
 
 ### v3.3.0.115-2（2021.08.22）
+
 适配微信 `3.3.0.115`，新增功能：
 * 发送图片消息
 
 ### v3.3.0.115-1（2021.08.22）
+
 适配微信 `3.3.0.115`。
 
 ### v3.0.0.57-1（2021.02.12）
+
 适配微信 `3.0.0.57`，支持功能：
 * 登录状态判断
 * 接收文本消息

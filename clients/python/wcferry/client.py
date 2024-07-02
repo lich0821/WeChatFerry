@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.0.14.1"
+__version__ = "39.1.0.0"
 
 import atexit
 import base64
+import ctypes
 import logging
 import mimetypes
 import os
@@ -72,11 +73,12 @@ class Wcf():
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
         self.host = host
+        self.sdk = None
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
-            cmd = fr'"{self._wcf_root}\wcf.exe" start {self.port} {"debug" if debug else ""}'
-            if os.system(cmd) != 0:
+            self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
+            if self.sdk.WxInitSDK(debug, port) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
 
@@ -121,11 +123,9 @@ class Wcf():
         self.disable_recv_msg()
         self.cmd_socket.close()
 
-        if self._local_mode:
-            cmd = fr'"{self._wcf_root}\wcf.exe" stop'
-            if os.system(cmd) != 0:
-                self.LOG.error("退出失败！")
-                return
+        if self._local_mode and self.sdk and self.sdk.WxDestroySDK() != 0:
+            self.LOG.error("退出失败！")
+
         self._is_running = False
 
     def keep_running(self):
@@ -658,7 +658,7 @@ class Wcf():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
                     cnt["wxid"].startswith("gh_") or    # 公众号
                     cnt["wxid"] in not_friends.keys()   # 其他杂号
-                    ):
+                ):
                 continue
             friends.append(cnt)
 

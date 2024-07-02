@@ -7,8 +7,8 @@
 
 using namespace std;
 extern WxCalls_t g_WxCalls;
-extern DWORD g_WeChatWinDllAddr;
-
+extern UINT64 g_WeChatWinDllAddr;
+#if 0
 #define FEAT_LEN 5
 static const uint8_t FEAT_COUNTRY[FEAT_LEN]  = { 0xA4, 0xD9, 0x02, 0x4A, 0x18 };
 static const uint8_t FEAT_PROVINCE[FEAT_LEN] = { 0xE2, 0xEA, 0xA8, 0xD1, 0x18 };
@@ -183,3 +183,4 @@ RpcContact_t GetContactByWxid(string wxid)
 
     return contact;
 }
+#endif
