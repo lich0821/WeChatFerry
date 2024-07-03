@@ -195,6 +195,33 @@ static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
     }
 }
 
+static MH_STATUS InitializeHook()
+{
+    if (isMH_Initialized) {
+        return MH_OK;
+    }
+    MH_STATUS status = MH_Initialize();
+    if (status == MH_OK) {
+        isMH_Initialized = true;
+    }
+    return status;
+}
+
+static MH_STATUS UninitializeHook()
+{
+    if (!isMH_Initialized) {
+        return MH_OK;
+    }
+    if (gIsLogging || gIsListening || gIsListeningPyq) {
+        return MH_OK;
+    }
+    MH_STATUS status = MH_Uninitialize();
+    if (status == MH_OK) {
+        isMH_Initialized = false;
+    }
+    return status;
+}
+
 void EnableLog()
 {
     MH_STATUS status = MH_UNKNOWN;
@@ -204,13 +231,10 @@ void EnableLog()
     }
     WxLog_t funcWxLog = (WxLog_t)(g_WeChatWinDllAddr + OS_WXLOG);
 
-    if (!isMH_Initialized) {
-        status = MH_Initialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Initialize failed: {}", to_string(status));
-            return;
-        }
-        isMH_Initialized = true;
+    status = InitializeHook();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Initialize failed: {}", to_string(status));
+        return;
     }
 
     status = MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog));
@@ -241,12 +265,11 @@ void DisableLog()
     }
 
     gIsLogging = false;
-    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
-        status = MH_Uninitialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
-            return;
-        }
+
+    status = UninitializeHook();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
+        return;
     }
 }
 
@@ -259,13 +282,10 @@ void ListenMessage()
     }
     funcRecvMsg = (RecvMsg_t)(g_WeChatWinDllAddr + OS_RECV_MSG_CALL);
 
-    if (!isMH_Initialized) {
-        status = MH_Initialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Initialize failed: {}", to_string(status));
-            return;
-        }
-        isMH_Initialized = true;
+    status = InitializeHook();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Initialize failed: {}", to_string(status));
+        return;
     }
 
     status = MH_CreateHook(funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg));
@@ -296,19 +316,12 @@ void UnListenMessage()
         return;
     }
 
-    status = MH_Uninitialize();
+    gIsListening = false;
+
+    status = UninitializeHook();
     if (status != MH_OK) {
         LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
         return;
-    }
-
-    gIsListening = false;
-    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
-        status = MH_Uninitialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
-            return;
-        }
     }
 }
 
@@ -321,13 +334,10 @@ void ListenPyq()
     }
     funcRecvPyq = (RecvPyq_t)(g_WeChatWinDllAddr + OS_PYQ_MSG_CALL);
 
-    if (!isMH_Initialized) {
-        status = MH_Initialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Initialize failed: {}", to_string(status));
-            return;
-        }
-        isMH_Initialized = true;
+    status = InitializeHook();
+    if (status != MH_OK) {
+        LOG_ERROR("MH_Initialize failed: {}", to_string(status));
+        return;
     }
 
     status = MH_CreateHook(funcRecvPyq, &DispatchPyq, reinterpret_cast<LPVOID *>(&realRecvPyq));
@@ -358,18 +368,11 @@ void UnListenPyq()
         return;
     }
 
-    status = MH_Uninitialize();
+    gIsListeningPyq = false;
+
+    status = UninitializeHook();
     if (status != MH_OK) {
         LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
         return;
-    }
-
-    gIsListeningPyq = false;
-    if (isMH_Initialized && !gIsLogging && !gIsListening && !gIsListeningPyq) {
-        status = MH_Uninitialize();
-        if (status != MH_OK) {
-            LOG_ERROR("MH_Uninitialize failed: {}", to_string(status));
-            return;
-        }
     }
 }
