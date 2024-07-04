@@ -13,11 +13,6 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置默认值
-        run: |
-          echo "USE_CACHE=yes" >> $GITHUB_ENV
-          echo "BUILD_CONFIGS=Release,Debug" >> $GITHUB_ENV
-
       - name: 获取版本号和微信版本号
         run: |
           $version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
@@ -45,7 +40,6 @@ jobs:
 
       - name: 设置缓存
         id: cache-dependencies
-        # if: github.event.inputs.use_cache == 'yes'
         uses: actions/cache@v4
         with:
           path: |
@@ -69,12 +63,10 @@ jobs:
 
       - name: 解析并构建配置
         run: |
-          # $configurations = "${{ github.event.inputs.build_configurations }}".Split(',')
           $configurations = "Release,Debug".Split(',')
           foreach ($config in $configurations) {
             Write-Host "Building configuration: $config"
             msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /verbosity:detailed
-
           }
         shell: pwsh
 
