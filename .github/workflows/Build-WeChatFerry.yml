@@ -3,23 +3,7 @@ name: Build-WeChatFerry
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+' 
-  workflow_dispatch:
-    # inputs:
-    #   use_cache:
-    #     description: '是否使用缓存'
-    #     required: true
-    #     default: 'yes'
-    #     type: choice
-    #     options:
-    #       - 'yes'
-    #       - 'no'
-    #   build_configurations:
-    #     description: '编译配置（使用逗号分隔多个配置）'
-    #     required: true
-    #     default: 'Release,Debug'
-    #     type: string
-
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   build:
@@ -28,12 +12,12 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
-        
-      # - name: 设置默认值
-      #   run: |
-      #     echo "USE_CACHE=${{ github.event.inputs.use_cache || 'yes' }}" >> $GITHUB_ENV
-      #     echo "BUILD_CONFIGS=${{ github.event.inputs.build_configurations || 'Release,Debug' }}" >> $GITHUB_ENV
-          
+
+      - name: 设置默认值
+        run: |
+          echo "USE_CACHE=yes" >> $GITHUB_ENV
+          echo "BUILD_CONFIGS=Release,Debug" >> $GITHUB_ENV
+
       - name: 获取版本号和微信版本号
         run: |
           $version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
@@ -47,18 +31,18 @@ jobs:
       - name: 设置 Visual Studio 2019
         uses: microsoft/setup-msbuild@v2
         with:
-          vs-version: '16.0' # 16.x 对应 Visual Studio 2019
+          vs-version: "16.0" # 16.x 对应 Visual Studio 2019
 
       - name: 设置 Python 3
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: 安装 Python 依赖项
         run: |
           python -m pip install --upgrade pip
           pip install grpcio-tools==1.48.2
-          
+
       - name: 设置缓存
         id: cache-dependencies
         # if: github.event.inputs.use_cache == 'yes'
@@ -70,9 +54,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-dependencies-
 
-          
       - name: 安装 vcpkg 和依赖项
-        # if: steps.cache-dependencies.outputs.cache-hit != 'true' || github.event.inputs.use_cache == 'no'
         run: |
           cd C:/Tools
           git clone https://github.com/microsoft/vcpkg
@@ -84,8 +66,6 @@ jobs:
           .\vcpkg\vcpkg install minhook:x64-windows-static
           .\vcpkg\vcpkg integrate install
           echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
-
-          
 
       - name: 解析并构建配置
         run: |
@@ -109,7 +89,7 @@ jobs:
       - name: 列出预发布文件
         run: |
           Get-ChildItem -Path "WeChatFerry/tmp" -Recurse
-          
+
       - name: 发布固件到 Github Releases
         uses: ncipollo/release-action@main
         with:
