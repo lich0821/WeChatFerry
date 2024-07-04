@@ -26,6 +26,8 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 #define OS_SEND_RICH_TEXT  0x21A09C0
 #define OS_SEND_PAT_MSG    0x2D669B0
 #define OS_FORWARD_MSG     0x238D350
+#define OS_GET_EMOTION_MGR 0x1C988D0
+#define OS_SEND_EMOTION    0x227B9E0
 
 typedef QWORD (*New_t)(QWORD);
 typedef QWORD (*Free_t)(QWORD);
@@ -38,6 +40,8 @@ typedef QWORD (*SendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD
 typedef QWORD (*SendRichTextMsg_t)(QWORD, QWORD, QWORD);
 typedef QWORD (*SendPatMsg_t)(QWORD, QWORD);
 typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*GetEmotionMgr_t)();
+typedef QWORD (*SendEmotion_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -205,6 +209,25 @@ int ForwardMessage(QWORD msgid, string receiver)
     return status;
 }
 
+void SendEmotionMessage(string wxid, string path)
+{
+    GetEmotionMgr_t GetEmotionMgr = (GetEmotionMgr_t)(g_WeChatWinDllAddr + OS_GET_EMOTION_MGR);
+    SendEmotion_t SendEmotion     = (SendEmotion_t)(g_WeChatWinDllAddr + OS_SEND_EMOTION);
+
+    WxString *pWxPath = NewWxStringFromStr(path);
+    WxString *pWxWxid = NewWxStringFromStr(wxid);
+
+    QWORD *buff = (QWORD *)HeapAlloc(GetProcessHeap(), 0, 0x20);
+    if (buff == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return;
+    }
+
+    memset(buff, 0, 0x20);
+    QWORD mgr = GetEmotionMgr();
+    SendEmotion(mgr, (QWORD)pWxPath, (QWORD)buff, (QWORD)pWxWxid, 2, (QWORD)buff, 0, (QWORD)buff);
+}
+
 #if 0
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
@@ -269,64 +292,6 @@ void SendXmlMessage(string receiver, string xml, string path, int type)
 		add esp, 0x8;
 		popfd;
 		popad;
-    }
-}
-
-void SendEmotionMessage(string wxid, string path)
-{
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
-
-    char buffer[0x1C] = { 0 };
-    wstring wsWxid    = String2Wstring(wxid);
-    wstring wsPath    = String2Wstring(path);
-
-    WxString wxWxid(wsWxid);
-    WxString wxPath(wsPath);
-    WxString nullbuffer;
-
-    // 发送文件Call地址 = 微信基址 + 偏移
-    DWORD sendCall1 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call1;
-    DWORD sendCall2 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call2;
-    DWORD sendCall3 = g_WeChatWinDllAddr + g_WxCalls.sendEmo.call3;
-
-    __asm {
-        pushad;
-        pushfd;
-        mov ebx, dword ptr[sendCall3];
-        lea eax, buffer;
-        push eax;
-        push 0x0;
-        sub esp, 0x14;
-        mov esi, esp;
-        mov dword ptr [esi], 0x0;
-        mov dword ptr [esi+0x4], 0x0;
-        mov dword ptr [esi+0x8], 0x0;
-        mov dword ptr [esi+0xC], 0x0;
-        mov dword ptr [esi+0x10], 0x0;
-        push 0x2;
-        lea eax, wxWxid;
-        sub esp, 0x14;
-        mov ecx, esp;
-        push eax;
-        call sendCall1;
-        sub esp, 0x14;
-        mov esi, esp;
-        mov dword ptr [esi], 0x0;
-        mov dword ptr [esi+0x4], 0x0;
-        mov dword ptr [esi+0x8], 0x0;
-        mov dword ptr [esi+0xC], 0x0;
-        mov dword ptr [esi+0x10], 0x0;
-        sub esp, 0x14;
-        mov ecx, esp;
-        lea eax, wxPath;
-        push eax;
-        call sendCall1;
-        mov ecx, ebx;
-        call sendCall2;
-        popfd;
-        popad;
     }
 }
 #endif

@@ -297,6 +297,30 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
     return true;
 }
 
+bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
+{
+    Response rsp  = Response_init_default;
+    rsp.func      = Functions_FUNC_SEND_EMOTION;
+    rsp.which_msg = Response_status_tag;
+
+    if ((path == NULL) || (receiver == NULL)) {
+        LOG_ERROR("Empty path or receiver.");
+        rsp.msg.status = -1;
+    } else {
+        SendEmotionMessage(receiver, path);
+        rsp.msg.status = 0;
+    }
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
+
 #if 0
 bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
@@ -313,30 +337,6 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
         string path(xml.path ? xml.path : "");
         uint32_t type = (uint32_t)xml.type;
         SendXmlMessage(receiver, content, path, type);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_EMOTION;
-    rsp.which_msg = Response_status_tag;
-
-    if ((path == NULL) || (receiver == NULL)) {
-        LOG_ERROR("Empty path or receiver.");
-        rsp.msg.status = -1;
-    } else {
-        SendEmotionMessage(receiver, path);
         rsp.msg.status = 0;
     }
 
@@ -910,13 +910,13 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
             break;
         }
+        case Functions_FUNC_SEND_EMOTION: {
+            ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
+            break;
+        }
 #if 0
         case Functions_FUNC_SEND_XML: {
             ret = func_send_xml(req.msg.xml, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_EMOTION: {
-            ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
 #endif
