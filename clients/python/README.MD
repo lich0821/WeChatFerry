@@ -6,6 +6,10 @@
 
 🤖示例机器人框架：[WeChatRobot](https://github.com/lich0821/WeChatRobot)。
 
+|![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg)|
+|:-:|:-:|
+|后台回复 `WCF` 加群交流|如果你觉得有用|
+
 ## 快速开始
 ```sh
 pip install --upgrade wcferry
@@ -13,10 +17,6 @@ pip install --upgrade wcferry
 
 ### Demo：
 参考 [WeChatRobot](https://github.com/lich0821/WeChatRobot) 和上面的文档。
-
-|![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/QR.jpeg)|
-|:-:|:-:|
-|后台回复 `WCF` 加群交流|如果你觉得有用|
 
 ## 一起开发
 ### 配置环境
@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.2.2.0 (2024.07.03)
-* 修复一个问题
+### v39.2.3.0 (2024.07.04)
+* 实现发送 GIF
 
 <details><summary>点击查看更多</summary>
 
@@ -70,6 +70,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
+* 发送 GIF
 * 拍一拍群友
 * 转发消息
 * 开启接收消息
