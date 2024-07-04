@@ -21,6 +21,10 @@
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
 
+|![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
+|:-:|:-:|
+|后台回复 `WCF` 加群交流|如果你觉得有用|
+
 <details><summary>点击查看功能清单</summary>
 
 * 查询登录状态
@@ -34,6 +38,7 @@
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
+* 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
 * 开启接收消息
@@ -51,12 +56,27 @@
 <details><summary>点击查看支持的客户端</summary>
 
 * Python
+* HTTP
+* NodeJS
 
 </details>
 
-|![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
-|:-:|:-:|
-|后台回复 `WCF` 加群交流|如果你觉得有用|
+## 快速开始
+### Python
+[![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
+
+* 安装
+```sh
+pip install --upgrade wcferry
+```
+
+* 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
+
+### HTTP
+#### [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
+#### [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
+
+### [NodeJS](clients/wcferry-node)
 
 ## 一起开发
 
@@ -166,9 +186,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.2.2
+### v39.2.3
 
-* 修复开启、停止接收消息失败问题
+* 实现发送 GIF
 
 <details><summary>点击查看更多</summary>
 
@@ -179,6 +199,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.2.2
+
+* 修复开启、停止接收消息失败问题
 
 ### v39.2.1
 
