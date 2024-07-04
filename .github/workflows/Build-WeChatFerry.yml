@@ -5,20 +5,20 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+' 
   workflow_dispatch:
-    inputs:
-      use_cache:
-        description: '是否使用缓存'
-        required: true
-        default: 'yes'
-        type: choice
-        options:
-          - 'yes'
-          - 'no'
-      build_configurations:
-        description: '编译配置（使用逗号分隔多个配置）'
-        required: true
-        default: 'Release,Debug'
-        type: string
+    # inputs:
+    #   use_cache:
+    #     description: '是否使用缓存'
+    #     required: true
+    #     default: 'yes'
+    #     type: choice
+    #     options:
+    #       - 'yes'
+    #       - 'no'
+    #   build_configurations:
+    #     description: '编译配置（使用逗号分隔多个配置）'
+    #     required: true
+    #     default: 'Release,Debug'
+    #     type: string
 
 
 jobs:
@@ -29,10 +29,10 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         
-      - name: 设置默认值
-        run: |
-          echo "USE_CACHE=${{ github.event.inputs.use_cache || 'yes' }}" >> $GITHUB_ENV
-          echo "BUILD_CONFIGS=${{ github.event.inputs.build_configurations || 'Release,Debug' }}" >> $GITHUB_ENV
+      # - name: 设置默认值
+      #   run: |
+      #     echo "USE_CACHE=${{ github.event.inputs.use_cache || 'yes' }}" >> $GITHUB_ENV
+      #     echo "BUILD_CONFIGS=${{ github.event.inputs.build_configurations || 'Release,Debug' }}" >> $GITHUB_ENV
           
       - name: 获取版本号和微信版本号
         run: |
@@ -61,7 +61,7 @@ jobs:
           
       - name: 设置缓存
         id: cache-dependencies
-        if: github.event.inputs.use_cache == 'yes'
+        # if: github.event.inputs.use_cache == 'yes'
         uses: actions/cache@v4
         with:
           path: |
@@ -89,7 +89,8 @@ jobs:
 
       - name: 解析并构建配置
         run: |
-          $configurations = "${{ github.event.inputs.build_configurations }}".Split(',')
+          # $configurations = "${{ github.event.inputs.build_configurations }}".Split(',')
+          $configurations = "Release,Debug".Split(',')
           foreach ($config in $configurations) {
             Write-Host "Building configuration: $config"
             msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /verbosity:detailed
