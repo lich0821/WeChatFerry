@@ -2,15 +2,8 @@ name: Build-WeChatFerry
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - 'WeChatFerry/**'  # 仅当这个目录中的文件有变化时触发
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'WeChatFerry/**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' 
   workflow_dispatch:
     inputs:
       use_cache:
