@@ -2,9 +2,15 @@ name: Build-WeChatFerry
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
+    paths:
+      - 'WeChatFerry/**'  # 仅当这个目录中的文件有变化时触发
   pull_request:
-    branches: [master]
+    branches:
+      - master
+    paths:
+      - 'WeChatFerry/**'
   workflow_dispatch:
     inputs:
       use_cache:
@@ -29,7 +35,12 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
-
+        
+      - name: 设置默认值
+        run: |
+          echo "USE_CACHE=${{ github.event.inputs.use_cache || 'yes' }}" >> $GITHUB_ENV
+          echo "BUILD_CONFIGS=${{ github.event.inputs.build_configurations || 'Release,Debug' }}" >> $GITHUB_ENV
+          
       - name: 获取版本号和微信版本号
         run: |
           $version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
