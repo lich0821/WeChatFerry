@@ -24,6 +24,7 @@ typedef struct PortPath {
 } PortPath_t;
 
 DWORD GetWeChatPid();
+BOOL IsProcessX64(DWORD pid);
 int OpenWeChat(DWORD *pid);
 int GetWeChatVersion(wchar_t *version);
 size_t GetWstringByAddress(UINT64 address, wchar_t *buffer, UINT64 buffer_size);

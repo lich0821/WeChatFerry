@@ -180,6 +180,34 @@ DWORD GetWeChatPid()
     return pid;
 }
 
+enum class WindowsArchiture { x32, x64 };
+static WindowsArchiture GetWindowsArchitecture()
+{
+#ifdef _WIN64
+    return WindowsArchiture::x64;
+#else
+    return WindowsArchiture::x32;
+#endif
+}
+
+BOOL IsProcessX64(DWORD pid)
+{
+    BOOL isWow64    = false;
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
+    if (!hProcess)
+        return false;
+    BOOL result = IsWow64Process(hProcess, &isWow64);
+    CloseHandle(hProcess);
+    if (!result)
+        return false;
+    if (isWow64)
+        return false;
+    else if (GetWindowsArchitecture() == WindowsArchiture::x32)
+        return false;
+    else
+        return true;
+}
+
 int OpenWeChat(DWORD *pid)
 {
     *pid = GetWeChatPid();
