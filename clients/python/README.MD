@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.2.3.0 (2024.07.04)
-* 实现发送 GIF
+### v39.2.3.1 (2024.07.08)
+* 添加 x32/x64 检测防止崩溃
 
 <details><summary>点击查看更多</summary>
 
