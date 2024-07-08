@@ -186,9 +186,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.2.3
+### v39.2.4
 
-* 实现发送 GIF
+* 修复 wxid 问题
 
 <details><summary>点击查看更多</summary>
 
@@ -199,6 +199,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.2.3
+
+* 实现发送 GIF
 
 ### v39.2.2
 
