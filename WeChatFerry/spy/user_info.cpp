@@ -5,7 +5,7 @@
 extern UINT64 g_WeChatWinDllAddr;
 
 #define OS_USER_HOME   0x5A7E190
-#define OS_USER_WXID   0x5AB7FB8
+#define OS_USER_WXID   0x5AB7F30
 #define OS_USER_NAME   0x5AB8098
 #define OS_USER_MOBILE 0x5AB7FD8
 
