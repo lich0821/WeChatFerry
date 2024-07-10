@@ -4,7 +4,7 @@
 
 ## 快速开始
 
-* 下载 [最新发布的文件](https://github.com/lich0821/WeChatFerry/releases/latest)，解压到 `WeChatFerry\clients\java\wcferry\src\main\resources\win32-x86-64`。
+* 下载 [最新发布的文件](https://github.com/lich0821/WeChatFerry/releases/latest)，解压到 `WeChatFerry\clients\java\wcferry\dll`目录下。
 
 * 使用惯用 IDE，打开工程，编译，运行。
 
@@ -68,9 +68,9 @@ cd C:/Projs/WeChatFerry/java/wcferry/src/main/java
 protoc.exe --java_out=. --proto_path=C:\Projs\WeChatFerry\WeChatFerry\rpc\proto wcf.proto
 ```
 
-### 添加 `wcferry` 依赖
+### 添加 `dll` 依赖
 
-将 `wcf.exe` 、 `spy.dll` 、 `spy_debug.dll` 添加到 `WeChatFerry\clients\java\wcferry\src\main\resources\win32-x86-64`。
+将  `spy.dll` 、 `spy_debug.dll`、 `spy.dll` 添加到 `WeChatFerry\clients\java\wcferry\dll`。
 
 ### 其他问题
 
