@@ -103,12 +103,13 @@ func httpInit() {
 	// 下载附件
 	r.POST("/api/DownloadAttach", app.DownloadAttach)
 
-	r.Run(":8000")
+	r.Run("127.0.0.1:8000")
 }
 
 func OnMsg() {
 	err := app.WxClient.OnMSG(func(msg *wcf.WxMsg) {
 		var message app.Message
+		message.IsSelf = msg.IsSelf
 		message.IsGroup = msg.IsGroup
 		message.MessageId = msg.Id
 		message.Type = msg.Type
@@ -117,7 +118,10 @@ func OnMsg() {
 		message.Content = msg.Content
 		message.Sign = msg.Sign
 		message.WxId = msg.Sender
+		message.Thumb = msg.Thumb
+		message.Extra = msg.Extra
 		message.Xml = msg.Xml
+		// 如果你设置了回调链接 那么他就是会传给你 如果你没设置 你可以在else中 添加你的代码 直接删掉 回调的判断即可
 		if app.WxClient.MessageCallbackUrl != "" {
 			var data = map[string]interface{}{
 				"code":    0,
@@ -177,11 +181,23 @@ func OnMsg() {
 				}
 			}
 		} else {
-			// 植入我自己的功能接口
-			fmt.Println("请设置消息回调的url")
+			//fmt.Println("消息类型：", message.Type)
+			//fmt.Println("消息Thumb：", message.Thumb) // 这个可以直接下载
+			//fmt.Println("消息Extra：", message.Extra) // 这个要点一下才能下载(自行处理)
+			//fmt.Println("消息xml：", message.Xml)
+			//if message.Type == 3 {
+			//	resp, _ := resty.New().R().SetBody(map[string]interface{}{
+			//		"id":    message.MessageId,
+			//		"thumb": "F:/c++/WeChatFerry/clients/go_wcf_http/", //下载到本地的哪里
+			//		"extra": message.Thumb,                             // 看上面的
+			//	}).Post("http://127.0.0.1:8001/api/DownloadAttach")
+			//	fmt.Println(resp.String())
+			//	fmt.Println(resp.Error())
+			//	fmt.Println(resp.StatusCode())
+			//}
+			go app.MessageProcess(message)
 		}
 	})
-	fmt.Println(err)
 	if err != nil {
 		fmt.Println(err)
 		OnMsg()
