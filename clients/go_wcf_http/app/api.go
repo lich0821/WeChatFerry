@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 type Result struct {
@@ -196,6 +197,7 @@ func SendIMG(c *gin.Context) {
 	var RequestData struct {
 		Path     string `json:"path"`
 		Receiver string `json:"receiver"`
+		Suffix   string `json:"suffix"`
 	}
 	if err := c.BindJSON(&RequestData); err != nil {
 		result.Code = 0
@@ -204,6 +206,9 @@ func SendIMG(c *gin.Context) {
 		result.Data = data
 		c.JSON(http.StatusOK, result)
 		return
+	}
+	if RequestData.Path[0:4] == "http" {
+		RequestData.Path, _ = DownloadFile(RequestData.Path, "file", RequestData.Suffix)
 	}
 	result.Code = 1
 	result.Message = "发送完成"
@@ -218,6 +223,7 @@ func SendFile(c *gin.Context) {
 	var RequestData struct {
 		Path     string `json:"path"`
 		Receiver string `json:"receiver"`
+		Suffix   string `json:"suffix"`
 	}
 	if err := c.BindJSON(&RequestData); err != nil {
 		result.Code = 0
@@ -226,6 +232,9 @@ func SendFile(c *gin.Context) {
 		result.Data = data
 		c.JSON(http.StatusOK, result)
 		return
+	}
+	if RequestData.Path[0:4] == "http" {
+		RequestData.Path, _ = DownloadFile(RequestData.Path, "file", RequestData.Suffix)
 	}
 	result.Code = 1
 	result.Message = "发送完成"
@@ -444,7 +453,17 @@ func DownloadAttach(c *gin.Context) {
 	}
 	result.Code = 1
 	result.Message = "下载附件调用成功"
-	var data = WxClient.DownloadAttach(RequestData.Id, RequestData.Thumb, RequestData.Extra)
-	result.Data = data
+	WxClient.DownloadAttach(RequestData.Id, "", RequestData.Extra)
+	times := 1
+	path := ""
+	for times < 30 {
+		path = WxClient.DecryptImage(RequestData.Extra, RequestData.Thumb)
+		if path != "func:FUNC_DECRYPT_IMAGE str:\"\"" && path != "func:FUNC_DECRYPT_IMAGE  str:\"\"" {
+			break
+		}
+		time.Sleep(time.Millisecond * 1000)
+		times += 1
+	}
+	result.Data = map[string]string{"path": path}
 	c.JSON(http.StatusOK, result)
 }
