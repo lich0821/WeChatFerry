@@ -4,7 +4,7 @@
 #include <string>
 
 #include "injector.h"
-#include "../com/util.h"
+#include "util.h"
 
 using namespace std;
 

@@ -5,10 +5,6 @@
 #include "spy.h"
 #include "util.h"
 
-<<<<<<< HEAD
-//WxCalls_t g_WxCalls      = { 0 };
-=======
->>>>>>> master
 UINT64 g_WeChatWinDllAddr = 0;
 
 static bool IsWxVersionMatched(const wchar_t *version)
@@ -37,19 +33,11 @@ void InitSpy(LPVOID args)
         return;
     }
     LOG_INFO("WeChat version: {}", Wstring2String(version).c_str());
-<<<<<<< HEAD
-    //if (LoadCalls(version, &g_WxCalls) != 0) { // 加载微信版本对应的Call地址
-    //    LOG_ERROR("不支持当前版本");
-    //    MessageBox(NULL, L"不支持当前版本", L"错误", 0);
-    //    return;
-    //}
-=======
     if (!IsWxVersionMatched(version)) {
         LOG_ERROR("不支持当前版本");
         MessageBox(NULL, L"不支持当前版本", L"错误", 0);
         return;
     }
->>>>>>> master
 
     RpcStartServer(pp->port);
 }

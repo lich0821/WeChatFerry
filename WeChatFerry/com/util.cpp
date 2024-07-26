@@ -1,5 +1,5 @@
 ﻿#include "Shlwapi.h"
-#include "../sdk/framework.h"
+#include "framework.h"
 #include <codecvt>
 #include <locale>
 #include <string.h>

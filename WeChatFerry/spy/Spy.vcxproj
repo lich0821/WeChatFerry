@@ -26,30 +26,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-<<<<<<< HEAD
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-=======
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'" Label="Configuration">
->>>>>>> master
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -85,6 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'" Label="Vcpkg">
     <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgConfiguration>Release</VcpkgConfiguration>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
@@ -102,7 +92,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)com;$(SolutionDir)rpc;$(SolutionDir)rpc\nanopb;$(SolutionDir)rpc\proto;$(SolutionDir)smc;$(SolutionDir)spy;C:\Tools\vcpkg\installed\x64-windows-static\include</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>false</OmitFramePointers>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
@@ -120,7 +110,7 @@
     </Link>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)rpc\proto
-F:\C++\vcpkg\installed\x64-windows-static\tools\protobuf\protoc.exe --nanopb_out=. wcf.proto</Command>
+$(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
@@ -255,7 +245,6 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="spy_types.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="user_info.h" />
-    <ClInclude Include="wechat_function.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\com\log.cpp" />

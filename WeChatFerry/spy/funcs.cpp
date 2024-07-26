@@ -10,7 +10,6 @@
 #include "log.h"
 #include "spy_types.h"
 #include "util.h"
-#include "wechat_function.h"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -50,13 +49,8 @@ typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*GetOCRManager_t)();
 typedef QWORD (*DoOCRTask_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-<<<<<<< HEAD
-int IsLogin(void) { return (int)GET_UINT64(g_WeChatWinDllAddr + offset::wcf_kLoginStatu); }
-=======
 int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + OS_LOGIN_STATUS); }
->>>>>>> master
 
-#if 0
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     // PNG?
@@ -83,6 +77,7 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 string DecryptImage(string src, string dir)
 {
     if (!fs::exists(src)) {
+        LOG_ERROR("File not exists: {}", src);
         return "";
     }
 
@@ -276,56 +271,7 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     return status;
 }
 
-<<<<<<< HEAD
-int RevokeMsg(uint64_t id)
-{
-    int status = -1;
-    uint64_t localId;
-    uint32_t dbIdx;
-    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
-        return status;
-    }
-
-    char chat_msg[0x2D8] = { 0 };
-
-    DWORD rmCall1 = g_WeChatWinDllAddr + g_WxCalls.rm.call1;
-    DWORD rmCall2 = g_WeChatWinDllAddr + g_WxCalls.rm.call2;
-    DWORD rmCall3 = g_WeChatWinDllAddr + g_WxCalls.rm.call3;
-    DWORD rmCall4 = g_WeChatWinDllAddr + g_WxCalls.rm.call4;
-    DWORD rmCall5 = g_WeChatWinDllAddr + g_WxCalls.rm.call5;
-
-    __asm {
-        pushad;
-        pushfd;
-        lea        ecx, chat_msg;
-        call       rmCall1;
-        call       rmCall2;
-        push       dword ptr [dbIdx];
-        lea        ecx, chat_msg;
-        push       dword ptr [localId];
-        call       rmCall3;
-        add        esp, 0x8;
-        call       rmCall2;
-        lea        ecx, chat_msg;
-        push       ecx;
-        mov        ecx, eax;
-        call       rmCall4;
-        mov        status, eax;
-        lea        ecx, chat_msg;
-        push       0x0;
-        call       rmCall5;
-        popfd;
-        popad;
-    }
-
-    return status;
-}
-
-string GetAudio(uint64_t id, string dir)
-=======
 string GetAudio(QWORD id, string dir)
->>>>>>> master
 {
     string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
     mp3path += to_string(id) + ".mp3";
