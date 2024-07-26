@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string>
+#include <minwindef.h>
 
 #include "spy_types.h"
 
