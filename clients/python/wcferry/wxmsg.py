@@ -56,7 +56,7 @@ class WxMsg():
         if not self.from_group():
             return False  # 只有群消息才能 @
 
-        if not re.findall(f"<atuserlist>.*({wxid}).*</atuserlist>", self.xml):
+        if not re.findall(f"<atuserlist>[\s|\S]*({wxid})[\s|\S]*</atuserlist>", self.xml):
             return False  # 不在 @ 清单里
 
         if re.findall(r"@(?:所有人|all|All)", self.content):

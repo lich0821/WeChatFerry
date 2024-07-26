@@ -11,7 +11,7 @@ public class Main {
         // Client client = new Client("127.0.0.1", 10086);
 
         // 本地启动 RPC
-        Client client = new Client(true); // 默认 10086 端口
+        Client client = new Client(); // 默认 10086 端口
         // Client client = new Client(10088,true); // 也可以指定端口
 
         // 是否已登录
@@ -60,3 +60,4 @@ public class Main {
         client.keepRunning();
     }
 }
+

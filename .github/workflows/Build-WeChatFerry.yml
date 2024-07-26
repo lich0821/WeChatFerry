@@ -1,0 +1,97 @@
+name: Build-WeChatFerry
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 获取版本号和微信版本号
+        run: |
+          $version_full = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $wechat_version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "ProductVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $version = $version_full -replace '(\d+\.\d+\.\d+)\.\d+', '$1'
+          echo "version=$version" >> $env:GITHUB_ENV
+          echo "wechat_version=$wechat_version" >> $env:GITHUB_ENV
+          echo "Program Version: $version"
+          echo "WeChat Version: $wechat_version"
+        shell: pwsh
+
+      - name: 设置 Visual Studio 2019
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: "16.0" # 16.x 对应 Visual Studio 2019
+
+      - name: 设置 Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: 安装 Python 依赖项
+        run: |
+          python -m pip install --upgrade pip
+          pip install grpcio-tools==1.48.2
+
+      - name: 设置缓存
+        id: cache-dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:/Tools/vcpkg
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/WeChatFerry/spy/spy.rc') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-
+
+      - name: 安装 vcpkg 和依赖项
+        run: |
+          cd C:/Tools
+          git clone https://github.com/microsoft/vcpkg
+          .\vcpkg\bootstrap-vcpkg.bat
+          .\vcpkg\vcpkg install protobuf[zlib]:x64-windows-static
+          .\vcpkg\vcpkg install spdlog:x64-windows-static
+          .\vcpkg\vcpkg install nng:x64-windows-static
+          .\vcpkg\vcpkg install magic-enum:x64-windows-static
+          .\vcpkg\vcpkg install minhook:x64-windows-static
+          .\vcpkg\vcpkg integrate install
+          echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
+
+      - name: 解析并构建配置
+        run: |
+          $configurations = "Release,Debug".Split(',')
+          foreach ($config in $configurations) {
+            Write-Host "Building configuration: $config"
+            msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /verbosity:detailed
+          }
+        shell: pwsh
+
+      - name: 打包输出文件及下载 WeChat 安装包
+        run: |
+          New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
+          Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
+          # Compress-Archive -Path "WeChatFerry/Out/*" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}-debug.zip"
+          Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "WeChatFerry/tmp/WeChatSetup-${{ env.wechat_version }}.exe"
+        shell: pwsh
+
+      - name: 列出预发布文件
+        run: |
+          Get-ChildItem -Path "WeChatFerry/tmp" -Recurse
+
+      - name: 发布固件到 Github Releases
+        uses: ncipollo/release-action@main
+        with:
+          name: v${{ env.version }}
+          tag: v${{ env.version }}
+          token: ${{ secrets.REPO_TOKEN }}
+          allowUpdates: true
+          artifacts: "WeChatFerry/tmp/*"
+          body: |
+            程序版本：`v${{ env.version }}`
+            配套微信版本：`${{ env.wechat_version }}`
+            [📖 Python 文档](https://wechatferry.readthedocs.io/)

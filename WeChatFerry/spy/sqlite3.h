@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "Windows.h"
+
+#include "spy_types.h"
 
 #define SQLITE_OK 0 /* Successful result */
 

@@ -8,6 +8,7 @@
 #include <vector>
 #include <wchar.h>
 
+#include "log.h"
 #include "util.h"
 
 #pragma comment(lib, "shlwapi")
@@ -179,6 +180,34 @@ DWORD GetWeChatPid()
     return pid;
 }
 
+enum class WindowsArchiture { x32, x64 };
+static WindowsArchiture GetWindowsArchitecture()
+{
+#ifdef _WIN64
+    return WindowsArchiture::x64;
+#else
+    return WindowsArchiture::x32;
+#endif
+}
+
+BOOL IsProcessX64(DWORD pid)
+{
+    BOOL isWow64    = false;
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
+    if (!hProcess)
+        return false;
+    BOOL result = IsWow64Process(hProcess, &isWow64);
+    CloseHandle(hProcess);
+    if (!result)
+        return false;
+    if (isWow64)
+        return false;
+    else if (GetWindowsArchitecture() == WindowsArchiture::x32)
+        return false;
+    else
+        return true;
+}
+
 int OpenWeChat(DWORD *pid)
 {
     *pid = GetWeChatPid();
@@ -295,4 +324,24 @@ void DbgMsg(const char *zcFormat, ...)
     std::string strText(zc.data(), iLen);
 
     OutputDebugStringA(strText.c_str());
+}
+
+WxString *NewWxStringFromStr(const string &str) { return NewWxStringFromWstr(String2Wstring(str)); }
+
+WxString *NewWxStringFromWstr(const wstring &ws)
+{
+    WxString *p       = (WxString *)HeapAlloc(GetProcessHeap(), 0, sizeof(WxString));
+    wchar_t *pWstring = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, (ws.size() + 1) * 2);
+    if (p == NULL || pWstring == NULL) {
+        LOG_ERROR("Out of Memory...");
+        return NULL;
+    }
+
+    wmemcpy(pWstring, ws.c_str(), ws.size() + 1);
+    p->wptr     = pWstring;
+    p->size     = (DWORD)ws.size();
+    p->capacity = (DWORD)ws.size();
+    p->ptr      = 0;
+    p->clen     = 0;
+    return p;
 }

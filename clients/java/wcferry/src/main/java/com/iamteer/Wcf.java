@@ -84,6 +84,10 @@ public final class Wcf {
      */
     FUNC_SEND_PAT_MSG(38),
     /**
+     * <code>FUNC_FORWARD_MSG = 39;</code>
+     */
+    FUNC_FORWARD_MSG(39),
+    /**
      * <code>FUNC_ENABLE_RECV_TXT = 48;</code>
      */
     FUNC_ENABLE_RECV_TXT(48),
@@ -120,9 +124,17 @@ public final class Wcf {
      */
     FUNC_REVOKE_MSG(86),
     /**
+     * <code>FUNC_REFRESH_QRCODE = 87;</code>
+     */
+    FUNC_REFRESH_QRCODE(87),
+    /**
      * <code>FUNC_DECRYPT_IMAGE = 96;</code>
      */
     FUNC_DECRYPT_IMAGE(96),
+    /**
+     * <code>FUNC_EXEC_OCR = 97;</code>
+     */
+    FUNC_EXEC_OCR(97),
     /**
      * <code>FUNC_ADD_ROOM_MEMBERS = 112;</code>
      */
@@ -203,6 +215,10 @@ public final class Wcf {
      */
     public static final int FUNC_SEND_PAT_MSG_VALUE = 38;
     /**
+     * <code>FUNC_FORWARD_MSG = 39;</code>
+     */
+    public static final int FUNC_FORWARD_MSG_VALUE = 39;
+    /**
      * <code>FUNC_ENABLE_RECV_TXT = 48;</code>
      */
     public static final int FUNC_ENABLE_RECV_TXT_VALUE = 48;
@@ -239,9 +255,17 @@ public final class Wcf {
      */
     public static final int FUNC_REVOKE_MSG_VALUE = 86;
     /**
+     * <code>FUNC_REFRESH_QRCODE = 87;</code>
+     */
+    public static final int FUNC_REFRESH_QRCODE_VALUE = 87;
+    /**
      * <code>FUNC_DECRYPT_IMAGE = 96;</code>
      */
     public static final int FUNC_DECRYPT_IMAGE_VALUE = 96;
+    /**
+     * <code>FUNC_EXEC_OCR = 97;</code>
+     */
+    public static final int FUNC_EXEC_OCR_VALUE = 97;
     /**
      * <code>FUNC_ADD_ROOM_MEMBERS = 112;</code>
      */
@@ -296,6 +320,7 @@ public final class Wcf {
         case 36: return FUNC_SEND_EMOTION;
         case 37: return FUNC_SEND_RICH_TXT;
         case 38: return FUNC_SEND_PAT_MSG;
+        case 39: return FUNC_FORWARD_MSG;
         case 48: return FUNC_ENABLE_RECV_TXT;
         case 64: return FUNC_DISABLE_RECV_TXT;
         case 80: return FUNC_EXEC_DB_QUERY;
@@ -305,7 +330,9 @@ public final class Wcf {
         case 84: return FUNC_DOWNLOAD_ATTACH;
         case 85: return FUNC_GET_CONTACT_INFO;
         case 86: return FUNC_REVOKE_MSG;
+        case 87: return FUNC_REFRESH_QRCODE;
         case 96: return FUNC_DECRYPT_IMAGE;
+        case 97: return FUNC_EXEC_OCR;
         case 112: return FUNC_ADD_ROOM_MEMBERS;
         case 113: return FUNC_DEL_ROOM_MEMBERS;
         case 114: return FUNC_INV_ROOM_MEMBERS;
@@ -381,31 +408,55 @@ public final class Wcf {
     com.iamteer.Wcf.Functions getFunc();
 
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      * @return Whether the empty field is set.
      */
     boolean hasEmpty();
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      * @return The empty.
      */
     com.iamteer.Wcf.Empty getEmpty();
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      */
     com.iamteer.Wcf.EmptyOrBuilder getEmptyOrBuilder();
 
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return Whether the str field is set.
      */
     boolean hasStr();
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The str.
      */
     java.lang.String getStr();
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The bytes for str.
      */
@@ -413,61 +464,109 @@ public final class Wcf {
         getStrBytes();
 
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      * @return Whether the txt field is set.
      */
     boolean hasTxt();
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      * @return The txt.
      */
     com.iamteer.Wcf.TextMsg getTxt();
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      */
     com.iamteer.Wcf.TextMsgOrBuilder getTxtOrBuilder();
 
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      * @return Whether the file field is set.
      */
     boolean hasFile();
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      * @return The file.
      */
     com.iamteer.Wcf.PathMsg getFile();
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      */
     com.iamteer.Wcf.PathMsgOrBuilder getFileOrBuilder();
 
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      * @return Whether the query field is set.
      */
     boolean hasQuery();
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      * @return The query.
      */
     com.iamteer.Wcf.DbQuery getQuery();
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      */
     com.iamteer.Wcf.DbQueryOrBuilder getQueryOrBuilder();
 
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      * @return Whether the v field is set.
      */
     boolean hasV();
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      * @return The v.
      */
     com.iamteer.Wcf.Verification getV();
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      */
     com.iamteer.Wcf.VerificationOrBuilder getVOrBuilder();
@@ -500,46 +599,82 @@ public final class Wcf {
     com.iamteer.Wcf.MemberMgmtOrBuilder getMOrBuilder();
 
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      * @return Whether the xml field is set.
      */
     boolean hasXml();
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      * @return The xml.
      */
     com.iamteer.Wcf.XmlMsg getXml();
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      */
     com.iamteer.Wcf.XmlMsgOrBuilder getXmlOrBuilder();
 
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      * @return Whether the dec field is set.
      */
     boolean hasDec();
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      * @return The dec.
      */
     com.iamteer.Wcf.DecPath getDec();
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      */
     com.iamteer.Wcf.DecPathOrBuilder getDecOrBuilder();
 
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      * @return Whether the tf field is set.
      */
     boolean hasTf();
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      * @return The tf.
      */
     com.iamteer.Wcf.Transfer getTf();
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      */
     com.iamteer.Wcf.TransferOrBuilder getTfOrBuilder();
@@ -549,7 +684,7 @@ public final class Wcf {
      * 64 位整数，通用
      * </pre>
      *
-     * <code>uint64 ui64 = 12;</code>
+     * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
      * @return Whether the ui64 field is set.
      */
     boolean hasUi64();
@@ -558,83 +693,166 @@ public final class Wcf {
      * 64 位整数，通用
      * </pre>
      *
-     * <code>uint64 ui64 = 12;</code>
+     * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
      * @return The ui64.
      */
     long getUi64();
 
     /**
+     * <pre>
+     * 布尔值
+     * </pre>
+     *
      * <code>bool flag = 13;</code>
      * @return Whether the flag field is set.
      */
     boolean hasFlag();
     /**
+     * <pre>
+     * 布尔值
+     * </pre>
+     *
      * <code>bool flag = 13;</code>
      * @return The flag.
      */
     boolean getFlag();
 
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      * @return Whether the att field is set.
      */
     boolean hasAtt();
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      * @return The att.
      */
     com.iamteer.Wcf.AttachMsg getAtt();
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      */
     com.iamteer.Wcf.AttachMsgOrBuilder getAttOrBuilder();
 
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      * @return Whether the am field is set.
      */
     boolean hasAm();
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      * @return The am.
      */
     com.iamteer.Wcf.AudioMsg getAm();
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      */
     com.iamteer.Wcf.AudioMsgOrBuilder getAmOrBuilder();
 
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      * @return Whether the rt field is set.
      */
     boolean hasRt();
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      * @return The rt.
      */
     com.iamteer.Wcf.RichText getRt();
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      */
     com.iamteer.Wcf.RichTextOrBuilder getRtOrBuilder();
 
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      * @return Whether the pm field is set.
      */
     boolean hasPm();
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      * @return The pm.
      */
     com.iamteer.Wcf.PatMsg getPm();
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      */
     com.iamteer.Wcf.PatMsgOrBuilder getPmOrBuilder();
 
-    com.iamteer.Wcf.Request.MsgCase getMsgCase();
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     * @return Whether the fm field is set.
+     */
+    boolean hasFm();
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     * @return The fm.
+     */
+    com.iamteer.Wcf.ForwardMsg getFm();
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     */
+    com.iamteer.Wcf.ForwardMsgOrBuilder getFmOrBuilder();
+
+    public com.iamteer.Wcf.Request.MsgCase getMsgCase();
   }
   /**
    * Protobuf type {@code wcf.Request}
@@ -659,6 +877,266 @@ public final class Wcf {
       return new Request();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Request(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              int rawValue = input.readEnum();
+
+              func_ = rawValue;
+              break;
+            }
+            case 18: {
+              com.iamteer.Wcf.Empty.Builder subBuilder = null;
+              if (msgCase_ == 2) {
+                subBuilder = ((com.iamteer.Wcf.Empty) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.Empty.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.Empty) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 2;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+              msgCase_ = 3;
+              msg_ = s;
+              break;
+            }
+            case 34: {
+              com.iamteer.Wcf.TextMsg.Builder subBuilder = null;
+              if (msgCase_ == 4) {
+                subBuilder = ((com.iamteer.Wcf.TextMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.TextMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.TextMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 4;
+              break;
+            }
+            case 42: {
+              com.iamteer.Wcf.PathMsg.Builder subBuilder = null;
+              if (msgCase_ == 5) {
+                subBuilder = ((com.iamteer.Wcf.PathMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.PathMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.PathMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 5;
+              break;
+            }
+            case 50: {
+              com.iamteer.Wcf.DbQuery.Builder subBuilder = null;
+              if (msgCase_ == 6) {
+                subBuilder = ((com.iamteer.Wcf.DbQuery) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.DbQuery.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.DbQuery) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 6;
+              break;
+            }
+            case 58: {
+              com.iamteer.Wcf.Verification.Builder subBuilder = null;
+              if (msgCase_ == 7) {
+                subBuilder = ((com.iamteer.Wcf.Verification) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.Verification.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.Verification) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 7;
+              break;
+            }
+            case 66: {
+              com.iamteer.Wcf.MemberMgmt.Builder subBuilder = null;
+              if (msgCase_ == 8) {
+                subBuilder = ((com.iamteer.Wcf.MemberMgmt) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.MemberMgmt.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.MemberMgmt) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 8;
+              break;
+            }
+            case 74: {
+              com.iamteer.Wcf.XmlMsg.Builder subBuilder = null;
+              if (msgCase_ == 9) {
+                subBuilder = ((com.iamteer.Wcf.XmlMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.XmlMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.XmlMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 9;
+              break;
+            }
+            case 82: {
+              com.iamteer.Wcf.DecPath.Builder subBuilder = null;
+              if (msgCase_ == 10) {
+                subBuilder = ((com.iamteer.Wcf.DecPath) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.DecPath.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.DecPath) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 10;
+              break;
+            }
+            case 90: {
+              com.iamteer.Wcf.Transfer.Builder subBuilder = null;
+              if (msgCase_ == 11) {
+                subBuilder = ((com.iamteer.Wcf.Transfer) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.Transfer.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.Transfer) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 11;
+              break;
+            }
+            case 96: {
+              msg_ = input.readUInt64();
+              msgCase_ = 12;
+              break;
+            }
+            case 104: {
+              msg_ = input.readBool();
+              msgCase_ = 13;
+              break;
+            }
+            case 114: {
+              com.iamteer.Wcf.AttachMsg.Builder subBuilder = null;
+              if (msgCase_ == 14) {
+                subBuilder = ((com.iamteer.Wcf.AttachMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.AttachMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.AttachMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 14;
+              break;
+            }
+            case 122: {
+              com.iamteer.Wcf.AudioMsg.Builder subBuilder = null;
+              if (msgCase_ == 15) {
+                subBuilder = ((com.iamteer.Wcf.AudioMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.AudioMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.AudioMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 15;
+              break;
+            }
+            case 130: {
+              com.iamteer.Wcf.RichText.Builder subBuilder = null;
+              if (msgCase_ == 16) {
+                subBuilder = ((com.iamteer.Wcf.RichText) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.RichText.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.RichText) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 16;
+              break;
+            }
+            case 138: {
+              com.iamteer.Wcf.PatMsg.Builder subBuilder = null;
+              if (msgCase_ == 17) {
+                subBuilder = ((com.iamteer.Wcf.PatMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.PatMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.PatMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 17;
+              break;
+            }
+            case 146: {
+              com.iamteer.Wcf.ForwardMsg.Builder subBuilder = null;
+              if (msgCase_ == 18) {
+                subBuilder = ((com.iamteer.Wcf.ForwardMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.ForwardMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.ForwardMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 18;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Request_descriptor;
@@ -673,7 +1151,6 @@ public final class Wcf {
     }
 
     private int msgCase_ = 0;
-    @SuppressWarnings("serial")
     private java.lang.Object msg_;
     public enum MsgCase
         implements com.google.protobuf.Internal.EnumLite,
@@ -694,6 +1171,7 @@ public final class Wcf {
       AM(15),
       RT(16),
       PM(17),
+      FM(18),
       MSG_NOT_SET(0);
       private final int value;
       private MsgCase(int value) {
@@ -727,6 +1205,7 @@ public final class Wcf {
           case 15: return AM;
           case 16: return RT;
           case 17: return PM;
+          case 18: return FM;
           case 0: return MSG_NOT_SET;
           default: return null;
         }
@@ -743,7 +1222,7 @@ public final class Wcf {
     }
 
     public static final int FUNC_FIELD_NUMBER = 1;
-    private int func_ = 0;
+    private int func_;
     /**
      * <code>.wcf.Functions func = 1;</code>
      * @return The enum numeric value on the wire for func.
@@ -756,12 +1235,17 @@ public final class Wcf {
      * @return The func.
      */
     @java.lang.Override public com.iamteer.Wcf.Functions getFunc() {
-      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
+      @SuppressWarnings("deprecation")
+      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
       return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
     }
 
     public static final int EMPTY_FIELD_NUMBER = 2;
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      * @return Whether the empty field is set.
      */
@@ -770,6 +1254,10 @@ public final class Wcf {
       return msgCase_ == 2;
     }
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      * @return The empty.
      */
@@ -781,6 +1269,10 @@ public final class Wcf {
       return com.iamteer.Wcf.Empty.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 无参数
+     * </pre>
+     *
      * <code>.wcf.Empty empty = 2;</code>
      */
     @java.lang.Override
@@ -793,6 +1285,10 @@ public final class Wcf {
 
     public static final int STR_FIELD_NUMBER = 3;
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return Whether the str field is set.
      */
@@ -800,6 +1296,10 @@ public final class Wcf {
       return msgCase_ == 3;
     }
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The str.
      */
@@ -821,6 +1321,10 @@ public final class Wcf {
       }
     }
     /**
+     * <pre>
+     * 字符串
+     * </pre>
+     *
      * <code>string str = 3;</code>
      * @return The bytes for str.
      */
@@ -845,6 +1349,10 @@ public final class Wcf {
 
     public static final int TXT_FIELD_NUMBER = 4;
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      * @return Whether the txt field is set.
      */
@@ -853,6 +1361,10 @@ public final class Wcf {
       return msgCase_ == 4;
     }
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      * @return The txt.
      */
@@ -864,6 +1376,10 @@ public final class Wcf {
       return com.iamteer.Wcf.TextMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 发送文本消息结构
+     * </pre>
+     *
      * <code>.wcf.TextMsg txt = 4;</code>
      */
     @java.lang.Override
@@ -876,6 +1392,10 @@ public final class Wcf {
 
     public static final int FILE_FIELD_NUMBER = 5;
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      * @return Whether the file field is set.
      */
@@ -884,6 +1404,10 @@ public final class Wcf {
       return msgCase_ == 5;
     }
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      * @return The file.
      */
@@ -895,6 +1419,10 @@ public final class Wcf {
       return com.iamteer.Wcf.PathMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 发送图片、文件消息结构
+     * </pre>
+     *
      * <code>.wcf.PathMsg file = 5;</code>
      */
     @java.lang.Override
@@ -907,6 +1435,10 @@ public final class Wcf {
 
     public static final int QUERY_FIELD_NUMBER = 6;
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      * @return Whether the query field is set.
      */
@@ -915,6 +1447,10 @@ public final class Wcf {
       return msgCase_ == 6;
     }
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      * @return The query.
      */
@@ -926,6 +1462,10 @@ public final class Wcf {
       return com.iamteer.Wcf.DbQuery.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 数据库查询参数结构
+     * </pre>
+     *
      * <code>.wcf.DbQuery query = 6;</code>
      */
     @java.lang.Override
@@ -938,6 +1478,10 @@ public final class Wcf {
 
     public static final int V_FIELD_NUMBER = 7;
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      * @return Whether the v field is set.
      */
@@ -946,6 +1490,10 @@ public final class Wcf {
       return msgCase_ == 7;
     }
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      * @return The v.
      */
@@ -957,6 +1505,10 @@ public final class Wcf {
       return com.iamteer.Wcf.Verification.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 通过好友验证参数结构
+     * </pre>
+     *
      * <code>.wcf.Verification v = 7;</code>
      */
     @java.lang.Override
@@ -1012,6 +1564,10 @@ public final class Wcf {
 
     public static final int XML_FIELD_NUMBER = 9;
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      * @return Whether the xml field is set.
      */
@@ -1020,6 +1576,10 @@ public final class Wcf {
       return msgCase_ == 9;
     }
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      * @return The xml.
      */
@@ -1031,6 +1591,10 @@ public final class Wcf {
       return com.iamteer.Wcf.XmlMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * XML参数结构
+     * </pre>
+     *
      * <code>.wcf.XmlMsg xml = 9;</code>
      */
     @java.lang.Override
@@ -1043,6 +1607,10 @@ public final class Wcf {
 
     public static final int DEC_FIELD_NUMBER = 10;
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      * @return Whether the dec field is set.
      */
@@ -1051,6 +1619,10 @@ public final class Wcf {
       return msgCase_ == 10;
     }
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      * @return The dec.
      */
@@ -1062,6 +1634,10 @@ public final class Wcf {
       return com.iamteer.Wcf.DecPath.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 解密图片参数结构
+     * </pre>
+     *
      * <code>.wcf.DecPath dec = 10;</code>
      */
     @java.lang.Override
@@ -1074,6 +1650,10 @@ public final class Wcf {
 
     public static final int TF_FIELD_NUMBER = 11;
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      * @return Whether the tf field is set.
      */
@@ -1082,6 +1662,10 @@ public final class Wcf {
       return msgCase_ == 11;
     }
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      * @return The tf.
      */
@@ -1093,6 +1677,10 @@ public final class Wcf {
       return com.iamteer.Wcf.Transfer.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 接收转账参数结构
+     * </pre>
+     *
      * <code>.wcf.Transfer tf = 11;</code>
      */
     @java.lang.Override
@@ -1109,7 +1697,7 @@ public final class Wcf {
      * 64 位整数，通用
      * </pre>
      *
-     * <code>uint64 ui64 = 12;</code>
+     * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
      * @return Whether the ui64 field is set.
      */
     @java.lang.Override
@@ -1121,7 +1709,7 @@ public final class Wcf {
      * 64 位整数，通用
      * </pre>
      *
-     * <code>uint64 ui64 = 12;</code>
+     * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
      * @return The ui64.
      */
     @java.lang.Override
@@ -1134,6 +1722,10 @@ public final class Wcf {
 
     public static final int FLAG_FIELD_NUMBER = 13;
     /**
+     * <pre>
+     * 布尔值
+     * </pre>
+     *
      * <code>bool flag = 13;</code>
      * @return Whether the flag field is set.
      */
@@ -1142,6 +1734,10 @@ public final class Wcf {
       return msgCase_ == 13;
     }
     /**
+     * <pre>
+     * 布尔值
+     * </pre>
+     *
      * <code>bool flag = 13;</code>
      * @return The flag.
      */
@@ -1155,6 +1751,10 @@ public final class Wcf {
 
     public static final int ATT_FIELD_NUMBER = 14;
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      * @return Whether the att field is set.
      */
@@ -1163,6 +1763,10 @@ public final class Wcf {
       return msgCase_ == 14;
     }
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      * @return The att.
      */
@@ -1174,6 +1778,10 @@ public final class Wcf {
       return com.iamteer.Wcf.AttachMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 下载图片、视频、文件参数结构
+     * </pre>
+     *
      * <code>.wcf.AttachMsg att = 14;</code>
      */
     @java.lang.Override
@@ -1186,6 +1794,10 @@ public final class Wcf {
 
     public static final int AM_FIELD_NUMBER = 15;
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      * @return Whether the am field is set.
      */
@@ -1194,6 +1806,10 @@ public final class Wcf {
       return msgCase_ == 15;
     }
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      * @return The am.
      */
@@ -1205,6 +1821,10 @@ public final class Wcf {
       return com.iamteer.Wcf.AudioMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 保存语音参数结构
+     * </pre>
+     *
      * <code>.wcf.AudioMsg am = 15;</code>
      */
     @java.lang.Override
@@ -1217,6 +1837,10 @@ public final class Wcf {
 
     public static final int RT_FIELD_NUMBER = 16;
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      * @return Whether the rt field is set.
      */
@@ -1225,6 +1849,10 @@ public final class Wcf {
       return msgCase_ == 16;
     }
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      * @return The rt.
      */
@@ -1236,6 +1864,10 @@ public final class Wcf {
       return com.iamteer.Wcf.RichText.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 发送卡片消息结构
+     * </pre>
+     *
      * <code>.wcf.RichText rt = 16;</code>
      */
     @java.lang.Override
@@ -1248,6 +1880,10 @@ public final class Wcf {
 
     public static final int PM_FIELD_NUMBER = 17;
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      * @return Whether the pm field is set.
      */
@@ -1256,6 +1892,10 @@ public final class Wcf {
       return msgCase_ == 17;
     }
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      * @return The pm.
      */
@@ -1267,6 +1907,10 @@ public final class Wcf {
       return com.iamteer.Wcf.PatMsg.getDefaultInstance();
     }
     /**
+     * <pre>
+     * 发送拍一拍参数结构
+     * </pre>
+     *
      * <code>.wcf.PatMsg pm = 17;</code>
      */
     @java.lang.Override
@@ -1275,6 +1919,49 @@ public final class Wcf {
          return (com.iamteer.Wcf.PatMsg) msg_;
       }
       return com.iamteer.Wcf.PatMsg.getDefaultInstance();
+    }
+
+    public static final int FM_FIELD_NUMBER = 18;
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     * @return Whether the fm field is set.
+     */
+    @java.lang.Override
+    public boolean hasFm() {
+      return msgCase_ == 18;
+    }
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     * @return The fm.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.ForwardMsg getFm() {
+      if (msgCase_ == 18) {
+         return (com.iamteer.Wcf.ForwardMsg) msg_;
+      }
+      return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+    }
+    /**
+     * <pre>
+     * 转发消息参数结构
+     * </pre>
+     *
+     * <code>.wcf.ForwardMsg fm = 18;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.ForwardMsgOrBuilder getFmOrBuilder() {
+      if (msgCase_ == 18) {
+         return (com.iamteer.Wcf.ForwardMsg) msg_;
+      }
+      return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1344,7 +2031,10 @@ public final class Wcf {
       if (msgCase_ == 17) {
         output.writeMessage(17, (com.iamteer.Wcf.PatMsg) msg_);
       }
-      getUnknownFields().writeTo(output);
+      if (msgCase_ == 18) {
+        output.writeMessage(18, (com.iamteer.Wcf.ForwardMsg) msg_);
+      }
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -1422,7 +2112,11 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(17, (com.iamteer.Wcf.PatMsg) msg_);
       }
-      size += getUnknownFields().getSerializedSize();
+      if (msgCase_ == 18) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(18, (com.iamteer.Wcf.ForwardMsg) msg_);
+      }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -1504,10 +2198,14 @@ public final class Wcf {
           if (!getPm()
               .equals(other.getPm())) return false;
           break;
+        case 18:
+          if (!getFm()
+              .equals(other.getFm())) return false;
+          break;
         case 0:
         default:
       }
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -1587,10 +2285,14 @@ public final class Wcf {
           hash = (37 * hash) + PM_FIELD_NUMBER;
           hash = (53 * hash) + getPm().hashCode();
           break;
+        case 18:
+          hash = (37 * hash) + FM_FIELD_NUMBER;
+          hash = (53 * hash) + getFm().hashCode();
+          break;
         case 0:
         default:
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -1707,58 +2409,24 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.Request.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         func_ = 0;
-        if (emptyBuilder_ != null) {
-          emptyBuilder_.clear();
-        }
-        if (txtBuilder_ != null) {
-          txtBuilder_.clear();
-        }
-        if (fileBuilder_ != null) {
-          fileBuilder_.clear();
-        }
-        if (queryBuilder_ != null) {
-          queryBuilder_.clear();
-        }
-        if (vBuilder_ != null) {
-          vBuilder_.clear();
-        }
-        if (mBuilder_ != null) {
-          mBuilder_.clear();
-        }
-        if (xmlBuilder_ != null) {
-          xmlBuilder_.clear();
-        }
-        if (decBuilder_ != null) {
-          decBuilder_.clear();
-        }
-        if (tfBuilder_ != null) {
-          tfBuilder_.clear();
-        }
-        if (attBuilder_ != null) {
-          attBuilder_.clear();
-        }
-        if (amBuilder_ != null) {
-          amBuilder_.clear();
-        }
-        if (rtBuilder_ != null) {
-          rtBuilder_.clear();
-        }
-        if (pmBuilder_ != null) {
-          pmBuilder_.clear();
-        }
+
         msgCase_ = 0;
         msg_ = null;
         return this;
@@ -1787,76 +2455,151 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.Request buildPartial() {
         com.iamteer.Wcf.Request result = new com.iamteer.Wcf.Request(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        buildPartialOneofs(result);
+        result.func_ = func_;
+        if (msgCase_ == 2) {
+          if (emptyBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = emptyBuilder_.build();
+          }
+        }
+        if (msgCase_ == 3) {
+          result.msg_ = msg_;
+        }
+        if (msgCase_ == 4) {
+          if (txtBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = txtBuilder_.build();
+          }
+        }
+        if (msgCase_ == 5) {
+          if (fileBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = fileBuilder_.build();
+          }
+        }
+        if (msgCase_ == 6) {
+          if (queryBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = queryBuilder_.build();
+          }
+        }
+        if (msgCase_ == 7) {
+          if (vBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = vBuilder_.build();
+          }
+        }
+        if (msgCase_ == 8) {
+          if (mBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = mBuilder_.build();
+          }
+        }
+        if (msgCase_ == 9) {
+          if (xmlBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = xmlBuilder_.build();
+          }
+        }
+        if (msgCase_ == 10) {
+          if (decBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = decBuilder_.build();
+          }
+        }
+        if (msgCase_ == 11) {
+          if (tfBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = tfBuilder_.build();
+          }
+        }
+        if (msgCase_ == 12) {
+          result.msg_ = msg_;
+        }
+        if (msgCase_ == 13) {
+          result.msg_ = msg_;
+        }
+        if (msgCase_ == 14) {
+          if (attBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = attBuilder_.build();
+          }
+        }
+        if (msgCase_ == 15) {
+          if (amBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = amBuilder_.build();
+          }
+        }
+        if (msgCase_ == 16) {
+          if (rtBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = rtBuilder_.build();
+          }
+        }
+        if (msgCase_ == 17) {
+          if (pmBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = pmBuilder_.build();
+          }
+        }
+        if (msgCase_ == 18) {
+          if (fmBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = fmBuilder_.build();
+          }
+        }
+        result.msgCase_ = msgCase_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.Request result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.func_ = func_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
-      private void buildPartialOneofs(com.iamteer.Wcf.Request result) {
-        result.msgCase_ = msgCase_;
-        result.msg_ = this.msg_;
-        if (msgCase_ == 2 &&
-            emptyBuilder_ != null) {
-          result.msg_ = emptyBuilder_.build();
-        }
-        if (msgCase_ == 4 &&
-            txtBuilder_ != null) {
-          result.msg_ = txtBuilder_.build();
-        }
-        if (msgCase_ == 5 &&
-            fileBuilder_ != null) {
-          result.msg_ = fileBuilder_.build();
-        }
-        if (msgCase_ == 6 &&
-            queryBuilder_ != null) {
-          result.msg_ = queryBuilder_.build();
-        }
-        if (msgCase_ == 7 &&
-            vBuilder_ != null) {
-          result.msg_ = vBuilder_.build();
-        }
-        if (msgCase_ == 8 &&
-            mBuilder_ != null) {
-          result.msg_ = mBuilder_.build();
-        }
-        if (msgCase_ == 9 &&
-            xmlBuilder_ != null) {
-          result.msg_ = xmlBuilder_.build();
-        }
-        if (msgCase_ == 10 &&
-            decBuilder_ != null) {
-          result.msg_ = decBuilder_.build();
-        }
-        if (msgCase_ == 11 &&
-            tfBuilder_ != null) {
-          result.msg_ = tfBuilder_.build();
-        }
-        if (msgCase_ == 14 &&
-            attBuilder_ != null) {
-          result.msg_ = attBuilder_.build();
-        }
-        if (msgCase_ == 15 &&
-            amBuilder_ != null) {
-          result.msg_ = amBuilder_.build();
-        }
-        if (msgCase_ == 16 &&
-            rtBuilder_ != null) {
-          result.msg_ = rtBuilder_.build();
-        }
-        if (msgCase_ == 17 &&
-            pmBuilder_ != null) {
-          result.msg_ = pmBuilder_.build();
-        }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
       }
-
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Request) {
@@ -1939,11 +2682,15 @@ public final class Wcf {
             mergePm(other.getPm());
             break;
           }
+          case FM: {
+            mergeFm(other.getFm());
+            break;
+          }
           case MSG_NOT_SET: {
             break;
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -1958,142 +2705,17 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.Request parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                func_ = input.readEnum();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                input.readMessage(
-                    getEmptyFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 2;
-                break;
-              } // case 18
-              case 26: {
-                java.lang.String s = input.readStringRequireUtf8();
-                msgCase_ = 3;
-                msg_ = s;
-                break;
-              } // case 26
-              case 34: {
-                input.readMessage(
-                    getTxtFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 4;
-                break;
-              } // case 34
-              case 42: {
-                input.readMessage(
-                    getFileFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 5;
-                break;
-              } // case 42
-              case 50: {
-                input.readMessage(
-                    getQueryFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 6;
-                break;
-              } // case 50
-              case 58: {
-                input.readMessage(
-                    getVFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 7;
-                break;
-              } // case 58
-              case 66: {
-                input.readMessage(
-                    getMFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 8;
-                break;
-              } // case 66
-              case 74: {
-                input.readMessage(
-                    getXmlFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 9;
-                break;
-              } // case 74
-              case 82: {
-                input.readMessage(
-                    getDecFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 10;
-                break;
-              } // case 82
-              case 90: {
-                input.readMessage(
-                    getTfFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 11;
-                break;
-              } // case 90
-              case 96: {
-                msg_ = input.readUInt64();
-                msgCase_ = 12;
-                break;
-              } // case 96
-              case 104: {
-                msg_ = input.readBool();
-                msgCase_ = 13;
-                break;
-              } // case 104
-              case 114: {
-                input.readMessage(
-                    getAttFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 14;
-                break;
-              } // case 114
-              case 122: {
-                input.readMessage(
-                    getAmFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 15;
-                break;
-              } // case 122
-              case 130: {
-                input.readMessage(
-                    getRtFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 16;
-                break;
-              } // case 130
-              case 138: {
-                input.readMessage(
-                    getPmFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 17;
-                break;
-              } // case 138
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.Request) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int msgCase_ = 0;
@@ -2111,7 +2733,6 @@ public final class Wcf {
         return this;
       }
 
-      private int bitField0_;
 
       private int func_ = 0;
       /**
@@ -2127,8 +2748,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setFuncValue(int value) {
+        
         func_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -2138,7 +2759,8 @@ public final class Wcf {
        */
       @java.lang.Override
       public com.iamteer.Wcf.Functions getFunc() {
-        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
+        @SuppressWarnings("deprecation")
+        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
         return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
       }
       /**
@@ -2150,7 +2772,7 @@ public final class Wcf {
         if (value == null) {
           throw new NullPointerException();
         }
-        bitField0_ |= 0x00000001;
+        
         func_ = value.getNumber();
         onChanged();
         return this;
@@ -2160,7 +2782,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearFunc() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         func_ = 0;
         onChanged();
         return this;
@@ -2169,6 +2791,10 @@ public final class Wcf {
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.Empty, com.iamteer.Wcf.Empty.Builder, com.iamteer.Wcf.EmptyOrBuilder> emptyBuilder_;
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        * @return Whether the empty field is set.
        */
@@ -2177,6 +2803,10 @@ public final class Wcf {
         return msgCase_ == 2;
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        * @return The empty.
        */
@@ -2195,6 +2825,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       public Builder setEmpty(com.iamteer.Wcf.Empty value) {
@@ -2211,6 +2845,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       public Builder setEmpty(
@@ -2225,6 +2863,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       public Builder mergeEmpty(com.iamteer.Wcf.Empty value) {
@@ -2240,14 +2882,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 2) {
             emptyBuilder_.mergeFrom(value);
-          } else {
-            emptyBuilder_.setMessage(value);
           }
+          emptyBuilder_.setMessage(value);
         }
         msgCase_ = 2;
         return this;
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       public Builder clearEmpty() {
@@ -2267,12 +2912,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       public com.iamteer.Wcf.Empty.Builder getEmptyBuilder() {
         return getEmptyFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       @java.lang.Override
@@ -2287,6 +2940,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 无参数
+       * </pre>
+       *
        * <code>.wcf.Empty empty = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -2304,11 +2961,15 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 2;
-        onChanged();
+        onChanged();;
         return emptyBuilder_;
       }
 
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return Whether the str field is set.
        */
@@ -2317,6 +2978,10 @@ public final class Wcf {
         return msgCase_ == 3;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return The str.
        */
@@ -2339,6 +3004,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return The bytes for str.
        */
@@ -2362,19 +3031,29 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @param value The str to set.
        * @return This builder for chaining.
        */
       public Builder setStr(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        msgCase_ = 3;
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  msgCase_ = 3;
         msg_ = value;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @return This builder for chaining.
        */
@@ -2387,14 +3066,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 字符串
+       * </pre>
+       *
        * <code>string str = 3;</code>
        * @param value The bytes for str to set.
        * @return This builder for chaining.
        */
       public Builder setStrBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
         msgCase_ = 3;
         msg_ = value;
         onChanged();
@@ -2404,6 +3089,10 @@ public final class Wcf {
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.TextMsg, com.iamteer.Wcf.TextMsg.Builder, com.iamteer.Wcf.TextMsgOrBuilder> txtBuilder_;
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        * @return Whether the txt field is set.
        */
@@ -2412,6 +3101,10 @@ public final class Wcf {
         return msgCase_ == 4;
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        * @return The txt.
        */
@@ -2430,6 +3123,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       public Builder setTxt(com.iamteer.Wcf.TextMsg value) {
@@ -2446,6 +3143,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       public Builder setTxt(
@@ -2460,6 +3161,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       public Builder mergeTxt(com.iamteer.Wcf.TextMsg value) {
@@ -2475,14 +3180,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 4) {
             txtBuilder_.mergeFrom(value);
-          } else {
-            txtBuilder_.setMessage(value);
           }
+          txtBuilder_.setMessage(value);
         }
         msgCase_ = 4;
         return this;
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       public Builder clearTxt() {
@@ -2502,12 +3210,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       public com.iamteer.Wcf.TextMsg.Builder getTxtBuilder() {
         return getTxtFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       @java.lang.Override
@@ -2522,6 +3238,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送文本消息结构
+       * </pre>
+       *
        * <code>.wcf.TextMsg txt = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -2539,13 +3259,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 4;
-        onChanged();
+        onChanged();;
         return txtBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.PathMsg, com.iamteer.Wcf.PathMsg.Builder, com.iamteer.Wcf.PathMsgOrBuilder> fileBuilder_;
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        * @return Whether the file field is set.
        */
@@ -2554,6 +3278,10 @@ public final class Wcf {
         return msgCase_ == 5;
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        * @return The file.
        */
@@ -2572,6 +3300,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       public Builder setFile(com.iamteer.Wcf.PathMsg value) {
@@ -2588,6 +3320,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       public Builder setFile(
@@ -2602,6 +3338,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       public Builder mergeFile(com.iamteer.Wcf.PathMsg value) {
@@ -2617,14 +3357,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 5) {
             fileBuilder_.mergeFrom(value);
-          } else {
-            fileBuilder_.setMessage(value);
           }
+          fileBuilder_.setMessage(value);
         }
         msgCase_ = 5;
         return this;
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       public Builder clearFile() {
@@ -2644,12 +3387,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       public com.iamteer.Wcf.PathMsg.Builder getFileBuilder() {
         return getFileFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       @java.lang.Override
@@ -2664,6 +3415,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送图片、文件消息结构
+       * </pre>
+       *
        * <code>.wcf.PathMsg file = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -2681,13 +3436,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 5;
-        onChanged();
+        onChanged();;
         return fileBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.DbQuery, com.iamteer.Wcf.DbQuery.Builder, com.iamteer.Wcf.DbQueryOrBuilder> queryBuilder_;
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        * @return Whether the query field is set.
        */
@@ -2696,6 +3455,10 @@ public final class Wcf {
         return msgCase_ == 6;
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        * @return The query.
        */
@@ -2714,6 +3477,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       public Builder setQuery(com.iamteer.Wcf.DbQuery value) {
@@ -2730,6 +3497,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       public Builder setQuery(
@@ -2744,6 +3515,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       public Builder mergeQuery(com.iamteer.Wcf.DbQuery value) {
@@ -2759,14 +3534,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 6) {
             queryBuilder_.mergeFrom(value);
-          } else {
-            queryBuilder_.setMessage(value);
           }
+          queryBuilder_.setMessage(value);
         }
         msgCase_ = 6;
         return this;
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       public Builder clearQuery() {
@@ -2786,12 +3564,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       public com.iamteer.Wcf.DbQuery.Builder getQueryBuilder() {
         return getQueryFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       @java.lang.Override
@@ -2806,6 +3592,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 数据库查询参数结构
+       * </pre>
+       *
        * <code>.wcf.DbQuery query = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -2823,13 +3613,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 6;
-        onChanged();
+        onChanged();;
         return queryBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.Verification, com.iamteer.Wcf.Verification.Builder, com.iamteer.Wcf.VerificationOrBuilder> vBuilder_;
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        * @return Whether the v field is set.
        */
@@ -2838,6 +3632,10 @@ public final class Wcf {
         return msgCase_ == 7;
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        * @return The v.
        */
@@ -2856,6 +3654,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       public Builder setV(com.iamteer.Wcf.Verification value) {
@@ -2872,6 +3674,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       public Builder setV(
@@ -2886,6 +3692,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       public Builder mergeV(com.iamteer.Wcf.Verification value) {
@@ -2901,14 +3711,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 7) {
             vBuilder_.mergeFrom(value);
-          } else {
-            vBuilder_.setMessage(value);
           }
+          vBuilder_.setMessage(value);
         }
         msgCase_ = 7;
         return this;
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       public Builder clearV() {
@@ -2928,12 +3741,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       public com.iamteer.Wcf.Verification.Builder getVBuilder() {
         return getVFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       @java.lang.Override
@@ -2948,6 +3769,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 通过好友验证参数结构
+       * </pre>
+       *
        * <code>.wcf.Verification v = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -2965,7 +3790,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 7;
-        onChanged();
+        onChanged();;
         return vBuilder_;
       }
 
@@ -3063,9 +3888,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 8) {
             mBuilder_.mergeFrom(value);
-          } else {
-            mBuilder_.setMessage(value);
           }
+          mBuilder_.setMessage(value);
         }
         msgCase_ = 8;
         return this;
@@ -3143,13 +3967,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 8;
-        onChanged();
+        onChanged();;
         return mBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.XmlMsg, com.iamteer.Wcf.XmlMsg.Builder, com.iamteer.Wcf.XmlMsgOrBuilder> xmlBuilder_;
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        * @return Whether the xml field is set.
        */
@@ -3158,6 +3986,10 @@ public final class Wcf {
         return msgCase_ == 9;
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        * @return The xml.
        */
@@ -3176,6 +4008,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       public Builder setXml(com.iamteer.Wcf.XmlMsg value) {
@@ -3192,6 +4028,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       public Builder setXml(
@@ -3206,6 +4046,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       public Builder mergeXml(com.iamteer.Wcf.XmlMsg value) {
@@ -3221,14 +4065,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 9) {
             xmlBuilder_.mergeFrom(value);
-          } else {
-            xmlBuilder_.setMessage(value);
           }
+          xmlBuilder_.setMessage(value);
         }
         msgCase_ = 9;
         return this;
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       public Builder clearXml() {
@@ -3248,12 +4095,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       public com.iamteer.Wcf.XmlMsg.Builder getXmlBuilder() {
         return getXmlFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       @java.lang.Override
@@ -3268,6 +4123,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * XML参数结构
+       * </pre>
+       *
        * <code>.wcf.XmlMsg xml = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -3285,13 +4144,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 9;
-        onChanged();
+        onChanged();;
         return xmlBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.DecPath, com.iamteer.Wcf.DecPath.Builder, com.iamteer.Wcf.DecPathOrBuilder> decBuilder_;
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        * @return Whether the dec field is set.
        */
@@ -3300,6 +4163,10 @@ public final class Wcf {
         return msgCase_ == 10;
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        * @return The dec.
        */
@@ -3318,6 +4185,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       public Builder setDec(com.iamteer.Wcf.DecPath value) {
@@ -3334,6 +4205,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       public Builder setDec(
@@ -3348,6 +4223,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       public Builder mergeDec(com.iamteer.Wcf.DecPath value) {
@@ -3363,14 +4242,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 10) {
             decBuilder_.mergeFrom(value);
-          } else {
-            decBuilder_.setMessage(value);
           }
+          decBuilder_.setMessage(value);
         }
         msgCase_ = 10;
         return this;
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       public Builder clearDec() {
@@ -3390,12 +4272,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       public com.iamteer.Wcf.DecPath.Builder getDecBuilder() {
         return getDecFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       @java.lang.Override
@@ -3410,6 +4300,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 解密图片参数结构
+       * </pre>
+       *
        * <code>.wcf.DecPath dec = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -3427,13 +4321,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 10;
-        onChanged();
+        onChanged();;
         return decBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.Transfer, com.iamteer.Wcf.Transfer.Builder, com.iamteer.Wcf.TransferOrBuilder> tfBuilder_;
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        * @return Whether the tf field is set.
        */
@@ -3442,6 +4340,10 @@ public final class Wcf {
         return msgCase_ == 11;
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        * @return The tf.
        */
@@ -3460,6 +4362,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       public Builder setTf(com.iamteer.Wcf.Transfer value) {
@@ -3476,6 +4382,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       public Builder setTf(
@@ -3490,6 +4400,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       public Builder mergeTf(com.iamteer.Wcf.Transfer value) {
@@ -3505,14 +4419,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 11) {
             tfBuilder_.mergeFrom(value);
-          } else {
-            tfBuilder_.setMessage(value);
           }
+          tfBuilder_.setMessage(value);
         }
         msgCase_ = 11;
         return this;
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       public Builder clearTf() {
@@ -3532,12 +4449,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       public com.iamteer.Wcf.Transfer.Builder getTfBuilder() {
         return getTfFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       @java.lang.Override
@@ -3552,6 +4477,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 接收转账参数结构
+       * </pre>
+       *
        * <code>.wcf.Transfer tf = 11;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -3569,7 +4498,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 11;
-        onChanged();
+        onChanged();;
         return tfBuilder_;
       }
 
@@ -3578,7 +4507,7 @@ public final class Wcf {
        * 64 位整数，通用
        * </pre>
        *
-       * <code>uint64 ui64 = 12;</code>
+       * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
        * @return Whether the ui64 field is set.
        */
       public boolean hasUi64() {
@@ -3589,7 +4518,7 @@ public final class Wcf {
        * 64 位整数，通用
        * </pre>
        *
-       * <code>uint64 ui64 = 12;</code>
+       * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
        * @return The ui64.
        */
       public long getUi64() {
@@ -3603,12 +4532,11 @@ public final class Wcf {
        * 64 位整数，通用
        * </pre>
        *
-       * <code>uint64 ui64 = 12;</code>
+       * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
        * @param value The ui64 to set.
        * @return This builder for chaining.
        */
       public Builder setUi64(long value) {
-
         msgCase_ = 12;
         msg_ = value;
         onChanged();
@@ -3619,7 +4547,7 @@ public final class Wcf {
        * 64 位整数，通用
        * </pre>
        *
-       * <code>uint64 ui64 = 12;</code>
+       * <code>uint64 ui64 = 12 [jstype = JS_STRING];</code>
        * @return This builder for chaining.
        */
       public Builder clearUi64() {
@@ -3632,6 +4560,10 @@ public final class Wcf {
       }
 
       /**
+       * <pre>
+       * 布尔值
+       * </pre>
+       *
        * <code>bool flag = 13;</code>
        * @return Whether the flag field is set.
        */
@@ -3639,6 +4571,10 @@ public final class Wcf {
         return msgCase_ == 13;
       }
       /**
+       * <pre>
+       * 布尔值
+       * </pre>
+       *
        * <code>bool flag = 13;</code>
        * @return The flag.
        */
@@ -3649,18 +4585,25 @@ public final class Wcf {
         return false;
       }
       /**
+       * <pre>
+       * 布尔值
+       * </pre>
+       *
        * <code>bool flag = 13;</code>
        * @param value The flag to set.
        * @return This builder for chaining.
        */
       public Builder setFlag(boolean value) {
-
         msgCase_ = 13;
         msg_ = value;
         onChanged();
         return this;
       }
       /**
+       * <pre>
+       * 布尔值
+       * </pre>
+       *
        * <code>bool flag = 13;</code>
        * @return This builder for chaining.
        */
@@ -3676,6 +4619,10 @@ public final class Wcf {
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.AttachMsg, com.iamteer.Wcf.AttachMsg.Builder, com.iamteer.Wcf.AttachMsgOrBuilder> attBuilder_;
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        * @return Whether the att field is set.
        */
@@ -3684,6 +4631,10 @@ public final class Wcf {
         return msgCase_ == 14;
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        * @return The att.
        */
@@ -3702,6 +4653,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       public Builder setAtt(com.iamteer.Wcf.AttachMsg value) {
@@ -3718,6 +4673,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       public Builder setAtt(
@@ -3732,6 +4691,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       public Builder mergeAtt(com.iamteer.Wcf.AttachMsg value) {
@@ -3747,14 +4710,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 14) {
             attBuilder_.mergeFrom(value);
-          } else {
-            attBuilder_.setMessage(value);
           }
+          attBuilder_.setMessage(value);
         }
         msgCase_ = 14;
         return this;
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       public Builder clearAtt() {
@@ -3774,12 +4740,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       public com.iamteer.Wcf.AttachMsg.Builder getAttBuilder() {
         return getAttFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       @java.lang.Override
@@ -3794,6 +4768,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 下载图片、视频、文件参数结构
+       * </pre>
+       *
        * <code>.wcf.AttachMsg att = 14;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -3811,13 +4789,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 14;
-        onChanged();
+        onChanged();;
         return attBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.AudioMsg, com.iamteer.Wcf.AudioMsg.Builder, com.iamteer.Wcf.AudioMsgOrBuilder> amBuilder_;
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        * @return Whether the am field is set.
        */
@@ -3826,6 +4808,10 @@ public final class Wcf {
         return msgCase_ == 15;
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        * @return The am.
        */
@@ -3844,6 +4830,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       public Builder setAm(com.iamteer.Wcf.AudioMsg value) {
@@ -3860,6 +4850,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       public Builder setAm(
@@ -3874,6 +4868,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       public Builder mergeAm(com.iamteer.Wcf.AudioMsg value) {
@@ -3889,14 +4887,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 15) {
             amBuilder_.mergeFrom(value);
-          } else {
-            amBuilder_.setMessage(value);
           }
+          amBuilder_.setMessage(value);
         }
         msgCase_ = 15;
         return this;
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       public Builder clearAm() {
@@ -3916,12 +4917,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       public com.iamteer.Wcf.AudioMsg.Builder getAmBuilder() {
         return getAmFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       @java.lang.Override
@@ -3936,6 +4945,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 保存语音参数结构
+       * </pre>
+       *
        * <code>.wcf.AudioMsg am = 15;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -3953,13 +4966,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 15;
-        onChanged();
+        onChanged();;
         return amBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.RichText, com.iamteer.Wcf.RichText.Builder, com.iamteer.Wcf.RichTextOrBuilder> rtBuilder_;
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        * @return Whether the rt field is set.
        */
@@ -3968,6 +4985,10 @@ public final class Wcf {
         return msgCase_ == 16;
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        * @return The rt.
        */
@@ -3986,6 +5007,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       public Builder setRt(com.iamteer.Wcf.RichText value) {
@@ -4002,6 +5027,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       public Builder setRt(
@@ -4016,6 +5045,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       public Builder mergeRt(com.iamteer.Wcf.RichText value) {
@@ -4031,14 +5064,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 16) {
             rtBuilder_.mergeFrom(value);
-          } else {
-            rtBuilder_.setMessage(value);
           }
+          rtBuilder_.setMessage(value);
         }
         msgCase_ = 16;
         return this;
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       public Builder clearRt() {
@@ -4058,12 +5094,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       public com.iamteer.Wcf.RichText.Builder getRtBuilder() {
         return getRtFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       @java.lang.Override
@@ -4078,6 +5122,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送卡片消息结构
+       * </pre>
+       *
        * <code>.wcf.RichText rt = 16;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -4095,13 +5143,17 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 16;
-        onChanged();
+        onChanged();;
         return rtBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
           com.iamteer.Wcf.PatMsg, com.iamteer.Wcf.PatMsg.Builder, com.iamteer.Wcf.PatMsgOrBuilder> pmBuilder_;
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        * @return Whether the pm field is set.
        */
@@ -4110,6 +5162,10 @@ public final class Wcf {
         return msgCase_ == 17;
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        * @return The pm.
        */
@@ -4128,6 +5184,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       public Builder setPm(com.iamteer.Wcf.PatMsg value) {
@@ -4144,6 +5204,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       public Builder setPm(
@@ -4158,6 +5222,10 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       public Builder mergePm(com.iamteer.Wcf.PatMsg value) {
@@ -4173,14 +5241,17 @@ public final class Wcf {
         } else {
           if (msgCase_ == 17) {
             pmBuilder_.mergeFrom(value);
-          } else {
-            pmBuilder_.setMessage(value);
           }
+          pmBuilder_.setMessage(value);
         }
         msgCase_ = 17;
         return this;
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       public Builder clearPm() {
@@ -4200,12 +5271,20 @@ public final class Wcf {
         return this;
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       public com.iamteer.Wcf.PatMsg.Builder getPmBuilder() {
         return getPmFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       @java.lang.Override
@@ -4220,6 +5299,10 @@ public final class Wcf {
         }
       }
       /**
+       * <pre>
+       * 发送拍一拍参数结构
+       * </pre>
+       *
        * <code>.wcf.PatMsg pm = 17;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -4237,8 +5320,185 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 17;
-        onChanged();
+        onChanged();;
         return pmBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.ForwardMsg, com.iamteer.Wcf.ForwardMsg.Builder, com.iamteer.Wcf.ForwardMsgOrBuilder> fmBuilder_;
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       * @return Whether the fm field is set.
+       */
+      @java.lang.Override
+      public boolean hasFm() {
+        return msgCase_ == 18;
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       * @return The fm.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.ForwardMsg getFm() {
+        if (fmBuilder_ == null) {
+          if (msgCase_ == 18) {
+            return (com.iamteer.Wcf.ForwardMsg) msg_;
+          }
+          return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+        } else {
+          if (msgCase_ == 18) {
+            return fmBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      public Builder setFm(com.iamteer.Wcf.ForwardMsg value) {
+        if (fmBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          fmBuilder_.setMessage(value);
+        }
+        msgCase_ = 18;
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      public Builder setFm(
+          com.iamteer.Wcf.ForwardMsg.Builder builderForValue) {
+        if (fmBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          fmBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 18;
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      public Builder mergeFm(com.iamteer.Wcf.ForwardMsg value) {
+        if (fmBuilder_ == null) {
+          if (msgCase_ == 18 &&
+              msg_ != com.iamteer.Wcf.ForwardMsg.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.ForwardMsg.newBuilder((com.iamteer.Wcf.ForwardMsg) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 18) {
+            fmBuilder_.mergeFrom(value);
+          }
+          fmBuilder_.setMessage(value);
+        }
+        msgCase_ = 18;
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      public Builder clearFm() {
+        if (fmBuilder_ == null) {
+          if (msgCase_ == 18) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 18) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          fmBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      public com.iamteer.Wcf.ForwardMsg.Builder getFmBuilder() {
+        return getFmFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.ForwardMsgOrBuilder getFmOrBuilder() {
+        if ((msgCase_ == 18) && (fmBuilder_ != null)) {
+          return fmBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 18) {
+            return (com.iamteer.Wcf.ForwardMsg) msg_;
+          }
+          return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * 转发消息参数结构
+       * </pre>
+       *
+       * <code>.wcf.ForwardMsg fm = 18;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.ForwardMsg, com.iamteer.Wcf.ForwardMsg.Builder, com.iamteer.Wcf.ForwardMsgOrBuilder> 
+          getFmFieldBuilder() {
+        if (fmBuilder_ == null) {
+          if (!(msgCase_ == 18)) {
+            msg_ = com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+          }
+          fmBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.ForwardMsg, com.iamteer.Wcf.ForwardMsg.Builder, com.iamteer.Wcf.ForwardMsgOrBuilder>(
+                  (com.iamteer.Wcf.ForwardMsg) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 18;
+        onChanged();;
+        return fmBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -4273,18 +5533,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new Request(input, extensionRegistry);
       }
     };
 
@@ -4556,7 +5805,34 @@ public final class Wcf {
      */
     com.iamteer.Wcf.UserInfoOrBuilder getUiOrBuilder();
 
-    com.iamteer.Wcf.Response.MsgCase getMsgCase();
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     * @return Whether the ocr field is set.
+     */
+    boolean hasOcr();
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     * @return The ocr.
+     */
+    com.iamteer.Wcf.OcrMsg getOcr();
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     */
+    com.iamteer.Wcf.OcrMsgOrBuilder getOcrOrBuilder();
+
+    public com.iamteer.Wcf.Response.MsgCase getMsgCase();
   }
   /**
    * Protobuf type {@code wcf.Response}
@@ -4581,6 +5857,177 @@ public final class Wcf {
       return new Response();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Response(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              int rawValue = input.readEnum();
+
+              func_ = rawValue;
+              break;
+            }
+            case 16: {
+              msg_ = input.readInt32();
+              msgCase_ = 2;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+              msgCase_ = 3;
+              msg_ = s;
+              break;
+            }
+            case 34: {
+              com.iamteer.Wcf.WxMsg.Builder subBuilder = null;
+              if (msgCase_ == 4) {
+                subBuilder = ((com.iamteer.Wcf.WxMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.WxMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.WxMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 4;
+              break;
+            }
+            case 42: {
+              com.iamteer.Wcf.MsgTypes.Builder subBuilder = null;
+              if (msgCase_ == 5) {
+                subBuilder = ((com.iamteer.Wcf.MsgTypes) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.MsgTypes.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.MsgTypes) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 5;
+              break;
+            }
+            case 50: {
+              com.iamteer.Wcf.RpcContacts.Builder subBuilder = null;
+              if (msgCase_ == 6) {
+                subBuilder = ((com.iamteer.Wcf.RpcContacts) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.RpcContacts.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.RpcContacts) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 6;
+              break;
+            }
+            case 58: {
+              com.iamteer.Wcf.DbNames.Builder subBuilder = null;
+              if (msgCase_ == 7) {
+                subBuilder = ((com.iamteer.Wcf.DbNames) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.DbNames.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.DbNames) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 7;
+              break;
+            }
+            case 66: {
+              com.iamteer.Wcf.DbTables.Builder subBuilder = null;
+              if (msgCase_ == 8) {
+                subBuilder = ((com.iamteer.Wcf.DbTables) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.DbTables.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.DbTables) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 8;
+              break;
+            }
+            case 74: {
+              com.iamteer.Wcf.DbRows.Builder subBuilder = null;
+              if (msgCase_ == 9) {
+                subBuilder = ((com.iamteer.Wcf.DbRows) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.DbRows.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.DbRows) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 9;
+              break;
+            }
+            case 82: {
+              com.iamteer.Wcf.UserInfo.Builder subBuilder = null;
+              if (msgCase_ == 10) {
+                subBuilder = ((com.iamteer.Wcf.UserInfo) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.UserInfo.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.UserInfo) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 10;
+              break;
+            }
+            case 90: {
+              com.iamteer.Wcf.OcrMsg.Builder subBuilder = null;
+              if (msgCase_ == 11) {
+                subBuilder = ((com.iamteer.Wcf.OcrMsg) msg_).toBuilder();
+              }
+              msg_ =
+                  input.readMessage(com.iamteer.Wcf.OcrMsg.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((com.iamteer.Wcf.OcrMsg) msg_);
+                msg_ = subBuilder.buildPartial();
+              }
+              msgCase_ = 11;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Response_descriptor;
@@ -4595,7 +6042,6 @@ public final class Wcf {
     }
 
     private int msgCase_ = 0;
-    @SuppressWarnings("serial")
     private java.lang.Object msg_;
     public enum MsgCase
         implements com.google.protobuf.Internal.EnumLite,
@@ -4609,6 +6055,7 @@ public final class Wcf {
       TABLES(8),
       ROWS(9),
       UI(10),
+      OCR(11),
       MSG_NOT_SET(0);
       private final int value;
       private MsgCase(int value) {
@@ -4635,6 +6082,7 @@ public final class Wcf {
           case 8: return TABLES;
           case 9: return ROWS;
           case 10: return UI;
+          case 11: return OCR;
           case 0: return MSG_NOT_SET;
           default: return null;
         }
@@ -4651,7 +6099,7 @@ public final class Wcf {
     }
 
     public static final int FUNC_FIELD_NUMBER = 1;
-    private int func_ = 0;
+    private int func_;
     /**
      * <code>.wcf.Functions func = 1;</code>
      * @return The enum numeric value on the wire for func.
@@ -4664,7 +6112,8 @@ public final class Wcf {
      * @return The func.
      */
     @java.lang.Override public com.iamteer.Wcf.Functions getFunc() {
-      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
+      @SuppressWarnings("deprecation")
+      com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
       return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
     }
 
@@ -5062,6 +6511,49 @@ public final class Wcf {
       return com.iamteer.Wcf.UserInfo.getDefaultInstance();
     }
 
+    public static final int OCR_FIELD_NUMBER = 11;
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     * @return Whether the ocr field is set.
+     */
+    @java.lang.Override
+    public boolean hasOcr() {
+      return msgCase_ == 11;
+    }
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     * @return The ocr.
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.OcrMsg getOcr() {
+      if (msgCase_ == 11) {
+         return (com.iamteer.Wcf.OcrMsg) msg_;
+      }
+      return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+    }
+    /**
+     * <pre>
+     * OCR 结果
+     * </pre>
+     *
+     * <code>.wcf.OcrMsg ocr = 11;</code>
+     */
+    @java.lang.Override
+    public com.iamteer.Wcf.OcrMsgOrBuilder getOcrOrBuilder() {
+      if (msgCase_ == 11) {
+         return (com.iamteer.Wcf.OcrMsg) msg_;
+      }
+      return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -5107,7 +6599,10 @@ public final class Wcf {
       if (msgCase_ == 10) {
         output.writeMessage(10, (com.iamteer.Wcf.UserInfo) msg_);
       }
-      getUnknownFields().writeTo(output);
+      if (msgCase_ == 11) {
+        output.writeMessage(11, (com.iamteer.Wcf.OcrMsg) msg_);
+      }
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -5156,7 +6651,11 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(10, (com.iamteer.Wcf.UserInfo) msg_);
       }
-      size += getUnknownFields().getSerializedSize();
+      if (msgCase_ == 11) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(11, (com.iamteer.Wcf.OcrMsg) msg_);
+      }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -5210,10 +6709,14 @@ public final class Wcf {
           if (!getUi()
               .equals(other.getUi())) return false;
           break;
+        case 11:
+          if (!getOcr()
+              .equals(other.getOcr())) return false;
+          break;
         case 0:
         default:
       }
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -5263,10 +6766,14 @@ public final class Wcf {
           hash = (37 * hash) + UI_FIELD_NUMBER;
           hash = (53 * hash) + getUi().hashCode();
           break;
+        case 11:
+          hash = (37 * hash) + OCR_FIELD_NUMBER;
+          hash = (53 * hash) + getOcr().hashCode();
+          break;
         case 0:
         default:
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -5383,40 +6890,24 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.Response.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         func_ = 0;
-        if (wxmsgBuilder_ != null) {
-          wxmsgBuilder_.clear();
-        }
-        if (typesBuilder_ != null) {
-          typesBuilder_.clear();
-        }
-        if (contactsBuilder_ != null) {
-          contactsBuilder_.clear();
-        }
-        if (dbsBuilder_ != null) {
-          dbsBuilder_.clear();
-        }
-        if (tablesBuilder_ != null) {
-          tablesBuilder_.clear();
-        }
-        if (rowsBuilder_ != null) {
-          rowsBuilder_.clear();
-        }
-        if (uiBuilder_ != null) {
-          uiBuilder_.clear();
-        }
+
         msgCase_ = 0;
         msg_ = null;
         return this;
@@ -5445,52 +6936,106 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.Response buildPartial() {
         com.iamteer.Wcf.Response result = new com.iamteer.Wcf.Response(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        buildPartialOneofs(result);
+        result.func_ = func_;
+        if (msgCase_ == 2) {
+          result.msg_ = msg_;
+        }
+        if (msgCase_ == 3) {
+          result.msg_ = msg_;
+        }
+        if (msgCase_ == 4) {
+          if (wxmsgBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = wxmsgBuilder_.build();
+          }
+        }
+        if (msgCase_ == 5) {
+          if (typesBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = typesBuilder_.build();
+          }
+        }
+        if (msgCase_ == 6) {
+          if (contactsBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = contactsBuilder_.build();
+          }
+        }
+        if (msgCase_ == 7) {
+          if (dbsBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = dbsBuilder_.build();
+          }
+        }
+        if (msgCase_ == 8) {
+          if (tablesBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = tablesBuilder_.build();
+          }
+        }
+        if (msgCase_ == 9) {
+          if (rowsBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = rowsBuilder_.build();
+          }
+        }
+        if (msgCase_ == 10) {
+          if (uiBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = uiBuilder_.build();
+          }
+        }
+        if (msgCase_ == 11) {
+          if (ocrBuilder_ == null) {
+            result.msg_ = msg_;
+          } else {
+            result.msg_ = ocrBuilder_.build();
+          }
+        }
+        result.msgCase_ = msgCase_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.Response result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.func_ = func_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
-      private void buildPartialOneofs(com.iamteer.Wcf.Response result) {
-        result.msgCase_ = msgCase_;
-        result.msg_ = this.msg_;
-        if (msgCase_ == 4 &&
-            wxmsgBuilder_ != null) {
-          result.msg_ = wxmsgBuilder_.build();
-        }
-        if (msgCase_ == 5 &&
-            typesBuilder_ != null) {
-          result.msg_ = typesBuilder_.build();
-        }
-        if (msgCase_ == 6 &&
-            contactsBuilder_ != null) {
-          result.msg_ = contactsBuilder_.build();
-        }
-        if (msgCase_ == 7 &&
-            dbsBuilder_ != null) {
-          result.msg_ = dbsBuilder_.build();
-        }
-        if (msgCase_ == 8 &&
-            tablesBuilder_ != null) {
-          result.msg_ = tablesBuilder_.build();
-        }
-        if (msgCase_ == 9 &&
-            rowsBuilder_ != null) {
-          result.msg_ = rowsBuilder_.build();
-        }
-        if (msgCase_ == 10 &&
-            uiBuilder_ != null) {
-          result.msg_ = uiBuilder_.build();
-        }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
       }
-
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Response) {
@@ -5545,11 +7090,15 @@ public final class Wcf {
             mergeUi(other.getUi());
             break;
           }
+          case OCR: {
+            mergeOcr(other.getOcr());
+            break;
+          }
           case MSG_NOT_SET: {
             break;
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -5564,95 +7113,17 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.Response parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                func_ = input.readEnum();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 16: {
-                msg_ = input.readInt32();
-                msgCase_ = 2;
-                break;
-              } // case 16
-              case 26: {
-                java.lang.String s = input.readStringRequireUtf8();
-                msgCase_ = 3;
-                msg_ = s;
-                break;
-              } // case 26
-              case 34: {
-                input.readMessage(
-                    getWxmsgFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 4;
-                break;
-              } // case 34
-              case 42: {
-                input.readMessage(
-                    getTypesFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 5;
-                break;
-              } // case 42
-              case 50: {
-                input.readMessage(
-                    getContactsFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 6;
-                break;
-              } // case 50
-              case 58: {
-                input.readMessage(
-                    getDbsFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 7;
-                break;
-              } // case 58
-              case 66: {
-                input.readMessage(
-                    getTablesFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 8;
-                break;
-              } // case 66
-              case 74: {
-                input.readMessage(
-                    getRowsFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 9;
-                break;
-              } // case 74
-              case 82: {
-                input.readMessage(
-                    getUiFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                msgCase_ = 10;
-                break;
-              } // case 82
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.Response) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int msgCase_ = 0;
@@ -5670,7 +7141,6 @@ public final class Wcf {
         return this;
       }
 
-      private int bitField0_;
 
       private int func_ = 0;
       /**
@@ -5686,8 +7156,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setFuncValue(int value) {
+        
         func_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -5697,7 +7167,8 @@ public final class Wcf {
        */
       @java.lang.Override
       public com.iamteer.Wcf.Functions getFunc() {
-        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.forNumber(func_);
+        @SuppressWarnings("deprecation")
+        com.iamteer.Wcf.Functions result = com.iamteer.Wcf.Functions.valueOf(func_);
         return result == null ? com.iamteer.Wcf.Functions.UNRECOGNIZED : result;
       }
       /**
@@ -5709,7 +7180,7 @@ public final class Wcf {
         if (value == null) {
           throw new NullPointerException();
         }
-        bitField0_ |= 0x00000001;
+        
         func_ = value.getNumber();
         onChanged();
         return this;
@@ -5719,7 +7190,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearFunc() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         func_ = 0;
         onChanged();
         return this;
@@ -5760,7 +7231,6 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setStatus(int value) {
-
         msgCase_ = 2;
         msg_ = value;
         onChanged();
@@ -5859,8 +7329,10 @@ public final class Wcf {
        */
       public Builder setStr(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        msgCase_ = 3;
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  msgCase_ = 3;
         msg_ = value;
         onChanged();
         return this;
@@ -5892,8 +7364,10 @@ public final class Wcf {
        */
       public Builder setStrBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
         msgCase_ = 3;
         msg_ = value;
         onChanged();
@@ -5994,9 +7468,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 4) {
             wxmsgBuilder_.mergeFrom(value);
-          } else {
-            wxmsgBuilder_.setMessage(value);
           }
+          wxmsgBuilder_.setMessage(value);
         }
         msgCase_ = 4;
         return this;
@@ -6074,7 +7547,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 4;
-        onChanged();
+        onChanged();;
         return wxmsgBuilder_;
       }
 
@@ -6172,9 +7645,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 5) {
             typesBuilder_.mergeFrom(value);
-          } else {
-            typesBuilder_.setMessage(value);
           }
+          typesBuilder_.setMessage(value);
         }
         msgCase_ = 5;
         return this;
@@ -6252,7 +7724,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 5;
-        onChanged();
+        onChanged();;
         return typesBuilder_;
       }
 
@@ -6350,9 +7822,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 6) {
             contactsBuilder_.mergeFrom(value);
-          } else {
-            contactsBuilder_.setMessage(value);
           }
+          contactsBuilder_.setMessage(value);
         }
         msgCase_ = 6;
         return this;
@@ -6430,7 +7901,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 6;
-        onChanged();
+        onChanged();;
         return contactsBuilder_;
       }
 
@@ -6528,9 +7999,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 7) {
             dbsBuilder_.mergeFrom(value);
-          } else {
-            dbsBuilder_.setMessage(value);
           }
+          dbsBuilder_.setMessage(value);
         }
         msgCase_ = 7;
         return this;
@@ -6608,7 +8078,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 7;
-        onChanged();
+        onChanged();;
         return dbsBuilder_;
       }
 
@@ -6706,9 +8176,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 8) {
             tablesBuilder_.mergeFrom(value);
-          } else {
-            tablesBuilder_.setMessage(value);
           }
+          tablesBuilder_.setMessage(value);
         }
         msgCase_ = 8;
         return this;
@@ -6786,7 +8255,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 8;
-        onChanged();
+        onChanged();;
         return tablesBuilder_;
       }
 
@@ -6884,9 +8353,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 9) {
             rowsBuilder_.mergeFrom(value);
-          } else {
-            rowsBuilder_.setMessage(value);
           }
+          rowsBuilder_.setMessage(value);
         }
         msgCase_ = 9;
         return this;
@@ -6964,7 +8432,7 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 9;
-        onChanged();
+        onChanged();;
         return rowsBuilder_;
       }
 
@@ -7062,9 +8530,8 @@ public final class Wcf {
         } else {
           if (msgCase_ == 10) {
             uiBuilder_.mergeFrom(value);
-          } else {
-            uiBuilder_.setMessage(value);
           }
+          uiBuilder_.setMessage(value);
         }
         msgCase_ = 10;
         return this;
@@ -7142,8 +8609,185 @@ public final class Wcf {
           msg_ = null;
         }
         msgCase_ = 10;
-        onChanged();
+        onChanged();;
         return uiBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.OcrMsg, com.iamteer.Wcf.OcrMsg.Builder, com.iamteer.Wcf.OcrMsgOrBuilder> ocrBuilder_;
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       * @return Whether the ocr field is set.
+       */
+      @java.lang.Override
+      public boolean hasOcr() {
+        return msgCase_ == 11;
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       * @return The ocr.
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.OcrMsg getOcr() {
+        if (ocrBuilder_ == null) {
+          if (msgCase_ == 11) {
+            return (com.iamteer.Wcf.OcrMsg) msg_;
+          }
+          return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+        } else {
+          if (msgCase_ == 11) {
+            return ocrBuilder_.getMessage();
+          }
+          return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      public Builder setOcr(com.iamteer.Wcf.OcrMsg value) {
+        if (ocrBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          msg_ = value;
+          onChanged();
+        } else {
+          ocrBuilder_.setMessage(value);
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      public Builder setOcr(
+          com.iamteer.Wcf.OcrMsg.Builder builderForValue) {
+        if (ocrBuilder_ == null) {
+          msg_ = builderForValue.build();
+          onChanged();
+        } else {
+          ocrBuilder_.setMessage(builderForValue.build());
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      public Builder mergeOcr(com.iamteer.Wcf.OcrMsg value) {
+        if (ocrBuilder_ == null) {
+          if (msgCase_ == 11 &&
+              msg_ != com.iamteer.Wcf.OcrMsg.getDefaultInstance()) {
+            msg_ = com.iamteer.Wcf.OcrMsg.newBuilder((com.iamteer.Wcf.OcrMsg) msg_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            msg_ = value;
+          }
+          onChanged();
+        } else {
+          if (msgCase_ == 11) {
+            ocrBuilder_.mergeFrom(value);
+          }
+          ocrBuilder_.setMessage(value);
+        }
+        msgCase_ = 11;
+        return this;
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      public Builder clearOcr() {
+        if (ocrBuilder_ == null) {
+          if (msgCase_ == 11) {
+            msgCase_ = 0;
+            msg_ = null;
+            onChanged();
+          }
+        } else {
+          if (msgCase_ == 11) {
+            msgCase_ = 0;
+            msg_ = null;
+          }
+          ocrBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      public com.iamteer.Wcf.OcrMsg.Builder getOcrBuilder() {
+        return getOcrFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      @java.lang.Override
+      public com.iamteer.Wcf.OcrMsgOrBuilder getOcrOrBuilder() {
+        if ((msgCase_ == 11) && (ocrBuilder_ != null)) {
+          return ocrBuilder_.getMessageOrBuilder();
+        } else {
+          if (msgCase_ == 11) {
+            return (com.iamteer.Wcf.OcrMsg) msg_;
+          }
+          return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * OCR 结果
+       * </pre>
+       *
+       * <code>.wcf.OcrMsg ocr = 11;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.iamteer.Wcf.OcrMsg, com.iamteer.Wcf.OcrMsg.Builder, com.iamteer.Wcf.OcrMsgOrBuilder> 
+          getOcrFieldBuilder() {
+        if (ocrBuilder_ == null) {
+          if (!(msgCase_ == 11)) {
+            msg_ = com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+          }
+          ocrBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.iamteer.Wcf.OcrMsg, com.iamteer.Wcf.OcrMsg.Builder, com.iamteer.Wcf.OcrMsgOrBuilder>(
+                  (com.iamteer.Wcf.OcrMsg) msg_,
+                  getParentForChildren(),
+                  isClean());
+          msg_ = null;
+        }
+        msgCase_ = 11;
+        onChanged();;
+        return ocrBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -7178,18 +8822,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new Response(input, extensionRegistry);
       }
     };
 
@@ -7235,6 +8868,48 @@ public final class Wcf {
       return new Empty();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Empty(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Empty_descriptor;
@@ -7262,7 +8937,7 @@ public final class Wcf {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -7271,7 +8946,7 @@ public final class Wcf {
       if (size != -1) return size;
 
       size = 0;
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -7286,7 +8961,7 @@ public final class Wcf {
       }
       com.iamteer.Wcf.Empty other = (com.iamteer.Wcf.Empty) obj;
 
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -7297,7 +8972,7 @@ public final class Wcf {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -7414,13 +9089,18 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.Empty.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
@@ -7456,6 +9136,38 @@ public final class Wcf {
       }
 
       @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Empty) {
           return mergeFrom((com.iamteer.Wcf.Empty)other);
@@ -7467,7 +9179,7 @@ public final class Wcf {
 
       public Builder mergeFrom(com.iamteer.Wcf.Empty other) {
         if (other == com.iamteer.Wcf.Empty.getDefaultInstance()) return this;
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -7482,30 +9194,17 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.Empty parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.Empty) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       @java.lang.Override
@@ -7541,18 +9240,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new Empty(input, extensionRegistry);
       }
     };
 
@@ -7601,7 +9289,7 @@ public final class Wcf {
      * 消息 id
      * </pre>
      *
-     * <code>uint64 id = 3;</code>
+     * <code>uint64 id = 3 [jstype = JS_STRING];</code>
      * @return The id.
      */
     long getId();
@@ -7795,6 +9483,115 @@ public final class Wcf {
       return new WxMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private WxMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              isSelf_ = input.readBool();
+              break;
+            }
+            case 16: {
+
+              isGroup_ = input.readBool();
+              break;
+            }
+            case 24: {
+
+              id_ = input.readUInt64();
+              break;
+            }
+            case 32: {
+
+              type_ = input.readUInt32();
+              break;
+            }
+            case 40: {
+
+              ts_ = input.readUInt32();
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              roomid_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              content_ = s;
+              break;
+            }
+            case 66: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sender_ = s;
+              break;
+            }
+            case 74: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sign_ = s;
+              break;
+            }
+            case 82: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              thumb_ = s;
+              break;
+            }
+            case 90: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              extra_ = s;
+              break;
+            }
+            case 98: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              xml_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_WxMsg_descriptor;
@@ -7809,7 +9606,7 @@ public final class Wcf {
     }
 
     public static final int IS_SELF_FIELD_NUMBER = 1;
-    private boolean isSelf_ = false;
+    private boolean isSelf_;
     /**
      * <pre>
      * 是否自己发送的
@@ -7824,7 +9621,7 @@ public final class Wcf {
     }
 
     public static final int IS_GROUP_FIELD_NUMBER = 2;
-    private boolean isGroup_ = false;
+    private boolean isGroup_;
     /**
      * <pre>
      * 是否群消息
@@ -7839,13 +9636,13 @@ public final class Wcf {
     }
 
     public static final int ID_FIELD_NUMBER = 3;
-    private long id_ = 0L;
+    private long id_;
     /**
      * <pre>
      * 消息 id
      * </pre>
      *
-     * <code>uint64 id = 3;</code>
+     * <code>uint64 id = 3 [jstype = JS_STRING];</code>
      * @return The id.
      */
     @java.lang.Override
@@ -7854,7 +9651,7 @@ public final class Wcf {
     }
 
     public static final int TYPE_FIELD_NUMBER = 4;
-    private int type_ = 0;
+    private int type_;
     /**
      * <pre>
      * 消息类型
@@ -7869,7 +9666,7 @@ public final class Wcf {
     }
 
     public static final int TS_FIELD_NUMBER = 5;
-    private int ts_ = 0;
+    private int ts_;
     /**
      * <pre>
      * 消息类型
@@ -7884,8 +9681,7 @@ public final class Wcf {
     }
 
     public static final int ROOMID_FIELD_NUMBER = 6;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object roomid_ = "";
+    private volatile java.lang.Object roomid_;
     /**
      * <pre>
      * 群 id（如果是群消息的话）
@@ -7931,8 +9727,7 @@ public final class Wcf {
     }
 
     public static final int CONTENT_FIELD_NUMBER = 7;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object content_ = "";
+    private volatile java.lang.Object content_;
     /**
      * <pre>
      * 消息内容
@@ -7978,8 +9773,7 @@ public final class Wcf {
     }
 
     public static final int SENDER_FIELD_NUMBER = 8;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object sender_ = "";
+    private volatile java.lang.Object sender_;
     /**
      * <pre>
      * 消息发送者
@@ -8025,8 +9819,7 @@ public final class Wcf {
     }
 
     public static final int SIGN_FIELD_NUMBER = 9;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object sign_ = "";
+    private volatile java.lang.Object sign_;
     /**
      * <pre>
      * Sign
@@ -8072,8 +9865,7 @@ public final class Wcf {
     }
 
     public static final int THUMB_FIELD_NUMBER = 10;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object thumb_ = "";
+    private volatile java.lang.Object thumb_;
     /**
      * <pre>
      * 缩略图
@@ -8119,8 +9911,7 @@ public final class Wcf {
     }
 
     public static final int EXTRA_FIELD_NUMBER = 11;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object extra_ = "";
+    private volatile java.lang.Object extra_;
     /**
      * <pre>
      * 附加内容
@@ -8166,8 +9957,7 @@ public final class Wcf {
     }
 
     public static final int XML_FIELD_NUMBER = 12;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object xml_ = "";
+    private volatile java.lang.Object xml_;
     /**
      * <pre>
      * 消息 xml
@@ -8262,7 +10052,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 12, xml_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -8312,7 +10102,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(xml_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, xml_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -8351,7 +10141,7 @@ public final class Wcf {
           .equals(other.getExtra())) return false;
       if (!getXml()
           .equals(other.getXml())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -8389,7 +10179,7 @@ public final class Wcf {
       hash = (53 * hash) + getExtra().hashCode();
       hash = (37 * hash) + XML_FIELD_NUMBER;
       hash = (53 * hash) + getXml().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -8506,30 +10296,46 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.WxMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         isSelf_ = false;
+
         isGroup_ = false;
+
         id_ = 0L;
+
         type_ = 0;
+
         ts_ = 0;
+
         roomid_ = "";
+
         content_ = "";
+
         sender_ = "";
+
         sign_ = "";
+
         thumb_ = "";
+
         extra_ = "";
+
         xml_ = "";
+
         return this;
       }
 
@@ -8556,51 +10362,54 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.WxMsg buildPartial() {
         com.iamteer.Wcf.WxMsg result = new com.iamteer.Wcf.WxMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.isSelf_ = isSelf_;
+        result.isGroup_ = isGroup_;
+        result.id_ = id_;
+        result.type_ = type_;
+        result.ts_ = ts_;
+        result.roomid_ = roomid_;
+        result.content_ = content_;
+        result.sender_ = sender_;
+        result.sign_ = sign_;
+        result.thumb_ = thumb_;
+        result.extra_ = extra_;
+        result.xml_ = xml_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.WxMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.isSelf_ = isSelf_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.isGroup_ = isGroup_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.type_ = type_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.ts_ = ts_;
-        }
-        if (((from_bitField0_ & 0x00000020) != 0)) {
-          result.roomid_ = roomid_;
-        }
-        if (((from_bitField0_ & 0x00000040) != 0)) {
-          result.content_ = content_;
-        }
-        if (((from_bitField0_ & 0x00000080) != 0)) {
-          result.sender_ = sender_;
-        }
-        if (((from_bitField0_ & 0x00000100) != 0)) {
-          result.sign_ = sign_;
-        }
-        if (((from_bitField0_ & 0x00000200) != 0)) {
-          result.thumb_ = thumb_;
-        }
-        if (((from_bitField0_ & 0x00000400) != 0)) {
-          result.extra_ = extra_;
-        }
-        if (((from_bitField0_ & 0x00000800) != 0)) {
-          result.xml_ = xml_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.WxMsg) {
@@ -8630,40 +10439,33 @@ public final class Wcf {
         }
         if (!other.getRoomid().isEmpty()) {
           roomid_ = other.roomid_;
-          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
-          bitField0_ |= 0x00000040;
           onChanged();
         }
         if (!other.getSender().isEmpty()) {
           sender_ = other.sender_;
-          bitField0_ |= 0x00000080;
           onChanged();
         }
         if (!other.getSign().isEmpty()) {
           sign_ = other.sign_;
-          bitField0_ |= 0x00000100;
           onChanged();
         }
         if (!other.getThumb().isEmpty()) {
           thumb_ = other.thumb_;
-          bitField0_ |= 0x00000200;
           onChanged();
         }
         if (!other.getExtra().isEmpty()) {
           extra_ = other.extra_;
-          bitField0_ |= 0x00000400;
           onChanged();
         }
         if (!other.getXml().isEmpty()) {
           xml_ = other.xml_;
-          bitField0_ |= 0x00000800;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -8678,93 +10480,19 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.WxMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                isSelf_ = input.readBool();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 16: {
-                isGroup_ = input.readBool();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 16
-              case 24: {
-                id_ = input.readUInt64();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 24
-              case 32: {
-                type_ = input.readUInt32();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 32
-              case 40: {
-                ts_ = input.readUInt32();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 40
-              case 50: {
-                roomid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000020;
-                break;
-              } // case 50
-              case 58: {
-                content_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000040;
-                break;
-              } // case 58
-              case 66: {
-                sender_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000080;
-                break;
-              } // case 66
-              case 74: {
-                sign_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000100;
-                break;
-              } // case 74
-              case 82: {
-                thumb_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000200;
-                break;
-              } // case 82
-              case 90: {
-                extra_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000400;
-                break;
-              } // case 90
-              case 98: {
-                xml_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000800;
-                break;
-              } // case 98
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.WxMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private boolean isSelf_ ;
       /**
@@ -8789,9 +10517,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setIsSelf(boolean value) {
-
+        
         isSelf_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -8804,7 +10531,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearIsSelf() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         isSelf_ = false;
         onChanged();
         return this;
@@ -8833,9 +10560,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setIsGroup(boolean value) {
-
+        
         isGroup_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -8848,7 +10574,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearIsGroup() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
         isGroup_ = false;
         onChanged();
         return this;
@@ -8860,7 +10586,7 @@ public final class Wcf {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 3;</code>
+       * <code>uint64 id = 3 [jstype = JS_STRING];</code>
        * @return The id.
        */
       @java.lang.Override
@@ -8872,14 +10598,13 @@ public final class Wcf {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 3;</code>
+       * <code>uint64 id = 3 [jstype = JS_STRING];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
       public Builder setId(long value) {
-
+        
         id_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -8888,11 +10613,11 @@ public final class Wcf {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 3;</code>
+       * <code>uint64 id = 3 [jstype = JS_STRING];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         id_ = 0L;
         onChanged();
         return this;
@@ -8921,9 +10646,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setType(int value) {
-
+        
         type_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -8936,7 +10660,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         type_ = 0;
         onChanged();
         return this;
@@ -8965,9 +10689,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setTs(int value) {
-
+        
         ts_ = value;
-        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -8980,7 +10703,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearTs() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        
         ts_ = 0;
         onChanged();
         return this;
@@ -9039,9 +10762,11 @@ public final class Wcf {
        */
       public Builder setRoomid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         roomid_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -9054,8 +10779,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearRoomid() {
+        
         roomid_ = getDefaultInstance().getRoomid();
-        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -9070,10 +10795,12 @@ public final class Wcf {
        */
       public Builder setRoomidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         roomid_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -9131,9 +10858,11 @@ public final class Wcf {
        */
       public Builder setContent(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         content_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -9146,8 +10875,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearContent() {
+        
         content_ = getDefaultInstance().getContent();
-        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
         return this;
       }
@@ -9162,10 +10891,12 @@ public final class Wcf {
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         content_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -9223,9 +10954,11 @@ public final class Wcf {
        */
       public Builder setSender(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         sender_ = value;
-        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -9238,8 +10971,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearSender() {
+        
         sender_ = getDefaultInstance().getSender();
-        bitField0_ = (bitField0_ & ~0x00000080);
         onChanged();
         return this;
       }
@@ -9254,10 +10987,12 @@ public final class Wcf {
        */
       public Builder setSenderBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         sender_ = value;
-        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -9315,9 +11050,11 @@ public final class Wcf {
        */
       public Builder setSign(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         sign_ = value;
-        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -9330,8 +11067,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearSign() {
+        
         sign_ = getDefaultInstance().getSign();
-        bitField0_ = (bitField0_ & ~0x00000100);
         onChanged();
         return this;
       }
@@ -9346,10 +11083,12 @@ public final class Wcf {
        */
       public Builder setSignBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         sign_ = value;
-        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -9407,9 +11146,11 @@ public final class Wcf {
        */
       public Builder setThumb(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         thumb_ = value;
-        bitField0_ |= 0x00000200;
         onChanged();
         return this;
       }
@@ -9422,8 +11163,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearThumb() {
+        
         thumb_ = getDefaultInstance().getThumb();
-        bitField0_ = (bitField0_ & ~0x00000200);
         onChanged();
         return this;
       }
@@ -9438,10 +11179,12 @@ public final class Wcf {
        */
       public Builder setThumbBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         thumb_ = value;
-        bitField0_ |= 0x00000200;
         onChanged();
         return this;
       }
@@ -9499,9 +11242,11 @@ public final class Wcf {
        */
       public Builder setExtra(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         extra_ = value;
-        bitField0_ |= 0x00000400;
         onChanged();
         return this;
       }
@@ -9514,8 +11259,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearExtra() {
+        
         extra_ = getDefaultInstance().getExtra();
-        bitField0_ = (bitField0_ & ~0x00000400);
         onChanged();
         return this;
       }
@@ -9530,10 +11275,12 @@ public final class Wcf {
        */
       public Builder setExtraBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         extra_ = value;
-        bitField0_ |= 0x00000400;
         onChanged();
         return this;
       }
@@ -9591,9 +11338,11 @@ public final class Wcf {
        */
       public Builder setXml(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         xml_ = value;
-        bitField0_ |= 0x00000800;
         onChanged();
         return this;
       }
@@ -9606,8 +11355,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearXml() {
+        
         xml_ = getDefaultInstance().getXml();
-        bitField0_ = (bitField0_ & ~0x00000800);
         onChanged();
         return this;
       }
@@ -9622,10 +11371,12 @@ public final class Wcf {
        */
       public Builder setXmlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         xml_ = value;
-        bitField0_ |= 0x00000800;
         onChanged();
         return this;
       }
@@ -9662,18 +11413,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new WxMsg(input, extensionRegistry);
       }
     };
 
@@ -9782,6 +11522,66 @@ public final class Wcf {
       return new TextMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private TextMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              msg_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              receiver_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              aters_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_TextMsg_descriptor;
@@ -9796,8 +11596,7 @@ public final class Wcf {
     }
 
     public static final int MSG_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object msg_ = "";
+    private volatile java.lang.Object msg_;
     /**
      * <pre>
      * 要发送的消息内容
@@ -9843,8 +11642,7 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object receiver_ = "";
+    private volatile java.lang.Object receiver_;
     /**
      * <pre>
      * 消息接收人，当为群时可&#64;
@@ -9890,8 +11688,7 @@ public final class Wcf {
     }
 
     public static final int ATERS_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object aters_ = "";
+    private volatile java.lang.Object aters_;
     /**
      * <pre>
      * 要&#64;的人列表，逗号分隔
@@ -9959,7 +11756,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(aters_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, aters_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -9977,7 +11774,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(aters_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, aters_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -9998,7 +11795,7 @@ public final class Wcf {
           .equals(other.getReceiver())) return false;
       if (!getAters()
           .equals(other.getAters())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -10015,7 +11812,7 @@ public final class Wcf {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + ATERS_FIELD_NUMBER;
       hash = (53 * hash) + getAters().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -10132,21 +11929,28 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.TextMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         msg_ = "";
+
         receiver_ = "";
+
         aters_ = "";
+
         return this;
       }
 
@@ -10173,24 +11977,45 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.TextMsg buildPartial() {
         com.iamteer.Wcf.TextMsg result = new com.iamteer.Wcf.TextMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.msg_ = msg_;
+        result.receiver_ = receiver_;
+        result.aters_ = aters_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.TextMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.msg_ = msg_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.receiver_ = receiver_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.aters_ = aters_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.TextMsg) {
@@ -10205,20 +12030,17 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.TextMsg.getDefaultInstance()) return this;
         if (!other.getMsg().isEmpty()) {
           msg_ = other.msg_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getAters().isEmpty()) {
           aters_ = other.aters_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -10233,48 +12055,19 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.TextMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                msg_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                receiver_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                aters_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.TextMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object msg_ = "";
       /**
@@ -10329,9 +12122,11 @@ public final class Wcf {
        */
       public Builder setMsg(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         msg_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -10344,8 +12139,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearMsg() {
+        
         msg_ = getDefaultInstance().getMsg();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -10360,10 +12155,12 @@ public final class Wcf {
        */
       public Builder setMsgBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         msg_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -10421,9 +12218,11 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         receiver_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -10436,8 +12235,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
+        
         receiver_ = getDefaultInstance().getReceiver();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -10452,10 +12251,12 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         receiver_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -10513,9 +12314,11 @@ public final class Wcf {
        */
       public Builder setAters(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         aters_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -10528,8 +12331,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearAters() {
+        
         aters_ = getDefaultInstance().getAters();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -10544,10 +12347,12 @@ public final class Wcf {
        */
       public Builder setAtersBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         aters_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -10584,18 +12389,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new TextMsg(input, extensionRegistry);
       }
     };
 
@@ -10683,6 +12477,60 @@ public final class Wcf {
       return new PathMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private PathMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              path_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              receiver_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_PathMsg_descriptor;
@@ -10697,8 +12545,7 @@ public final class Wcf {
     }
 
     public static final int PATH_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object path_ = "";
+    private volatile java.lang.Object path_;
     /**
      * <pre>
      * 要发送的图片的路径
@@ -10744,8 +12591,7 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object receiver_ = "";
+    private volatile java.lang.Object receiver_;
     /**
      * <pre>
      * 消息接收人
@@ -10810,7 +12656,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, receiver_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -10825,7 +12671,7 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, receiver_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -10844,7 +12690,7 @@ public final class Wcf {
           .equals(other.getPath())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -10859,7 +12705,7 @@ public final class Wcf {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
       hash = (53 * hash) + getReceiver().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -10976,20 +12822,26 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.PathMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         path_ = "";
+
         receiver_ = "";
+
         return this;
       }
 
@@ -11016,21 +12868,44 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.PathMsg buildPartial() {
         com.iamteer.Wcf.PathMsg result = new com.iamteer.Wcf.PathMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.path_ = path_;
+        result.receiver_ = receiver_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.PathMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.path_ = path_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.receiver_ = receiver_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.PathMsg) {
@@ -11045,15 +12920,13 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.PathMsg.getDefaultInstance()) return this;
         if (!other.getPath().isEmpty()) {
           path_ = other.path_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -11068,43 +12941,19 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.PathMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                path_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                receiver_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.PathMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object path_ = "";
       /**
@@ -11159,9 +13008,11 @@ public final class Wcf {
        */
       public Builder setPath(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         path_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -11174,8 +13025,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearPath() {
+        
         path_ = getDefaultInstance().getPath();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -11190,10 +13041,12 @@ public final class Wcf {
        */
       public Builder setPathBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         path_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -11251,9 +13104,11 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         receiver_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -11266,8 +13121,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
+        
         receiver_ = getDefaultInstance().getReceiver();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -11282,10 +13137,12 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         receiver_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -11322,18 +13179,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new PathMsg(input, extensionRegistry);
       }
     };
 
@@ -11452,6 +13298,71 @@ public final class Wcf {
       return new XmlMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private XmlMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              receiver_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              content_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              path_ = s;
+              break;
+            }
+            case 32: {
+
+              type_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_XmlMsg_descriptor;
@@ -11466,8 +13377,7 @@ public final class Wcf {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object receiver_ = "";
+    private volatile java.lang.Object receiver_;
     /**
      * <pre>
      * 消息接收人
@@ -11513,8 +13423,7 @@ public final class Wcf {
     }
 
     public static final int CONTENT_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object content_ = "";
+    private volatile java.lang.Object content_;
     /**
      * <pre>
      * xml 内容
@@ -11560,8 +13469,7 @@ public final class Wcf {
     }
 
     public static final int PATH_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object path_ = "";
+    private volatile java.lang.Object path_;
     /**
      * <pre>
      * 图片路径
@@ -11607,7 +13515,7 @@ public final class Wcf {
     }
 
     public static final int TYPE_FIELD_NUMBER = 4;
-    private int type_ = 0;
+    private int type_;
     /**
      * <pre>
      * 消息类型
@@ -11647,7 +13555,7 @@ public final class Wcf {
       if (type_ != 0) {
         output.writeInt32(4, type_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -11669,7 +13577,7 @@ public final class Wcf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, type_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -11692,7 +13600,7 @@ public final class Wcf {
           .equals(other.getPath())) return false;
       if (getType()
           != other.getType()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -11711,7 +13619,7 @@ public final class Wcf {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -11828,22 +13736,30 @@ public final class Wcf {
 
       // Construct using com.iamteer.Wcf.XmlMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         receiver_ = "";
+
         content_ = "";
+
         path_ = "";
+
         type_ = 0;
+
         return this;
       }
 
@@ -11870,27 +13786,46 @@ public final class Wcf {
       @java.lang.Override
       public com.iamteer.Wcf.XmlMsg buildPartial() {
         com.iamteer.Wcf.XmlMsg result = new com.iamteer.Wcf.XmlMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.receiver_ = receiver_;
+        result.content_ = content_;
+        result.path_ = path_;
+        result.type_ = type_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.XmlMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.receiver_ = receiver_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.content_ = content_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.path_ = path_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.type_ = type_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.XmlMsg) {
@@ -11905,23 +13840,20 @@ public final class Wcf {
         if (other == com.iamteer.Wcf.XmlMsg.getDefaultInstance()) return this;
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getPath().isEmpty()) {
           path_ = other.path_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (other.getType() != 0) {
           setType(other.getType());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -11936,53 +13868,19 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.XmlMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                receiver_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                content_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                path_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 32: {
-                type_ = input.readInt32();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 32
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.XmlMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object receiver_ = "";
       /**
@@ -12037,9 +13935,11 @@ public final class Wcf {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         receiver_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -12052,8 +13952,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
+        
         receiver_ = getDefaultInstance().getReceiver();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -12068,10 +13968,12 @@ public final class Wcf {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         receiver_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -12129,9 +14031,11 @@ public final class Wcf {
        */
       public Builder setContent(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         content_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -12144,8 +14048,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearContent() {
+        
         content_ = getDefaultInstance().getContent();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -12160,10 +14064,12 @@ public final class Wcf {
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         content_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -12221,9 +14127,11 @@ public final class Wcf {
        */
       public Builder setPath(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         path_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -12236,8 +14144,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearPath() {
+        
         path_ = getDefaultInstance().getPath();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -12252,10 +14160,12 @@ public final class Wcf {
        */
       public Builder setPathBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         path_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -12283,9 +14193,8 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder setType(int value) {
-
+        
         type_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -12298,7 +14207,7 @@ public final class Wcf {
        * @return This builder for chaining.
        */
       public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         type_ = 0;
         onChanged();
         return this;
@@ -12336,18 +14245,7 @@ public final class Wcf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new XmlMsg(input, extensionRegistry);
       }
     };
 
@@ -12394,14 +14292,14 @@ public final class Wcf {
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
-    /* nullable */
-java.lang.String getTypesOrDefault(
+
+    java.lang.String getTypesOrDefault(
         int key,
-        /* nullable */
-java.lang.String defaultValue);
+        java.lang.String defaultValue);
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
+
     java.lang.String getTypesOrThrow(
         int key);
   }
@@ -12427,6 +14325,62 @@ java.lang.String defaultValue);
       return new MsgTypes();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private MsgTypes(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                types_ = com.google.protobuf.MapField.newMapField(
+                    TypesDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
+              types__ = input.readMessage(
+                  TypesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              types_.getMutableMap().put(
+                  types__.getKey(), types__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_MsgTypes_descriptor;
@@ -12464,7 +14418,6 @@ java.lang.String defaultValue);
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "");
     }
-    @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
         java.lang.Integer, java.lang.String> types_;
     private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
@@ -12475,16 +14428,18 @@ java.lang.String defaultValue);
       }
       return types_;
     }
+
     public int getTypesCount() {
       return internalGetTypes().getMap().size();
     }
     /**
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
+
     @java.lang.Override
     public boolean containsTypes(
         int key) {
-
+      
       return internalGetTypes().getMap().containsKey(key);
     }
     /**
@@ -12499,6 +14454,7 @@ java.lang.String defaultValue);
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
+
     public java.util.Map<java.lang.Integer, java.lang.String> getTypesMap() {
       return internalGetTypes().getMap();
     }
@@ -12506,12 +14462,11 @@ java.lang.String defaultValue);
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
-    public /* nullable */
-java.lang.String getTypesOrDefault(
-        int key,
-        /* nullable */
-java.lang.String defaultValue) {
 
+    public java.lang.String getTypesOrDefault(
+        int key,
+        java.lang.String defaultValue) {
+      
       java.util.Map<java.lang.Integer, java.lang.String> map =
           internalGetTypes().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -12520,9 +14475,10 @@ java.lang.String defaultValue) {
      * <code>map&lt;int32, string&gt; types = 1;</code>
      */
     @java.lang.Override
+
     public java.lang.String getTypesOrThrow(
         int key) {
-
+      
       java.util.Map<java.lang.Integer, java.lang.String> map =
           internalGetTypes().getMap();
       if (!map.containsKey(key)) {
@@ -12551,7 +14507,7 @@ java.lang.String defaultValue) {
           internalGetTypes(),
           TypesDefaultEntryHolder.defaultEntry,
           1);
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -12570,7 +14526,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(1, types__);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -12587,7 +14543,7 @@ java.lang.String defaultValue) {
 
       if (!internalGetTypes().equals(
           other.internalGetTypes())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -12602,7 +14558,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + TYPES_FIELD_NUMBER;
         hash = (53 * hash) + internalGetTypes().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -12741,18 +14697,22 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.MsgTypes.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         internalGetMutableTypes().clear();
         return this;
       }
@@ -12780,19 +14740,45 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.MsgTypes buildPartial() {
         com.iamteer.Wcf.MsgTypes result = new com.iamteer.Wcf.MsgTypes(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        int from_bitField0_ = bitField0_;
+        result.types_ = internalGetTypes();
+        result.types_.makeImmutable();
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.MsgTypes result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.types_ = internalGetTypes();
-          result.types_.makeImmutable();
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.MsgTypes) {
@@ -12807,8 +14793,7 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.MsgTypes.getDefaultInstance()) return this;
         internalGetMutableTypes().mergeFrom(
             other.internalGetTypes());
-        bitField0_ |= 0x00000001;
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -12823,39 +14808,17 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.MsgTypes parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
-                types__ = input.readMessage(
-                    TypesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-                internalGetMutableTypes().getMutableMap().put(
-                    types__.getKey(), types__.getValue());
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.MsgTypes) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
@@ -12863,7 +14826,7 @@ java.lang.String defaultValue) {
       private com.google.protobuf.MapField<
           java.lang.Integer, java.lang.String> types_;
       private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-          internalGetTypes() {
+      internalGetTypes() {
         if (types_ == null) {
           return com.google.protobuf.MapField.emptyMapField(
               TypesDefaultEntryHolder.defaultEntry);
@@ -12871,7 +14834,8 @@ java.lang.String defaultValue) {
         return types_;
       }
       private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-          internalGetMutableTypes() {
+      internalGetMutableTypes() {
+        onChanged();;
         if (types_ == null) {
           types_ = com.google.protobuf.MapField.newMapField(
               TypesDefaultEntryHolder.defaultEntry);
@@ -12879,20 +14843,20 @@ java.lang.String defaultValue) {
         if (!types_.isMutable()) {
           types_ = types_.copy();
         }
-        bitField0_ |= 0x00000001;
-        onChanged();
         return types_;
       }
+
       public int getTypesCount() {
         return internalGetTypes().getMap().size();
       }
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
+
       @java.lang.Override
       public boolean containsTypes(
           int key) {
-
+        
         return internalGetTypes().getMap().containsKey(key);
       }
       /**
@@ -12907,6 +14871,7 @@ java.lang.String defaultValue) {
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
+
       public java.util.Map<java.lang.Integer, java.lang.String> getTypesMap() {
         return internalGetTypes().getMap();
       }
@@ -12914,12 +14879,11 @@ java.lang.String defaultValue) {
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
-      public /* nullable */
-java.lang.String getTypesOrDefault(
-          int key,
-          /* nullable */
-java.lang.String defaultValue) {
 
+      public java.lang.String getTypesOrDefault(
+          int key,
+          java.lang.String defaultValue) {
+        
         java.util.Map<java.lang.Integer, java.lang.String> map =
             internalGetTypes().getMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -12928,9 +14892,10 @@ java.lang.String defaultValue) {
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
       @java.lang.Override
+
       public java.lang.String getTypesOrThrow(
           int key) {
-
+        
         java.util.Map<java.lang.Integer, java.lang.String> map =
             internalGetTypes().getMap();
         if (!map.containsKey(key)) {
@@ -12938,8 +14903,8 @@ java.lang.String defaultValue) {
         }
         return map.get(key);
       }
+
       public Builder clearTypes() {
-        bitField0_ = (bitField0_ & ~0x00000001);
         internalGetMutableTypes().getMutableMap()
             .clear();
         return this;
@@ -12947,9 +14912,10 @@ java.lang.String defaultValue) {
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
+
       public Builder removeTypes(
           int key) {
-
+        
         internalGetMutableTypes().getMutableMap()
             .remove(key);
         return this;
@@ -12959,8 +14925,7 @@ java.lang.String defaultValue) {
        */
       @java.lang.Deprecated
       public java.util.Map<java.lang.Integer, java.lang.String>
-          getMutableTypes() {
-        bitField0_ |= 0x00000001;
+      getMutableTypes() {
         return internalGetMutableTypes().getMutableMap();
       }
       /**
@@ -12969,21 +14934,23 @@ java.lang.String defaultValue) {
       public Builder putTypes(
           int key,
           java.lang.String value) {
+        
+        if (value == null) {
+  throw new NullPointerException("map value");
+}
 
-        if (value == null) { throw new NullPointerException("map value"); }
         internalGetMutableTypes().getMutableMap()
             .put(key, value);
-        bitField0_ |= 0x00000001;
         return this;
       }
       /**
        * <code>map&lt;int32, string&gt; types = 1;</code>
        */
+
       public Builder putAllTypes(
           java.util.Map<java.lang.Integer, java.lang.String> values) {
         internalGetMutableTypes().getMutableMap()
             .putAll(values);
-        bitField0_ |= 0x00000001;
         return this;
       }
       @java.lang.Override
@@ -13019,18 +14986,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new MsgTypes(input, extensionRegistry);
       }
     };
 
@@ -13233,6 +15189,95 @@ java.lang.String defaultValue) {
       return new RpcContact();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RpcContact(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              wxid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              code_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              remark_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              country_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              province_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              city_ = s;
+              break;
+            }
+            case 64: {
+
+              gender_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_RpcContact_descriptor;
@@ -13247,8 +15292,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int WXID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object wxid_ = "";
+    private volatile java.lang.Object wxid_;
     /**
      * <pre>
      * 微信 id
@@ -13294,8 +15338,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int CODE_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object code_ = "";
+    private volatile java.lang.Object code_;
     /**
      * <pre>
      * 微信号
@@ -13341,8 +15384,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int REMARK_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object remark_ = "";
+    private volatile java.lang.Object remark_;
     /**
      * <pre>
      * 备注
@@ -13388,8 +15430,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int NAME_FIELD_NUMBER = 4;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object name_ = "";
+    private volatile java.lang.Object name_;
     /**
      * <pre>
      * 微信昵称
@@ -13435,8 +15476,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int COUNTRY_FIELD_NUMBER = 5;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object country_ = "";
+    private volatile java.lang.Object country_;
     /**
      * <pre>
      * 国家
@@ -13482,8 +15522,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int PROVINCE_FIELD_NUMBER = 6;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object province_ = "";
+    private volatile java.lang.Object province_;
     /**
      * <pre>
      * 省/州
@@ -13529,8 +15568,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int CITY_FIELD_NUMBER = 7;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object city_ = "";
+    private volatile java.lang.Object city_;
     /**
      * <pre>
      * 城市
@@ -13576,7 +15614,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int GENDER_FIELD_NUMBER = 8;
-    private int gender_ = 0;
+    private int gender_;
     /**
      * <pre>
      * 性别
@@ -13628,7 +15666,7 @@ java.lang.String defaultValue) {
       if (gender_ != 0) {
         output.writeInt32(8, gender_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -13662,7 +15700,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, gender_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -13693,7 +15731,7 @@ java.lang.String defaultValue) {
           .equals(other.getCity())) return false;
       if (getGender()
           != other.getGender()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -13720,7 +15758,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getCity().hashCode();
       hash = (37 * hash) + GENDER_FIELD_NUMBER;
       hash = (53 * hash) + getGender();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -13837,26 +15875,38 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.RpcContact.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         wxid_ = "";
+
         code_ = "";
+
         remark_ = "";
+
         name_ = "";
+
         country_ = "";
+
         province_ = "";
+
         city_ = "";
+
         gender_ = 0;
+
         return this;
       }
 
@@ -13883,39 +15933,50 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.RpcContact buildPartial() {
         com.iamteer.Wcf.RpcContact result = new com.iamteer.Wcf.RpcContact(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.wxid_ = wxid_;
+        result.code_ = code_;
+        result.remark_ = remark_;
+        result.name_ = name_;
+        result.country_ = country_;
+        result.province_ = province_;
+        result.city_ = city_;
+        result.gender_ = gender_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.RpcContact result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.wxid_ = wxid_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.code_ = code_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.remark_ = remark_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.name_ = name_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.country_ = country_;
-        }
-        if (((from_bitField0_ & 0x00000020) != 0)) {
-          result.province_ = province_;
-        }
-        if (((from_bitField0_ & 0x00000040) != 0)) {
-          result.city_ = city_;
-        }
-        if (((from_bitField0_ & 0x00000080) != 0)) {
-          result.gender_ = gender_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.RpcContact) {
@@ -13930,43 +15991,36 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.RpcContact.getDefaultInstance()) return this;
         if (!other.getWxid().isEmpty()) {
           wxid_ = other.wxid_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getCode().isEmpty()) {
           code_ = other.code_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getRemark().isEmpty()) {
           remark_ = other.remark_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
-          bitField0_ |= 0x00000008;
           onChanged();
         }
         if (!other.getCountry().isEmpty()) {
           country_ = other.country_;
-          bitField0_ |= 0x00000010;
           onChanged();
         }
         if (!other.getProvince().isEmpty()) {
           province_ = other.province_;
-          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (!other.getCity().isEmpty()) {
           city_ = other.city_;
-          bitField0_ |= 0x00000040;
           onChanged();
         }
         if (other.getGender() != 0) {
           setGender(other.getGender());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -13981,73 +16035,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.RpcContact parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                wxid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                code_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                remark_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 34: {
-                name_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 34
-              case 42: {
-                country_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 42
-              case 50: {
-                province_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000020;
-                break;
-              } // case 50
-              case 58: {
-                city_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000040;
-                break;
-              } // case 58
-              case 64: {
-                gender_ = input.readInt32();
-                bitField0_ |= 0x00000080;
-                break;
-              } // case 64
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.RpcContact) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object wxid_ = "";
       /**
@@ -14102,9 +16102,11 @@ java.lang.String defaultValue) {
        */
       public Builder setWxid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -14117,8 +16119,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearWxid() {
+        
         wxid_ = getDefaultInstance().getWxid();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -14133,10 +16135,12 @@ java.lang.String defaultValue) {
        */
       public Builder setWxidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -14194,9 +16198,11 @@ java.lang.String defaultValue) {
        */
       public Builder setCode(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         code_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -14209,8 +16215,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearCode() {
+        
         code_ = getDefaultInstance().getCode();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -14225,10 +16231,12 @@ java.lang.String defaultValue) {
        */
       public Builder setCodeBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         code_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -14286,9 +16294,11 @@ java.lang.String defaultValue) {
        */
       public Builder setRemark(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         remark_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -14301,8 +16311,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearRemark() {
+        
         remark_ = getDefaultInstance().getRemark();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -14317,10 +16327,12 @@ java.lang.String defaultValue) {
        */
       public Builder setRemarkBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         remark_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -14378,9 +16390,11 @@ java.lang.String defaultValue) {
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         name_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -14393,8 +16407,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearName() {
+        
         name_ = getDefaultInstance().getName();
-        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -14409,10 +16423,12 @@ java.lang.String defaultValue) {
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         name_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -14470,9 +16486,11 @@ java.lang.String defaultValue) {
        */
       public Builder setCountry(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         country_ = value;
-        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -14485,8 +16503,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearCountry() {
+        
         country_ = getDefaultInstance().getCountry();
-        bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
         return this;
       }
@@ -14501,10 +16519,12 @@ java.lang.String defaultValue) {
        */
       public Builder setCountryBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         country_ = value;
-        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -14562,9 +16582,11 @@ java.lang.String defaultValue) {
        */
       public Builder setProvince(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         province_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -14577,8 +16599,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearProvince() {
+        
         province_ = getDefaultInstance().getProvince();
-        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -14593,10 +16615,12 @@ java.lang.String defaultValue) {
        */
       public Builder setProvinceBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         province_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -14654,9 +16678,11 @@ java.lang.String defaultValue) {
        */
       public Builder setCity(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         city_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -14669,8 +16695,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearCity() {
+        
         city_ = getDefaultInstance().getCity();
-        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
         return this;
       }
@@ -14685,10 +16711,12 @@ java.lang.String defaultValue) {
        */
       public Builder setCityBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         city_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -14716,9 +16744,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder setGender(int value) {
-
+        
         gender_ = value;
-        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -14731,7 +16758,7 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearGender() {
-        bitField0_ = (bitField0_ & ~0x00000080);
+        
         gender_ = 0;
         onChanged();
         return this;
@@ -14769,18 +16796,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new RpcContact(input, extensionRegistry);
       }
     };
 
@@ -14851,6 +16867,61 @@ java.lang.String defaultValue) {
       return new RpcContacts();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RpcContacts(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                contacts_ = new java.util.ArrayList<com.iamteer.Wcf.RpcContact>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              contacts_.add(
+                  input.readMessage(com.iamteer.Wcf.RpcContact.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          contacts_ = java.util.Collections.unmodifiableList(contacts_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_RpcContacts_descriptor;
@@ -14865,7 +16936,6 @@ java.lang.String defaultValue) {
     }
 
     public static final int CONTACTS_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.RpcContact> contacts_;
     /**
      * <code>repeated .wcf.RpcContact contacts = 1;</code>
@@ -14922,7 +16992,7 @@ java.lang.String defaultValue) {
       for (int i = 0; i < contacts_.size(); i++) {
         output.writeMessage(1, contacts_.get(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -14935,7 +17005,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, contacts_.get(i));
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -14952,7 +17022,7 @@ java.lang.String defaultValue) {
 
       if (!getContactsList()
           .equals(other.getContactsList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -14967,7 +17037,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + CONTACTS_FIELD_NUMBER;
         hash = (53 * hash) + getContactsList().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -15084,25 +17154,29 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.RpcContacts.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getContactsFieldBuilder();
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         if (contactsBuilder_ == null) {
           contacts_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          contacts_ = null;
           contactsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -15129,13 +17203,7 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.RpcContacts buildPartial() {
         com.iamteer.Wcf.RpcContacts result = new com.iamteer.Wcf.RpcContacts(this);
-        buildPartialRepeatedFields(result);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartialRepeatedFields(com.iamteer.Wcf.RpcContacts result) {
+        int from_bitField0_ = bitField0_;
         if (contactsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             contacts_ = java.util.Collections.unmodifiableList(contacts_);
@@ -15145,12 +17213,42 @@ java.lang.String defaultValue) {
         } else {
           result.contacts_ = contactsBuilder_.build();
         }
+        onBuilt();
+        return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.RpcContacts result) {
-        int from_bitField0_ = bitField0_;
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.RpcContacts) {
@@ -15189,7 +17287,7 @@ java.lang.String defaultValue) {
             }
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -15204,43 +17302,17 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.RpcContacts parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                com.iamteer.Wcf.RpcContact m =
-                    input.readMessage(
-                        com.iamteer.Wcf.RpcContact.parser(),
-                        extensionRegistry);
-                if (contactsBuilder_ == null) {
-                  ensureContactsIsMutable();
-                  contacts_.add(m);
-                } else {
-                  contactsBuilder_.addMessage(m);
-                }
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.RpcContacts) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
@@ -15517,18 +17589,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new RpcContacts(input, extensionRegistry);
       }
     };
 
@@ -15590,8 +17651,7 @@ java.lang.String defaultValue) {
       super(builder);
     }
     private DbNames() {
-      names_ =
-          com.google.protobuf.LazyStringArrayList.emptyList();
+      names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -15601,6 +17661,61 @@ java.lang.String defaultValue) {
       return new DbNames();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbNames(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                names_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              names_.add(s);
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          names_ = names_.getUnmodifiableView();
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbNames_descriptor;
@@ -15615,9 +17730,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int NAMES_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private com.google.protobuf.LazyStringArrayList names_ =
-        com.google.protobuf.LazyStringArrayList.emptyList();
+    private com.google.protobuf.LazyStringList names_;
     /**
      * <code>repeated string names = 1;</code>
      * @return A list containing the names.
@@ -15668,7 +17781,7 @@ java.lang.String defaultValue) {
       for (int i = 0; i < names_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, names_.getRaw(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -15685,7 +17798,7 @@ java.lang.String defaultValue) {
         size += dataSize;
         size += 1 * getNamesList().size();
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -15702,7 +17815,7 @@ java.lang.String defaultValue) {
 
       if (!getNamesList()
           .equals(other.getNamesList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -15717,7 +17830,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + NAMES_FIELD_NUMBER;
         hash = (53 * hash) + getNamesList().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -15834,20 +17947,24 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbNames.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
-        names_ =
-            com.google.protobuf.LazyStringArrayList.emptyList();
+        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -15874,19 +17991,48 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbNames buildPartial() {
         com.iamteer.Wcf.DbNames result = new com.iamteer.Wcf.DbNames(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          names_ = names_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.names_ = names_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbNames result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          names_.makeImmutable();
-          result.names_ = names_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbNames) {
@@ -15902,14 +18048,14 @@ java.lang.String defaultValue) {
         if (!other.names_.isEmpty()) {
           if (names_.isEmpty()) {
             names_ = other.names_;
-            bitField0_ |= 0x00000001;
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureNamesIsMutable();
             names_.addAll(other.names_);
           }
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -15924,47 +18070,27 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbNames parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                java.lang.String s = input.readStringRequireUtf8();
-                ensureNamesIsMutable();
-                names_.add(s);
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbNames) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
 
-      private com.google.protobuf.LazyStringArrayList names_ =
-          com.google.protobuf.LazyStringArrayList.emptyList();
+      private com.google.protobuf.LazyStringList names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureNamesIsMutable() {
-        if (!names_.isModifiable()) {
+        if (!((bitField0_ & 0x00000001) != 0)) {
           names_ = new com.google.protobuf.LazyStringArrayList(names_);
-        }
-        bitField0_ |= 0x00000001;
+          bitField0_ |= 0x00000001;
+         }
       }
       /**
        * <code>repeated string names = 1;</code>
@@ -15972,8 +18098,7 @@ java.lang.String defaultValue) {
        */
       public com.google.protobuf.ProtocolStringList
           getNamesList() {
-        names_.makeImmutable();
-        return names_;
+        return names_.getUnmodifiableView();
       }
       /**
        * <code>repeated string names = 1;</code>
@@ -16007,10 +18132,11 @@ java.lang.String defaultValue) {
        */
       public Builder setNames(
           int index, java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        ensureNamesIsMutable();
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureNamesIsMutable();
         names_.set(index, value);
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16021,10 +18147,11 @@ java.lang.String defaultValue) {
        */
       public Builder addNames(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        ensureNamesIsMutable();
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureNamesIsMutable();
         names_.add(value);
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16038,7 +18165,6 @@ java.lang.String defaultValue) {
         ensureNamesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, names_);
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16047,9 +18173,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearNames() {
-        names_ =
-          com.google.protobuf.LazyStringArrayList.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);;
+        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -16060,11 +18185,12 @@ java.lang.String defaultValue) {
        */
       public Builder addNamesBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
         ensureNamesIsMutable();
         names_.add(value);
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16101,18 +18227,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbNames(input, extensionRegistry);
       }
     };
 
@@ -16200,6 +18315,60 @@ java.lang.String defaultValue) {
       return new DbTable();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbTable(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sql_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbTable_descriptor;
@@ -16214,8 +18383,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object name_ = "";
+    private volatile java.lang.Object name_;
     /**
      * <pre>
      * 表名
@@ -16261,8 +18429,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int SQL_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object sql_ = "";
+    private volatile java.lang.Object sql_;
     /**
      * <pre>
      * 建表 SQL
@@ -16327,7 +18494,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sql_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -16342,7 +18509,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sql_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -16361,7 +18528,7 @@ java.lang.String defaultValue) {
           .equals(other.getName())) return false;
       if (!getSql()
           .equals(other.getSql())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -16376,7 +18543,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + SQL_FIELD_NUMBER;
       hash = (53 * hash) + getSql().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -16493,20 +18660,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbTable.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         name_ = "";
+
         sql_ = "";
+
         return this;
       }
 
@@ -16533,21 +18706,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbTable buildPartial() {
         com.iamteer.Wcf.DbTable result = new com.iamteer.Wcf.DbTable(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.name_ = name_;
+        result.sql_ = sql_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbTable result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.name_ = name_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.sql_ = sql_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbTable) {
@@ -16562,15 +18758,13 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.DbTable.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getSql().isEmpty()) {
           sql_ = other.sql_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -16585,43 +18779,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbTable parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                name_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                sql_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbTable) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object name_ = "";
       /**
@@ -16676,9 +18846,11 @@ java.lang.String defaultValue) {
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         name_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16691,8 +18863,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearName() {
+        
         name_ = getDefaultInstance().getName();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -16707,10 +18879,12 @@ java.lang.String defaultValue) {
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         name_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -16768,9 +18942,11 @@ java.lang.String defaultValue) {
        */
       public Builder setSql(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         sql_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -16783,8 +18959,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearSql() {
+        
         sql_ = getDefaultInstance().getSql();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -16799,10 +18975,12 @@ java.lang.String defaultValue) {
        */
       public Builder setSqlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         sql_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -16839,18 +19017,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbTable(input, extensionRegistry);
       }
     };
 
@@ -16921,6 +19088,61 @@ java.lang.String defaultValue) {
       return new DbTables();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbTables(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                tables_ = new java.util.ArrayList<com.iamteer.Wcf.DbTable>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              tables_.add(
+                  input.readMessage(com.iamteer.Wcf.DbTable.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          tables_ = java.util.Collections.unmodifiableList(tables_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbTables_descriptor;
@@ -16935,7 +19157,6 @@ java.lang.String defaultValue) {
     }
 
     public static final int TABLES_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbTable> tables_;
     /**
      * <code>repeated .wcf.DbTable tables = 1;</code>
@@ -16992,7 +19213,7 @@ java.lang.String defaultValue) {
       for (int i = 0; i < tables_.size(); i++) {
         output.writeMessage(1, tables_.get(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -17005,7 +19226,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, tables_.get(i));
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -17022,7 +19243,7 @@ java.lang.String defaultValue) {
 
       if (!getTablesList()
           .equals(other.getTablesList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -17037,7 +19258,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + TABLES_FIELD_NUMBER;
         hash = (53 * hash) + getTablesList().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -17154,25 +19375,29 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbTables.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getTablesFieldBuilder();
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         if (tablesBuilder_ == null) {
           tables_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          tables_ = null;
           tablesBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -17199,13 +19424,7 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbTables buildPartial() {
         com.iamteer.Wcf.DbTables result = new com.iamteer.Wcf.DbTables(this);
-        buildPartialRepeatedFields(result);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbTables result) {
+        int from_bitField0_ = bitField0_;
         if (tablesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             tables_ = java.util.Collections.unmodifiableList(tables_);
@@ -17215,12 +19434,42 @@ java.lang.String defaultValue) {
         } else {
           result.tables_ = tablesBuilder_.build();
         }
+        onBuilt();
+        return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbTables result) {
-        int from_bitField0_ = bitField0_;
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbTables) {
@@ -17259,7 +19508,7 @@ java.lang.String defaultValue) {
             }
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -17274,43 +19523,17 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbTables parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                com.iamteer.Wcf.DbTable m =
-                    input.readMessage(
-                        com.iamteer.Wcf.DbTable.parser(),
-                        extensionRegistry);
-                if (tablesBuilder_ == null) {
-                  ensureTablesIsMutable();
-                  tables_.add(m);
-                } else {
-                  tablesBuilder_.addMessage(m);
-                }
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbTables) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
@@ -17587,18 +19810,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbTables(input, extensionRegistry);
       }
     };
 
@@ -17686,6 +19898,60 @@ java.lang.String defaultValue) {
       return new DbQuery();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbQuery(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              db_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sql_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbQuery_descriptor;
@@ -17700,8 +19966,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int DB_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object db_ = "";
+    private volatile java.lang.Object db_;
     /**
      * <pre>
      * 目标数据库
@@ -17747,8 +20012,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int SQL_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object sql_ = "";
+    private volatile java.lang.Object sql_;
     /**
      * <pre>
      * 查询 SQL
@@ -17813,7 +20077,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sql_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -17828,7 +20092,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sql_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sql_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -17847,7 +20111,7 @@ java.lang.String defaultValue) {
           .equals(other.getDb())) return false;
       if (!getSql()
           .equals(other.getSql())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -17862,7 +20126,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getDb().hashCode();
       hash = (37 * hash) + SQL_FIELD_NUMBER;
       hash = (53 * hash) + getSql().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -17979,20 +20243,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbQuery.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         db_ = "";
+
         sql_ = "";
+
         return this;
       }
 
@@ -18019,21 +20289,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbQuery buildPartial() {
         com.iamteer.Wcf.DbQuery result = new com.iamteer.Wcf.DbQuery(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.db_ = db_;
+        result.sql_ = sql_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbQuery result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.db_ = db_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.sql_ = sql_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbQuery) {
@@ -18048,15 +20341,13 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.DbQuery.getDefaultInstance()) return this;
         if (!other.getDb().isEmpty()) {
           db_ = other.db_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getSql().isEmpty()) {
           sql_ = other.sql_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -18071,43 +20362,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbQuery parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                db_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                sql_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbQuery) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object db_ = "";
       /**
@@ -18162,9 +20429,11 @@ java.lang.String defaultValue) {
        */
       public Builder setDb(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         db_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -18177,8 +20446,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearDb() {
+        
         db_ = getDefaultInstance().getDb();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -18193,10 +20462,12 @@ java.lang.String defaultValue) {
        */
       public Builder setDbBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         db_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -18254,9 +20525,11 @@ java.lang.String defaultValue) {
        */
       public Builder setSql(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         sql_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -18269,8 +20542,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearSql() {
+        
         sql_ = getDefaultInstance().getSql();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -18285,10 +20558,12 @@ java.lang.String defaultValue) {
        */
       public Builder setSqlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         sql_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -18325,18 +20600,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbQuery(input, extensionRegistry);
       }
     };
 
@@ -18424,6 +20688,64 @@ java.lang.String defaultValue) {
       return new DbField();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbField(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              type_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              column_ = s;
+              break;
+            }
+            case 26: {
+
+              content_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbField_descriptor;
@@ -18438,7 +20760,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int TYPE_FIELD_NUMBER = 1;
-    private int type_ = 0;
+    private int type_;
     /**
      * <pre>
      * 字段类型
@@ -18453,8 +20775,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int COLUMN_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object column_ = "";
+    private volatile java.lang.Object column_;
     /**
      * <pre>
      * 字段名称
@@ -18500,7 +20821,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int CONTENT_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
+    private com.google.protobuf.ByteString content_;
     /**
      * <pre>
      * 字段内容
@@ -18537,7 +20858,7 @@ java.lang.String defaultValue) {
       if (!content_.isEmpty()) {
         output.writeBytes(3, content_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -18557,7 +20878,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, content_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -18578,7 +20899,7 @@ java.lang.String defaultValue) {
           .equals(other.getColumn())) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -18595,7 +20916,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getColumn().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -18712,21 +21033,28 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbField.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         type_ = 0;
+
         column_ = "";
+
         content_ = com.google.protobuf.ByteString.EMPTY;
+
         return this;
       }
 
@@ -18753,24 +21081,45 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbField buildPartial() {
         com.iamteer.Wcf.DbField result = new com.iamteer.Wcf.DbField(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.type_ = type_;
+        result.column_ = column_;
+        result.content_ = content_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbField result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.type_ = type_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.column_ = column_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.content_ = content_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbField) {
@@ -18788,13 +21137,12 @@ java.lang.String defaultValue) {
         }
         if (!other.getColumn().isEmpty()) {
           column_ = other.column_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.getContent() != com.google.protobuf.ByteString.EMPTY) {
           setContent(other.getContent());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -18809,48 +21157,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbField parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                type_ = input.readInt32();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                column_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                content_ = input.readBytes();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbField) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private int type_ ;
       /**
@@ -18875,9 +21194,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder setType(int value) {
-
+        
         type_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -18890,7 +21208,7 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         type_ = 0;
         onChanged();
         return this;
@@ -18949,9 +21267,11 @@ java.lang.String defaultValue) {
        */
       public Builder setColumn(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         column_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -18964,8 +21284,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearColumn() {
+        
         column_ = getDefaultInstance().getColumn();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -18980,10 +21300,12 @@ java.lang.String defaultValue) {
        */
       public Builder setColumnBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         column_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -19011,9 +21333,11 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder setContent(com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         content_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -19026,7 +21350,7 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearContent() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         content_ = getDefaultInstance().getContent();
         onChanged();
         return this;
@@ -19064,18 +21388,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbField(input, extensionRegistry);
       }
     };
 
@@ -19146,6 +21459,61 @@ java.lang.String defaultValue) {
       return new DbRow();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbRow(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                fields_ = new java.util.ArrayList<com.iamteer.Wcf.DbField>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              fields_.add(
+                  input.readMessage(com.iamteer.Wcf.DbField.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          fields_ = java.util.Collections.unmodifiableList(fields_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbRow_descriptor;
@@ -19160,7 +21528,6 @@ java.lang.String defaultValue) {
     }
 
     public static final int FIELDS_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbField> fields_;
     /**
      * <code>repeated .wcf.DbField fields = 1;</code>
@@ -19217,7 +21584,7 @@ java.lang.String defaultValue) {
       for (int i = 0; i < fields_.size(); i++) {
         output.writeMessage(1, fields_.get(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -19230,7 +21597,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, fields_.get(i));
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -19247,7 +21614,7 @@ java.lang.String defaultValue) {
 
       if (!getFieldsList()
           .equals(other.getFieldsList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -19262,7 +21629,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + FIELDS_FIELD_NUMBER;
         hash = (53 * hash) + getFieldsList().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -19379,25 +21746,29 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbRow.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getFieldsFieldBuilder();
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         if (fieldsBuilder_ == null) {
           fields_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          fields_ = null;
           fieldsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -19424,13 +21795,7 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbRow buildPartial() {
         com.iamteer.Wcf.DbRow result = new com.iamteer.Wcf.DbRow(this);
-        buildPartialRepeatedFields(result);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbRow result) {
+        int from_bitField0_ = bitField0_;
         if (fieldsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             fields_ = java.util.Collections.unmodifiableList(fields_);
@@ -19440,12 +21805,42 @@ java.lang.String defaultValue) {
         } else {
           result.fields_ = fieldsBuilder_.build();
         }
+        onBuilt();
+        return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbRow result) {
-        int from_bitField0_ = bitField0_;
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbRow) {
@@ -19484,7 +21879,7 @@ java.lang.String defaultValue) {
             }
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -19499,43 +21894,17 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbRow parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                com.iamteer.Wcf.DbField m =
-                    input.readMessage(
-                        com.iamteer.Wcf.DbField.parser(),
-                        extensionRegistry);
-                if (fieldsBuilder_ == null) {
-                  ensureFieldsIsMutable();
-                  fields_.add(m);
-                } else {
-                  fieldsBuilder_.addMessage(m);
-                }
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbRow) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
@@ -19812,18 +22181,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbRow(input, extensionRegistry);
       }
     };
 
@@ -19894,6 +22252,61 @@ java.lang.String defaultValue) {
       return new DbRows();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DbRows(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                rows_ = new java.util.ArrayList<com.iamteer.Wcf.DbRow>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              rows_.add(
+                  input.readMessage(com.iamteer.Wcf.DbRow.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          rows_ = java.util.Collections.unmodifiableList(rows_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DbRows_descriptor;
@@ -19908,7 +22321,6 @@ java.lang.String defaultValue) {
     }
 
     public static final int ROWS_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
     private java.util.List<com.iamteer.Wcf.DbRow> rows_;
     /**
      * <code>repeated .wcf.DbRow rows = 1;</code>
@@ -19965,7 +22377,7 @@ java.lang.String defaultValue) {
       for (int i = 0; i < rows_.size(); i++) {
         output.writeMessage(1, rows_.get(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -19978,7 +22390,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, rows_.get(i));
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -19995,7 +22407,7 @@ java.lang.String defaultValue) {
 
       if (!getRowsList()
           .equals(other.getRowsList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -20010,7 +22422,7 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + ROWS_FIELD_NUMBER;
         hash = (53 * hash) + getRowsList().hashCode();
       }
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -20127,25 +22539,29 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DbRows.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getRowsFieldBuilder();
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         if (rowsBuilder_ == null) {
           rows_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          rows_ = null;
           rowsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -20172,13 +22588,7 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DbRows buildPartial() {
         com.iamteer.Wcf.DbRows result = new com.iamteer.Wcf.DbRows(this);
-        buildPartialRepeatedFields(result);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartialRepeatedFields(com.iamteer.Wcf.DbRows result) {
+        int from_bitField0_ = bitField0_;
         if (rowsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             rows_ = java.util.Collections.unmodifiableList(rows_);
@@ -20188,12 +22598,42 @@ java.lang.String defaultValue) {
         } else {
           result.rows_ = rowsBuilder_.build();
         }
+        onBuilt();
+        return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DbRows result) {
-        int from_bitField0_ = bitField0_;
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DbRows) {
@@ -20232,7 +22672,7 @@ java.lang.String defaultValue) {
             }
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -20247,43 +22687,17 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DbRows parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                com.iamteer.Wcf.DbRow m =
-                    input.readMessage(
-                        com.iamteer.Wcf.DbRow.parser(),
-                        extensionRegistry);
-                if (rowsBuilder_ == null) {
-                  ensureRowsIsMutable();
-                  rows_.add(m);
-                } else {
-                  rowsBuilder_.addMessage(m);
-                }
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DbRows) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
       private int bitField0_;
@@ -20560,18 +22974,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DbRows(input, extensionRegistry);
       }
     };
 
@@ -20669,6 +23072,65 @@ java.lang.String defaultValue) {
       return new Verification();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Verification(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              v3_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              v4_ = s;
+              break;
+            }
+            case 24: {
+
+              scene_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Verification_descriptor;
@@ -20683,8 +23145,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int V3_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object v3_ = "";
+    private volatile java.lang.Object v3_;
     /**
      * <pre>
      * 加密的用户名
@@ -20730,8 +23191,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int V4_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object v4_ = "";
+    private volatile java.lang.Object v4_;
     /**
      * <pre>
      * Ticket
@@ -20777,7 +23237,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int SCENE_FIELD_NUMBER = 3;
-    private int scene_ = 0;
+    private int scene_;
     /**
      * <pre>
      * 添加方式：17 名片，30 扫码
@@ -20814,7 +23274,7 @@ java.lang.String defaultValue) {
       if (scene_ != 0) {
         output.writeInt32(3, scene_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -20833,7 +23293,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, scene_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -20854,7 +23314,7 @@ java.lang.String defaultValue) {
           .equals(other.getV4())) return false;
       if (getScene()
           != other.getScene()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -20871,7 +23331,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getV4().hashCode();
       hash = (37 * hash) + SCENE_FIELD_NUMBER;
       hash = (53 * hash) + getScene();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -20988,21 +23448,28 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.Verification.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         v3_ = "";
+
         v4_ = "";
+
         scene_ = 0;
+
         return this;
       }
 
@@ -21029,24 +23496,45 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.Verification buildPartial() {
         com.iamteer.Wcf.Verification result = new com.iamteer.Wcf.Verification(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.v3_ = v3_;
+        result.v4_ = v4_;
+        result.scene_ = scene_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.Verification result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.v3_ = v3_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.v4_ = v4_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.scene_ = scene_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Verification) {
@@ -21061,18 +23549,16 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.Verification.getDefaultInstance()) return this;
         if (!other.getV3().isEmpty()) {
           v3_ = other.v3_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getV4().isEmpty()) {
           v4_ = other.v4_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.getScene() != 0) {
           setScene(other.getScene());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -21087,48 +23573,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.Verification parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                v3_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                v4_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 24: {
-                scene_ = input.readInt32();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 24
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.Verification) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object v3_ = "";
       /**
@@ -21183,9 +23640,11 @@ java.lang.String defaultValue) {
        */
       public Builder setV3(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         v3_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -21198,8 +23657,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearV3() {
+        
         v3_ = getDefaultInstance().getV3();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -21214,10 +23673,12 @@ java.lang.String defaultValue) {
        */
       public Builder setV3Bytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         v3_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -21275,9 +23736,11 @@ java.lang.String defaultValue) {
        */
       public Builder setV4(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         v4_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -21290,8 +23753,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearV4() {
+        
         v4_ = getDefaultInstance().getV4();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -21306,10 +23769,12 @@ java.lang.String defaultValue) {
        */
       public Builder setV4Bytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         v4_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -21337,9 +23802,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder setScene(int value) {
-
+        
         scene_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -21352,7 +23816,7 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearScene() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         scene_ = 0;
         onChanged();
         return this;
@@ -21390,18 +23854,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new Verification(input, extensionRegistry);
       }
     };
 
@@ -21489,6 +23942,60 @@ java.lang.String defaultValue) {
       return new MemberMgmt();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private MemberMgmt(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              roomid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              wxids_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_MemberMgmt_descriptor;
@@ -21503,8 +24010,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int ROOMID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object roomid_ = "";
+    private volatile java.lang.Object roomid_;
     /**
      * <pre>
      * 要加的群ID
@@ -21550,8 +24056,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int WXIDS_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object wxids_ = "";
+    private volatile java.lang.Object wxids_;
     /**
      * <pre>
      * 要加群的人列表，逗号分隔
@@ -21616,7 +24121,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxids_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, wxids_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -21631,7 +24136,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxids_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, wxids_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -21650,7 +24155,7 @@ java.lang.String defaultValue) {
           .equals(other.getRoomid())) return false;
       if (!getWxids()
           .equals(other.getWxids())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -21665,7 +24170,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getRoomid().hashCode();
       hash = (37 * hash) + WXIDS_FIELD_NUMBER;
       hash = (53 * hash) + getWxids().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -21782,20 +24287,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.MemberMgmt.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         roomid_ = "";
+
         wxids_ = "";
+
         return this;
       }
 
@@ -21822,21 +24333,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.MemberMgmt buildPartial() {
         com.iamteer.Wcf.MemberMgmt result = new com.iamteer.Wcf.MemberMgmt(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.roomid_ = roomid_;
+        result.wxids_ = wxids_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.MemberMgmt result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.roomid_ = roomid_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.wxids_ = wxids_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.MemberMgmt) {
@@ -21851,15 +24385,13 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.MemberMgmt.getDefaultInstance()) return this;
         if (!other.getRoomid().isEmpty()) {
           roomid_ = other.roomid_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getWxids().isEmpty()) {
           wxids_ = other.wxids_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -21874,43 +24406,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.MemberMgmt parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                roomid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                wxids_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.MemberMgmt) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object roomid_ = "";
       /**
@@ -21965,9 +24473,11 @@ java.lang.String defaultValue) {
        */
       public Builder setRoomid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         roomid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -21980,8 +24490,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearRoomid() {
+        
         roomid_ = getDefaultInstance().getRoomid();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -21996,10 +24506,12 @@ java.lang.String defaultValue) {
        */
       public Builder setRoomidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         roomid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -22057,9 +24569,11 @@ java.lang.String defaultValue) {
        */
       public Builder setWxids(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         wxids_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -22072,8 +24586,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearWxids() {
+        
         wxids_ = getDefaultInstance().getWxids();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -22088,10 +24602,12 @@ java.lang.String defaultValue) {
        */
       public Builder setWxidsBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         wxids_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -22128,18 +24644,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new MemberMgmt(input, extensionRegistry);
       }
     };
 
@@ -22269,6 +24774,72 @@ java.lang.String defaultValue) {
       return new UserInfo();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private UserInfo(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              wxid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              mobile_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              home_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_UserInfo_descriptor;
@@ -22283,8 +24854,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int WXID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object wxid_ = "";
+    private volatile java.lang.Object wxid_;
     /**
      * <pre>
      * 微信ID
@@ -22330,8 +24900,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object name_ = "";
+    private volatile java.lang.Object name_;
     /**
      * <pre>
      * 昵称
@@ -22377,8 +24946,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int MOBILE_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object mobile_ = "";
+    private volatile java.lang.Object mobile_;
     /**
      * <pre>
      * 手机号
@@ -22424,8 +24992,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int HOME_FIELD_NUMBER = 4;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object home_ = "";
+    private volatile java.lang.Object home_;
     /**
      * <pre>
      * 文件/图片等父路径
@@ -22496,7 +25063,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, home_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -22517,7 +25084,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, home_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -22540,7 +25107,7 @@ java.lang.String defaultValue) {
           .equals(other.getMobile())) return false;
       if (!getHome()
           .equals(other.getHome())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -22559,7 +25126,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getMobile().hashCode();
       hash = (37 * hash) + HOME_FIELD_NUMBER;
       hash = (53 * hash) + getHome().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -22676,22 +25243,30 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.UserInfo.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         wxid_ = "";
+
         name_ = "";
+
         mobile_ = "";
+
         home_ = "";
+
         return this;
       }
 
@@ -22718,27 +25293,46 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.UserInfo buildPartial() {
         com.iamteer.Wcf.UserInfo result = new com.iamteer.Wcf.UserInfo(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.wxid_ = wxid_;
+        result.name_ = name_;
+        result.mobile_ = mobile_;
+        result.home_ = home_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.UserInfo result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.wxid_ = wxid_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.name_ = name_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.mobile_ = mobile_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.home_ = home_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.UserInfo) {
@@ -22753,25 +25347,21 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.UserInfo.getDefaultInstance()) return this;
         if (!other.getWxid().isEmpty()) {
           wxid_ = other.wxid_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getMobile().isEmpty()) {
           mobile_ = other.mobile_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getHome().isEmpty()) {
           home_ = other.home_;
-          bitField0_ |= 0x00000008;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -22786,53 +25376,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.UserInfo parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                wxid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                name_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                mobile_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 34: {
-                home_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 34
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.UserInfo) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object wxid_ = "";
       /**
@@ -22887,9 +25443,11 @@ java.lang.String defaultValue) {
        */
       public Builder setWxid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -22902,8 +25460,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearWxid() {
+        
         wxid_ = getDefaultInstance().getWxid();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -22918,10 +25476,12 @@ java.lang.String defaultValue) {
        */
       public Builder setWxidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -22979,9 +25539,11 @@ java.lang.String defaultValue) {
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         name_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -22994,8 +25556,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearName() {
+        
         name_ = getDefaultInstance().getName();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -23010,10 +25572,12 @@ java.lang.String defaultValue) {
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         name_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -23071,9 +25635,11 @@ java.lang.String defaultValue) {
        */
       public Builder setMobile(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         mobile_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -23086,8 +25652,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearMobile() {
+        
         mobile_ = getDefaultInstance().getMobile();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -23102,10 +25668,12 @@ java.lang.String defaultValue) {
        */
       public Builder setMobileBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         mobile_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -23163,9 +25731,11 @@ java.lang.String defaultValue) {
        */
       public Builder setHome(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         home_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -23178,8 +25748,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearHome() {
+        
         home_ = getDefaultInstance().getHome();
-        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -23194,10 +25764,12 @@ java.lang.String defaultValue) {
        */
       public Builder setHomeBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         home_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -23234,18 +25806,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new UserInfo(input, extensionRegistry);
       }
     };
 
@@ -23333,6 +25894,60 @@ java.lang.String defaultValue) {
       return new DecPath();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DecPath(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              src_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              dst_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_DecPath_descriptor;
@@ -23347,8 +25962,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int SRC_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object src_ = "";
+    private volatile java.lang.Object src_;
     /**
      * <pre>
      * 源路径
@@ -23394,8 +26008,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int DST_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object dst_ = "";
+    private volatile java.lang.Object dst_;
     /**
      * <pre>
      * 目标路径
@@ -23460,7 +26073,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dst_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, dst_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -23475,7 +26088,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dst_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, dst_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -23494,7 +26107,7 @@ java.lang.String defaultValue) {
           .equals(other.getSrc())) return false;
       if (!getDst()
           .equals(other.getDst())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -23509,7 +26122,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getSrc().hashCode();
       hash = (37 * hash) + DST_FIELD_NUMBER;
       hash = (53 * hash) + getDst().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -23626,20 +26239,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.DecPath.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         src_ = "";
+
         dst_ = "";
+
         return this;
       }
 
@@ -23666,21 +26285,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.DecPath buildPartial() {
         com.iamteer.Wcf.DecPath result = new com.iamteer.Wcf.DecPath(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.src_ = src_;
+        result.dst_ = dst_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.DecPath result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.src_ = src_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.dst_ = dst_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.DecPath) {
@@ -23695,15 +26337,13 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.DecPath.getDefaultInstance()) return this;
         if (!other.getSrc().isEmpty()) {
           src_ = other.src_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getDst().isEmpty()) {
           dst_ = other.dst_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -23718,43 +26358,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.DecPath parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                src_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                dst_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.DecPath) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object src_ = "";
       /**
@@ -23809,9 +26425,11 @@ java.lang.String defaultValue) {
        */
       public Builder setSrc(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         src_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -23824,8 +26442,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearSrc() {
+        
         src_ = getDefaultInstance().getSrc();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -23840,10 +26458,12 @@ java.lang.String defaultValue) {
        */
       public Builder setSrcBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         src_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -23901,9 +26521,11 @@ java.lang.String defaultValue) {
        */
       public Builder setDst(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         dst_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -23916,8 +26538,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearDst() {
+        
         dst_ = getDefaultInstance().getDst();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -23932,10 +26554,12 @@ java.lang.String defaultValue) {
        */
       public Builder setDstBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         dst_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -23972,18 +26596,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new DecPath(input, extensionRegistry);
       }
     };
 
@@ -24092,6 +26705,66 @@ java.lang.String defaultValue) {
       return new Transfer();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Transfer(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              wxid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              tfid_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              taid_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_Transfer_descriptor;
@@ -24106,8 +26779,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int WXID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object wxid_ = "";
+    private volatile java.lang.Object wxid_;
     /**
      * <pre>
      * 转账人
@@ -24153,8 +26825,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int TFID_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object tfid_ = "";
+    private volatile java.lang.Object tfid_;
     /**
      * <pre>
      * 转账id transferid
@@ -24200,8 +26871,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int TAID_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object taid_ = "";
+    private volatile java.lang.Object taid_;
     /**
      * <pre>
      * Transaction id
@@ -24269,7 +26939,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(taid_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, taid_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -24287,7 +26957,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(taid_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, taid_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -24308,7 +26978,7 @@ java.lang.String defaultValue) {
           .equals(other.getTfid())) return false;
       if (!getTaid()
           .equals(other.getTaid())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -24325,7 +26995,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getTfid().hashCode();
       hash = (37 * hash) + TAID_FIELD_NUMBER;
       hash = (53 * hash) + getTaid().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -24442,21 +27112,28 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.Transfer.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         wxid_ = "";
+
         tfid_ = "";
+
         taid_ = "";
+
         return this;
       }
 
@@ -24483,24 +27160,45 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.Transfer buildPartial() {
         com.iamteer.Wcf.Transfer result = new com.iamteer.Wcf.Transfer(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.wxid_ = wxid_;
+        result.tfid_ = tfid_;
+        result.taid_ = taid_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.Transfer result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.wxid_ = wxid_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.tfid_ = tfid_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.taid_ = taid_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.Transfer) {
@@ -24515,20 +27213,17 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.Transfer.getDefaultInstance()) return this;
         if (!other.getWxid().isEmpty()) {
           wxid_ = other.wxid_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getTfid().isEmpty()) {
           tfid_ = other.tfid_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getTaid().isEmpty()) {
           taid_ = other.taid_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -24543,48 +27238,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.Transfer parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                wxid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                tfid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                taid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.Transfer) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object wxid_ = "";
       /**
@@ -24639,9 +27305,11 @@ java.lang.String defaultValue) {
        */
       public Builder setWxid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -24654,8 +27322,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearWxid() {
+        
         wxid_ = getDefaultInstance().getWxid();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -24670,10 +27338,12 @@ java.lang.String defaultValue) {
        */
       public Builder setWxidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         wxid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -24731,9 +27401,11 @@ java.lang.String defaultValue) {
        */
       public Builder setTfid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         tfid_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -24746,8 +27418,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearTfid() {
+        
         tfid_ = getDefaultInstance().getTfid();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -24762,10 +27434,12 @@ java.lang.String defaultValue) {
        */
       public Builder setTfidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         tfid_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -24823,9 +27497,11 @@ java.lang.String defaultValue) {
        */
       public Builder setTaid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         taid_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -24838,8 +27514,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearTaid() {
+        
         taid_ = getDefaultInstance().getTaid();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -24854,10 +27530,12 @@ java.lang.String defaultValue) {
        */
       public Builder setTaidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         taid_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -24894,18 +27572,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new Transfer(input, extensionRegistry);
       }
     };
 
@@ -24934,7 +27601,7 @@ java.lang.String defaultValue) {
      * 消息 id
      * </pre>
      *
-     * <code>uint64 id = 1;</code>
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
      * @return The id.
      */
     long getId();
@@ -25003,6 +27670,65 @@ java.lang.String defaultValue) {
       return new AttachMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private AttachMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readUInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              thumb_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              extra_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_AttachMsg_descriptor;
@@ -25017,13 +27743,13 @@ java.lang.String defaultValue) {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private long id_ = 0L;
+    private long id_;
     /**
      * <pre>
      * 消息 id
      * </pre>
      *
-     * <code>uint64 id = 1;</code>
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
      * @return The id.
      */
     @java.lang.Override
@@ -25032,8 +27758,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int THUMB_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object thumb_ = "";
+    private volatile java.lang.Object thumb_;
     /**
      * <pre>
      * 消息中的 thumb
@@ -25079,8 +27804,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int EXTRA_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object extra_ = "";
+    private volatile java.lang.Object extra_;
     /**
      * <pre>
      * 消息中的 extra
@@ -25148,7 +27872,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, extra_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -25167,7 +27891,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(extra_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, extra_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -25188,7 +27912,7 @@ java.lang.String defaultValue) {
           .equals(other.getThumb())) return false;
       if (!getExtra()
           .equals(other.getExtra())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -25206,7 +27930,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getThumb().hashCode();
       hash = (37 * hash) + EXTRA_FIELD_NUMBER;
       hash = (53 * hash) + getExtra().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -25323,21 +28047,28 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.AttachMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         id_ = 0L;
+
         thumb_ = "";
+
         extra_ = "";
+
         return this;
       }
 
@@ -25364,24 +28095,45 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.AttachMsg buildPartial() {
         com.iamteer.Wcf.AttachMsg result = new com.iamteer.Wcf.AttachMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.id_ = id_;
+        result.thumb_ = thumb_;
+        result.extra_ = extra_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.AttachMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.thumb_ = thumb_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.extra_ = extra_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.AttachMsg) {
@@ -25399,15 +28151,13 @@ java.lang.String defaultValue) {
         }
         if (!other.getThumb().isEmpty()) {
           thumb_ = other.thumb_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getExtra().isEmpty()) {
           extra_ = other.extra_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -25422,48 +28172,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.AttachMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                id_ = input.readUInt64();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                thumb_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                extra_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.AttachMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private long id_ ;
       /**
@@ -25471,7 +28192,7 @@ java.lang.String defaultValue) {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @return The id.
        */
       @java.lang.Override
@@ -25483,14 +28204,13 @@ java.lang.String defaultValue) {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
       public Builder setId(long value) {
-
+        
         id_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -25499,11 +28219,11 @@ java.lang.String defaultValue) {
        * 消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         id_ = 0L;
         onChanged();
         return this;
@@ -25562,9 +28282,11 @@ java.lang.String defaultValue) {
        */
       public Builder setThumb(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         thumb_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -25577,8 +28299,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearThumb() {
+        
         thumb_ = getDefaultInstance().getThumb();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -25593,10 +28315,12 @@ java.lang.String defaultValue) {
        */
       public Builder setThumbBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         thumb_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -25654,9 +28378,11 @@ java.lang.String defaultValue) {
        */
       public Builder setExtra(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         extra_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -25669,8 +28395,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearExtra() {
+        
         extra_ = getDefaultInstance().getExtra();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -25685,10 +28411,12 @@ java.lang.String defaultValue) {
        */
       public Builder setExtraBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         extra_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -25725,18 +28453,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new AttachMsg(input, extensionRegistry);
       }
     };
 
@@ -25765,7 +28482,7 @@ java.lang.String defaultValue) {
      * 语音消息 id
      * </pre>
      *
-     * <code>uint64 id = 1;</code>
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
      * @return The id.
      */
     long getId();
@@ -25813,6 +28530,59 @@ java.lang.String defaultValue) {
       return new AudioMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private AudioMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readUInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              dir_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_AudioMsg_descriptor;
@@ -25827,13 +28597,13 @@ java.lang.String defaultValue) {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private long id_ = 0L;
+    private long id_;
     /**
      * <pre>
      * 语音消息 id
      * </pre>
      *
-     * <code>uint64 id = 1;</code>
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
      * @return The id.
      */
     @java.lang.Override
@@ -25842,8 +28612,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int DIR_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object dir_ = "";
+    private volatile java.lang.Object dir_;
     /**
      * <pre>
      * 存放目录
@@ -25908,7 +28677,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dir_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, dir_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -25924,7 +28693,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(dir_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, dir_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -25943,7 +28712,7 @@ java.lang.String defaultValue) {
           != other.getId()) return false;
       if (!getDir()
           .equals(other.getDir())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -25959,7 +28728,7 @@ java.lang.String defaultValue) {
           getId());
       hash = (37 * hash) + DIR_FIELD_NUMBER;
       hash = (53 * hash) + getDir().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -26076,20 +28845,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.AudioMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         id_ = 0L;
+
         dir_ = "";
+
         return this;
       }
 
@@ -26116,21 +28891,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.AudioMsg buildPartial() {
         com.iamteer.Wcf.AudioMsg result = new com.iamteer.Wcf.AudioMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.id_ = id_;
+        result.dir_ = dir_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.AudioMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.dir_ = dir_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.AudioMsg) {
@@ -26148,10 +28946,9 @@ java.lang.String defaultValue) {
         }
         if (!other.getDir().isEmpty()) {
           dir_ = other.dir_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -26166,43 +28963,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.AudioMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                id_ = input.readUInt64();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                dir_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.AudioMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private long id_ ;
       /**
@@ -26210,7 +28983,7 @@ java.lang.String defaultValue) {
        * 语音消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @return The id.
        */
       @java.lang.Override
@@ -26222,14 +28995,13 @@ java.lang.String defaultValue) {
        * 语音消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
       public Builder setId(long value) {
-
+        
         id_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -26238,11 +29010,11 @@ java.lang.String defaultValue) {
        * 语音消息 id
        * </pre>
        *
-       * <code>uint64 id = 1;</code>
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         id_ = 0L;
         onChanged();
         return this;
@@ -26301,9 +29073,11 @@ java.lang.String defaultValue) {
        */
       public Builder setDir(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         dir_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -26316,8 +29090,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearDir() {
+        
         dir_ = getDefaultInstance().getDir();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -26332,10 +29106,12 @@ java.lang.String defaultValue) {
        */
       public Builder setDirBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         dir_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -26372,18 +29148,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new AudioMsg(input, extensionRegistry);
       }
     };
 
@@ -26576,6 +29341,90 @@ java.lang.String defaultValue) {
       return new RichText();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RichText(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              account_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              title_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              digest_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              url_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              thumburl_ = s;
+              break;
+            }
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              receiver_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_RichText_descriptor;
@@ -26590,8 +29439,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object name_ = "";
+    private volatile java.lang.Object name_;
     /**
      * <pre>
      * 显示名字
@@ -26637,8 +29485,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int ACCOUNT_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object account_ = "";
+    private volatile java.lang.Object account_;
     /**
      * <pre>
      * 公众号 id
@@ -26684,8 +29531,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int TITLE_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object title_ = "";
+    private volatile java.lang.Object title_;
     /**
      * <pre>
      * 标题
@@ -26731,8 +29577,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int DIGEST_FIELD_NUMBER = 4;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object digest_ = "";
+    private volatile java.lang.Object digest_;
     /**
      * <pre>
      * 摘要
@@ -26778,8 +29623,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int URL_FIELD_NUMBER = 5;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object url_ = "";
+    private volatile java.lang.Object url_;
     /**
      * <pre>
      * 链接
@@ -26825,8 +29669,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int THUMBURL_FIELD_NUMBER = 6;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object thumburl_ = "";
+    private volatile java.lang.Object thumburl_;
     /**
      * <pre>
      * 缩略图
@@ -26872,8 +29715,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int RECEIVER_FIELD_NUMBER = 7;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object receiver_ = "";
+    private volatile java.lang.Object receiver_;
     /**
      * <pre>
      * 接收人
@@ -26953,7 +29795,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, receiver_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -26983,7 +29825,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, receiver_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -27012,7 +29854,7 @@ java.lang.String defaultValue) {
           .equals(other.getThumburl())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -27037,7 +29879,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getThumburl().hashCode();
       hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
       hash = (53 * hash) + getReceiver().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -27154,25 +29996,36 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.RichText.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         name_ = "";
+
         account_ = "";
+
         title_ = "";
+
         digest_ = "";
+
         url_ = "";
+
         thumburl_ = "";
+
         receiver_ = "";
+
         return this;
       }
 
@@ -27199,36 +30052,49 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.RichText buildPartial() {
         com.iamteer.Wcf.RichText result = new com.iamteer.Wcf.RichText(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.name_ = name_;
+        result.account_ = account_;
+        result.title_ = title_;
+        result.digest_ = digest_;
+        result.url_ = url_;
+        result.thumburl_ = thumburl_;
+        result.receiver_ = receiver_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.RichText result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.name_ = name_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.account_ = account_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.title_ = title_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.digest_ = digest_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.url_ = url_;
-        }
-        if (((from_bitField0_ & 0x00000020) != 0)) {
-          result.thumburl_ = thumburl_;
-        }
-        if (((from_bitField0_ & 0x00000040) != 0)) {
-          result.receiver_ = receiver_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.RichText) {
@@ -27243,40 +30109,33 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.RichText.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getAccount().isEmpty()) {
           account_ = other.account_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getTitle().isEmpty()) {
           title_ = other.title_;
-          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getDigest().isEmpty()) {
           digest_ = other.digest_;
-          bitField0_ |= 0x00000008;
           onChanged();
         }
         if (!other.getUrl().isEmpty()) {
           url_ = other.url_;
-          bitField0_ |= 0x00000010;
           onChanged();
         }
         if (!other.getThumburl().isEmpty()) {
           thumburl_ = other.thumburl_;
-          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (!other.getReceiver().isEmpty()) {
           receiver_ = other.receiver_;
-          bitField0_ |= 0x00000040;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -27291,68 +30150,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.RichText parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                name_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                account_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              case 26: {
-                title_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 34: {
-                digest_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 34
-              case 42: {
-                url_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 42
-              case 50: {
-                thumburl_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000020;
-                break;
-              } // case 50
-              case 58: {
-                receiver_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000040;
-                break;
-              } // case 58
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.RichText) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object name_ = "";
       /**
@@ -27407,9 +30217,11 @@ java.lang.String defaultValue) {
        */
       public Builder setName(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         name_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -27422,8 +30234,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearName() {
+        
         name_ = getDefaultInstance().getName();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -27438,10 +30250,12 @@ java.lang.String defaultValue) {
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         name_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -27499,9 +30313,11 @@ java.lang.String defaultValue) {
        */
       public Builder setAccount(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         account_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -27514,8 +30330,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearAccount() {
+        
         account_ = getDefaultInstance().getAccount();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -27530,10 +30346,12 @@ java.lang.String defaultValue) {
        */
       public Builder setAccountBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         account_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -27591,9 +30409,11 @@ java.lang.String defaultValue) {
        */
       public Builder setTitle(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         title_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -27606,8 +30426,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearTitle() {
+        
         title_ = getDefaultInstance().getTitle();
-        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -27622,10 +30442,12 @@ java.lang.String defaultValue) {
        */
       public Builder setTitleBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         title_ = value;
-        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -27683,9 +30505,11 @@ java.lang.String defaultValue) {
        */
       public Builder setDigest(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         digest_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -27698,8 +30522,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearDigest() {
+        
         digest_ = getDefaultInstance().getDigest();
-        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -27714,10 +30538,12 @@ java.lang.String defaultValue) {
        */
       public Builder setDigestBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         digest_ = value;
-        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -27775,9 +30601,11 @@ java.lang.String defaultValue) {
        */
       public Builder setUrl(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         url_ = value;
-        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -27790,8 +30618,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearUrl() {
+        
         url_ = getDefaultInstance().getUrl();
-        bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
         return this;
       }
@@ -27806,10 +30634,12 @@ java.lang.String defaultValue) {
        */
       public Builder setUrlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         url_ = value;
-        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -27867,9 +30697,11 @@ java.lang.String defaultValue) {
        */
       public Builder setThumburl(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         thumburl_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -27882,8 +30714,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearThumburl() {
+        
         thumburl_ = getDefaultInstance().getThumburl();
-        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -27898,10 +30730,12 @@ java.lang.String defaultValue) {
        */
       public Builder setThumburlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         thumburl_ = value;
-        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -27959,9 +30793,11 @@ java.lang.String defaultValue) {
        */
       public Builder setReceiver(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         receiver_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -27974,8 +30810,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearReceiver() {
+        
         receiver_ = getDefaultInstance().getReceiver();
-        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
         return this;
       }
@@ -27990,10 +30826,12 @@ java.lang.String defaultValue) {
        */
       public Builder setReceiverBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         receiver_ = value;
-        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -28030,18 +30868,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new RichText(input, extensionRegistry);
       }
     };
 
@@ -28129,6 +30956,60 @@ java.lang.String defaultValue) {
       return new PatMsg();
     }
 
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private PatMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              roomid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              wxid_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return com.iamteer.Wcf.internal_static_wcf_PatMsg_descriptor;
@@ -28143,8 +31024,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int ROOMID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object roomid_ = "";
+    private volatile java.lang.Object roomid_;
     /**
      * <pre>
      * 群 id
@@ -28190,8 +31070,7 @@ java.lang.String defaultValue) {
     }
 
     public static final int WXID_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object wxid_ = "";
+    private volatile java.lang.Object wxid_;
     /**
      * <pre>
      * wxid
@@ -28256,7 +31135,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, wxid_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
     @java.lang.Override
@@ -28271,7 +31150,7 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, wxid_);
       }
-      size += getUnknownFields().getSerializedSize();
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -28290,7 +31169,7 @@ java.lang.String defaultValue) {
           .equals(other.getRoomid())) return false;
       if (!getWxid()
           .equals(other.getWxid())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
 
@@ -28305,7 +31184,7 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getRoomid().hashCode();
       hash = (37 * hash) + WXID_FIELD_NUMBER;
       hash = (53 * hash) + getWxid().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -28422,20 +31301,26 @@ java.lang.String defaultValue) {
 
       // Construct using com.iamteer.Wcf.PatMsg.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
         roomid_ = "";
+
         wxid_ = "";
+
         return this;
       }
 
@@ -28462,21 +31347,44 @@ java.lang.String defaultValue) {
       @java.lang.Override
       public com.iamteer.Wcf.PatMsg buildPartial() {
         com.iamteer.Wcf.PatMsg result = new com.iamteer.Wcf.PatMsg(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
+        result.roomid_ = roomid_;
+        result.wxid_ = wxid_;
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(com.iamteer.Wcf.PatMsg result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.roomid_ = roomid_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.wxid_ = wxid_;
-        }
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
       }
-
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.iamteer.Wcf.PatMsg) {
@@ -28491,15 +31399,13 @@ java.lang.String defaultValue) {
         if (other == com.iamteer.Wcf.PatMsg.getDefaultInstance()) return this;
         if (!other.getRoomid().isEmpty()) {
           roomid_ = other.roomid_;
-          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getWxid().isEmpty()) {
           wxid_ = other.wxid_;
-          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
@@ -28514,43 +31420,19 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
+        com.iamteer.Wcf.PatMsg parsedMessage = null;
         try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                roomid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                wxid_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.PatMsg) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          onChanged();
-        } // finally
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object roomid_ = "";
       /**
@@ -28605,9 +31487,11 @@ java.lang.String defaultValue) {
        */
       public Builder setRoomid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         roomid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -28620,8 +31504,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearRoomid() {
+        
         roomid_ = getDefaultInstance().getRoomid();
-        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -28636,10 +31520,12 @@ java.lang.String defaultValue) {
        */
       public Builder setRoomidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         roomid_ = value;
-        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -28697,9 +31583,11 @@ java.lang.String defaultValue) {
        */
       public Builder setWxid(
           java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         wxid_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -28712,8 +31600,8 @@ java.lang.String defaultValue) {
        * @return This builder for chaining.
        */
       public Builder clearWxid() {
+        
         wxid_ = getDefaultInstance().getWxid();
-        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -28728,10 +31616,12 @@ java.lang.String defaultValue) {
        */
       public Builder setWxidBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
         wxid_ = value;
-        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -28768,18 +31658,7 @@ java.lang.String defaultValue) {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
+        return new PatMsg(input, extensionRegistry);
       }
     };
 
@@ -28794,6 +31673,1395 @@ java.lang.String defaultValue) {
 
     @java.lang.Override
     public com.iamteer.Wcf.PatMsg getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface OcrMsgOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.OcrMsg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 状态
+     * </pre>
+     *
+     * <code>int32 status = 1;</code>
+     * @return The status.
+     */
+    int getStatus();
+
+    /**
+     * <pre>
+     * 结果
+     * </pre>
+     *
+     * <code>string result = 2;</code>
+     * @return The result.
+     */
+    java.lang.String getResult();
+    /**
+     * <pre>
+     * 结果
+     * </pre>
+     *
+     * <code>string result = 2;</code>
+     * @return The bytes for result.
+     */
+    com.google.protobuf.ByteString
+        getResultBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.OcrMsg}
+   */
+  public static final class OcrMsg extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.OcrMsg)
+      OcrMsgOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use OcrMsg.newBuilder() to construct.
+    private OcrMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private OcrMsg() {
+      result_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new OcrMsg();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private OcrMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              status_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              result_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_OcrMsg_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_OcrMsg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.OcrMsg.class, com.iamteer.Wcf.OcrMsg.Builder.class);
+    }
+
+    public static final int STATUS_FIELD_NUMBER = 1;
+    private int status_;
+    /**
+     * <pre>
+     * 状态
+     * </pre>
+     *
+     * <code>int32 status = 1;</code>
+     * @return The status.
+     */
+    @java.lang.Override
+    public int getStatus() {
+      return status_;
+    }
+
+    public static final int RESULT_FIELD_NUMBER = 2;
+    private volatile java.lang.Object result_;
+    /**
+     * <pre>
+     * 结果
+     * </pre>
+     *
+     * <code>string result = 2;</code>
+     * @return The result.
+     */
+    @java.lang.Override
+    public java.lang.String getResult() {
+      java.lang.Object ref = result_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        result_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 结果
+     * </pre>
+     *
+     * <code>string result = 2;</code>
+     * @return The bytes for result.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getResultBytes() {
+      java.lang.Object ref = result_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        result_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (status_ != 0) {
+        output.writeInt32(1, status_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(result_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, result_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (status_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, status_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(result_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, result_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.OcrMsg)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.OcrMsg other = (com.iamteer.Wcf.OcrMsg) obj;
+
+      if (getStatus()
+          != other.getStatus()) return false;
+      if (!getResult()
+          .equals(other.getResult())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + STATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getStatus();
+      hash = (37 * hash) + RESULT_FIELD_NUMBER;
+      hash = (53 * hash) + getResult().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.OcrMsg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.OcrMsg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.OcrMsg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.OcrMsg)
+        com.iamteer.Wcf.OcrMsgOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_OcrMsg_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_OcrMsg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.OcrMsg.class, com.iamteer.Wcf.OcrMsg.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.OcrMsg.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        status_ = 0;
+
+        result_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_OcrMsg_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.OcrMsg getDefaultInstanceForType() {
+        return com.iamteer.Wcf.OcrMsg.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.OcrMsg build() {
+        com.iamteer.Wcf.OcrMsg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.OcrMsg buildPartial() {
+        com.iamteer.Wcf.OcrMsg result = new com.iamteer.Wcf.OcrMsg(this);
+        result.status_ = status_;
+        result.result_ = result_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.OcrMsg) {
+          return mergeFrom((com.iamteer.Wcf.OcrMsg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.OcrMsg other) {
+        if (other == com.iamteer.Wcf.OcrMsg.getDefaultInstance()) return this;
+        if (other.getStatus() != 0) {
+          setStatus(other.getStatus());
+        }
+        if (!other.getResult().isEmpty()) {
+          result_ = other.result_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.iamteer.Wcf.OcrMsg parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.OcrMsg) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int status_ ;
+      /**
+       * <pre>
+       * 状态
+       * </pre>
+       *
+       * <code>int32 status = 1;</code>
+       * @return The status.
+       */
+      @java.lang.Override
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <pre>
+       * 状态
+       * </pre>
+       *
+       * <code>int32 status = 1;</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(int value) {
+        
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 状态
+       * </pre>
+       *
+       * <code>int32 status = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object result_ = "";
+      /**
+       * <pre>
+       * 结果
+       * </pre>
+       *
+       * <code>string result = 2;</code>
+       * @return The result.
+       */
+      public java.lang.String getResult() {
+        java.lang.Object ref = result_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          result_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 结果
+       * </pre>
+       *
+       * <code>string result = 2;</code>
+       * @return The bytes for result.
+       */
+      public com.google.protobuf.ByteString
+          getResultBytes() {
+        java.lang.Object ref = result_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          result_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 结果
+       * </pre>
+       *
+       * <code>string result = 2;</code>
+       * @param value The result to set.
+       * @return This builder for chaining.
+       */
+      public Builder setResult(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        result_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 结果
+       * </pre>
+       *
+       * <code>string result = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearResult() {
+        
+        result_ = getDefaultInstance().getResult();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 结果
+       * </pre>
+       *
+       * <code>string result = 2;</code>
+       * @param value The bytes for result to set.
+       * @return This builder for chaining.
+       */
+      public Builder setResultBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        result_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.OcrMsg)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.OcrMsg)
+    private static final com.iamteer.Wcf.OcrMsg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.OcrMsg();
+    }
+
+    public static com.iamteer.Wcf.OcrMsg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<OcrMsg>
+        PARSER = new com.google.protobuf.AbstractParser<OcrMsg>() {
+      @java.lang.Override
+      public OcrMsg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new OcrMsg(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<OcrMsg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<OcrMsg> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.OcrMsg getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ForwardMsgOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:wcf.ForwardMsg)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 待转发消息 ID
+     * </pre>
+     *
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <pre>
+     * 转发接收目标，群为 roomId，个人为 wxid
+     * </pre>
+     *
+     * <code>string receiver = 2;</code>
+     * @return The receiver.
+     */
+    java.lang.String getReceiver();
+    /**
+     * <pre>
+     * 转发接收目标，群为 roomId，个人为 wxid
+     * </pre>
+     *
+     * <code>string receiver = 2;</code>
+     * @return The bytes for receiver.
+     */
+    com.google.protobuf.ByteString
+        getReceiverBytes();
+  }
+  /**
+   * Protobuf type {@code wcf.ForwardMsg}
+   */
+  public static final class ForwardMsg extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:wcf.ForwardMsg)
+      ForwardMsgOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ForwardMsg.newBuilder() to construct.
+    private ForwardMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ForwardMsg() {
+      receiver_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ForwardMsg();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ForwardMsg(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readUInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              receiver_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.iamteer.Wcf.internal_static_wcf_ForwardMsg_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.iamteer.Wcf.internal_static_wcf_ForwardMsg_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.iamteer.Wcf.ForwardMsg.class, com.iamteer.Wcf.ForwardMsg.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <pre>
+     * 待转发消息 ID
+     * </pre>
+     *
+     * <code>uint64 id = 1 [jstype = JS_STRING];</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public long getId() {
+      return id_;
+    }
+
+    public static final int RECEIVER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object receiver_;
+    /**
+     * <pre>
+     * 转发接收目标，群为 roomId，个人为 wxid
+     * </pre>
+     *
+     * <code>string receiver = 2;</code>
+     * @return The receiver.
+     */
+    @java.lang.Override
+    public java.lang.String getReceiver() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        receiver_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 转发接收目标，群为 roomId，个人为 wxid
+     * </pre>
+     *
+     * <code>string receiver = 2;</code>
+     * @return The bytes for receiver.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReceiverBytes() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        receiver_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeUInt64(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, receiver_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, receiver_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.iamteer.Wcf.ForwardMsg)) {
+        return super.equals(obj);
+      }
+      com.iamteer.Wcf.ForwardMsg other = (com.iamteer.Wcf.ForwardMsg) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getReceiver()
+          .equals(other.getReceiver())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
+      hash = (53 * hash) + getReceiver().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.iamteer.Wcf.ForwardMsg parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.iamteer.Wcf.ForwardMsg prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code wcf.ForwardMsg}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:wcf.ForwardMsg)
+        com.iamteer.Wcf.ForwardMsgOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.iamteer.Wcf.internal_static_wcf_ForwardMsg_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.iamteer.Wcf.internal_static_wcf_ForwardMsg_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.iamteer.Wcf.ForwardMsg.class, com.iamteer.Wcf.ForwardMsg.Builder.class);
+      }
+
+      // Construct using com.iamteer.Wcf.ForwardMsg.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        receiver_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.iamteer.Wcf.internal_static_wcf_ForwardMsg_descriptor;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.ForwardMsg getDefaultInstanceForType() {
+        return com.iamteer.Wcf.ForwardMsg.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.ForwardMsg build() {
+        com.iamteer.Wcf.ForwardMsg result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.iamteer.Wcf.ForwardMsg buildPartial() {
+        com.iamteer.Wcf.ForwardMsg result = new com.iamteer.Wcf.ForwardMsg(this);
+        result.id_ = id_;
+        result.receiver_ = receiver_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.iamteer.Wcf.ForwardMsg) {
+          return mergeFrom((com.iamteer.Wcf.ForwardMsg)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.iamteer.Wcf.ForwardMsg other) {
+        if (other == com.iamteer.Wcf.ForwardMsg.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getReceiver().isEmpty()) {
+          receiver_ = other.receiver_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.iamteer.Wcf.ForwardMsg parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.iamteer.Wcf.ForwardMsg) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <pre>
+       * 待转发消息 ID
+       * </pre>
+       *
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <pre>
+       * 待转发消息 ID
+       * </pre>
+       *
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 待转发消息 ID
+       * </pre>
+       *
+       * <code>uint64 id = 1 [jstype = JS_STRING];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object receiver_ = "";
+      /**
+       * <pre>
+       * 转发接收目标，群为 roomId，个人为 wxid
+       * </pre>
+       *
+       * <code>string receiver = 2;</code>
+       * @return The receiver.
+       */
+      public java.lang.String getReceiver() {
+        java.lang.Object ref = receiver_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          receiver_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转发接收目标，群为 roomId，个人为 wxid
+       * </pre>
+       *
+       * <code>string receiver = 2;</code>
+       * @return The bytes for receiver.
+       */
+      public com.google.protobuf.ByteString
+          getReceiverBytes() {
+        java.lang.Object ref = receiver_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          receiver_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 转发接收目标，群为 roomId，个人为 wxid
+       * </pre>
+       *
+       * <code>string receiver = 2;</code>
+       * @param value The receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiver(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        receiver_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发接收目标，群为 roomId，个人为 wxid
+       * </pre>
+       *
+       * <code>string receiver = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReceiver() {
+        
+        receiver_ = getDefaultInstance().getReceiver();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 转发接收目标，群为 roomId，个人为 wxid
+       * </pre>
+       *
+       * <code>string receiver = 2;</code>
+       * @param value The bytes for receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiverBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        receiver_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:wcf.ForwardMsg)
+    }
+
+    // @@protoc_insertion_point(class_scope:wcf.ForwardMsg)
+    private static final com.iamteer.Wcf.ForwardMsg DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.iamteer.Wcf.ForwardMsg();
+    }
+
+    public static com.iamteer.Wcf.ForwardMsg getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ForwardMsg>
+        PARSER = new com.google.protobuf.AbstractParser<ForwardMsg>() {
+      @java.lang.Override
+      public ForwardMsg parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ForwardMsg(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ForwardMsg> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ForwardMsg> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.iamteer.Wcf.ForwardMsg getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -28934,6 +33202,16 @@ java.lang.String defaultValue) {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_wcf_PatMsg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_OcrMsg_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_OcrMsg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_wcf_ForwardMsg_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_wcf_ForwardMsg_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -28943,7 +33221,7 @@ java.lang.String defaultValue) {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\twcf.proto\022\003wcf\"\334\003\n\007Request\022\034\n\004func\030\001 \001" +
+      "\n\twcf.proto\022\003wcf\"\377\003\n\007Request\022\034\n\004func\030\001 \001" +
       "(\0162\016.wcf.Functions\022\033\n\005empty\030\002 \001(\0132\n.wcf." +
       "EmptyH\000\022\r\n\003str\030\003 \001(\tH\000\022\033\n\003txt\030\004 \001(\0132\014.wc" +
       "f.TextMsgH\000\022\034\n\004file\030\005 \001(\0132\014.wcf.PathMsgH" +
@@ -28951,72 +33229,78 @@ java.lang.String defaultValue) {
       "\001(\0132\021.wcf.VerificationH\000\022\034\n\001m\030\010 \001(\0132\017.wc" +
       "f.MemberMgmtH\000\022\032\n\003xml\030\t \001(\0132\013.wcf.XmlMsg" +
       "H\000\022\033\n\003dec\030\n \001(\0132\014.wcf.DecPathH\000\022\033\n\002tf\030\013 " +
-      "\001(\0132\r.wcf.TransferH\000\022\016\n\004ui64\030\014 \001(\004H\000\022\016\n\004" +
-      "flag\030\r \001(\010H\000\022\035\n\003att\030\016 \001(\0132\016.wcf.AttachMs" +
-      "gH\000\022\033\n\002am\030\017 \001(\0132\r.wcf.AudioMsgH\000\022\033\n\002rt\030\020" +
-      " \001(\0132\r.wcf.RichTextH\000\022\031\n\002pm\030\021 \001(\0132\013.wcf." +
-      "PatMsgH\000B\005\n\003msg\"\253\002\n\010Response\022\034\n\004func\030\001 \001" +
-      "(\0162\016.wcf.Functions\022\020\n\006status\030\002 \001(\005H\000\022\r\n\003" +
-      "str\030\003 \001(\tH\000\022\033\n\005wxmsg\030\004 \001(\0132\n.wcf.WxMsgH\000" +
-      "\022\036\n\005types\030\005 \001(\0132\r.wcf.MsgTypesH\000\022$\n\010cont" +
-      "acts\030\006 \001(\0132\020.wcf.RpcContactsH\000\022\033\n\003dbs\030\007 " +
-      "\001(\0132\014.wcf.DbNamesH\000\022\037\n\006tables\030\010 \001(\0132\r.wc" +
-      "f.DbTablesH\000\022\033\n\004rows\030\t \001(\0132\013.wcf.DbRowsH" +
-      "\000\022\033\n\002ui\030\n \001(\0132\r.wcf.UserInfoH\000B\005\n\003msg\"\007\n" +
-      "\005Empty\"\272\001\n\005WxMsg\022\017\n\007is_self\030\001 \001(\010\022\020\n\010is_" +
-      "group\030\002 \001(\010\022\n\n\002id\030\003 \001(\004\022\014\n\004type\030\004 \001(\r\022\n\n" +
-      "\002ts\030\005 \001(\r\022\016\n\006roomid\030\006 \001(\t\022\017\n\007content\030\007 \001" +
-      "(\t\022\016\n\006sender\030\010 \001(\t\022\014\n\004sign\030\t \001(\t\022\r\n\005thum" +
-      "b\030\n \001(\t\022\r\n\005extra\030\013 \001(\t\022\013\n\003xml\030\014 \001(\t\"7\n\007T" +
-      "extMsg\022\013\n\003msg\030\001 \001(\t\022\020\n\010receiver\030\002 \001(\t\022\r\n" +
-      "\005aters\030\003 \001(\t\")\n\007PathMsg\022\014\n\004path\030\001 \001(\t\022\020\n" +
-      "\010receiver\030\002 \001(\t\"G\n\006XmlMsg\022\020\n\010receiver\030\001 " +
-      "\001(\t\022\017\n\007content\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004ty" +
-      "pe\030\004 \001(\005\"a\n\010MsgTypes\022\'\n\005types\030\001 \003(\0132\030.wc" +
-      "f.MsgTypes.TypesEntry\032,\n\nTypesEntry\022\013\n\003k" +
-      "ey\030\001 \001(\005\022\r\n\005value\030\002 \001(\t:\0028\001\"\207\001\n\nRpcConta" +
-      "ct\022\014\n\004wxid\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\016\n\006remark" +
-      "\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\017\n\007country\030\005 \001(\t\022\020\n" +
-      "\010province\030\006 \001(\t\022\014\n\004city\030\007 \001(\t\022\016\n\006gender\030" +
-      "\010 \001(\005\"0\n\013RpcContacts\022!\n\010contacts\030\001 \003(\0132\017" +
-      ".wcf.RpcContact\"\030\n\007DbNames\022\r\n\005names\030\001 \003(" +
-      "\t\"$\n\007DbTable\022\014\n\004name\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"" +
-      "(\n\010DbTables\022\034\n\006tables\030\001 \003(\0132\014.wcf.DbTabl" +
-      "e\"\"\n\007DbQuery\022\n\n\002db\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"8\n" +
-      "\007DbField\022\014\n\004type\030\001 \001(\005\022\016\n\006column\030\002 \001(\t\022\017" +
-      "\n\007content\030\003 \001(\014\"%\n\005DbRow\022\034\n\006fields\030\001 \003(\013" +
-      "2\014.wcf.DbField\"\"\n\006DbRows\022\030\n\004rows\030\001 \003(\0132\n" +
-      ".wcf.DbRow\"5\n\014Verification\022\n\n\002v3\030\001 \001(\t\022\n" +
-      "\n\002v4\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\"+\n\nMemberMgmt\022" +
-      "\016\n\006roomid\030\001 \001(\t\022\r\n\005wxids\030\002 \001(\t\"D\n\010UserIn" +
-      "fo\022\014\n\004wxid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\016\n\006mobile" +
-      "\030\003 \001(\t\022\014\n\004home\030\004 \001(\t\"#\n\007DecPath\022\013\n\003src\030\001" +
-      " \001(\t\022\013\n\003dst\030\002 \001(\t\"4\n\010Transfer\022\014\n\004wxid\030\001 " +
-      "\001(\t\022\014\n\004tfid\030\002 \001(\t\022\014\n\004taid\030\003 \001(\t\"5\n\tAttac" +
-      "hMsg\022\n\n\002id\030\001 \001(\004\022\r\n\005thumb\030\002 \001(\t\022\r\n\005extra" +
-      "\030\003 \001(\t\"#\n\010AudioMsg\022\n\n\002id\030\001 \001(\004\022\013\n\003dir\030\002 " +
-      "\001(\t\"y\n\010RichText\022\014\n\004name\030\001 \001(\t\022\017\n\007account" +
-      "\030\002 \001(\t\022\r\n\005title\030\003 \001(\t\022\016\n\006digest\030\004 \001(\t\022\013\n" +
-      "\003url\030\005 \001(\t\022\020\n\010thumburl\030\006 \001(\t\022\020\n\010receiver" +
-      "\030\007 \001(\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001(\t\022\014\n\004wxid" +
-      "\030\002 \001(\t*\260\005\n\tFunctions\022\021\n\rFUNC_RESERVED\020\000\022" +
-      "\021\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF_WXID" +
-      "\020\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_GET_C" +
-      "ONTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n\022FUNC" +
-      "_GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_INFO\020\025" +
-      "\022\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SEND_TX" +
-      "T\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND_FILE" +
-      "\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_EMOTI" +
-      "ON\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUNC_SEN" +
-      "D_PAT_MSG\020&\022\030\n\024FUNC_ENABLE_RECV_TXT\0200\022\031\n" +
-      "\025FUNC_DISABLE_RECV_TXT\020@\022\026\n\022FUNC_EXEC_DB" +
-      "_QUERY\020P\022\026\n\022FUNC_ACCEPT_FRIEND\020Q\022\026\n\022FUNC" +
-      "_RECV_TRANSFER\020R\022\024\n\020FUNC_REFRESH_PYQ\020S\022\030" +
-      "\n\024FUNC_DOWNLOAD_ATTACH\020T\022\031\n\025FUNC_GET_CON" +
-      "TACT_INFO\020U\022\023\n\017FUNC_REVOKE_MSG\020V\022\026\n\022FUNC" +
-      "_DECRYPT_IMAGE\020`\022\031\n\025FUNC_ADD_ROOM_MEMBER" +
-      "S\020p\022\031\n\025FUNC_DEL_ROOM_MEMBERS\020q\022\031\n\025FUNC_I" +
-      "NV_ROOM_MEMBERS\020rB\r\n\013com.iamteerb\006proto3"
+      "\001(\0132\r.wcf.TransferH\000\022\022\n\004ui64\030\014 \001(\004B\0020\001H\000" +
+      "\022\016\n\004flag\030\r \001(\010H\000\022\035\n\003att\030\016 \001(\0132\016.wcf.Atta" +
+      "chMsgH\000\022\033\n\002am\030\017 \001(\0132\r.wcf.AudioMsgH\000\022\033\n\002" +
+      "rt\030\020 \001(\0132\r.wcf.RichTextH\000\022\031\n\002pm\030\021 \001(\0132\013." +
+      "wcf.PatMsgH\000\022\035\n\002fm\030\022 \001(\0132\017.wcf.ForwardMs" +
+      "gH\000B\005\n\003msg\"\307\002\n\010Response\022\034\n\004func\030\001 \001(\0162\016." +
+      "wcf.Functions\022\020\n\006status\030\002 \001(\005H\000\022\r\n\003str\030\003" +
+      " \001(\tH\000\022\033\n\005wxmsg\030\004 \001(\0132\n.wcf.WxMsgH\000\022\036\n\005t" +
+      "ypes\030\005 \001(\0132\r.wcf.MsgTypesH\000\022$\n\010contacts\030" +
+      "\006 \001(\0132\020.wcf.RpcContactsH\000\022\033\n\003dbs\030\007 \001(\0132\014" +
+      ".wcf.DbNamesH\000\022\037\n\006tables\030\010 \001(\0132\r.wcf.DbT" +
+      "ablesH\000\022\033\n\004rows\030\t \001(\0132\013.wcf.DbRowsH\000\022\033\n\002" +
+      "ui\030\n \001(\0132\r.wcf.UserInfoH\000\022\032\n\003ocr\030\013 \001(\0132\013" +
+      ".wcf.OcrMsgH\000B\005\n\003msg\"\007\n\005Empty\"\276\001\n\005WxMsg\022" +
+      "\017\n\007is_self\030\001 \001(\010\022\020\n\010is_group\030\002 \001(\010\022\016\n\002id" +
+      "\030\003 \001(\004B\0020\001\022\014\n\004type\030\004 \001(\r\022\n\n\002ts\030\005 \001(\r\022\016\n\006" +
+      "roomid\030\006 \001(\t\022\017\n\007content\030\007 \001(\t\022\016\n\006sender\030" +
+      "\010 \001(\t\022\014\n\004sign\030\t \001(\t\022\r\n\005thumb\030\n \001(\t\022\r\n\005ex" +
+      "tra\030\013 \001(\t\022\013\n\003xml\030\014 \001(\t\"7\n\007TextMsg\022\013\n\003msg" +
+      "\030\001 \001(\t\022\020\n\010receiver\030\002 \001(\t\022\r\n\005aters\030\003 \001(\t\"" +
+      ")\n\007PathMsg\022\014\n\004path\030\001 \001(\t\022\020\n\010receiver\030\002 \001" +
+      "(\t\"G\n\006XmlMsg\022\020\n\010receiver\030\001 \001(\t\022\017\n\007conten" +
+      "t\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004type\030\004 \001(\005\"a\n\010M" +
+      "sgTypes\022\'\n\005types\030\001 \003(\0132\030.wcf.MsgTypes.Ty" +
+      "pesEntry\032,\n\nTypesEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005v" +
+      "alue\030\002 \001(\t:\0028\001\"\207\001\n\nRpcContact\022\014\n\004wxid\030\001 " +
+      "\001(\t\022\014\n\004code\030\002 \001(\t\022\016\n\006remark\030\003 \001(\t\022\014\n\004nam" +
+      "e\030\004 \001(\t\022\017\n\007country\030\005 \001(\t\022\020\n\010province\030\006 \001" +
+      "(\t\022\014\n\004city\030\007 \001(\t\022\016\n\006gender\030\010 \001(\005\"0\n\013RpcC" +
+      "ontacts\022!\n\010contacts\030\001 \003(\0132\017.wcf.RpcConta" +
+      "ct\"\030\n\007DbNames\022\r\n\005names\030\001 \003(\t\"$\n\007DbTable\022" +
+      "\014\n\004name\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"(\n\010DbTables\022\034" +
+      "\n\006tables\030\001 \003(\0132\014.wcf.DbTable\"\"\n\007DbQuery\022" +
+      "\n\n\002db\030\001 \001(\t\022\013\n\003sql\030\002 \001(\t\"8\n\007DbField\022\014\n\004t" +
+      "ype\030\001 \001(\005\022\016\n\006column\030\002 \001(\t\022\017\n\007content\030\003 \001" +
+      "(\014\"%\n\005DbRow\022\034\n\006fields\030\001 \003(\0132\014.wcf.DbFiel" +
+      "d\"\"\n\006DbRows\022\030\n\004rows\030\001 \003(\0132\n.wcf.DbRow\"5\n" +
+      "\014Verification\022\n\n\002v3\030\001 \001(\t\022\n\n\002v4\030\002 \001(\t\022\r\n" +
+      "\005scene\030\003 \001(\005\"+\n\nMemberMgmt\022\016\n\006roomid\030\001 \001" +
+      "(\t\022\r\n\005wxids\030\002 \001(\t\"D\n\010UserInfo\022\014\n\004wxid\030\001 " +
+      "\001(\t\022\014\n\004name\030\002 \001(\t\022\016\n\006mobile\030\003 \001(\t\022\014\n\004hom" +
+      "e\030\004 \001(\t\"#\n\007DecPath\022\013\n\003src\030\001 \001(\t\022\013\n\003dst\030\002" +
+      " \001(\t\"4\n\010Transfer\022\014\n\004wxid\030\001 \001(\t\022\014\n\004tfid\030\002" +
+      " \001(\t\022\014\n\004taid\030\003 \001(\t\"9\n\tAttachMsg\022\016\n\002id\030\001 " +
+      "\001(\004B\0020\001\022\r\n\005thumb\030\002 \001(\t\022\r\n\005extra\030\003 \001(\t\"\'\n" +
+      "\010AudioMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\013\n\003dir\030\002 \001(\t\"y" +
+      "\n\010RichText\022\014\n\004name\030\001 \001(\t\022\017\n\007account\030\002 \001(" +
+      "\t\022\r\n\005title\030\003 \001(\t\022\016\n\006digest\030\004 \001(\t\022\013\n\003url\030" +
+      "\005 \001(\t\022\020\n\010thumburl\030\006 \001(\t\022\020\n\010receiver\030\007 \001(" +
+      "\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001(\t\022\014\n\004wxid\030\002 \001(" +
+      "\t\"(\n\006OcrMsg\022\016\n\006status\030\001 \001(\005\022\016\n\006result\030\002 " +
+      "\001(\t\".\n\nForwardMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\020\n\010rec" +
+      "eiver\030\002 \001(\t*\362\005\n\tFunctions\022\021\n\rFUNC_RESERV" +
+      "ED\020\000\022\021\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF" +
+      "_WXID\020\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_" +
+      "GET_CONTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n" +
+      "\022FUNC_GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_I" +
+      "NFO\020\025\022\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SE" +
+      "ND_TXT\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND" +
+      "_FILE\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_" +
+      "EMOTION\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUN" +
+      "C_SEND_PAT_MSG\020&\022\024\n\020FUNC_FORWARD_MSG\020\'\022\030" +
+      "\n\024FUNC_ENABLE_RECV_TXT\0200\022\031\n\025FUNC_DISABLE" +
+      "_RECV_TXT\020@\022\026\n\022FUNC_EXEC_DB_QUERY\020P\022\026\n\022F" +
+      "UNC_ACCEPT_FRIEND\020Q\022\026\n\022FUNC_RECV_TRANSFE" +
+      "R\020R\022\024\n\020FUNC_REFRESH_PYQ\020S\022\030\n\024FUNC_DOWNLO" +
+      "AD_ATTACH\020T\022\031\n\025FUNC_GET_CONTACT_INFO\020U\022\023" +
+      "\n\017FUNC_REVOKE_MSG\020V\022\027\n\023FUNC_REFRESH_QRCO" +
+      "DE\020W\022\026\n\022FUNC_DECRYPT_IMAGE\020`\022\021\n\rFUNC_EXE" +
+      "C_OCR\020a\022\031\n\025FUNC_ADD_ROOM_MEMBERS\020p\022\031\n\025FU" +
+      "NC_DEL_ROOM_MEMBERS\020q\022\031\n\025FUNC_INV_ROOM_M" +
+      "EMBERS\020rB\r\n\013com.iamteerb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -29027,13 +33311,13 @@ java.lang.String defaultValue) {
     internal_static_wcf_Request_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_Request_descriptor,
-        new java.lang.String[] { "Func", "Empty", "Str", "Txt", "File", "Query", "V", "M", "Xml", "Dec", "Tf", "Ui64", "Flag", "Att", "Am", "Rt", "Pm", "Msg", });
+        new java.lang.String[] { "Func", "Empty", "Str", "Txt", "File", "Query", "V", "M", "Xml", "Dec", "Tf", "Ui64", "Flag", "Att", "Am", "Rt", "Pm", "Fm", "Msg", });
     internal_static_wcf_Response_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_wcf_Response_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_Response_descriptor,
-        new java.lang.String[] { "Func", "Status", "Str", "Wxmsg", "Types", "Contacts", "Dbs", "Tables", "Rows", "Ui", "Msg", });
+        new java.lang.String[] { "Func", "Status", "Str", "Wxmsg", "Types", "Contacts", "Dbs", "Tables", "Rows", "Ui", "Ocr", "Msg", });
     internal_static_wcf_Empty_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_wcf_Empty_fieldAccessorTable = new
@@ -29184,6 +33468,18 @@ java.lang.String defaultValue) {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_PatMsg_descriptor,
         new java.lang.String[] { "Roomid", "Wxid", });
+    internal_static_wcf_OcrMsg_descriptor =
+      getDescriptor().getMessageTypes().get(26);
+    internal_static_wcf_OcrMsg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_OcrMsg_descriptor,
+        new java.lang.String[] { "Status", "Result", });
+    internal_static_wcf_ForwardMsg_descriptor =
+      getDescriptor().getMessageTypes().get(27);
+    internal_static_wcf_ForwardMsg_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_wcf_ForwardMsg_descriptor,
+        new java.lang.String[] { "Id", "Receiver", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -47,6 +47,11 @@ int WxInitSDK(bool debug, int port)
         return status;
     }
 
+    if (!IsProcessX64(wcPid)) {
+        MessageBox(NULL, L"只支持 64 位微信", L"WxInitSDK", 0);
+        return -1;
+    }
+
     Sleep(2000); // 等待微信打开
     wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {

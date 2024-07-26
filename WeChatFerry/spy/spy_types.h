@@ -4,6 +4,7 @@
 #include <string>
 
 typedef uint64_t QWORD;
+<<<<<<< HEAD
 typedef struct UserInfoCall {
     DWORD wxid = 0x5AB7FB8;
     DWORD nickName = 0x5AB8098;
@@ -207,6 +208,8 @@ typedef struct WxCalls {
     //CallFm_t fm;         // 转发消息
     //CallRfLoginQr_t rlq; // 刷新登录二维码
 } WxCalls_t;
+=======
+>>>>>>> master
 
 struct WxString {
     const wchar_t *wptr;
