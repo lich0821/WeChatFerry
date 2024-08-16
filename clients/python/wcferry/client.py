@@ -150,6 +150,7 @@ class Wcf():
 
     def get_qrcode(self) -> str:
         """获取登录二维码，已经登录则返回空字符串"""
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REFRESH_QRCODE  # FUNC_REFRESH_QRCODE
         rsp = self._send_request(req)
