@@ -727,6 +727,7 @@ class Wcf():
         Returns:
             dict: {wxid, code, name, gender}
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_GET_CONTACT_INFO  # FUNC_GET_CONTACT_INFO
         req.str = wxid
