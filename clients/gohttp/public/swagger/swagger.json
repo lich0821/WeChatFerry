@@ -2,23 +2,26 @@
     "swagger": "2.0",
     "info": {
         "description": "基于 WeChatFerry RPC 实现的微信接口，使用 Go 语言编写，无第三方运行时依赖，易于对接任意编程语言。",
-        "title": "WeChat Rest Api",
+        "title": "Wrest Chat Api",
         "contact": {
             "name": "WeChatRest",
-            "url": "https://github.com/opentdp/wechat-rest"
+            "url": "https://github.com/opentdp/wrest-chat"
         },
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "v0.8.0"
+        "version": "v0.10.0"
     },
-    "basePath": "/api",
+    "basePath": "/",
     "paths": {
-        "/accept_new_friend": {
+        "/wcf/accept_new_friend": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::联系人管理"
                 ],
                 "summary": "接受好友请求",
                 "parameters": [
@@ -38,26 +41,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/add_chatroom_members": {
+        "/wcf/add_chatroom_members": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "添加群成员",
                 "parameters": [
@@ -77,26 +71,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/alias_in_chatroom": {
+        "/wcf/alias_in_chatroom": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "获取群成员昵称",
                 "parameters": [
@@ -116,26 +101,47 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
+                    }
+                }
+            }
+        },
+        "/wcf/audio_msg": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WCF::消息收取"
+                ],
+                "summary": "获取语音消息",
+                "parameters": [
+                    {
+                        "description": "获取语音消息参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/wcfrest.GetAudioMsgRequest"
                         }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
                     }
                 }
             }
         },
-        "/avatars": {
+        "/wcf/avatars": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::联系人管理"
                 ],
                 "summary": "获取头像列表",
                 "parameters": [
@@ -158,26 +164,17 @@
                                 "$ref": "#/definitions/wcfrest.AvatarPayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/chatroom_members": {
+        "/wcf/chatroom_members": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "获取群成员列表",
                 "parameters": [
@@ -200,26 +197,17 @@
                                 "$ref": "#/definitions/wcfrest.ContactPayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/chatrooms": {
+        "/wcf/chatrooms": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "获取群列表",
                 "responses": {
@@ -231,26 +219,17 @@
                                 "$ref": "#/definitions/wcfrest.ContactPayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/contacts": {
+        "/wcf/contacts": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::联系人管理"
                 ],
                 "summary": "获取完整通讯录",
                 "responses": {
@@ -262,26 +241,17 @@
                                 "$ref": "#/definitions/wcfrest.ContactPayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/db_names": {
+        "/wcf/db_names": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::数据库查询"
                 ],
                 "summary": "获取数据库列表",
                 "responses": {
@@ -293,26 +263,17 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/db_query_sql": {
+        "/wcf/db_query_sql": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::数据库查询"
                 ],
                 "summary": "执行数据库查询",
                 "parameters": [
@@ -336,26 +297,17 @@
                                 "additionalProperties": true
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/db_tables": {
+        "/wcf/db_tables": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::数据库查询"
                 ],
                 "summary": "获取数据库表列表",
                 "parameters": [
@@ -378,26 +330,17 @@
                                 "$ref": "#/definitions/wcfrest.DbTablePayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/del_chatroom_members": {
+        "/wcf/del_chatroom_members": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "删除群成员",
                 "parameters": [
@@ -417,26 +360,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/disable_receiver": {
+        "/wcf/disable_receiver": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息推送"
                 ],
                 "summary": "关闭推送消息到URL",
                 "parameters": [
@@ -456,26 +390,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/download_attach": {
+        "/wcf/download_attach": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息收取"
                 ],
                 "summary": "下载附件",
                 "parameters": [
@@ -495,26 +420,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/download_image": {
+        "/wcf/download_image": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息收取"
                 ],
                 "summary": "下载图片",
                 "parameters": [
@@ -534,26 +450,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/enable_receiver": {
+        "/wcf/enable_receiver": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息推送"
                 ],
                 "summary": "开启推送消息到URL",
                 "parameters": [
@@ -573,26 +480,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/forward_msg": {
+        "/wcf/forward_msg": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "转发消息",
                 "parameters": [
@@ -612,26 +510,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/friends": {
+        "/wcf/friends": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::联系人管理"
                 ],
                 "summary": "获取好友列表",
                 "responses": {
@@ -643,104 +532,17 @@
                                 "$ref": "#/definitions/wcfrest.ContactPayload"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/get_audio_msg": {
+        "/wcf/invite_chatroom_members": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "获取语音消息",
-                "parameters": [
-                    {
-                        "description": "获取语音消息参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/wcfrest.GetAudioMsgRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/wcfrest.CommonPayload"
-                        }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/get_ocr_result": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "获取OCR识别结果",
-                "parameters": [
-                    {
-                        "description": "获取OCR识别结果参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/wcfrest.GetOcrRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/wcfrest.CommonPayload"
-                        }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/invite_chatroom_members": {
-            "post": {
-                "produces": [
-                    "application/json"
+                "tags": [
+                    "WCF::群聊管理"
                 ],
                 "summary": "邀请群成员",
                 "parameters": [
@@ -760,26 +562,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/is_login": {
+        "/wcf/is_login": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
                 ],
                 "summary": "检查登录状态",
                 "responses": {
@@ -788,26 +581,36 @@
                         "schema": {
                             "type": "boolean"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
+                    }
+                }
+            }
+        },
+        "/wcf/login_qr": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
+                ],
+                "summary": "登录二维码",
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
                     }
                 }
             }
         },
-        "/msg_types": {
+        "/wcf/msg_types": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
                 ],
                 "summary": "获取所有消息类型",
                 "responses": {
@@ -819,26 +622,47 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
+                    }
+                }
+            }
+        },
+        "/wcf/ocr_result": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WCF::消息收取"
+                ],
+                "summary": "获取OCR识别结果",
+                "parameters": [
+                    {
+                        "description": "获取OCR识别结果参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/wcfrest.GetOcrRequest"
                         }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
                     }
                 }
             }
         },
-        "/receive_transfer": {
+        "/wcf/receive_transfer": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息收取"
                 ],
                 "summary": "接受转账",
                 "parameters": [
@@ -858,26 +682,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/refresh_pyq": {
+        "/wcf/refresh_pyq": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
                 ],
                 "summary": "刷新朋友圈",
                 "parameters": [
@@ -897,26 +712,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/revoke_msg": {
+        "/wcf/revoke_msg": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "撤回消息",
                 "parameters": [
@@ -936,26 +742,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/self_info": {
+        "/wcf/self_info": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
                 ],
                 "summary": "获取登录账号个人信息",
                 "responses": {
@@ -964,26 +761,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.UserInfoPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/self_wxid": {
+        "/wcf/self_wxid": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::其他"
                 ],
                 "summary": "获取登录账号wxid",
                 "responses": {
@@ -992,26 +780,17 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/send_file": {
+        "/wcf/send_file": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "发送文件消息",
                 "parameters": [
@@ -1031,26 +810,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/send_img": {
+        "/wcf/send_img": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "发送图片消息",
                 "parameters": [
@@ -1060,7 +830,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/wcfrest.SendImgRequest"
+                            "$ref": "#/definitions/wcfrest.SendFileRequest"
                         }
                     }
                 ],
@@ -1070,26 +840,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/send_pat_msg": {
+        "/wcf/send_pat_msg": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "拍一拍群友",
                 "parameters": [
@@ -1109,26 +870,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/send_rich_text": {
+        "/wcf/send_rich_text": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "发送卡片消息",
                 "parameters": [
@@ -1148,26 +900,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/send_txt": {
+        "/wcf/send_txt": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::消息发送"
                 ],
                 "summary": "发送文本消息",
                 "parameters": [
@@ -1187,29 +930,17 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.CommonPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/socket_receiver": {
+        "/wcf/socket_receiver": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "websocket"
+                    "WCF::消息推送"
                 ],
                 "summary": "推送消息到Socket",
                 "responses": {
@@ -1218,26 +949,17 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         },
-        "/user_info": {
+        "/wcf/user_info": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "WCF::联系人管理"
                 ],
                 "summary": "根据wxid获取个人信息",
                 "parameters": [
@@ -1257,24 +979,1166 @@
                         "schema": {
                             "$ref": "#/definitions/wcfrest.ContactPayload"
                         }
-                    },
-                    "400": {
-                        "description": "非法请求",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部服务器错误",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "aichat.MsgHistory": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "消息内容",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "user,assistant",
+                    "type": "string"
+                }
+            }
+        },
+        "aichat.UserConfig": {
+            "type": "object",
+            "properties": {
+                "endpoint": {
+                    "description": "接口地址",
+                    "type": "string"
+                },
+                "family": {
+                    "description": "族类描述",
+                    "type": "string"
+                },
+                "model": {
+                    "description": "模型",
+                    "type": "string"
+                },
+                "msg_history_max": {
+                    "description": "消息记录最大条数",
+                    "type": "integer"
+                },
+                "msg_historys": {
+                    "description": "消息历史记录",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/aichat.MsgHistory"
+                    }
+                },
+                "provider": {
+                    "description": "供应商",
+                    "type": "string"
+                },
+                "role_context": {
+                    "description": "角色设定",
+                    "type": "string"
+                },
+                "secret": {
+                    "description": "密钥格式\n科大讯飞 APP-ID,API-KEY,API-SECRET\n文心一言 API-KEY,API-SECRET\n腾讯混元 APP-ID,API-KEY,API-SECRET\n阿里百炼（通义千问） APP-ID,AGENT-KEY,ACCESS_KEY_ID,ACCESS_KEY_SECRET\n其他服务商 API-KEY",
+                    "type": "string"
+                }
+            }
+        },
+        "chatroom.CreateParam": {
+            "type": "object",
+            "required": [
+                "roomid"
+            ],
+            "properties": {
+                "join_argot": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "model_context": {
+                    "type": "string"
+                },
+                "model_default": {
+                    "type": "string"
+                },
+                "model_history": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pat_return": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "revoke_msg": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "welcome_msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatroom.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatroom.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "integer"
+                }
+            }
+        },
+        "chatroom.FetchParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                }
+            }
+        },
+        "chatroom.UpdateParam": {
+            "type": "object",
+            "required": [
+                "roomid"
+            ],
+            "properties": {
+                "join_argot": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "model_context": {
+                    "type": "string"
+                },
+                "model_default": {
+                    "type": "string"
+                },
+                "model_history": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pat_return": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "revoke_msg": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "welcome_msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "cronjob.CreateParam": {
+            "type": "object",
+            "required": [
+                "content",
+                "day_of_month",
+                "day_of_week",
+                "directory",
+                "hour",
+                "minute",
+                "month",
+                "name",
+                "second",
+                "timeout",
+                "type"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "day_of_month": {
+                    "type": "string"
+                },
+                "day_of_week": {
+                    "type": "string"
+                },
+                "deliver": {
+                    "type": "string"
+                },
+                "directory": {
+                    "type": "string"
+                },
+                "entry_id": {
+                    "type": "integer"
+                },
+                "hour": {
+                    "type": "string"
+                },
+                "minute": {
+                    "type": "string"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "second": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "cronjob.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "entry_id": {
+                    "type": "integer"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cronjob.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "cronjob.FetchParam": {
+            "type": "object",
+            "properties": {
+                "entry_id": {
+                    "type": "integer"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cronjob.UpdateParam": {
+            "type": "object",
+            "required": [
+                "content",
+                "day_of_month",
+                "day_of_week",
+                "directory",
+                "hour",
+                "minute",
+                "month",
+                "name",
+                "second",
+                "timeout",
+                "type"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "day_of_month": {
+                    "type": "string"
+                },
+                "day_of_week": {
+                    "type": "string"
+                },
+                "deliver": {
+                    "type": "string"
+                },
+                "directory": {
+                    "type": "string"
+                },
+                "entry_id": {
+                    "type": "integer"
+                },
+                "hour": {
+                    "type": "string"
+                },
+                "minute": {
+                    "type": "string"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "second": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyword.CreateParam": {
+            "type": "object",
+            "required": [
+                "group",
+                "phrase",
+                "roomid"
+            ],
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyword.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyword.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyword.FetchParam": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyword.UpdateParam": {
+            "type": "object",
+            "required": [
+                "group",
+                "phrase",
+                "roomid"
+            ],
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            }
+        },
+        "llmodel.CreateParam": {
+            "type": "object",
+            "required": [
+                "family",
+                "mid",
+                "model",
+                "provider",
+                "secret"
+            ],
+            "properties": {
+                "endpoint": {
+                    "type": "string"
+                },
+                "family": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "mid": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "secret": {
+                    "type": "string"
+                }
+            }
+        },
+        "llmodel.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "mid": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "llmodel.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "family": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                }
+            }
+        },
+        "llmodel.FetchParam": {
+            "type": "object",
+            "properties": {
+                "mid": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "llmodel.UpdateParam": {
+            "type": "object",
+            "required": [
+                "family",
+                "mid",
+                "model",
+                "provider",
+                "secret"
+            ],
+            "properties": {
+                "endpoint": {
+                    "type": "string"
+                },
+                "family": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "mid": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "secret": {
+                    "type": "string"
+                }
+            }
+        },
+        "plugin.CronjobPlugin": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/cronjob.CreateParam"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                }
+            }
+        },
+        "plugin.KeywordPlugin": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/keyword.CreateParam"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.CreateParam": {
+            "type": "object",
+            "required": [
+                "wxid"
+            ],
+            "properties": {
+                "ai_model": {
+                    "type": "string"
+                },
+                "ban_expire": {
+                    "type": "integer"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.FetchParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.UpdateParam": {
+            "type": "object",
+            "required": [
+                "wxid"
+            ],
+            "properties": {
+                "ai_model": {
+                    "type": "string"
+                },
+                "ban_expire": {
+                    "type": "integer"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "roomid": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "setting.CreateParam": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "setting.DeleteParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "setting.FetchAllParam": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                }
+            }
+        },
+        "setting.FetchParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                }
+            }
+        },
+        "setting.UpdateParam": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rd": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "sundry.AiChatParam": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "wxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "sundry.Handler": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "description": "指令",
+                    "type": "string"
+                },
+                "describe": {
+                    "description": "指令的描述信息",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "0:不限制 7:群管理 9:创始人",
+                    "type": "integer"
+                },
+                "order": {
+                    "description": "排序，越小越靠前",
+                    "type": "integer"
+                },
+                "roomid": {
+                    "description": "使用场景 [*:所有,-:私聊,+:群聊,其他:群聊]",
+                    "type": "string"
+                }
+            }
+        },
+        "sundry.HandlersParam": {
+            "type": "object",
+            "properties": {
+                "reset": {
+                    "description": "是否重置机器人指令",
+                    "type": "boolean"
+                }
+            }
+        },
+        "sundry.SystemVersion": {
+            "type": "object",
+            "properties": {
+                "build_version": {
+                    "description": "系统编译版本",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "系统版本",
+                    "type": "string"
+                },
+                "wcf_version": {
+                    "description": "wcferry 版本",
+                    "type": "string"
+                },
+                "wechat_version": {
+                    "description": "wechat 版本",
+                    "type": "string"
+                }
+            }
+        },
+        "tables.Chatroom": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "join_argot": {
+                    "description": "加群指令",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "等级 [1:待验证, 2:已注册]",
+                    "type": "integer"
+                },
+                "model_context": {
+                    "description": "定义模型扮演的身份",
+                    "type": "string"
+                },
+                "model_default": {
+                    "description": "定义默认模型",
+                    "type": "string"
+                },
+                "model_history": {
+                    "description": "定义历史消息数量",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "群聊名称",
+                    "type": "string"
+                },
+                "pat_return": {
+                    "description": "响应拍拍我",
+                    "type": "string"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "revoke_msg": {
+                    "description": "防撤回消息",
+                    "type": "string"
+                },
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                },
+                "welcome_msg": {
+                    "description": "欢迎消息",
+                    "type": "string"
+                }
+            }
+        },
+        "tables.Cronjob": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "命令内容",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "day_of_month": {
+                    "description": "日",
+                    "type": "string"
+                },
+                "day_of_week": {
+                    "description": "周",
+                    "type": "string"
+                },
+                "deliver": {
+                    "description": "执行结果交付方式",
+                    "type": "string"
+                },
+                "directory": {
+                    "description": "工作目录",
+                    "type": "string"
+                },
+                "entry_id": {
+                    "description": "任务运行时 Id",
+                    "type": "integer"
+                },
+                "hour": {
+                    "description": "时",
+                    "type": "string"
+                },
+                "minute": {
+                    "description": "分",
+                    "type": "string"
+                },
+                "month": {
+                    "description": "月",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "second": {
+                    "description": "秒",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "超时时间（秒）",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "命令类型 [CMD, POWERSHELL, SHELL]",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                }
+            }
+        },
+        "tables.Keyword": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "group": {
+                    "description": "分组",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "等级",
+                    "type": "integer"
+                },
+                "phrase": {
+                    "description": "短语",
+                    "type": "string"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                },
+                "target": {
+                    "description": "目标",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                }
+            }
+        },
+        "tables.LLModel": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "endpoint": {
+                    "description": "仅 google 和 openai 支持自定义",
+                    "type": "string"
+                },
+                "family": {
+                    "description": "模型家族，用于在指令中描述模型类型",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "等级，用于限制用户访问",
+                    "type": "integer"
+                },
+                "mid": {
+                    "description": "模型 Id，用于生成模型切换指令",
+                    "type": "string"
+                },
+                "model": {
+                    "description": "模型，必须和服务商对应",
+                    "type": "string"
+                },
+                "provider": {
+                    "description": "服务商 [google, openai, xunfei, baidu, tencent]",
+                    "type": "string"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "secret": {
+                    "description": "密钥，必须和服务商对应，多个字段按指定顺序填写并用逗号隔开",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                }
+            }
+        },
+        "tables.Profile": {
+            "type": "object",
+            "properties": {
+                "ai_model": {
+                    "description": "会话模型",
+                    "type": "string"
+                },
+                "ban_expire": {
+                    "description": "拉黑截止时间",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "level": {
+                    "description": "等级 [1:待验证, 2:已注册, 7:管理员, 9:创始人]",
+                    "type": "integer"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "roomid": {
+                    "description": "群聊 id",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                },
+                "wxid": {
+                    "description": "微信 id",
+                    "type": "string"
+                }
+            }
+        },
+        "tables.Setting": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "group": {
+                    "description": "分组",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "键",
+                    "type": "string"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "类型",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                },
+                "value": {
+                    "description": "值",
+                    "type": "string"
+                }
+            }
+        },
+        "tables.Webhook": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "创建时间戳",
+                    "type": "integer"
+                },
+                "rd": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "target_id": {
+                    "description": "群聊/私聊ID",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "webhook 标识（GUID）",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后更新时间戳",
+                    "type": "integer"
+                }
+            }
+        },
         "wcfrest.AcceptNewFriendRequest": {
             "type": "object",
             "properties": {
@@ -1587,21 +2451,12 @@
         "wcfrest.SendFileRequest": {
             "type": "object",
             "properties": {
-                "path": {
-                    "description": "文件路径",
+                "base64": {
+                    "description": "文件 base64 数据",
                     "type": "string"
                 },
-                "receiver": {
-                    "description": "接收人或群的 id",
-                    "type": "string"
-                }
-            }
-        },
-        "wcfrest.SendImgRequest": {
-            "type": "object",
-            "properties": {
                 "path": {
-                    "description": "图片路径",
+                    "description": "文件路径，若提供 base64 则写入此路径",
                     "type": "string"
                 },
                 "receiver": {
@@ -1693,6 +2548,48 @@
                 },
                 "wxid": {
                     "description": "用户 id",
+                    "type": "string"
+                }
+            }
+        },
+        "webhook.CreateWebhookParam": {
+            "type": "object",
+            "required": [
+                "target_id"
+            ],
+            "properties": {
+                "remark": {
+                    "type": "string"
+                },
+                "target_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "webhook.DeleteWebhookParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "target_id": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "webhook.FetchWebhookParam": {
+            "type": "object",
+            "properties": {
+                "rd": {
+                    "type": "integer"
+                },
+                "target_id": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 }
             }
