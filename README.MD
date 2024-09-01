@@ -16,7 +16,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/I6n_6fuQa60CrROWSgq0TA)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/Y2Q37VYV730Iu9TrgiCmCw)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
@@ -73,10 +73,25 @@ pip install --upgrade wcferry
 * 参考框架：[🤖WeChatRobot](https://github.com/lich0821/WeChatRobot)
 
 ### HTTP
-#### [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
-#### [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
+* [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
+* [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
 
-### [NodeJS](clients/wcferry-node)
+### Java
+* [java](clients/java/README.MD)
+
+### NodeJS
+* [wcferry-node](https://github.com/dr-forget/wcferry-node)
+* [node-wcferry](https://github.com/stkevintan/node-wcferry)
+
+### C#
+* [WeChatFerry-CSharp](https://github.com/send010/WeChatFerry-CSharp)
+
+### Rust
+* [wechat-bot](https://github.com/CliffHan/wechat-bot)
+
+### Docker
+* [docker_wechat](https://github.com/Saroth/docker_wechat)
+* [wechatbot-provider-windows](https://github.com/danni-cool/wechatbot-provider-windows)
 
 ## 一起开发
 
