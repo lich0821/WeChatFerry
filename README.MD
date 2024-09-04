@@ -82,6 +82,7 @@ pip install --upgrade wcferry
 ### NodeJS
 * [wcferry-node](https://github.com/dr-forget/wcferry-node)
 * [node-wcferry](https://github.com/stkevintan/node-wcferry)
+* [wechatferry](https://github.com/wechatferry/wechatferry)
 
 ### C#
 * [WeChatFerry-CSharp](https://github.com/send010/WeChatFerry-CSharp)
