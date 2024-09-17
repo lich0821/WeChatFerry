@@ -6,7 +6,7 @@ from queue import Empty
 from threading import Thread
 from time import sleep
 
-from wcferry import Wcf
+from wcferry import Wcf, enumWeChatProcess
 
 logging.basicConfig(level='DEBUG', format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 LOG = logging.getLogger("Demo")
@@ -82,7 +82,20 @@ def main():
 
 
 if __name__ == "__main__":
-    wcf = main()
+    # wcf = main()
 
     # 一直运行
-    wcf.keep_running()
+    # wcf.keep_running()
+
+    count = enumWeChatProcess()
+    print(count)
+
+    port = 8180
+    for index in range(count):
+        print(index)
+        wcf = Wcf(debug=False, block=False, processIndex=index, port=port)             # 默认连接本地服务
+        port +=10
+        LOG.info(f"已经登录: {True if wcf.is_login() else False}")
+        LOG.info(f"wxid: {wcf.get_self_wxid()}")
+        wcf.send_text("Hello world.", "filehelper")
+        wcf = None

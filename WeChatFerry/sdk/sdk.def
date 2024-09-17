@@ -1,3 +1,4 @@
 ﻿EXPORTS
     WxInitSDK
     WxDestroySDK
+    EnumWeChatProcess
