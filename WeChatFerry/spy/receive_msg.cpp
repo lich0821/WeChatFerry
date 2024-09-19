@@ -38,8 +38,8 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_PYQ_MSG_XML      0x9B8
 #define OS_PYQ_MSG_SENDER   0x18
 #define OS_PYQ_MSG_CONTENT  0x48
-#define OS_PYQ_MSG_CALL     0x2EFAA10
-#define OS_WXLOG            0x26DA2D0
+#define OS_PYQ_MSG_CALL     0x2e42c90
+#define OS_WXLOG            0x2613d20
 
 typedef QWORD (*RecvMsg_t)(QWORD, QWORD);
 typedef QWORD (*WxLog_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);

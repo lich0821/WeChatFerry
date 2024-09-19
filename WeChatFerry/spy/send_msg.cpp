@@ -14,20 +14,20 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 
 #define SRTM_SIZE 0x3F0
 
-#define OS_NEW             0x1C28800
-#define OS_FREE            0x1C1FF10
-#define OS_SEND_MSG_MGR    0x1C1E690
-#define OS_SEND_TEXT       0x238DDD0
-#define OS_SEND_IMAGE      0x2383560
-#define OS_GET_APP_MSG_MGR 0x1C23630
-#define OS_SEND_FILE       0x21969E0
-#define OS_RTM_NEW         0x1C27D50
-#define OS_RTM_FREE        0x1C27120
+#define OS_NEW             0x1b5e140
+#define OS_FREE            0x1b55850
+#define OS_SEND_MSG_MGR    0x1ca4f70
+#define OS_SEND_TEXT       0x22c6b60
+#define OS_SEND_IMAGE      0x22bc2f0
+#define OS_GET_APP_MSG_MGR 0x1b557d0
+#define OS_SEND_FILE       0x20d0230
+#define OS_RTM_NEW         0x1b5d690
+#define OS_RTM_FREE        0x1b5ca60
 #define OS_SEND_RICH_TEXT  0x21A09C0
-#define OS_SEND_PAT_MSG    0x2D669B0
-#define OS_FORWARD_MSG     0x238D350
-#define OS_GET_EMOTION_MGR 0x1C988D0
-#define OS_SEND_EMOTION    0x227B9E0
+#define OS_SEND_PAT_MSG    0x2caec00
+#define OS_FORWARD_MSG     0x22C60E0
+#define OS_GET_EMOTION_MGR 0x1bcef10
+#define OS_SEND_EMOTION    0x21b52d5
 
 typedef QWORD (*New_t)(QWORD);
 typedef QWORD (*Free_t)(QWORD);
