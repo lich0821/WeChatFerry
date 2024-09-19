@@ -5,7 +5,7 @@
 #include "sqlite3.h"
 #include "util.h"
 
-#define OFFSET_DB_INSTANCE     0x5A40598
+#define OFFSET_DB_INSTANCE     0x5902000
 #define OFFSET_DB_MICROMSG     0xb8
 #define OFFSET_DB_CHAT_MSG     0x2c8
 #define OFFSET_DB_MISC         0x5f0
@@ -14,7 +14,7 @@
 #define OFFSET_DB_BIZCHAT_MSG  0x1A70
 #define OFFSET_DB_FUNCTION_MSG 0x1b98
 #define OFFSET_DB_NAME         0x28
-#define OFFSET_DB_MSG_MGR      0x5ABB5D8
+#define OFFSET_DB_MSG_MGR      0x595F900
 
 extern UINT64 g_WeChatWinDllAddr;
 

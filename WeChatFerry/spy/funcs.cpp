@@ -24,17 +24,17 @@ extern QWORD g_WeChatWinDllAddr;
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-#define OS_LOGIN_STATUS               0x5AB86A8
-#define OS_GET_SNS_DATA_MGR           0x22A91C0
-#define OS_GET_SNS_FIRST_PAGE         0x2ED9080
-#define OS_GET_SNS_TIMELINE_MGR       0x2E6B110
-#define OS_GET_SNS_NEXT_PAGE          0x2EFEC00
-#define OS_NEW_CHAT_MSG               0x1C28800
-#define OS_FREE_CHAT_MSG              0x1C1FF10
-#define OS_GET_CHAT_MGR               0x1C51CF0
-#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x2206280
-#define OS_GET_PRE_DOWNLOAD_MGR       0x1CD87E0
-#define OS_PUSH_ATTACH_TASK           0x1DA69C0
+#define OS_LOGIN_STATUS               0x595C9E8
+#define OS_GET_SNS_DATA_MGR           0x21E2200
+#define OS_GET_SNS_FIRST_PAGE         0x2E212d0
+#define OS_GET_SNS_TIMELINE_MGR       0x2DB3390
+#define OS_GET_SNS_NEXT_PAGE          0x2EC8970
+#define OS_NEW_CHAT_MSG               0x1B5E140
+#define OS_FREE_CHAT_MSG              0x1B55850
+#define OS_GET_CHAT_MGR               0x1B876C0
+#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x213FB00
+#define OS_GET_PRE_DOWNLOAD_MGR       0x1C0EE70
+#define OS_PUSH_ATTACH_TASK           0x1CDF4E0
 
 typedef QWORD (*GetSNSDataMgr_t)();
 typedef QWORD (*GetSnsTimeLineMgr_t)();
