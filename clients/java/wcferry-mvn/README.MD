@@ -86,6 +86,7 @@ wcferry-mvn
 │    │    │    └─WcferryApplication.java    启动类
 │    │    │resources                        数据库脚本
 │    │    │    ├─libs                       本程序内置依赖包
+│    │    │    ├─proto                      proto文件
 │    │    │    ├─win32-x86-64               依赖程序
 │    │    │    ├─application.yml            本程序主配置文件
 │    │    │    └─logback-spring.xml         日志配置文件
@@ -109,6 +110,13 @@ wcferry:
   # DLL文件位置
   dll-path: /dll/sdk.dll
 ```
+
+#### 生成proto文件
+
+本程序已经集成了生成proto文件的maven插件，直接install即可生成proto文件，且会在打包程序中去除 src/main/resources/proto
+下面的内容，只保留实体类中的文件
+
+默认install会重新根据 生成实体，如果不想被替换，请删除 src/main/resources/proto 下对应的文件即可
 
 ### 提交规范
 
