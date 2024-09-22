@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 /**
- * 配置文件-UAM模块的外部接口
+ * 配置文件-wcferry的配置文件
  *
  * @author chandler
  * @date 2024-04-26 21:35
@@ -22,7 +22,7 @@ public class WcferryProperties {
     private String dllPath;
 
     /**
-     * 端口
+     * socket端口
      */
     private Integer socketPort;
 

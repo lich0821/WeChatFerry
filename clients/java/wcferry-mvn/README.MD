@@ -47,15 +47,13 @@ wcferry:
 
 ### 编译运行
 
-找到 src/main/java/com/iamteer/Main.java 类
+找到 src/main/java/com/iamteer/WcferryApplication.java 类
 
 直接启动即可
 
 ### 访问
 
 启动后springboot自身的端口为 9201 socket的端口为 10086
-
-
 
 ## 参与开发
 
