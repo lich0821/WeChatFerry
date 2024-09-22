@@ -1,0 +1,19 @@
+# 配置文件
+
+# 服务端配置
+server:
+  # 端口设置
+  port: 9201
+
+spring:
+  # 配置应用信息
+  application:
+    # 应用名
+    name: wcferry-mvn
+
+# 本服务参数
+wcferry:
+  # DLL文件位置
+  dll-path: E:\WeChatFerry\clients\java\wcferry-mvn\dll\sdk.dll
+  # socket端口
+  socket-port: 10086

@@ -77,7 +77,7 @@ pip install --upgrade wcferry
 * [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
 
 ### Java
-* [java](clients/java/README.MD)
+* [java](clients/java/wcferry/README.MD)
 
 ### NodeJS
 * [wcferry-node](https://github.com/dr-forget/wcferry-node)

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="false" scan="false">
+	<springProperty scop="context" name="spring.application.name" source="spring.application.name" defaultValue=""/>
+	<property name="log.path" value="logs/${spring.application.name}"/>
+	<property name="log.name" value="${spring.application.name}"/>
+
+	<!-- 彩色日志格式 -->
+	<property name="CONSOLE_LOG_PATTERN"
+			  value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+	<!-- 彩色日志依赖的渲染类 -->
+	<conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+	<conversionRule conversionWord="wex"
+					converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+	<conversionRule conversionWord="wEx"
+					converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+	<!-- Console log output -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Log file debug output -->
+	<appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/debug.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/%d{yyyy-MM, aux}/debug.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<!-- 追加方式记录日志 -->
+		<append>true</append>
+		<!-- 日志文件的格式 -->
+		<encoder>
+			<pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
+			<charset>utf-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- Log file error output -->
+	<appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/%d{yyyy-MM}/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<!-- 追加方式记录日志 -->
+		<append>true</append>
+		<!-- 日志文件的格式 -->
+		<encoder>
+			<pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
+			<charset>utf-8</charset>
+		</encoder>
+		<!-- 此日志文件只记录error级别的 -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
+
+	<!--
+		DEBUG：输出调试信息；指出细粒度信息事件对调试应用程序是非常有帮助的。
+		INFO： 输出提示信息；消息在粗粒度级别上突出强调应用程序的运行过程。
+		WARN： 输出警告信息；表明会出现潜在错误的情形。
+		ERROR：输出错误信息；指出虽然发生错误事件，但仍然不影响系统的继续运行。
+		FATAL： 输出致命错误；指出每个严重的错误事件将会导致应用程序的退出。
+		ALL level：打开所有日志记录开关；是最低等级的，用于打开所有日志记录。
+		OFF level：关闭所有日志记录开关；是最高等级的，用于关闭所有日志记录。
+		日志级别(按照范围从小到大排序)：OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL
+		范围大的会包含范围小的，例如日志设置为INFO级别的话则FATAL、ERROR、WARN、INFO的日志开关都是打开的，而DEBUG的日志开关将是关闭的。
+	-->
+	<!--
+        <logger>用来设置某一个包或者具体的某一个类的日志打印级别、以及指定<appender>。
+        <logger>仅有一个name属性，
+        一个可选的level和一个可选的addtivity属性。
+        name:用来指定受此logger约束的某一个包或者具体的某一个类。
+        level:用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF，
+              如果未设置此属性，那么当前logger将会继承上级的级别。
+    -->
+
+	<!-- 日志监听器 屏蔽 -->
+	<logger name="org.springframework.boot.autoconfigure.logging" level="INFO">
+		<appender-ref ref="console"/>
+	</logger>
+
+	<!-- Level: FATAL 0  ERROR 3  WARN 4  INFO 6  DEBUG 7 -->
+	<root level="DEBUG">
+		<appender-ref ref="console"/>
+		<appender-ref ref="debug"/>
+		<appender-ref ref="error"/>
+	</root>
+</configuration>
