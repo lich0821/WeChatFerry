@@ -1,4 +1,4 @@
-package com.iamteer;
+package com.iamteer.service;
 
 import com.sun.jna.Library;
 
