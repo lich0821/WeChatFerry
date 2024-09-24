@@ -55,6 +55,8 @@ wcferry:
 
 启动后springboot自身的端口为 9201 socket的端口为 10086
 
+swagger地址：http://localhost:9201/swagger-ui/index.html
+
 ## 参与开发
 
 ### 核心依赖
