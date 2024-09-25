@@ -69,6 +69,9 @@ class Wcf():
         self._wcf_root = os.path.abspath(os.path.dirname(__file__))
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
+        # 在脚本所在目录创建logs文件夹
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
         self.LOG = logging.getLogger("WCF")
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
@@ -276,7 +279,7 @@ class Wcf():
             sleep(1)
             cnt += 1
 
-        self.LOG.error(f"获取超时")
+        self.LOG.error("获取超时")
         return ""
 
     def send_text(self, msg: str, receiver: str, aters: Optional[str] = "") -> int:
@@ -302,7 +305,7 @@ class Wcf():
     def _download_file(self, url: str) -> str:
         path = None
         if not self._local_mode:
-            self.LOG.error(f"只有本地模式才支持网络路径！")
+            self.LOG.error("只有本地模式才支持网络路径！")
             return path
 
         try:
@@ -834,7 +837,7 @@ class Wcf():
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
         if self.download_attach(id, "", extra) != 0:
-            self.LOG.error(f"下载失败")
+            self.LOG.error("下载失败")
             return ""
         cnt = 0
         while cnt < timeout:
@@ -844,7 +847,7 @@ class Wcf():
             sleep(1)
             cnt += 1
 
-        self.LOG.error(f"下载超时")
+        self.LOG.error("下载超时")
         return ""
 
     def add_chatroom_members(self, roomid: str, wxids: str) -> int:
