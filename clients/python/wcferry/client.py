@@ -69,9 +69,6 @@ class Wcf():
         self._wcf_root = os.path.abspath(os.path.dirname(__file__))
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
-        # 在脚本所在目录创建logs文件夹
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
         self.LOG = logging.getLogger("WCF")
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
