@@ -28,6 +28,8 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 #define OS_FORWARD_MSG     0x22C60E0
 #define OS_GET_EMOTION_MGR 0x1bcef10
 #define OS_SEND_EMOTION    0x21b52d5
+#define OS_XML_BUGSIGN     0x24F0D70
+#define OS_SEND_XML        0x20CF360
 
 typedef QWORD (*New_t)(QWORD);
 typedef QWORD (*Free_t)(QWORD);
@@ -42,6 +44,10 @@ typedef QWORD (*SendPatMsg_t)(QWORD, QWORD);
 typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*GetEmotionMgr_t)();
 typedef QWORD (*SendEmotion_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+
+
+typedef QWORD(*__XmlBufSignFunc)(QWORD, QWORD, QWORD);
+typedef QWORD(*__SendXmlMsgFunc)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -228,70 +234,49 @@ void SendEmotionMessage(string wxid, string path)
     SendEmotion(mgr, (QWORD)pWxPath, (QWORD)buff, (QWORD)pWxWxid, 2, (QWORD)buff, 0, (QWORD)buff);
 }
 
-#if 0
+
 void SendXmlMessage(string receiver, string xml, string path, int type)
 {
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
 
-    // 发送消息Call地址 = 微信基址 + 偏移
-    DWORD sendXmlCall1 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call1;
-    DWORD sendXmlCall2 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call2;
-    DWORD sendXmlCall3 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call3;
-    DWORD sendXmlCall4 = g_WeChatWinDllAddr + g_WxCalls.sendXml.call4;
-    DWORD sendXmlParam = g_WeChatWinDllAddr + g_WxCalls.sendXml.param;
 
-    char buffer[0xFF0] = { 0 };
+    New_t funcNew = (New_t)(g_WeChatWinDllAddr + OS_NEW);
+    Free_t funcFree = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
+
+    DWORD xmlBufSign = g_WeChatWinDllAddr + OS_XML_BUGSIGN;
+    DWORD sendXmlMsg = g_WeChatWinDllAddr + OS_SEND_XML;
+    __XmlBufSignFunc xmlBufSignFunc = (__XmlBufSignFunc)xmlBufSign;
+    __SendXmlMsgFunc sendXmlMsgFunc = (__SendXmlMsgFunc)sendXmlMsg;
+
+
+    char buff[0x500] = { 0 };
+    char buff2[0x500] = { 0 };
     char nullBuf[0x1C] = { 0 };
 
-    wstring wsSender   = String2Wstring(GetSelfWxid());
-    wstring wsReceiver = String2Wstring(receiver);
-    wstring wsXml      = String2Wstring(xml);
+    DWORD pBuf = reinterpret_cast<DWORD>(&buff);
+    DWORD pBuf2 = reinterpret_cast<DWORD>(&buff2);
 
-    WxString wxPath;
-    WxString wxNull;
-    WxString wxXml(wsXml);
-    WxString wxSender(wsSender);
-    WxString wxReceiver(wsReceiver);
 
-    if (!path.empty()) {
-        wstring wsPath = String2Wstring(path);
-        wxPath         = WxString(wsPath);
-    }
+    funcNew(pBuf);
+    funcNew(pBuf2);
 
-    DWORD sendtype = type;
-    __asm {
-		pushad;
-		pushfd;
-		lea ecx, buffer;
-		call sendXmlCall1;
-		mov eax, [sendtype];
-		push eax;
-		lea eax, nullBuf;
-		lea edx, wxSender;
-		push eax;
-		lea eax, wxPath;
-		push eax;
-		lea eax, wxXml;
-		push eax;
-		lea edi, wxReceiver;
-		push edi;
-		lea ecx, buffer;
-		call sendXmlCall2;
-		add esp, 0x14;
-		lea eax, wxNull;
-		push eax;
-		lea ecx, buffer;
-		call sendXmlCall3;
-		mov dl, 0x0;
-		lea ecx, buffer;
-		push sendXmlParam;
-		push sendXmlParam;
-		call sendXmlCall4;
-		add esp, 0x8;
-		popfd;
-		popad;
-    }
+    DWORD sbuf[4] = { 0,0,0, 0 };
+
+    DWORD sign = xmlBufSignFunc(pBuf2, reinterpret_cast<DWORD>(&sbuf), 0x1);
+
+
+    WxString* pReceiver = NewWxStringFromStr(receiver);
+    WxString* pXml = NewWxStringFromStr(xml);
+    WxString* pPath = NewWxStringFromStr(path);
+    WxString* pType = NewWxStringFromStr(type);
+
+    wstring* pSender   = NewWxStringFromStr(GetSelfWxid());
+
+    sendXmlMsgFunc(pBuf, pSender, pReceiver, pXml, pPath, reinterpret_cast<DWORD>(&nullBuf), pType, 0x4, sign, pBuf2);
+
+    funcFree(reinterpret_cast<UINT64>(&buff));
+    funcFree(reinterpret_cast<UINT64>(&buff2));
 }
-#endif
+
