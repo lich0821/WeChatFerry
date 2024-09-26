@@ -235,11 +235,12 @@ void SendEmotionMessage(string wxid, string path)
 }
 
 
-void SendXmlMessage(string receiver, string xml, string path, int type)
+void SendXmlMessage(string receiver, string xml, string path, QWORD type)
 {
     if (g_WeChatWinDllAddr == 0) {
         return;
     }
+
 
 
     New_t funcNew = (New_t)(g_WeChatWinDllAddr + OS_NEW);
@@ -270,11 +271,12 @@ void SendXmlMessage(string receiver, string xml, string path, int type)
     WxString* pReceiver = NewWxStringFromStr(receiver);
     WxString* pXml = NewWxStringFromStr(xml);
     WxString* pPath = NewWxStringFromStr(path);
-    WxString* pType = NewWxStringFromStr(type);
 
-    wstring* pSender   = NewWxStringFromStr(GetSelfWxid());
+    WxString* pSender = NewWxStringFromStr(GetSelfWxid());
 
-    sendXmlMsgFunc(pBuf, pSender, pReceiver, pXml, pPath, reinterpret_cast<DWORD>(&nullBuf), pType, 0x4, sign, pBuf2);
+    //sendXmlMsgFunc(pBuf, pSender, pReceiver, pXml, pPath, reinterpret_cast<DWORD>(&nullBuf), pType, 0x4, sign, pBuf2);
+    sendXmlMsgFunc(pBuf, reinterpret_cast<UINT64>(pSender), reinterpret_cast<UINT64>(pReceiver), reinterpret_cast<UINT64>(pXml), reinterpret_cast<UINT64>(pPath), reinterpret_cast<UINT64>(&nullBuf), type, 0x4, sign, pBuf2);
+
 
     funcFree(reinterpret_cast<UINT64>(&buff));
     funcFree(reinterpret_cast<UINT64>(&buff2));
