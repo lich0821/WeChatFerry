@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import com.iamteer.service.SDK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.iamteer.entity.Wcf;
 import com.iamteer.entity.Wcf.DbQuery;
 import com.iamteer.entity.Wcf.DbRow;
@@ -25,11 +25,15 @@ import com.iamteer.entity.Wcf.RpcContact;
 import com.iamteer.entity.Wcf.UserInfo;
 import com.iamteer.entity.Wcf.Verification;
 import com.iamteer.entity.Wcf.WxMsg;
+import com.iamteer.entity.vo.response.WxMsgResp;
+import com.iamteer.service.SDK;
 import com.sun.jna.Native;
 
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Client {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -78,7 +82,8 @@ public class Client {
             cmdSocket = new Pair1Socket();
             cmdSocket.dial(url);
             // logger.info("请点击登录微信");
-            while (!isLogin()) { // 直到登录成功
+            while (!isLogin()) {
+                // 直到登录成功
                 waitMs(1000);
             }
         } catch (Exception e) {
@@ -514,8 +519,22 @@ public class Client {
     }
 
     public void printWxMsg(WxMsg msg) {
-        logger.info("{}[{}]:{}:{}:{}\n{}", msg.getSender(), msg.getRoomid(), msg.getId(), msg.getType(),
-            msg.getXml().replace("\n", "").replace("\t", ""), msg.getContent());
+        WxMsgResp wxMsgResp = new WxMsgResp();
+        wxMsgResp.setIsSelf(msg.getIsSelf());
+        wxMsgResp.setIsGroup(msg.getIsGroup());
+        wxMsgResp.setId(msg.getId());
+        wxMsgResp.setType(msg.getType());
+        wxMsgResp.setTs(msg.getTs());
+        wxMsgResp.setRoomId(msg.getRoomid());
+        wxMsgResp.setContent(msg.getContent());
+        wxMsgResp.setSender(msg.getSender());
+        wxMsgResp.setSign(msg.getSign());
+        wxMsgResp.setThumb(msg.getThumb());
+        wxMsgResp.setExtra(msg.getExtra());
+        wxMsgResp.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
+
+        String jsonString = JSONObject.toJSONString(wxMsgResp);
+        log.info("收到消息: {}", jsonString);
     }
 
     private String bytesToHex(byte[] bytes) {
