@@ -2,11 +2,12 @@ package com.iamteer.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
-import com.iamteer.BussinessContext;
+import com.iamteer.handle.WechatSocketClient;
 import com.iamteer.service.TestService;
-import com.iamteer.utils.SpringContextHolderUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,16 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TestServiceImpl implements TestService {
 
+    @Resource
+    private WechatSocketClient wechatSocketClient;
+
     @Override
     public Boolean isLogin() {
 
-        BussinessContext bussinessContext = SpringContextHolderUtil.getBean(BussinessContext.class);
-
-        boolean flag = bussinessContext.getClient().isLogin();
+        boolean flag = wechatSocketClient.isLogin();
         log.info("flag:{}", flag);
-        List<String> list = bussinessContext.getClient().getDbNames();
+        List<String> list = wechatSocketClient.getDbNames();
         log.info("list:{}", list);
-        return flag;
+        return false;
     }
 
 }

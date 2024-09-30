@@ -1,4 +1,4 @@
-package com.iamteer;
+package com.iamteer.handle;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -34,9 +34,9 @@ import io.sisu.nng.pair.Pair1Socket;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Client {
+public class WechatSocketClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private static final Logger logger = LoggerFactory.getLogger(WechatSocketClient.class);
     private static final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
     private Socket cmdSocket = null;
     private Socket msgSocket = null;
@@ -52,15 +52,15 @@ public class Client {
     private int port;
     private String dllPath;
 
-    public Client() {
+    public WechatSocketClient() {
         this(DEFAULT_HOST, PORT, false, DEFAULT_DLL_PATH);
     }
 
-    public Client(int port, String dllPath) {
+    public WechatSocketClient(int port, String dllPath) {
         this(DEFAULT_HOST, port, false, dllPath);
     }
 
-    public Client(String host, int port, boolean debug, String dllPath) {
+    public WechatSocketClient(String host, int port, boolean debug, String dllPath) {
         this.host = host;
         this.port = port;
         this.dllPath = dllPath;
