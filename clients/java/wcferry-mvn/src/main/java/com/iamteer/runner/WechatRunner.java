@@ -4,8 +4,10 @@ import javax.annotation.Resource;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.iamteer.BussinessContext;
 import com.iamteer.Client;
 import com.iamteer.config.WcferryProperties;
 
@@ -19,10 +21,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@Order(101)
 public class WechatRunner implements ApplicationRunner {
 
     @Resource
     private WcferryProperties properties;
+
+    @Resource
+    private BussinessContext bussinessContext;
+
+    public WechatRunner(BussinessContext bussinessContext) {
+        this.bussinessContext = bussinessContext;
+    }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -38,8 +48,8 @@ public class WechatRunner implements ApplicationRunner {
         // 本地启动 RPC
         // Client client = new Client(); // 默认 10086 端口
         // Client client = new Client(10088,true); // 也可以指定端口
-
-        Client client = new Client(properties.getSocketPort(), properties.getDllPath()); // 默认 10086 端口
+        Client client = new Client(properties.getSocketPort(), properties.getDllPath());
+        bussinessContext.setClient(client); // 默认 10086 端口
 
         // 是否已登录
         // log.info("isLogin: {}", client.isLogin());
