@@ -1,0 +1,24 @@
+# 配置文件
+
+# 服务端配置
+server:
+  # 端口设置
+  port: 9201
+
+spring:
+  # 配置应用信息
+  application:
+    # 应用名
+    name: wechat-ferry
+  # swagger适配
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+# 本服务参数
+wechat:
+  ferry:
+    # DLL文件位置
+    dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
+    # socket端口
+    socket-port: 10086
