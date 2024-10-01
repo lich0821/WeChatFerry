@@ -24,7 +24,9 @@ import com.wechat.ferry.entity.po.Wcf.UserInfo;
 import com.wechat.ferry.entity.po.Wcf.Verification;
 import com.wechat.ferry.entity.po.Wcf.WxMsg;
 import com.wechat.ferry.entity.vo.response.WxMsgResp;
+import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.service.SDK;
+import com.wechat.ferry.utils.HttpClientUtil;
 
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
@@ -39,33 +41,49 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WeChatSocketClient {
 
-    private static final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
+    /**
+     * 消息缓冲区大小，16M
+     */
+    private static final Integer BUFFER_SIZE = 16 * 1024 * 1024;
+
+    /**
+     * 默认IP
+     */
+    private static final String DEFAULT_HOST = "127.0.0.1";
+
+    /**
+     * 请求地址
+     */
+    private static final String CMD_URL = "tcp://%s:%s";
+
     private Socket cmdSocket = null;
     private Socket msgSocket = null;
-    private static String DEFAULT_HOST = "127.0.0.1";
-    private static int PORT = 10086;
-    private static String CMDURL = "tcp://%s:%s";
-    private static String DEFAULT_DLL_PATH = System.getProperty("user.dir") + "\\dll\\sdk.dll";
+
+    /**
+     * 是否收到消息
+     */
     private boolean isReceivingMsg = false;
+
+    /**
+     * 是否为本地端口
+     */
     private boolean isLocalHostPort = false;
+
+    /**
+     * 消息返回
+     */
     private BlockingQueue<WxMsg> msgQ;
 
-    private String host;
-    private int port;
-    private String dllPath;
+    private final String host;
+    private final Integer port;
 
-    public WeChatSocketClient() {
-        this(DEFAULT_HOST, PORT, false, DEFAULT_DLL_PATH);
-    }
-
-    public WeChatSocketClient(int port, String dllPath) {
+    public WeChatSocketClient(Integer port, String dllPath) {
         this(DEFAULT_HOST, port, false, dllPath);
     }
 
-    public WeChatSocketClient(String host, int port, boolean debug, String dllPath) {
+    public WeChatSocketClient(String host, Integer port, boolean debug, String dllPath) {
         this.host = host;
         this.port = port;
-        this.dllPath = dllPath;
 
         SDK INSTANCE = Native.load(dllPath, SDK.class);
         int status = INSTANCE.WxInitSDK(debug, port);
@@ -73,7 +91,7 @@ public class WeChatSocketClient {
             log.error("启动 RPC 失败: {}", status);
             System.exit(-1);
         }
-        connectRPC(String.format(CMDURL, host, port), INSTANCE);
+        connectRPC(String.format(CMD_URL, host, port), INSTANCE);
         if (DEFAULT_HOST.equals(host) || "localhost".equalsIgnoreCase(host)) {
             isLocalHostPort = true;
         }
@@ -83,7 +101,6 @@ public class WeChatSocketClient {
         try {
             cmdSocket = new Pair1Socket();
             cmdSocket.dial(url);
-            // logger.info("请点击登录微信");
             while (!isLogin()) {
                 // 直到登录成功
                 waitMs(1000);
@@ -117,7 +134,7 @@ public class WeChatSocketClient {
     /**
      * 当前微信客户端是否登录微信号
      *
-     * @return
+     * @return 是否登录结果
      */
     public boolean isLogin() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_IS_LOGIN_VALUE).build();
@@ -131,22 +148,21 @@ public class WeChatSocketClient {
     /**
      * 获得微信客户端登录的微信ID
      *
-     * @return
+     * @return 微信ID
      */
-    public String getSelfWxid() {
+    public String getSelfWxId() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getStr();
         }
-
         return "";
     }
 
     /**
      * 获取所有消息类型
      *
-     * @return
+     * @return 消息类型集合
      */
     public Map<Integer, String> getMsgTypes() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
@@ -154,7 +170,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             return rsp.getTypes().getTypesMap();
         }
-
         return Wcf.MsgTypes.newBuilder().build().getTypesMap();
     }
 
@@ -166,7 +181,7 @@ public class WeChatSocketClient {
      * "filehelper": "文件传输助手",
      * "newsapp": "新闻",
      *
-     * @return
+     * @return 联系人列表
      */
     public List<RpcContact> getContacts() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_CONTACTS_VALUE).build();
@@ -174,7 +189,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             return rsp.getContacts().getContactsList();
         }
-
         return Wcf.RpcContacts.newBuilder().build().getContactsList();
     }
 
@@ -183,7 +197,7 @@ public class WeChatSocketClient {
      *
      * @param db 数据库名
      * @param sql 执行的sql语句
-     * @return
+     * @return 数据记录列表
      */
     public List<DbRow> querySql(String db, String sql) {
         DbQuery dbQuery = DbQuery.newBuilder().setSql(sql).setDb(db).build();
@@ -198,7 +212,7 @@ public class WeChatSocketClient {
     /**
      * 获取所有数据库名
      *
-     * @return
+     * @return 数据库名称列表
      */
     public List<String> getDbNames() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
@@ -206,15 +220,14 @@ public class WeChatSocketClient {
         if (rsp != null) {
             return rsp.getDbs().getNamesList();
         }
-
         return Wcf.DbNames.newBuilder().build().getNamesList();
     }
 
     /**
      * 获取指定数据库中的所有表
      *
-     * @param db
-     * @return
+     * @param db 数据库名称
+     * @return 数据库中表列表
      */
     public Map<String, String> getDbTables(String db) {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
@@ -225,7 +238,6 @@ public class WeChatSocketClient {
                 tables.put(tbl.getName(), tbl.getSql());
             }
         }
-
         return tables;
     }
 
@@ -240,7 +252,7 @@ public class WeChatSocketClient {
      * @author Changhua
      * @example sendText(" Hello @ 某人1 @ 某人2 ", " xxxxxxxx @ chatroom ",
      *          "wxid_xxxxxxxxxxxxx1,wxid_xxxxxxxxxxxxx2");
-     **/
+     */
     public int sendText(String msg, String receiver, String aters) {
         Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
@@ -250,7 +262,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             ret = rsp.getStatus();
         }
-
         return ret;
     }
 
@@ -270,7 +281,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             ret = rsp.getStatus();
         }
-
         return ret;
     }
 
@@ -290,7 +300,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             ret = rsp.getStatus();
         }
-
         return ret;
     }
 
@@ -299,8 +308,8 @@ public class WeChatSocketClient {
      *
      * @param receiver 接收者微信id
      * @param xml xml内容
-     * @param path
-     * @param type
+     * @param path 路径
+     * @param type 类型
      * @return 发送结果状态码
      */
     public int sendXml(String receiver, String xml, String path, int type) {
@@ -312,7 +321,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             ret = rsp.getStatus();
         }
-
         return ret;
     }
 
@@ -332,7 +340,6 @@ public class WeChatSocketClient {
         if (rsp != null) {
             ret = rsp.getStatus();
         }
-
         return ret;
     }
 
@@ -420,12 +427,12 @@ public class WeChatSocketClient {
     /**
      * 判断是否是艾特自己的消息
      *
-     * @param wxMsgXml
-     * @param wxMsgContent
-     * @return
+     * @param wxMsgXml XML消息
+     * @param wxMsgContent 消息内容
+     * @return 是否
      */
     public boolean isAtMeMsg(String wxMsgXml, String wxMsgContent) {
-        String format = String.format("<atuserlist><![CDATA[%s]]></atuserlist>", getSelfWxid());
+        String format = String.format("<atuserlist><![CDATA[%s]]></atuserlist>", getSelfWxId());
         boolean isAtAll = wxMsgContent.startsWith("@所有人") || wxMsgContent.startsWith("@all");
         if (wxMsgXml.contains(format) && !isAtAll) {
             return true;
@@ -437,7 +444,8 @@ public class WeChatSocketClient {
         try {
             msgSocket = new Pair1Socket();
             msgSocket.dial(url);
-            msgSocket.setReceiveTimeout(2000); // 2 秒超时
+            // 设置 2 秒超时
+            msgSocket.setReceiveTimeout(2000);
         } catch (Exception e) {
             log.error("创建消息 RPC 失败", e);
             return;
@@ -508,14 +516,13 @@ public class WeChatSocketClient {
         for (RpcContact c : contacts) {
             int value = c.getGender();
             String gender;
-            if (value == 1) {
+            if (SexEnum.BOY.getCode().equals(String.valueOf(value))) {
                 gender = "男";
-            } else if (value == 2) {
+            } else if (SexEnum.GIRL.getCode().equals(String.valueOf(value))) {
                 gender = "女";
             } else {
                 gender = "未知";
             }
-
             log.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(), c.getProvince(), c.getCity(), gender);
         }
     }
@@ -550,6 +557,32 @@ public class WeChatSocketClient {
     public void keepRunning() {
         while (true) {
             waitMs(1000);
+        }
+    }
+
+    public void forwardMsg(WxMsg msg, String url) {
+        WxMsgResp wxMsgResp = new WxMsgResp();
+        wxMsgResp.setIsSelf(msg.getIsSelf());
+        wxMsgResp.setIsGroup(msg.getIsGroup());
+        wxMsgResp.setId(msg.getId());
+        wxMsgResp.setType(msg.getType());
+        wxMsgResp.setTs(msg.getTs());
+        wxMsgResp.setRoomId(msg.getRoomid());
+        wxMsgResp.setContent(msg.getContent());
+        wxMsgResp.setSender(msg.getSender());
+        wxMsgResp.setSign(msg.getSign());
+        wxMsgResp.setThumb(msg.getThumb());
+        wxMsgResp.setExtra(msg.getExtra());
+        wxMsgResp.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
+
+        String jsonString = JSONObject.toJSONString(wxMsgResp);
+        try {
+            String responseStr = HttpClientUtil.doPostJson(url, jsonString);
+            if (!JSONObject.parseObject(responseStr).getString("code").equals("200")) {
+                log.error("本机消息转发失败！-URL：{}", url);
+            }
+        } catch (Exception e) {
+            log.error("转发接口报错：", e);
         }
     }
 

@@ -83,6 +83,13 @@
 	<logger name="org.springframework.boot.autoconfigure.logging" level="INFO">
 		<appender-ref ref="console"/>
 	</logger>
+	<!-- httpclient 屏蔽 -->
+	<logger name="org.apache" level="OFF">
+		<appender-ref ref="error"/>
+	</logger>
+	<logger name="httpclient" level="OFF">
+		<appender-ref ref="error"/>
+	</logger>
 
 	<!-- Level: FATAL 0  ERROR 3  WARN 4  INFO 6  DEBUG 7 -->
 	<root level="DEBUG">

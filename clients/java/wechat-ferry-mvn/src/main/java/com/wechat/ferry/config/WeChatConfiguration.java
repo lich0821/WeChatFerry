@@ -2,6 +2,7 @@ package com.wechat.ferry.config;
 
 import javax.annotation.Resource;
 
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,6 +23,9 @@ public class WeChatConfiguration {
     @Resource
     private WeChatFerryProperties properties;
 
+    @Resource
+    private ServerProperties serverProperties;
+
     @Bean
     public WeChatSocketClient client() {
         log.debug("[读取配置文件]-端口：{}，地址：{}", properties.getSocketPort(), properties.getDllPath());
@@ -29,8 +33,6 @@ public class WeChatConfiguration {
         // Client client = new Client("127.0.0.1", 10086);
 
         // 本地启动 RPC
-        // Client client = new Client(); // 默认 10086 端口
-        // Client client = new Client(10088,true); // 也可以指定端口
         WeChatSocketClient wechatSocketClient = new WeChatSocketClient(properties.getSocketPort(), properties.getDllPath());
 
         // 是否已登录
@@ -69,12 +71,17 @@ public class WeChatConfiguration {
         // 发送表情消息，gif 必须要存在
         // client.sendEmotion("C:\\Projs\\WeChatFerry\\emo.gif", "filehelper");
 
+        // 使用本机打印
+        String url = "http://localhost:" + serverProperties.getPort() + "/wechat/msg/receive";
         // 接收消息，并调用 printWxMsg 处理
         wechatSocketClient.enableRecvMsg(100);
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 while (wechatSocketClient.getIsReceivingMsg()) {
-                    wechatSocketClient.printWxMsg(wechatSocketClient.getMsg());
+                    // 只打印
+                    // wechatSocketClient.printWxMsg(wechatSocketClient.getMsg());
+                    // 转发到boot项目进行消息处理
+                    wechatSocketClient.forwardMsg(wechatSocketClient.getMsg(), url);
                 }
             }
         });
