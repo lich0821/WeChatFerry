@@ -12,6 +12,12 @@ import com.wechat.ferry.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 控制层-测试类
+ *
+ * @author chandler
+ * @date 2024-09-25 22:17
+ */
 @RestController
 @RequestMapping("/test")
 @Api(tags = "测试-接口")

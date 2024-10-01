@@ -4,10 +4,12 @@ import com.sun.jna.Library;
 
 /**
  * SDK.dll的接口类
- * 
- * @Description
+ *
  * @Author xinggq
  * @Date 2024/7/10
+ *
+ * @author xinggq
+ * @date 2024-07-10 15:21
  */
 public interface SDK extends Library {
 

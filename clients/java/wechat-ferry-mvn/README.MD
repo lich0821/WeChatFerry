@@ -2,6 +2,9 @@
 
 ⚠️ **只支持 Windows** ⚠️
 
+`声明：` 本项目是基于 clients/java/wcferry 项目改造，随着时间推进，项目结构和代码规范逐渐产生分离，使用此项目的人员可参考之前的项目
+我们在开发时请尽量保持注释的完整性，便于阅读维护
+
 ## 快速使用
 
 ### 环境准备
@@ -38,11 +41,12 @@
 
 ```yaml
 # 本服务参数
-wcferry:
-  # DLL文件位置
-  dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
-  # socket端口
-  socket-port: 10086
+wechat:
+  ferry:
+    # DLL文件位置
+    dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
+    # socket端口
+    socket-port: 10086
 ```
 
 ### 编译运行

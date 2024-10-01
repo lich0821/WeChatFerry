@@ -8,10 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.fastjson2.JSONObject;
+import com.sun.jna.Native;
 import com.wechat.ferry.entity.po.Wcf;
 import com.wechat.ferry.entity.po.Wcf.DbQuery;
 import com.wechat.ferry.entity.po.Wcf.DbRow;
@@ -27,16 +25,20 @@ import com.wechat.ferry.entity.po.Wcf.Verification;
 import com.wechat.ferry.entity.po.Wcf.WxMsg;
 import com.wechat.ferry.entity.vo.response.WxMsgResp;
 import com.wechat.ferry.service.SDK;
-import com.sun.jna.Native;
 
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 处理层-微信客户端
+ *
+ * @author Changhua
+ * @date 2023-12-06 22:11
+ */
 @Slf4j
-public class WechatSocketClient {
+public class WeChatSocketClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(WechatSocketClient.class);
     private static final int BUFFER_SIZE = 16 * 1024 * 1024; // 16M
     private Socket cmdSocket = null;
     private Socket msgSocket = null;
@@ -52,15 +54,15 @@ public class WechatSocketClient {
     private int port;
     private String dllPath;
 
-    public WechatSocketClient() {
+    public WeChatSocketClient() {
         this(DEFAULT_HOST, PORT, false, DEFAULT_DLL_PATH);
     }
 
-    public WechatSocketClient(int port, String dllPath) {
+    public WeChatSocketClient(int port, String dllPath) {
         this(DEFAULT_HOST, port, false, dllPath);
     }
 
-    public WechatSocketClient(String host, int port, boolean debug, String dllPath) {
+    public WeChatSocketClient(String host, int port, boolean debug, String dllPath) {
         this.host = host;
         this.port = port;
         this.dllPath = dllPath;
@@ -68,7 +70,7 @@ public class WechatSocketClient {
         SDK INSTANCE = Native.load(dllPath, SDK.class);
         int status = INSTANCE.WxInitSDK(debug, port);
         if (status != 0) {
-            logger.error("启动 RPC 失败: {}", status);
+            log.error("启动 RPC 失败: {}", status);
             System.exit(-1);
         }
         connectRPC(String.format(CMDURL, host, port), INSTANCE);
@@ -87,11 +89,11 @@ public class WechatSocketClient {
                 waitMs(1000);
             }
         } catch (Exception e) {
-            logger.error("连接 RPC 失败: ", e);
+            log.error("连接 RPC 失败: ", e);
             System.exit(-1);
         }
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("关闭...");
+            log.info("关闭...");
             diableRecvMsg();
             if (isLocalHostPort) {
                 INSTANCE.WxDestroySDK();
@@ -107,7 +109,7 @@ public class WechatSocketClient {
             long size = cmdSocket.receive(ret, true);
             return Response.parseFrom(Arrays.copyOfRange(ret.array(), 0, (int)size));
         } catch (Exception e) {
-            logger.error("命令调用失败: ", e);
+            log.error("命令调用失败: ", e);
             return null;
         }
     }
@@ -242,7 +244,7 @@ public class WechatSocketClient {
     public int sendText(String msg, String receiver, String aters) {
         Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
-        logger.debug("sendText: {}", bytesToHex(req.toByteArray()));
+        log.debug("sendText: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {
@@ -262,7 +264,7 @@ public class WechatSocketClient {
     public int sendImage(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
-        logger.debug("sendImage: {}", bytesToHex(req.toByteArray()));
+        log.debug("sendImage: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {
@@ -282,7 +284,7 @@ public class WechatSocketClient {
     public int sendFile(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
-        logger.debug("sendFile: {}", bytesToHex(req.toByteArray()));
+        log.debug("sendFile: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {
@@ -304,7 +306,7 @@ public class WechatSocketClient {
     public int sendXml(String receiver, String xml, String path, int type) {
         Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
-        logger.debug("sendXml: {}", bytesToHex(req.toByteArray()));
+        log.debug("sendXml: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {
@@ -324,7 +326,7 @@ public class WechatSocketClient {
     public int sendEmotion(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
-        logger.debug("sendEmotion: {}", bytesToHex(req.toByteArray()));
+        log.debug("sendEmotion: {}", bytesToHex(req.toByteArray()));
         Response rsp = sendCmd(req);
         int ret = -1;
         if (rsp != null) {
@@ -437,7 +439,7 @@ public class WechatSocketClient {
             msgSocket.dial(url);
             msgSocket.setReceiveTimeout(2000); // 2 秒超时
         } catch (Exception e) {
-            logger.error("创建消息 RPC 失败", e);
+            log.error("创建消息 RPC 失败", e);
             return;
         }
         ByteBuffer bb = ByteBuffer.allocate(BUFFER_SIZE);
@@ -453,7 +455,7 @@ public class WechatSocketClient {
         try {
             msgSocket.close();
         } catch (Exception e) {
-            logger.error("关闭连接失败", e);
+            log.error("关闭连接失败", e);
         }
     }
 
@@ -465,7 +467,7 @@ public class WechatSocketClient {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ENABLE_RECV_TXT_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp == null) {
-            logger.error("启动消息接收失败");
+            log.error("启动消息接收失败");
             isReceivingMsg = false;
             return;
         }
@@ -514,7 +516,7 @@ public class WechatSocketClient {
                 gender = "未知";
             }
 
-            logger.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(), c.getProvince(), c.getCity(), gender);
+            log.info("{}, {}, {}, {}, {}, {}, {}", c.getWxid(), c.getName(), c.getCode(), c.getCountry(), c.getProvince(), c.getCity(), gender);
         }
     }
 

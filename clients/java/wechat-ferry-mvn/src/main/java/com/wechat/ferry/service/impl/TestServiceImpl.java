@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.wechat.ferry.handle.WeChatSocketClient;
 import org.springframework.stereotype.Service;
 
-import com.wechat.ferry.handle.WechatSocketClient;
 import com.wechat.ferry.service.TestService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TestServiceImpl implements TestService {
 
     @Resource
-    private WechatSocketClient wechatSocketClient;
+    private WeChatSocketClient wechatSocketClient;
 
     @Override
     public Boolean isLogin() {

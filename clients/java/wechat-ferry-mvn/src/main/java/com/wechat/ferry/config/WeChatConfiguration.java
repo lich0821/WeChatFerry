@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wechat.ferry.handle.WechatSocketClient;
+import com.wechat.ferry.handle.WeChatSocketClient;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,21 +17,21 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Configuration
-public class WechatConfiguration {
+public class WeChatConfiguration {
 
     @Resource
     private WeChatFerryProperties properties;
 
     @Bean
-    public WechatSocketClient client() {
-        log.debug("测试：端口：{}，地址：{}", properties.getSocketPort(), properties.getDllPath());
+    public WeChatSocketClient client() {
+        log.debug("[读取配置文件]-端口：{}，地址：{}", properties.getSocketPort(), properties.getDllPath());
         // 连接远程 RPC
         // Client client = new Client("127.0.0.1", 10086);
 
         // 本地启动 RPC
         // Client client = new Client(); // 默认 10086 端口
         // Client client = new Client(10088,true); // 也可以指定端口
-        WechatSocketClient wechatSocketClient = new WechatSocketClient(properties.getSocketPort(), properties.getDllPath());
+        WeChatSocketClient wechatSocketClient = new WeChatSocketClient(properties.getSocketPort(), properties.getDllPath());
 
         // 是否已登录
         // log.info("isLogin: {}", client.isLogin());
