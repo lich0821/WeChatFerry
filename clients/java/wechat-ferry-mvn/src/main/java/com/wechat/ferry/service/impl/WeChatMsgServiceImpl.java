@@ -1,9 +1,9 @@
 package com.wechat.ferry.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wechat.ferry.handle.WeChatSocketClient;
+import com.alibaba.fastjson2.JSON;
+import com.wechat.ferry.entity.dto.WxMsgDTO;
 import com.wechat.ferry.service.WeChatMsgService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class WeChatMsgServiceImpl implements WeChatMsgService {
 
-    private WeChatSocketClient wechatSocketClient;
-
-    @Autowired
-    public void setWechatSocketClient(WeChatSocketClient wechatSocketClient) {
-        this.wechatSocketClient = wechatSocketClient;
-    }
-
     @Override
     public void receiveMsg(String jsonString) {
-        log.debug("[收到消息]-[消息内容]-打印：{}", jsonString);
+        // 转为JSON对象
+        WxMsgDTO dto = JSON.parseObject(jsonString, WxMsgDTO.class);
+        // TODO 这里可以拓展自己需要的功能
+        log.debug("[收到消息]-[消息内容]-打印：{}", dto);
     }
 
 }

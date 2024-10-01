@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.sun.jna.Native;
+import com.wechat.ferry.entity.dto.WxMsgDTO;
 import com.wechat.ferry.entity.po.Wcf;
 import com.wechat.ferry.entity.po.Wcf.DbQuery;
 import com.wechat.ferry.entity.po.Wcf.DbRow;
@@ -23,7 +24,6 @@ import com.wechat.ferry.entity.po.Wcf.RpcContact;
 import com.wechat.ferry.entity.po.Wcf.UserInfo;
 import com.wechat.ferry.entity.po.Wcf.Verification;
 import com.wechat.ferry.entity.po.Wcf.WxMsg;
-import com.wechat.ferry.entity.vo.response.WxMsgResp;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
@@ -528,21 +528,21 @@ public class WeChatSocketClient {
     }
 
     public void printWxMsg(WxMsg msg) {
-        WxMsgResp wxMsgResp = new WxMsgResp();
-        wxMsgResp.setIsSelf(msg.getIsSelf());
-        wxMsgResp.setIsGroup(msg.getIsGroup());
-        wxMsgResp.setId(msg.getId());
-        wxMsgResp.setType(msg.getType());
-        wxMsgResp.setTs(msg.getTs());
-        wxMsgResp.setRoomId(msg.getRoomid());
-        wxMsgResp.setContent(msg.getContent());
-        wxMsgResp.setSender(msg.getSender());
-        wxMsgResp.setSign(msg.getSign());
-        wxMsgResp.setThumb(msg.getThumb());
-        wxMsgResp.setExtra(msg.getExtra());
-        wxMsgResp.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
+        WxMsgDTO dto = new WxMsgDTO();
+        dto.setIsSelf(msg.getIsSelf());
+        dto.setIsGroup(msg.getIsGroup());
+        dto.setId(msg.getId());
+        dto.setType(msg.getType());
+        dto.setTs(msg.getTs());
+        dto.setRoomId(msg.getRoomid());
+        dto.setContent(msg.getContent());
+        dto.setSender(msg.getSender());
+        dto.setSign(msg.getSign());
+        dto.setThumb(msg.getThumb());
+        dto.setExtra(msg.getExtra());
+        dto.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
 
-        String jsonString = JSONObject.toJSONString(wxMsgResp);
+        String jsonString = JSONObject.toJSONString(dto);
         log.info("收到消息: {}", jsonString);
     }
 
@@ -561,21 +561,21 @@ public class WeChatSocketClient {
     }
 
     public void forwardMsg(WxMsg msg, String url) {
-        WxMsgResp wxMsgResp = new WxMsgResp();
-        wxMsgResp.setIsSelf(msg.getIsSelf());
-        wxMsgResp.setIsGroup(msg.getIsGroup());
-        wxMsgResp.setId(msg.getId());
-        wxMsgResp.setType(msg.getType());
-        wxMsgResp.setTs(msg.getTs());
-        wxMsgResp.setRoomId(msg.getRoomid());
-        wxMsgResp.setContent(msg.getContent());
-        wxMsgResp.setSender(msg.getSender());
-        wxMsgResp.setSign(msg.getSign());
-        wxMsgResp.setThumb(msg.getThumb());
-        wxMsgResp.setExtra(msg.getExtra());
-        wxMsgResp.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
+        WxMsgDTO dto = new WxMsgDTO();
+        dto.setIsSelf(msg.getIsSelf());
+        dto.setIsGroup(msg.getIsGroup());
+        dto.setId(msg.getId());
+        dto.setType(msg.getType());
+        dto.setTs(msg.getTs());
+        dto.setRoomId(msg.getRoomid());
+        dto.setContent(msg.getContent());
+        dto.setSender(msg.getSender());
+        dto.setSign(msg.getSign());
+        dto.setThumb(msg.getThumb());
+        dto.setExtra(msg.getExtra());
+        dto.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
 
-        String jsonString = JSONObject.toJSONString(wxMsgResp);
+        String jsonString = JSONObject.toJSONString(dto);
         try {
             String responseStr = HttpClientUtil.doPostJson(url, jsonString);
             if (!JSONObject.parseObject(responseStr).getString("code").equals("200")) {

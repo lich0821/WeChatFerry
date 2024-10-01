@@ -1,4 +1,4 @@
-package com.wechat.ferry.entity.vo.response;
+package com.wechat.ferry.entity.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2024-09-26 19:56
  */
 @Data
-public class WxMsgResp {
+public class WxMsgDTO {
 
     /**
      * 是否自己发送的

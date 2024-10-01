@@ -11,7 +11,7 @@ public interface WeChatMsgService {
     /**
      * 接收消息
      *
-     * @param jsonString json转换后的字符串
+     * @param jsonString json数据
      *
      * @author chandler
      * @date 2024-10-01 14:33
