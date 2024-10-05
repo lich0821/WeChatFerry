@@ -14,6 +14,15 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  # 打成jar包必须添加如下配置才能找到页面
+  thymeleaf:
+    mode: HTML
+    cache: false
+    prefix: classpath:/templates
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
 
 # 本服务参数
 wechat:
@@ -22,3 +31,21 @@ wechat:
     dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
     # socket端口
     socket-port: 10086
+    # 需要开启消息处理的群
+    open-msg-groups:
+      - 53257911728@chatroom
+    # 接收消息转发开关
+    receive-msg-fwd-switch: false
+    # 接收消息转发URL
+    receive-msg-fwd-urls:
+      - http://
+    # 发送消息前转发开关
+    send-msg-front-fwd-switch: false
+    # 发送消息前转发URL
+    send-msg-front-fwd-urls:
+      - http://
+    # 发送消息后转发开关
+    send-msg-back-fwd-switch: false
+    # 发送消息后转发URL
+    send-msg-back-fwd-urls:
+      - http://

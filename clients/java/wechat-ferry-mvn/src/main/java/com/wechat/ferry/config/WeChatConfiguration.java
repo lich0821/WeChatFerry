@@ -27,7 +27,7 @@ public class WeChatConfiguration {
     private ServerProperties serverProperties;
 
     @Bean
-    public WeChatSocketClient client() {
+    public WeChatSocketClient weChatSocketClient() {
         log.debug("[读取配置文件]-端口：{}，地址：{}", properties.getSocketPort(), properties.getDllPath());
         // 连接远程 RPC
         // Client client = new Client("127.0.0.1", 10086);

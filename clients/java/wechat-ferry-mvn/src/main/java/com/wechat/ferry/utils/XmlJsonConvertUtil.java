@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.dom4j.Attribute;
@@ -16,27 +17,27 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 @Slf4j
 public class XmlJsonConvertUtil {
 
-    public static String readFile(String path) {
-        String str = "";
-        try {
-            File file = new File(path);
-            FileInputStream fis = new FileInputStream(file);
-            FileChannel fc = fis.getChannel();
-            ByteBuffer bb = ByteBuffer.allocate(new Long(file.length()).intValue());
-            // fc向buffer中读入数据
-            fc.read(bb);
-            bb.flip();
-            str = new String(bb.array(), "UTF8");
-            fc.close();
-            fis.close();
-        } catch (Exception e) {
-            log.error("异常：{} ", e.getMessage());
-        }
+    private static final String DEFAULT_ATTRIBUTE_PREFIX = "_";
+    private static final String DEFAULT_VALUE_PREFIX = "_text";
+
+    public static String readFile(String path) throws Exception {
+        File file = new File(path);
+        FileInputStream fis = new FileInputStream(file);
+        FileChannel fc = fis.getChannel();
+        ByteBuffer bb = ByteBuffer.allocate(new Long(file.length()).intValue());
+        // fc向buffer中读入数据
+        fc.read(bb);
+        bb.flip();
+        String str = new String(bb.array(), StandardCharsets.UTF_8);
+        fc.close();
+        fis.close();
         return str;
+
     }
 
     /**
@@ -44,15 +45,15 @@ public class XmlJsonConvertUtil {
      * 
      * @param xmlStr
      * @return
+     * @throws DocumentException
      */
     public static JSONObject xml2Json(String xmlStr) {
         JSONObject json = new JSONObject();
         try {
-            xmlStr = xmlStr.replace("<?xml version=\\\"1.0\\\"?>\\n", "");
             Document doc = DocumentHelper.parseText(xmlStr);
             dom4j2Json(doc.getRootElement(), json);
         } catch (DocumentException e) {
-            log.error("异常：{} ", e.getMessage());
+            log.error("转换失败：", e);
         }
         return json;
     }
@@ -68,7 +69,7 @@ public class XmlJsonConvertUtil {
         for (Object o : element.attributes()) {
             Attribute attr = (Attribute)o;
             if (!isEmpty(attr.getValue())) {
-                json.put("@" + attr.getName(), attr.getValue());
+                json.put(DEFAULT_ATTRIBUTE_PREFIX + attr.getName(), attr.getValue());
             }
         }
         List<Element> chdEl = element.elements();
@@ -110,12 +111,25 @@ public class XmlJsonConvertUtil {
                 for (Object o : element.attributes()) {
                     Attribute attr = (Attribute)o;
                     if (!isEmpty(attr.getValue())) {
-                        json.put("@" + attr.getName(), attr.getValue());
+                        json.put(DEFAULT_ATTRIBUTE_PREFIX + attr.getName(), attr.getValue());
                     }
                 }
+                // 判断是否包含属性
+                // if (!CollectionUtils.isEmpty(e.attributes())) {
+                // for (Object o : e.attributes()) {
+                // Attribute attr = (Attribute)o;
+                // if (!isEmpty(attr.getValue())) {
+                // json.put(DEFAULT_ATTRIBUTE_PREFIX + attr.getName(), attr.getValue());
+                // }
+                // if (!e.getText().isEmpty()) {
+                // json.put(DEFAULT_VALUE_PREFIX, e.getText());
+                // }
+                // }
+                // } else {
                 if (!e.getText().isEmpty()) {
                     json.put(e.getName(), e.getText());
                 }
+                // }
             }
         }
     }
@@ -125,6 +139,17 @@ public class XmlJsonConvertUtil {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        String xml = "<msgsource></msgsource>";
+
+        log.info("xml格式化前:{}", xml);
+        xml = xml.replaceAll(">[\\s\\p{Zs}]*<","><");
+        log.info("xml格式化后:{}", xml);
+        JSONObject json = xml2Json(xml);
+        System.out.println("xml2Json:" + json.toJSONString());
+
     }
 
 }

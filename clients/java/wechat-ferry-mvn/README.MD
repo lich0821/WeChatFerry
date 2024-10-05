@@ -9,11 +9,12 @@
 
 ### 环境准备
 
-| 名称    | 版本        |
-|-------|-----------|
-| JDK   | 1.8+      |
-| Maven | 3.8+      |
-| 微信    | 3.9.10.27 |
+| 名称    | 版本        | 备注 |
+|-------|-----------|----|
+| JDK   | 1.8+      | √  |
+| Maven | 3.8+      | √  |
+| 微信    | 3.9.10.27 | √  |
+| MySQL | 8.0+      | 备用 |
 
 ### 下载文件
 
@@ -49,6 +50,10 @@ wechat:
     socket-port: 10086
 ```
 
+### 数据库修改-目前未使用
+
+为了更好的拓展应用，本客户端后续将采用mysql数据库，请自行安装mysql数据库
+
 ### 编译运行
 
 找到 src/main/java/com/wechat/ferry/WeChatFerryApplication.java 类
@@ -71,6 +76,9 @@ swagger地址：http://localhost:9201/swagger-ui/index.html
 | protobuf-java | 3.22.2 | rpc      |
 | jna           | 5.6.0  | 态访问系统本地库 |
 | nng-java      | 1.4.0  | 本地包      |
+| fastjson2     | 2.0.52 | 序列化      |
+| dom4j         | 2.1.3  | XML解析包   |
+| httpclient    | 4.5.13 | 客户端请求    |
 
 ### 模块结构
 
@@ -86,7 +94,8 @@ wechat-ferry-mvn
 │  │  │  ├─config                           配置
 │  │  │  ├─entity                           聚合模型
 │  │  │  │  ├─dto                           DTO模型
-│  │  │  │  ├─po                            实体模型
+│  │  │  │  ├─po                            数据库实体(与表结构一一对应,否则请使用DTO)
+│  │  │  │  ├─proto                         PB实体
 │  │  │  │  └─vo                            视图层返回体目录
 │  │  │  ├─enums                            枚举
 │  │  │  ├─handle                           处理层

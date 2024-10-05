@@ -4,13 +4,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * DTO-微信消息
+ * DTO-ge微信消息
  *
  * @author chandler
  * @date 2024-09-26 19:56
  */
 @Data
-public class WxMsgDTO {
+public class WxPpMsgDTO {
 
     /**
      * 是否自己发送的
