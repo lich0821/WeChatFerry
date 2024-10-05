@@ -1,6 +1,7 @@
 package com.wechat.ferry.config;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -62,5 +63,10 @@ public class WeChatFerryProperties {
      * 发送消息后转发URL
      */
     private List<String> sendMsgBackFwdUrls;
+
+    /**
+     * 调用第三方服务客户端成功状态码
+     */
+    private Map<String, String> thirdPartyOkCodes;
 
 }

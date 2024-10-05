@@ -1,5 +1,7 @@
 package com.wechat.ferry.service.impl;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +64,12 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                 }
                 try {
                     String responseStr = HttpClientUtil.doPostJson(receiveMsgFwdUrl, jsonString);
-                    if (ObjectUtils.isEmpty(responseStr) || !JSONObject.parseObject(responseStr).getString("code").equals("200")) {
-                        log.error("消息转发外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
+                    if (judgeSuccess(responseStr)) {
+                        log.error("[接收消息]-消息转发外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
                     }
                     log.debug("[接收消息]-[转发接收到的消息]-转发消息至：{}", receiveMsgFwdUrl);
                 } catch (Exception e) {
-                    log.error("消息转发接口[{}]异常：", receiveMsgFwdUrl, e);
+                    log.error("[接收消息]-消息转发接口[{}]服务异常：", receiveMsgFwdUrl, e);
                 }
             }
         }
@@ -78,10 +80,12 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         boolean passFlag = false;
         if (!ObjectUtils.isEmpty(responseStr)) {
             JSONObject jSONObject = JSONObject.parseObject(responseStr);
-            if (!ObjectUtils.isEmpty(jSONObject)) {
-                if (!ObjectUtils.isEmpty(jSONObject.get("code"))) {
-                    if (jSONObject.get("code").equals("200")) {
-                        return true;
+            if (!ObjectUtils.isEmpty(jSONObject) && !CollectionUtils.isEmpty(weChatFerryProperties.getThirdPartyOkCodes())) {
+                Map<String, String> codeMap = weChatFerryProperties.getThirdPartyOkCodes();
+                for (Map.Entry<String, String> entry : codeMap.entrySet()) {
+                    if (!ObjectUtils.isEmpty(jSONObject.get(entry.getKey())) && jSONObject.get(entry.getKey()).equals(entry.getValue())) {
+                        passFlag = true;
+                        break;
                     }
                 }
             }

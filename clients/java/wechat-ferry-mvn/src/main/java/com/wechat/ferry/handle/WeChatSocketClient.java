@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import org.springframework.util.ObjectUtils;
+
 import com.alibaba.fastjson2.JSONObject;
 import com.sun.jna.Native;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
@@ -27,6 +29,7 @@ import com.wechat.ferry.entity.proto.Wcf.WxMsg;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
+import com.wechat.ferry.utils.XmlJsonConvertUtil;
 
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
@@ -573,12 +576,36 @@ public class WeChatSocketClient {
         dto.setType(msg.getType());
         dto.setTs(msg.getTs());
         dto.setRoomId(msg.getRoomid());
-        dto.setContent(content);
         dto.setSender(msg.getSender());
         dto.setSign(msg.getSign());
         dto.setThumb(msg.getThumb());
         dto.setExtra(msg.getExtra());
         dto.setXml(xml);
+        // 根据消息类型判断 引用-49
+        if (!ObjectUtils.isEmpty(msg.getContent()) && "49".equals("" + msg.getType())) {
+            try {
+                dto.setQuoteContent(content);
+                JSONObject json = XmlJsonConvertUtil.xml2Json(content);
+                // 获取第一层级的JSONObject
+                JSONObject level1 = json.getJSONObject("msg");
+                if (!ObjectUtils.isEmpty(level1)) {
+                    // 获取第二层级的JSONObject
+                    JSONObject level2 = level1.getJSONObject("appmsg");
+                    if (!ObjectUtils.isEmpty(level2)) {
+                        // 获取field字段的值
+                        String fieldValue = level2.getString("title");
+                        dto.setContent(fieldValue);
+                    }
+                }
+                dto.setJsonContent(json);
+            } catch (Exception e) {
+                log.error("XML提取报错：", e);
+                // 报错就使用原值
+                dto.setContent(content);
+            }
+        } else {
+            dto.setContent(content);
+        }
 
         String jsonString = JSONObject.toJSONString(dto);
         try {

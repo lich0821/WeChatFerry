@@ -1,5 +1,8 @@
 package com.wechat.ferry.entity.dto;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -53,6 +56,21 @@ public class WxPpMsgDTO {
      */
     @ApiModelProperty(value = "消息内容")
     private String content;
+
+    /**
+     * 转为JSON的内容
+     * 对应DLL中的content原始内容
+     */
+    @ApiModelProperty(value = "转为JSON的内容")
+    private JSONObject jsonContent;
+
+    /**
+     * 引用内容
+     * 对应DLL中的content原始内容
+     */
+    @JsonIgnore
+    @ApiModelProperty(value = "消息内容XML")
+    private String quoteContent;
 
     /**
      * 消息发送者

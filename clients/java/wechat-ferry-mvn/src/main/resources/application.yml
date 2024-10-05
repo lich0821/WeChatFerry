@@ -38,14 +38,18 @@ wechat:
     receive-msg-fwd-switch: false
     # 接收消息转发URL
     receive-msg-fwd-urls:
-      - http://
+      - http://localhost:9001/msg
     # 发送消息前转发开关
     send-msg-front-fwd-switch: false
     # 发送消息前转发URL
     send-msg-front-fwd-urls:
-      - http://
+      - http://localhost:9001/msg
     # 发送消息后转发开关
     send-msg-back-fwd-switch: false
     # 发送消息后转发URL
     send-msg-back-fwd-urls:
-      - http://
+      - http://localhost:9001/msg
+    # 调用第三方服务客户端成功状态码
+    third-party-ok-codes:
+      # key:状态码字段 val:状态码值
+      code: '200'

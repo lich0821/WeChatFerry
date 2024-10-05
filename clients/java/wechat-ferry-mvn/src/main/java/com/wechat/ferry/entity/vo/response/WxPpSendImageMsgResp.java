@@ -15,15 +15,29 @@ import lombok.Data;
 public class WxPpSendImageMsgResp {
 
     /**
-     * 类型编号
+     * 状态码
      */
-    @ApiModelProperty(value = "类型编号")
-    private Integer id;
+    @ApiModelProperty(value = "状态码")
+    private String code;
 
     /**
-     * 类型名称
+     * 返回信息
      */
-    @ApiModelProperty(value = "类型名称")
-    private String name;
+    @ApiModelProperty(value = "返回信息")
+    private String msg;
+
+    /**
+     * 图片地址
+     */
+    @ApiModelProperty(value = "图片地址")
+    private String path;
+
+    /**
+     * 消息接收人
+     * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
+     * 群聊为 roomid（xxxxxxxxxx@chatroom）
+     */
+    @ApiModelProperty(value = "消息接收人")
+    private String recipient;
 
 }

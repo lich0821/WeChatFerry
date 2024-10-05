@@ -12,12 +12,12 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.util.ObjectUtils;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
 
 @Slf4j
 public class XmlJsonConvertUtil {
@@ -52,6 +52,14 @@ public class XmlJsonConvertUtil {
         try {
             Document doc = DocumentHelper.parseText(xmlStr);
             dom4j2Json(doc.getRootElement(), json);
+
+            // 存放根节点
+            if (!ObjectUtils.isEmpty(json)) {
+                Element rootElement = doc.getRootElement();
+                JSONObject wrapperJson = new JSONObject();
+                wrapperJson.put(rootElement.getName(), json);
+                json = wrapperJson;
+            }
         } catch (DocumentException e) {
             log.error("转换失败：", e);
         }
@@ -142,10 +150,10 @@ public class XmlJsonConvertUtil {
     }
 
     public static void main(String[] args) {
-        String xml = "<msgsource></msgsource>";
+        String xml = "<msg><appmsg appid=\"\" sdkver=\"0\"><title>就是个网页哇</title><des /><username /></appmsg></msg>";
 
         log.info("xml格式化前:{}", xml);
-        xml = xml.replaceAll(">[\\s\\p{Zs}]*<","><");
+        xml = xml.replaceAll(">[\\s\\p{Zs}]*<", "><");
         log.info("xml格式化后:{}", xml);
         JSONObject json = xml2Json(xml);
         System.out.println("xml2Json:" + json.toJSONString());

@@ -285,6 +285,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
 
     @Override
     public WxPpSendImageMsgResp sendImageMsg(WxPpSendImageMsgReq request) {
+        WxPpSendImageMsgResp resp = new WxPpSendImageMsgResp();
         int state = wechatSocketClient.sendImage(request.getPath(), request.getRecipient());
         return null;
     }
