@@ -20,22 +20,26 @@ import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.vo.request.WxPpDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendCardMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpPatOnePatMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendImageMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpSendRichTextMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpSendXmlMsgReq;
 import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseFieldResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
 import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
 import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
 import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendCardMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendImageMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpSendPatOnePatMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpSendRichTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpSendXmlMsgResp;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
 import com.wechat.ferry.handle.WeChatSocketClient;
@@ -135,18 +139,59 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     vo.setSex(SexEnum.getCodeMap(String.valueOf(rpcContact.getGender())).getCode());
                     vo.setSexLabel(SexEnum.getCodeMap(String.valueOf(rpcContact.getGender())).getName());
                 }
-                // 是否为企业微信
+                // 微信类型
                 if (!ObjectUtils.isEmpty(rpcContact.getWxid())) {
+                    List<String> mixedNoList = new ArrayList<>();
+                    // 朋友推荐消息
+                    mixedNoList.add("fmessage");
+                    // 语音记事本
+                    mixedNoList.add("medianote");
+                    // 漂流瓶
+                    mixedNoList.add("floatbottle");
+                    // 文件传输助手
+                    mixedNoList.add("filehelper");
+                    // 新闻
+                    mixedNoList.add("newsapp");
+                    // 微信公众平台 weixingongzhong
+                    mixedNoList.add("weixinguanhaozhushou");
+                    // 微信团队
+                    mixedNoList.add("weixin");
+                    // 微信支付 wxzhifu
+                    mixedNoList.add("gh_3dfda90e39d6");
+                    // 微信公开课 wx-gongkaike
+                    mixedNoList.add("gh_c46cbbfa1de9");
+                    // 微信公开课 wx-gongkaike
+                    mixedNoList.add("gh_c46cbbfa1de9");
+                    // 微信运动 WeRun-WeChat
+                    mixedNoList.add("gh_43f2581f6fd6");
+                    // 微信游戏 game
+                    mixedNoList.add("gh_25d9ac85a4bc");
+                    // 微信游戏 game
+                    mixedNoList.add("gh_25d9ac85a4bc");
+                    // 微信开发者
+                    mixedNoList.add("gh_56fc3b00cc4f");
+                    // 微信搜一搜 wechat_search
+                    mixedNoList.add("gh_f08f54ae25a4");
+                    // 微信搜一搜 wechat_search
+                    mixedNoList.add("gh_f08f54ae25a4");
                     if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.WORK.getAffix())) {
+                        // 企微
                         vo.setType(WxContactsTypeEnum.WORK.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.WORK.getName());
                     } else if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.GROUP.getAffix())) {
+                        // 群聊
                         vo.setType(WxContactsTypeEnum.GROUP.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.GROUP.getName());
+                    } else if (mixedNoList.contains(rpcContact.getWxid())) {
+                        // 官方杂号
+                        vo.setType(WxContactsTypeEnum.OFFICIAL_MIXED_NO.getCode());
+                        vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_MIXED_NO.getName());
                     } else if (rpcContact.getWxid().startsWith(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getAffix())) {
+                        // 微信公众号
                         vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
                     } else {
+                        // 个微
                         vo.setType(WxContactsTypeEnum.PERSON.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.PERSON.getName());
                     }
@@ -293,6 +338,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 atUser = String.join(",", request.getAtUsers());
             }
         }
+        // 0 为成功，其他失败
         int state = wechatSocketClient.sendText(request.getMsgText(), request.getRecipient(), atUser);
         log.info("[发送消息]-[文本消息]-处理结束");
         return null;
@@ -301,25 +347,43 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpSendImageMsgResp sendImageMsg(WxPpSendImageMsgReq request) {
         WxPpSendImageMsgResp resp = new WxPpSendImageMsgResp();
-        int state = wechatSocketClient.sendImage(request.getPath(), request.getRecipient());
+        int state = wechatSocketClient.sendImage(request.getResourcePath(), request.getRecipient());
         return null;
     }
 
     @Override
     public WxPpSendFileMsgResp sendFileMsg(WxPpSendFileMsgReq request) {
-        int state = wechatSocketClient.sendFile(request.getPath(), request.getRecipient());
+        int state = wechatSocketClient.sendFile(request.getResourcePath(), request.getRecipient());
         return null;
     }
 
     @Override
-    public WxPpSendCardMsgResp sendCardMsg(WxPpSendCardMsgReq request) {
-        int state = wechatSocketClient.sendXml(request.getRecipient(), request.getXml(), request.getPath(), request.getType());
+    public WxPpSendXmlMsgResp sendXmlMsg(WxPpSendXmlMsgReq request) {
+        int state = wechatSocketClient.sendXml(request.getRecipient(), request.getXmlContent(), request.getResourcePath(), request.getXmlType());
         return null;
     }
 
     @Override
     public WxPpSendEmojiMsgResp sendEmojiMsg(WxPpSendEmojiMsgReq request) {
-        int state = wechatSocketClient.sendEmotion(request.getPath(), request.getRecipient());
+        int state = wechatSocketClient.sendEmotion(request.getResourcePath(), request.getRecipient());
+        return null;
+    }
+
+    @Override
+    public WxPpSendRichTextMsgResp sendRichTextMsg(WxPpSendRichTextMsgReq request) {
+        Wcf.RichText richTextMsg = Wcf.RichText.newBuilder().setName(request.getName()).setAccount(request.getAccount()).setTitle(request.getTitle())
+            .setDigest(request.getDigest()).setUrl(request.getJumpUrl()).setThumburl(request.getThumbnailUrl()).setReceiver(request.getRecipient())
+            .build();
+        Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_RICH_TXT_VALUE).setRt(richTextMsg).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
+        return null;
+    }
+
+    @Override
+    public WxPpSendPatOnePatMsgResp patOnePat(WxPpPatOnePatMsgReq request) {
+        Wcf.PatMsg patMsg = Wcf.PatMsg.newBuilder().setRoomid(request.getRecipient()).setWxid(request.getPatUser()).build();
+        Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
         return null;
     }
 

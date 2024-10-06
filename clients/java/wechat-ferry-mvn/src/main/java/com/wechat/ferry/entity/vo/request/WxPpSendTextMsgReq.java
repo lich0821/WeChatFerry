@@ -19,6 +19,7 @@ public class WxPpSendTextMsgReq {
     /**
      * 消息文本
      * 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
+     * 换行使用 `\\\\n` （单杠）
      */
     @ApiModelProperty(value = "消息文本")
     private String msgText;

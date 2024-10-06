@@ -15,10 +15,12 @@ import lombok.Data;
 public class WxPpSendImageMsgReq {
 
     /**
-     * 图片地址
+     * 资源路径-本地图片地址
+     * 如：`C:/Projs/WeChatRobot/TEQuant.jpeg`
+     * 或 `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg`
      */
-    @ApiModelProperty(value = "图片地址")
-    private String path;
+    @ApiModelProperty(value = "资源路径-本地图片地址")
+    private String resourcePath;
 
     /**
      * 消息接收人

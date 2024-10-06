@@ -5,20 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求入参-个微发送文件消息
+ * 请求入参-个微发送拍一拍消息
  *
  * @author chandler
- * @date 2024-10-04 23:08
+ * @date 2024-10-06 15:50
  */
 @Data
-@ApiModel(value = "wxPpSendFileMsgReq", description = "个微发送文件消息请求入参")
-public class WxPpSendFileMsgReq {
-
-    /**
-     * 资源路径-本地文件路径
-     */
-    @ApiModelProperty(value = "资源路径-本地文件路径")
-    private String resourcePath;
+@ApiModel(value = "wxPpPatOnePatMsgReq", description = "个微发送拍一拍消息请求入参")
+public class WxPpPatOnePatMsgReq {
 
     /**
      * 消息接收人
@@ -27,5 +21,11 @@ public class WxPpSendFileMsgReq {
      */
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
+
+    /**
+     * 要拍的wxid
+     */
+    @ApiModelProperty(value = "要拍的wxid")
+    private String patUser;
 
 }

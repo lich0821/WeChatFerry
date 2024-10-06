@@ -15,10 +15,10 @@ import lombok.Data;
 public class WxPpSendEmojiMsgReq {
 
     /**
-     * 路径
+     * 资源路径-本地表情路径
      */
-    @ApiModelProperty(value = "路径")
-    private String path;
+    @ApiModelProperty(value = "资源路径-本地表情路径")
+    private String resourcePath;
 
     /**
      * 消息接收人

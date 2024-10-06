@@ -33,9 +33,14 @@ public enum WxContactsTypeEnum {
     GROUP("3", "群组", "@chatroom"),
 
     /**
-     * 4-公众号
+     * 4-官方杂号
      */
-    OFFICIAL_ACCOUNT("4", "公众号", "gh_"),
+    OFFICIAL_MIXED_NO("4", "官方杂号", null),
+
+    /**
+     * 5-公众号
+     */
+    OFFICIAL_ACCOUNT("5", "公众号", "gh_"),
 
     /**
      * 未匹配上
