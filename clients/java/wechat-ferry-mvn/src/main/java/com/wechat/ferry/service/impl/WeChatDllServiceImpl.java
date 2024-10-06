@@ -84,7 +84,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         Wcf.UserInfo userInfo = wechatSocketClient.getUserInfo();
         if (!ObjectUtils.isEmpty(userInfo)) {
             resp.setWeChatUid(userInfo.getWxid());
-            resp.setName(userInfo.getName());
+            resp.setWeChatNickname(userInfo.getName());
             resp.setPhone(userInfo.getMobile());
             resp.setHomePath(userInfo.getHome());
         }
@@ -118,8 +118,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 WxPpContactsResp vo = new WxPpContactsResp();
                 vo.setWeChatUid(rpcContact.getWxid());
                 vo.setWeChatNo(rpcContact.getCode());
-                vo.setRemark(rpcContact.getRemark());
-                vo.setNickName(rpcContact.getName());
+                vo.setFriendRemark(rpcContact.getRemark());
+                vo.setWeChatNickname(rpcContact.getName());
                 if (!ObjectUtils.isEmpty(rpcContact.getCountry())) {
                     vo.setCountryPinyin(rpcContact.getCountry());
                     if ("CN".equals(rpcContact.getCountry())) {
@@ -282,8 +282,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                         }
                         if ("NickName".equals(dbField.getColumn())) {
                             String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
-                            vo.setNickName(content);
-                            dbMap.put(vo.getWeChatUid(), vo.getNickName());
+                            vo.setGroupNickName(content);
+                            dbMap.put(vo.getWeChatUid(), vo.getGroupNickName());
                         }
                     }
                 }
@@ -309,7 +309,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                                         // 如果没有设置群昵称则默认为微信名称
                                         nickName = dbMap.get(member.getWxid());
                                     }
-                                    vo.setNickName(nickName);
+                                    vo.setGroupNickName(nickName);
                                     vo.setState(String.valueOf(member.getState()));
                                     list.add(vo);
                                 }

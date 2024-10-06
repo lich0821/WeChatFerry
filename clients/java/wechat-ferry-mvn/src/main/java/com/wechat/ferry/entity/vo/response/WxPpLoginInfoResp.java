@@ -22,10 +22,10 @@ public class WxPpLoginInfoResp {
     private String weChatUid;
 
     /**
-     * name
+     * 微信昵称
      */
-    @ApiModelProperty(value = "name")
-    private String name;
+    @ApiModelProperty(value = "微信昵称")
+    private String weChatNickname;
 
     /**
      * 手机号

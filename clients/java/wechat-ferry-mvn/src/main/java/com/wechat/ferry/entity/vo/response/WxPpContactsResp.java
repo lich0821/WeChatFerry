@@ -28,16 +28,16 @@ public class WxPpContactsResp {
     private String weChatNo;
 
     /**
-     * 备注
-     */
-    @ApiModelProperty(value = "备注")
-    private String remark;
-
-    /**
      * 微信昵称
      */
     @ApiModelProperty(value = "微信昵称")
-    private String nickName;
+    private String weChatNickname;
+
+    /**
+     * 好友备注
+     */
+    @ApiModelProperty(value = "好友备注")
+    private String friendRemark;
 
     /**
      * 国家

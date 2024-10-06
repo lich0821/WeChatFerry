@@ -22,10 +22,10 @@ public class WxPpGroupMemberResp {
     private String weChatUid;
 
     /**
-     * 微信昵称
+     * 群内昵称
      */
-    @ApiModelProperty(value = "微信昵称")
-    private String nickName;
+    @ApiModelProperty(value = "群内昵称")
+    private String groupNickName;
 
     /**
      * 状态
