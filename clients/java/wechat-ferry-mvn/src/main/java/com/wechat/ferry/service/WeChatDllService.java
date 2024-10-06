@@ -13,6 +13,7 @@ import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
 import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
 import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
 import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendCardMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
@@ -39,14 +40,24 @@ public interface WeChatDllService {
     Boolean loginStatus();
 
     /**
-     * 获得微信客户端登录的微信ID
+     * 获取登录微信内部识别号UID
      *
-     * @return 微信ID
+     * @return 微信内部识别号UID
      *
      * @author chandler
      * @date 2024-10-01 21:22
      */
-    String queryLoginWeChatId();
+    String queryLoginWeChatUid();
+
+    /**
+     * 获取登录微信信息
+     *
+     * @return 当前登录微信信息
+     *
+     * @author chandler
+     * @date 2024-10-05 22:54
+     */
+    WxPpLoginInfoResp queryLoginWeChatInfo();
 
     /**
      * 获取所有消息类型

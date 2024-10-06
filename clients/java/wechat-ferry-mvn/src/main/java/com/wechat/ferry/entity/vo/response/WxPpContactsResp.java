@@ -15,16 +15,17 @@ import lombok.Data;
 public class WxPpContactsResp {
 
     /**
-     * 微信编号
+     * 微信内部识别号UID
+     * 原始微信账号ID，以"wxid_"开头，初始默认的微信ID=微信号。
      */
-    @ApiModelProperty(value = "微信编号")
-    private String weChatNo;
+    @ApiModelProperty(value = "微信内部识别号UID")
+    private String weChatUid;
 
     /**
-     * 微信代码
+     * 微信号
      */
-    @ApiModelProperty(value = "微信代码")
-    private String weChatCode;
+    @ApiModelProperty(value = "微信号")
+    private String weChatNo;
 
     /**
      * 备注

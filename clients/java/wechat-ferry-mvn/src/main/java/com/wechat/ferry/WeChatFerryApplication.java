@@ -2,6 +2,7 @@ package com.wechat.ferry;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 启动类
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author chandler
  * @date 2024-09-21 12:19
  */
+@EnableScheduling
 @SpringBootApplication
 public class WeChatFerryApplication {
 

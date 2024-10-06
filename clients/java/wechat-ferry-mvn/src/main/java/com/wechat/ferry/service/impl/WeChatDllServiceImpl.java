@@ -29,6 +29,7 @@ import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseFieldResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
 import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
 import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendCardMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
@@ -67,10 +68,24 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public String queryLoginWeChatId() {
-        String weChatNo = wechatSocketClient.getSelfWxId();
-        log.info("[查询]-[登录微信编号]-weChatNo:{}", weChatNo);
-        return weChatNo;
+    public String queryLoginWeChatUid() {
+        String weChatUid = wechatSocketClient.getSelfWxId();
+        log.info("[查询]-[登录微信UID]-weChatUid:{}", weChatUid);
+        return weChatUid;
+    }
+
+    @Override
+    public WxPpLoginInfoResp queryLoginWeChatInfo() {
+        WxPpLoginInfoResp resp = new WxPpLoginInfoResp();
+        Wcf.UserInfo userInfo = wechatSocketClient.getUserInfo();
+        if (!ObjectUtils.isEmpty(userInfo)) {
+            resp.setWeChatUid(userInfo.getWxid());
+            resp.setName(userInfo.getName());
+            resp.setPhone(userInfo.getMobile());
+            resp.setHomePath(userInfo.getHome());
+        }
+        log.info("[查询]-[获取登录微信信息]-resp:{}", resp);
+        return resp;
     }
 
     @Override
@@ -86,7 +101,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 list.add(resp);
             }
         }
-        log.info("[查询]-[所消息类型]-共查到:{}条", list.size());
+        log.info("[查询]-[所有消息类型]-共查到:{}条", list.size());
         return list;
     }
 
@@ -97,8 +112,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if (!CollectionUtils.isEmpty(rpcContactList)) {
             for (Wcf.RpcContact rpcContact : rpcContactList) {
                 WxPpContactsResp vo = new WxPpContactsResp();
-                vo.setWeChatNo(rpcContact.getWxid());
-                vo.setWeChatCode(rpcContact.getCode());
+                vo.setWeChatUid(rpcContact.getWxid());
+                vo.setWeChatNo(rpcContact.getCode());
                 vo.setRemark(rpcContact.getRemark());
                 vo.setNickName(rpcContact.getName());
                 if (!ObjectUtils.isEmpty(rpcContact.getCountry())) {
@@ -218,12 +233,12 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                         if ("UserName".equals(dbField.getColumn())) {
                             vo = new WxPpGroupMemberResp();
                             String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
-                            vo.setWeChatNo(content);
+                            vo.setWeChatUid(content);
                         }
                         if ("NickName".equals(dbField.getColumn())) {
                             String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
                             vo.setNickName(content);
-                            dbMap.put(vo.getWeChatNo(), vo.getNickName());
+                            dbMap.put(vo.getWeChatUid(), vo.getNickName());
                         }
                     }
                 }
@@ -243,7 +258,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                                 Wcf.RoomData roomData = Wcf.RoomData.parseFrom(roomDataBytes);
                                 for (Wcf.RoomData.RoomMember member : roomData.getMembersList()) {
                                     vo = new WxPpGroupMemberResp();
-                                    vo.setWeChatNo(member.getWxid());
+                                    vo.setWeChatUid(member.getWxid());
                                     String nickName = member.getName();
                                     if (ObjectUtils.isEmpty(nickName)) {
                                         // 如果没有设置群昵称则默认为微信名称

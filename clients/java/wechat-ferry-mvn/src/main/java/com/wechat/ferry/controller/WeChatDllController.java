@@ -14,17 +14,18 @@ import com.wechat.ferry.entity.vo.request.WxPpDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendCardMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendEmojiMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendImageMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
 import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
 import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
 import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
 import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendCardMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendImageMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpSendTextMsgResp;
 import com.wechat.ferry.enums.ResponseCodeEnum;
@@ -60,18 +61,18 @@ public class WeChatDllController {
         return TResponse.ok(ResponseCodeEnum.SUCCESS, status);
     }
 
-    @ApiOperation(value = "获取登录微信号", notes = "queryLoginWeChatNo")
-    @PostMapping(value = "/loginWeChatNo")
-    public TResponse<Object> queryLoginWeChatNo() {
-        String weChatNo = weChatDllService.queryLoginWeChatId();
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, weChatNo);
+    @ApiOperation(value = "获取登录微信内部识别号UID", notes = "queryLoginWeChatUid")
+    @PostMapping(value = "/loginWeChatUid")
+    public TResponse<Object> queryLoginWeChatUid() {
+        String weChatUid = weChatDllService.queryLoginWeChatUid();
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, weChatUid);
     }
 
     @ApiOperation(value = "获取登录微信信息", notes = "queryLoginWeChatInfo")
     @PostMapping(value = "/loginWeChatInfo")
-    public TResponse<Object> queryLoginWeChatInfo() {
-
-        return TResponse.ok(ResponseCodeEnum.SUCCESS);
+    public TResponse<WxPpLoginInfoResp> queryLoginWeChatInfo() {
+        WxPpLoginInfoResp resp = weChatDllService.queryLoginWeChatInfo();
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "获取消息类型", notes = "queryMsgTypeList")
