@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求入参-个微发送富文本消息
+ * 请求入参-个微WCF发送富文本消息
  *
  * @author chandler
  * @date 2024-10-06 15:40
  */
 @Data
-@ApiModel(value = "wxPpSendRichTextMsgReq", description = "个微发送富文本消息请求入参")
-public class WxPpSendRichTextMsgReq {
+@ApiModel(value = "wxPpWcfSendRichTextMsgReq", description = "个微WCF发送富文本消息请求入参")
+public class WxPpWcfSendRichTextMsgReq {
 
     /**
      * 消息接收人

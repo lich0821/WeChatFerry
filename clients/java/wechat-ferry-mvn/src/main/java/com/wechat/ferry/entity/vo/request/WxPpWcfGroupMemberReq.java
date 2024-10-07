@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求入参-个微查询群成员
+ * 请求入参-个微WCF查询群成员
  *
  * @author chandler
  * @date 2024-10-02 20:55
  */
 @Data
-@ApiModel(value = "wxPpGroupMemberReq", description = "个微查询群成员请求入参")
-public class WxPpGroupMemberReq {
+@ApiModel(value = "wxPpWcfGroupMemberReq", description = "个微WCF查询群成员请求入参")
+public class WxPpWcfGroupMemberReq {
 
     /**
      * 群编号

@@ -10,28 +10,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wechat.ferry.entity.TResponse;
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseSqlReq;
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseTableReq;
-import com.wechat.ferry.entity.vo.request.WxPpGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpPatOnePatMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendEmojiMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendImageMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendRichTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendXmlMsgReq;
-import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
-import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
-import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
-import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
-import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendImageMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendPatOnePatMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendRichTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendXmlMsgResp;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendRichTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
+import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendEmojiMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendFileMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendImageMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 import com.wechat.ferry.enums.ResponseCodeEnum;
 import com.wechat.ferry.service.WeChatDllService;
 
@@ -74,29 +74,29 @@ public class WeChatDllController {
 
     @ApiOperation(value = "获取登录微信信息", notes = "queryLoginWeChatInfo")
     @PostMapping(value = "/loginWeChatInfo")
-    public TResponse<WxPpLoginInfoResp> queryLoginWeChatInfo() {
-        WxPpLoginInfoResp resp = weChatDllService.queryLoginWeChatInfo();
+    public TResponse<WxPpWcfLoginInfoResp> queryLoginWeChatInfo() {
+        WxPpWcfLoginInfoResp resp = weChatDllService.queryLoginWeChatInfo();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "获取消息类型", notes = "queryMsgTypeList")
     @PostMapping(value = "/list/msgType")
-    public TResponse<List<WxPpMsgTypeResp>> queryMsgTypeList() {
-        List<WxPpMsgTypeResp> list = weChatDllService.queryMsgTypeList();
+    public TResponse<List<WxPpWcfMsgTypeResp>> queryMsgTypeList() {
+        List<WxPpWcfMsgTypeResp> list = weChatDllService.queryMsgTypeList();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
     @ApiOperation(value = "获取联系人", notes = "queryContactsList")
     @PostMapping(value = "/list/contacts")
-    public TResponse<List<WxPpContactsResp>> queryContactsList() {
-        List<WxPpContactsResp> list = weChatDllService.queryContactsList();
+    public TResponse<List<WxPpWcfContactsResp>> queryContactsList() {
+        List<WxPpWcfContactsResp> list = weChatDllService.queryContactsList();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
     @ApiOperation(value = "获取可查询数据库", notes = "queryDatabaseSql")
     @PostMapping(value = "/list/dbSql")
-    public TResponse<List<WxPpDatabaseRowResp>> queryDatabaseSql(@Validated @RequestBody WxPpDatabaseSqlReq request) {
-        List<WxPpDatabaseRowResp> list = weChatDllService.queryDatabaseSql(request);
+    public TResponse<List<WxPpWcfDatabaseRowResp>> queryDatabaseSql(@Validated @RequestBody WxPpWcfDatabaseSqlReq request) {
+        List<WxPpWcfDatabaseRowResp> list = weChatDllService.queryDatabaseSql(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
@@ -109,7 +109,7 @@ public class WeChatDllController {
 
     @ApiOperation(value = "获取指定数据库中的表", notes = "queryDatabaseTable")
     @PostMapping(value = "/list/dbTable")
-    public TResponse<List<String>> queryDatabaseTable(@Validated @RequestBody WxPpDatabaseTableReq request) {
+    public TResponse<List<String>> queryDatabaseTable(@Validated @RequestBody WxPpWcfDatabaseTableReq request) {
         List<String> list = weChatDllService.queryDatabaseTable(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
@@ -122,64 +122,64 @@ public class WeChatDllController {
 
     @ApiOperation(value = "查询群成员", notes = "queryGroupMember")
     @PostMapping(value = "/list/groupMember")
-    public TResponse<List<WxPpGroupMemberResp>> queryGroupMember(@Validated @RequestBody WxPpGroupMemberReq request) {
-        List<WxPpGroupMemberResp> list = weChatDllService.queryGroupMember(request);
+    public TResponse<List<WxPpWcfGroupMemberResp>> queryGroupMember(@Validated @RequestBody WxPpWcfGroupMemberReq request) {
+        List<WxPpWcfGroupMemberResp> list = weChatDllService.queryGroupMember(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
     @ApiOperation(value = "发送消息汇总入口", notes = "sendMsgMaster")
     @PostMapping(value = "/send/msgMaster")
-    public TResponse<WxPpSendTextMsgResp> sendMsgMaster(@Validated @RequestBody String jsonString) {
+    public TResponse<WxPpWcfSendTextMsgResp> sendMsgMaster(@Validated @RequestBody String jsonString) {
 
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
     @ApiOperation(value = "发送文本消息（可 @）", notes = "sendTextMsg")
     @PostMapping(value = "/send/textMsg")
-    public TResponse<WxPpSendTextMsgResp> sendTextMsg(@Validated @RequestBody WxPpSendTextMsgReq request) {
-        WxPpSendTextMsgResp resp = weChatDllService.sendTextMsg(request);
+    public TResponse<WxPpWcfSendTextMsgResp> sendTextMsg(@Validated @RequestBody WxPpWcfSendTextMsgReq request) {
+        WxPpWcfSendTextMsgResp resp = weChatDllService.sendTextMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "发送图片消息", notes = "sendImageMsg")
     @PostMapping(value = "/send/imageMsg")
-    public TResponse<WxPpSendImageMsgResp> sendImageMsg(@Validated @RequestBody WxPpSendImageMsgReq request) {
-        WxPpSendImageMsgResp resp = weChatDllService.sendImageMsg(request);
+    public TResponse<WxPpWcfSendImageMsgResp> sendImageMsg(@Validated @RequestBody WxPpWcfSendImageMsgReq request) {
+        WxPpWcfSendImageMsgResp resp = weChatDllService.sendImageMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "发送文件消息", notes = "sendFileMsg")
     @PostMapping(value = "/send/fileMsg")
-    public TResponse<WxPpSendFileMsgResp> sendFileMsg(@Validated @RequestBody WxPpSendFileMsgReq request) {
-        WxPpSendFileMsgResp resp = weChatDllService.sendFileMsg(request);
+    public TResponse<WxPpWcfSendFileMsgResp> sendFileMsg(@Validated @RequestBody WxPpWcfSendFileMsgReq request) {
+        WxPpWcfSendFileMsgResp resp = weChatDllService.sendFileMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "发送XML消息", notes = "sendXmlMsg")
     @PostMapping(value = "/send/xmlMsg")
-    public TResponse<WxPpSendXmlMsgResp> sendXmlMsg(@Validated @RequestBody WxPpSendXmlMsgReq request) {
-        WxPpSendXmlMsgResp resp = weChatDllService.sendXmlMsg(request);
+    public TResponse<WxPpWcfSendXmlMsgResp> sendXmlMsg(@Validated @RequestBody WxPpWcfSendXmlMsgReq request) {
+        WxPpWcfSendXmlMsgResp resp = weChatDllService.sendXmlMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "发送表情消息", notes = "sendEmojiMsg")
     @PostMapping(value = "/send/emojiMsg")
-    public TResponse<WxPpSendEmojiMsgResp> sendEmojiMsg(@Validated @RequestBody WxPpSendEmojiMsgReq request) {
-        WxPpSendEmojiMsgResp resp = weChatDllService.sendEmojiMsg(request);
+    public TResponse<WxPpWcfSendEmojiMsgResp> sendEmojiMsg(@Validated @RequestBody WxPpWcfSendEmojiMsgReq request) {
+        WxPpWcfSendEmojiMsgResp resp = weChatDllService.sendEmojiMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "发送富文本消息", notes = "sendRichTextMsg")
     @PostMapping(value = "/send/richTextMsg")
-    public TResponse<WxPpSendRichTextMsgResp> sendRichTextMsg(@Validated @RequestBody WxPpSendRichTextMsgReq request) {
-        WxPpSendRichTextMsgResp resp = weChatDllService.sendRichTextMsg(request);
+    public TResponse<WxPpWcfSendRichTextMsgResp> sendRichTextMsg(@Validated @RequestBody WxPpWcfSendRichTextMsgReq request) {
+        WxPpWcfSendRichTextMsgResp resp = weChatDllService.sendRichTextMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
     @ApiOperation(value = "拍一拍群友", notes = "patOnePat")
     @PostMapping(value = "/patOnePat")
-    public TResponse<WxPpSendPatOnePatMsgResp> patOnePat(@Validated @RequestBody WxPpPatOnePatMsgReq request) {
-        WxPpSendPatOnePatMsgResp resp = weChatDllService.patOnePat(request);
+    public TResponse<WxPpWcfSendPatOnePatMsgResp> patOnePat(@Validated @RequestBody WxPpWcfPatOnePatMsgReq request) {
+        WxPpWcfSendPatOnePatMsgResp resp = weChatDllService.patOnePat(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 

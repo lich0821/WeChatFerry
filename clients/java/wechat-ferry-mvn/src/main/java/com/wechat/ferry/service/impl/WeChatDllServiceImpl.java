@@ -17,29 +17,29 @@ import org.springframework.util.ObjectUtils;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wechat.ferry.entity.proto.Wcf;
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseSqlReq;
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseTableReq;
-import com.wechat.ferry.entity.vo.request.WxPpGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpPatOnePatMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendEmojiMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendImageMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendRichTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendXmlMsgReq;
-import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
-import com.wechat.ferry.entity.vo.response.WxPpDatabaseFieldResp;
-import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
-import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
-import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
-import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendImageMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendPatOnePatMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendRichTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendXmlMsgResp;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendRichTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
+import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseFieldResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendEmojiMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendFileMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendImageMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
 import com.wechat.ferry.handle.WeChatSocketClient;
@@ -79,8 +79,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public WxPpLoginInfoResp queryLoginWeChatInfo() {
-        WxPpLoginInfoResp resp = new WxPpLoginInfoResp();
+    public WxPpWcfLoginInfoResp queryLoginWeChatInfo() {
+        WxPpWcfLoginInfoResp resp = new WxPpWcfLoginInfoResp();
         Wcf.UserInfo userInfo = wechatSocketClient.getUserInfo();
         if (!ObjectUtils.isEmpty(userInfo)) {
             resp.setWeChatUid(userInfo.getWxid());
@@ -93,13 +93,13 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public List<WxPpMsgTypeResp> queryMsgTypeList() {
-        List<WxPpMsgTypeResp> list = new ArrayList<>();
+    public List<WxPpWcfMsgTypeResp> queryMsgTypeList() {
+        List<WxPpWcfMsgTypeResp> list = new ArrayList<>();
         Map<Integer, String> msgTypeMap = wechatSocketClient.getMsgTypes();
         if (!CollectionUtils.isEmpty(msgTypeMap)) {
-            WxPpMsgTypeResp resp;
+            WxPpWcfMsgTypeResp resp;
             for (Map.Entry<Integer, String> entry : msgTypeMap.entrySet()) {
-                resp = new WxPpMsgTypeResp();
+                resp = new WxPpWcfMsgTypeResp();
                 resp.setId(entry.getKey());
                 resp.setName(entry.getValue());
                 list.add(resp);
@@ -110,12 +110,12 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public List<WxPpContactsResp> queryContactsList() {
-        List<WxPpContactsResp> list = new ArrayList<>();
+    public List<WxPpWcfContactsResp> queryContactsList() {
+        List<WxPpWcfContactsResp> list = new ArrayList<>();
         List<Wcf.RpcContact> rpcContactList = wechatSocketClient.getContacts();
         if (!CollectionUtils.isEmpty(rpcContactList)) {
             for (Wcf.RpcContact rpcContact : rpcContactList) {
-                WxPpContactsResp vo = new WxPpContactsResp();
+                WxPpWcfContactsResp vo = new WxPpWcfContactsResp();
                 vo.setWeChatUid(rpcContact.getWxid());
                 vo.setWeChatNo(rpcContact.getCode());
                 vo.setFriendRemark(rpcContact.getRemark());
@@ -204,8 +204,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public List<WxPpDatabaseRowResp> queryDatabaseSql(WxPpDatabaseSqlReq request) {
-        List<WxPpDatabaseRowResp> list = new ArrayList<>();
+    public List<WxPpWcfDatabaseRowResp> queryDatabaseSql(WxPpWcfDatabaseSqlReq request) {
+        List<WxPpWcfDatabaseRowResp> list = new ArrayList<>();
         List<Wcf.DbRow> wcfList = wechatSocketClient.querySql(request.getDatabaseName(), request.getSqlText());
         if (!CollectionUtils.isEmpty(wcfList)) {
             // List<Map<String, Object>> result = new ArrayList<>();
@@ -223,10 +223,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             // }
 
             for (Wcf.DbRow dbRow : wcfList) {
-                WxPpDatabaseRowResp rowVo = new WxPpDatabaseRowResp();
-                List<WxPpDatabaseFieldResp> fieldVoList = new ArrayList<>();
+                WxPpWcfDatabaseRowResp rowVo = new WxPpWcfDatabaseRowResp();
+                List<WxPpWcfDatabaseFieldResp> fieldVoList = new ArrayList<>();
                 for (Wcf.DbField dbField : dbRow.getFieldsList()) {
-                    WxPpDatabaseFieldResp fieldVo = new WxPpDatabaseFieldResp();
+                    WxPpWcfDatabaseFieldResp fieldVo = new WxPpWcfDatabaseFieldResp();
                     fieldVo.setType(String.valueOf(dbField.getType()));
                     fieldVo.setColumn(dbField.getColumn());
                     String value = (String)converterSqlVal(dbField.getType(), dbField.getContent());
@@ -249,7 +249,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public List<String> queryDatabaseTable(WxPpDatabaseTableReq request) {
+    public List<String> queryDatabaseTable(WxPpWcfDatabaseTableReq request) {
         log.info("[查询]-[查询表]-request:{}", request);
         Map<String, String> wcfMap = wechatSocketClient.getDbTables(request.getDatabaseName());
 
@@ -258,8 +258,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public List<WxPpGroupMemberResp> queryGroupMember(WxPpGroupMemberReq request) {
-        List<WxPpGroupMemberResp> list = new ArrayList<>();
+    public List<WxPpWcfGroupMemberResp> queryGroupMember(WxPpWcfGroupMemberReq request) {
+        List<WxPpWcfGroupMemberResp> list = new ArrayList<>();
         // 查询群成员
         List<Wcf.DbRow> wcfList = new ArrayList<>();
         if (!ObjectUtils.isEmpty(request.getGroupNo())) {
@@ -273,10 +273,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             for (Wcf.DbRow dbRow : dbList) {
                 List<Wcf.DbField> dbFieldList = dbRow.getFieldsList();
                 if (!ObjectUtils.isEmpty(dbFieldList)) {
-                    WxPpGroupMemberResp vo = new WxPpGroupMemberResp();
+                    WxPpWcfGroupMemberResp vo = new WxPpWcfGroupMemberResp();
                     for (Wcf.DbField dbField : dbFieldList) {
                         if ("UserName".equals(dbField.getColumn())) {
-                            vo = new WxPpGroupMemberResp();
+                            vo = new WxPpWcfGroupMemberResp();
                             String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
                             vo.setWeChatUid(content);
                         }
@@ -295,14 +295,14 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             for (Wcf.DbRow dbRow : wcfList) {
                 List<Wcf.DbField> dbFieldList = dbRow.getFieldsList();
                 if (!ObjectUtils.isEmpty(dbFieldList)) {
-                    WxPpGroupMemberResp vo = new WxPpGroupMemberResp();
+                    WxPpWcfGroupMemberResp vo = new WxPpWcfGroupMemberResp();
                     for (Wcf.DbField dbField : dbFieldList) {
                         if ("RoomData".equals(dbField.getColumn())) {
                             try {
                                 byte[] roomDataBytes = dbField.getContent().toByteArray();
                                 Wcf.RoomData roomData = Wcf.RoomData.parseFrom(roomDataBytes);
                                 for (Wcf.RoomData.RoomMember member : roomData.getMembersList()) {
-                                    vo = new WxPpGroupMemberResp();
+                                    vo = new WxPpWcfGroupMemberResp();
                                     vo.setWeChatUid(member.getWxid());
                                     String nickName = member.getName();
                                     if (ObjectUtils.isEmpty(nickName)) {
@@ -326,7 +326,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public WxPpSendTextMsgResp sendTextMsg(WxPpSendTextMsgReq request) {
+    public WxPpWcfSendTextMsgResp sendTextMsg(WxPpWcfSendTextMsgReq request) {
         log.info("[发送消息]-[文本消息]-入参打印：{}", request);
         String atUser = "";
         if (request.getIsAtAll()) {
@@ -345,32 +345,32 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public WxPpSendImageMsgResp sendImageMsg(WxPpSendImageMsgReq request) {
-        WxPpSendImageMsgResp resp = new WxPpSendImageMsgResp();
+    public WxPpWcfSendImageMsgResp sendImageMsg(WxPpWcfSendImageMsgReq request) {
+        WxPpWcfSendImageMsgResp resp = new WxPpWcfSendImageMsgResp();
         int state = wechatSocketClient.sendImage(request.getResourcePath(), request.getRecipient());
         return null;
     }
 
     @Override
-    public WxPpSendFileMsgResp sendFileMsg(WxPpSendFileMsgReq request) {
+    public WxPpWcfSendFileMsgResp sendFileMsg(WxPpWcfSendFileMsgReq request) {
         int state = wechatSocketClient.sendFile(request.getResourcePath(), request.getRecipient());
         return null;
     }
 
     @Override
-    public WxPpSendXmlMsgResp sendXmlMsg(WxPpSendXmlMsgReq request) {
+    public WxPpWcfSendXmlMsgResp sendXmlMsg(WxPpWcfSendXmlMsgReq request) {
         int state = wechatSocketClient.sendXml(request.getRecipient(), request.getXmlContent(), request.getResourcePath(), request.getXmlType());
         return null;
     }
 
     @Override
-    public WxPpSendEmojiMsgResp sendEmojiMsg(WxPpSendEmojiMsgReq request) {
+    public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         int state = wechatSocketClient.sendEmotion(request.getResourcePath(), request.getRecipient());
         return null;
     }
 
     @Override
-    public WxPpSendRichTextMsgResp sendRichTextMsg(WxPpSendRichTextMsgReq request) {
+    public WxPpWcfSendRichTextMsgResp sendRichTextMsg(WxPpWcfSendRichTextMsgReq request) {
         Wcf.RichText richTextMsg = Wcf.RichText.newBuilder().setName(request.getName()).setAccount(request.getAccount()).setTitle(request.getTitle())
             .setDigest(request.getDigest()).setUrl(request.getJumpUrl()).setThumburl(request.getThumbnailUrl()).setReceiver(request.getRecipient())
             .build();
@@ -380,7 +380,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public WxPpSendPatOnePatMsgResp patOnePat(WxPpPatOnePatMsgReq request) {
+    public WxPpWcfSendPatOnePatMsgResp patOnePat(WxPpWcfPatOnePatMsgReq request) {
         Wcf.PatMsg patMsg = Wcf.PatMsg.newBuilder().setRoomid(request.getRecipient()).setWxid(request.getPatUser()).build();
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);

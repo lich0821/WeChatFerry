@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求入参-个微发送文件消息
+ * 请求入参-个微WCF发送文件消息
  *
  * @author chandler
  * @date 2024-10-04 23:08
  */
 @Data
-@ApiModel(value = "wxPpSendFileMsgReq", description = "个微发送文件消息请求入参")
-public class WxPpSendFileMsgReq {
+@ApiModel(value = "wxPpWcfSendFileMsgReq", description = "个微WCF发送文件消息请求入参")
+public class WxPpWcfSendFileMsgReq {
 
     /**
      * 资源路径-本地文件路径

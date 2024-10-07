@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求出参-个微数据库字段
+ * 请求出参-个微WCF数据库字段
  *
  * @author chandler
  * @date 2024/10/02 17:15
  */
 @Data
-@ApiModel(value = "wxPpDatabaseFieldResp", description = "个微数据库字段查询请求出参")
-public class WxPpDatabaseFieldResp {
+@ApiModel(value = "wxPpWcfDatabaseFieldResp", description = "个微WCF数据库字段查询请求出参")
+public class WxPpWcfDatabaseFieldResp {
 
     /**
      * 字段类型

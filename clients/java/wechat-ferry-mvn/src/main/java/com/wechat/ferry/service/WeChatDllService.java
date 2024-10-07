@@ -2,28 +2,28 @@ package com.wechat.ferry.service;
 
 import java.util.List;
 
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseSqlReq;
-import com.wechat.ferry.entity.vo.request.WxPpDatabaseTableReq;
-import com.wechat.ferry.entity.vo.request.WxPpGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpPatOnePatMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendEmojiMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendFileMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendImageMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendRichTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpSendXmlMsgReq;
-import com.wechat.ferry.entity.vo.response.WxPpContactsResp;
-import com.wechat.ferry.entity.vo.response.WxPpDatabaseRowResp;
-import com.wechat.ferry.entity.vo.response.WxPpGroupMemberResp;
-import com.wechat.ferry.entity.vo.response.WxPpLoginInfoResp;
-import com.wechat.ferry.entity.vo.response.WxPpMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendEmojiMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendFileMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendImageMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendPatOnePatMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendRichTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpSendXmlMsgResp;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendRichTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
+import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendEmojiMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendFileMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendImageMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 
 /**
  * 业务接口-对接原本DLL的接口
@@ -61,7 +61,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-05 22:54
      */
-    WxPpLoginInfoResp queryLoginWeChatInfo();
+    WxPpWcfLoginInfoResp queryLoginWeChatInfo();
 
     /**
      * 获取所有消息类型
@@ -71,7 +71,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-01 21:22
      */
-    List<WxPpMsgTypeResp> queryMsgTypeList();
+    List<WxPpWcfMsgTypeResp> queryMsgTypeList();
 
     /**
      * 获取所有联系人
@@ -81,7 +81,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-02 16:59
      */
-    List<WxPpContactsResp> queryContactsList();
+    List<WxPpWcfContactsResp> queryContactsList();
 
     /**
      * 获取可查询数据库
@@ -92,7 +92,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-02 17:52
      */
-    List<WxPpDatabaseRowResp> queryDatabaseSql(WxPpDatabaseSqlReq request);
+    List<WxPpWcfDatabaseRowResp> queryDatabaseSql(WxPpWcfDatabaseSqlReq request);
 
     /**
      * 获取数据库所有表名称
@@ -113,7 +113,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-02 17:52
      */
-    List<String> queryDatabaseTable(WxPpDatabaseTableReq request);
+    List<String> queryDatabaseTable(WxPpWcfDatabaseTableReq request);
 
     /**
      * 查询群成员
@@ -124,7 +124,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-02 20:59
      */
-    List<WxPpGroupMemberResp> queryGroupMember(WxPpGroupMemberReq request);
+    List<WxPpWcfGroupMemberResp> queryGroupMember(WxPpWcfGroupMemberReq request);
 
     /**
      * 发送文本消息（可 @）
@@ -137,7 +137,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-02 20:40
      */
-    WxPpSendTextMsgResp sendTextMsg(WxPpSendTextMsgReq request);
+    WxPpWcfSendTextMsgResp sendTextMsg(WxPpWcfSendTextMsgReq request);
 
     /**
      * 发送图片消息
@@ -148,7 +148,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-04 23:06
      */
-    WxPpSendImageMsgResp sendImageMsg(WxPpSendImageMsgReq request);
+    WxPpWcfSendImageMsgResp sendImageMsg(WxPpWcfSendImageMsgReq request);
 
     /**
      * 发送文件消息
@@ -159,7 +159,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-04 23:15
      */
-    WxPpSendFileMsgResp sendFileMsg(WxPpSendFileMsgReq request);
+    WxPpWcfSendFileMsgResp sendFileMsg(WxPpWcfSendFileMsgReq request);
 
     /**
      * 发送XML消息
@@ -170,7 +170,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-04 23:15
      */
-    WxPpSendXmlMsgResp sendXmlMsg(WxPpSendXmlMsgReq request);
+    WxPpWcfSendXmlMsgResp sendXmlMsg(WxPpWcfSendXmlMsgReq request);
 
     /**
      * 发送表情消息
@@ -181,7 +181,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-04 23:29
      */
-    WxPpSendEmojiMsgResp sendEmojiMsg(WxPpSendEmojiMsgReq request);
+    WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request);
 
     /**
      * 发送富文本消息
@@ -192,7 +192,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-06 15:48
      */
-    WxPpSendRichTextMsgResp sendRichTextMsg(WxPpSendRichTextMsgReq request);
+    WxPpWcfSendRichTextMsgResp sendRichTextMsg(WxPpWcfSendRichTextMsgReq request);
 
     /**
      * 拍一拍
@@ -203,6 +203,6 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2024-10-06 15:54
      */
-    WxPpSendPatOnePatMsgResp patOnePat(WxPpPatOnePatMsgReq request);
+    WxPpWcfSendPatOnePatMsgResp patOnePat(WxPpWcfPatOnePatMsgReq request);
 
 }

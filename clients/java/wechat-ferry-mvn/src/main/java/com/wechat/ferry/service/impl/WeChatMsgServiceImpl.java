@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -13,7 +12,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
-import com.wechat.ferry.service.WeChatExtService;
 import com.wechat.ferry.service.WeChatMsgService;
 import com.wechat.ferry.utils.HttpClientUtil;
 
@@ -29,13 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class WeChatMsgServiceImpl implements WeChatMsgService {
 
-    private WeChatExtService weChatExtService;
-
-    @Autowired
-    public void setWeChatExtService(WeChatExtService weChatExtService) {
-        this.weChatExtService = weChatExtService;
-    }
-
     @Resource
     private WeChatFerryProperties weChatFerryProperties;
 
@@ -49,7 +40,6 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         if (!CollectionUtils.isEmpty(weChatFerryProperties.getOpenMsgGroups())) {
             // 指定处理的群聊
             if (weChatFerryProperties.getOpenMsgGroups().contains(dto.getRoomId())) {
-                weChatExtService.instructSign(dto);
                 // TODO 这里可以拓展自己需要的功能
             }
         }

@@ -7,19 +7,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求出参-个微数据库记录
+ * 请求出参-个微WCF数据库记录
  *
  * @author chandler
  * @date 2024/10/02 17:14
  */
 @Data
-@ApiModel(value = "wxPpDatabaseRowResp", description = "个微数据库记录查询请求出参")
-public class WxPpDatabaseRowResp {
+@ApiModel(value = "wxPpWcfDatabaseRowResp", description = "个微WCF数据库记录查询请求出参")
+public class WxPpWcfDatabaseRowResp {
 
     /**
      * 字段列表
      */
     @ApiModelProperty(value = "字段列表")
-    private List<WxPpDatabaseFieldResp> fieldList;
+    private List<WxPpWcfDatabaseFieldResp> fieldList;
 
 }

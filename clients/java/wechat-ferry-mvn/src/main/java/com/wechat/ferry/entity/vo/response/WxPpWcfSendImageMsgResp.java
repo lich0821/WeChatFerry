@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求出参-个微发送图像消息
+ * 请求出参-个微WCF发送图像消息
  *
  * @author chandler
  * @date 2024/10/03 10:17
  */
 @Data
-@ApiModel(value = "wxPpSendImageMsgResp", description = "个微发送图像消息请求出参")
-public class WxPpSendImageMsgResp {
+@ApiModel(value = "wxPpWcfSendImageMsgResp", description = "个微WCF发送图像消息请求出参")
+public class WxPpWcfSendImageMsgResp {
 
     /**
      * 状态码

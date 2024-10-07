@@ -7,14 +7,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 请求入参-个微发送文本消息
+ * 请求入参-个微WCF发送文本消息
  *
  * @author chandler
  * @date 2024-10-02 20:33
  */
 @Data
-@ApiModel(value = "wxPpSendTextMsgReq", description = "个微发送文本消息请求入参")
-public class WxPpSendTextMsgReq {
+@ApiModel(value = "wxPpWcfSendTextMsgReq", description = "个微WCF发送文本消息请求入参")
+public class WxPpWcfSendTextMsgReq {
 
     /**
      * 消息文本

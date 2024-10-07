@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求出参-个微查询群成员
+ * 请求出参-个微WCF查询群成员
  *
  * @author chandler
  * @date 2024/10/01 21:26
  */
 @Data
-@ApiModel(value = "wxPpGroupMemberResp", description = "个微群成员查询请求出参")
-public class WxPpGroupMemberResp {
+@ApiModel(value = "wxPpWcfGroupMemberResp", description = "个微WCF群成员查询请求出参")
+public class WxPpWcfGroupMemberResp {
 
     /**
      * 微信内部识别号UID

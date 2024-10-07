@@ -5,21 +5,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 请求入参-个微发送图片消息
+ * 请求入参-个微WCF发送表情消息
  *
  * @author chandler
- * @date 2024-10-04 15:55
+ * @date 2024-10-04 23:14
  */
 @Data
-@ApiModel(value = "wxPpSendImageMsgReq", description = "个微发送图片消息请求入参")
-public class WxPpSendImageMsgReq {
+@ApiModel(value = "wxPpWcfSendEmojiMsgReq", description = "个微WCF发送表情消息请求入参")
+public class WxPpWcfSendEmojiMsgReq {
 
     /**
-     * 资源路径-本地图片地址
-     * 如：`C:/Projs/WeChatRobot/TEQuant.jpeg`
-     * 或 `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg`
+     * 资源路径-本地表情路径
      */
-    @ApiModelProperty(value = "资源路径-本地图片地址")
+    @ApiModelProperty(value = "资源路径-本地表情路径")
     private String resourcePath;
 
     /**
