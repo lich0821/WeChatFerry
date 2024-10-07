@@ -192,7 +192,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <OmitFramePointers>false</OmitFramePointers>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
