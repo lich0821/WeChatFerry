@@ -34,10 +34,10 @@ public class WxPpWcfContactsResp {
     private String weChatNickname;
 
     /**
-     * 好友备注
+     * 联系人备注
      */
-    @ApiModelProperty(value = "好友备注")
-    private String friendRemark;
+    @ApiModelProperty(value = "联系人备注")
+    private String weChatRemark;
 
     /**
      * 国家

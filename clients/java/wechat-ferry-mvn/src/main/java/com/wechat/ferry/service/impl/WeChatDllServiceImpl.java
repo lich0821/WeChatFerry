@@ -118,7 +118,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 WxPpWcfContactsResp vo = new WxPpWcfContactsResp();
                 vo.setWeChatUid(rpcContact.getWxid());
                 vo.setWeChatNo(rpcContact.getCode());
-                vo.setFriendRemark(rpcContact.getRemark());
+                vo.setWeChatRemark(rpcContact.getRemark());
                 vo.setWeChatNickname(rpcContact.getName());
                 if (!ObjectUtils.isEmpty(rpcContact.getCountry())) {
                     vo.setCountryPinyin(rpcContact.getCountry());
@@ -152,6 +152,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     mixedNoList.add("filehelper");
                     // 新闻
                     mixedNoList.add("newsapp");
+                    // 公众平台安全助手
+                    mixedNoList.add("mphelper");
                     // 微信公众平台 weixingongzhong
                     mixedNoList.add("weixinguanhaozhushou");
                     // 微信团队
@@ -174,12 +176,13 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     mixedNoList.add("gh_f08f54ae25a4");
                     // 微信搜一搜 wechat_search
                     mixedNoList.add("gh_f08f54ae25a4");
+
                     if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.WORK.getAffix())) {
                         // 企微
                         vo.setType(WxContactsTypeEnum.WORK.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.WORK.getName());
-                    } else if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.GROUP.getAffix())) {
-                        // 群聊
+                    } else if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.GROUP.getAffix()) || rpcContact.getWxid().endsWith("@im.chatroom")) {
+                        // 群聊 @im.chatroom 这种是很早之前的格式，单独例举
                         vo.setType(WxContactsTypeEnum.GROUP.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.GROUP.getName());
                     } else if (mixedNoList.contains(rpcContact.getWxid())) {
@@ -188,6 +191,13 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                         vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_MIXED_NO.getName());
                     } else if (rpcContact.getWxid().startsWith(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getAffix())) {
                         // 微信公众号
+                        vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
+                        vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
+                    } else if ("wxid_2876568766325".equals(rpcContact.getWxid()) || "wxid_2965349653612".equals(rpcContact.getWxid())
+                        || "wxid_4302923029011".equals(rpcContact.getWxid())) {
+                        // 应用宝 yingyongbao wxid_2876568766325
+                        // i黑马 iheima wxid_2965349653612
+                        // 丁香医生 DingXiangYiSheng wxid_4302923029011
                         vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
                     } else {
