@@ -45,24 +45,14 @@ public class WeChatFerryProperties {
     private List<String> receiveMsgFwdUrls;
 
     /**
-     * 发送消息前转发开关
+     * 发送消息转发标识 1-关闭 2-全转发 3-发送成功才转发
      */
-    private Boolean sendMsgFrontFwdSwitch = false;
+    private String sendMsgFwdFlag = "1";
 
     /**
-     * 发送消息前转发URL
+     * 发送消息转发URL
      */
-    private List<String> sendMsgFrontFwdUrls;
-
-    /**
-     * 发送消息后转发开关
-     */
-    private Boolean sendMsgBackFwdSwitch = false;
-
-    /**
-     * 发送消息后转发URL
-     */
-    private List<String> sendMsgBackFwdUrls;
+    private List<String> sendMsgFwdUrls;
 
     /**
      * 调用第三方服务客户端成功状态码

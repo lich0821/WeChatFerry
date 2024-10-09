@@ -9,13 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
@@ -44,6 +49,7 @@ import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
 import com.wechat.ferry.handle.WeChatSocketClient;
 import com.wechat.ferry.service.WeChatDllService;
+import com.wechat.ferry.utils.HttpClientUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +69,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public void setWechatSocketClient(WeChatSocketClient wechatSocketClient) {
         this.wechatSocketClient = wechatSocketClient;
     }
+
+    @Resource
+    private WeChatFerryProperties weChatFerryProperties;
 
     @Override
     public Boolean loginStatus() {
@@ -152,30 +161,20 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     mixedNoList.add("filehelper");
                     // 新闻
                     mixedNoList.add("newsapp");
-                    // 公众平台安全助手
-                    mixedNoList.add("mphelper");
-                    // 微信公众平台 weixingongzhong
-                    mixedNoList.add("weixinguanhaozhushou");
                     // 微信团队
                     mixedNoList.add("weixin");
                     // 微信支付 wxzhifu
-                    mixedNoList.add("gh_3dfda90e39d6");
+                    // mixedNoList.add("gh_3dfda90e39d6");
                     // 微信公开课 wx-gongkaike
-                    mixedNoList.add("gh_c46cbbfa1de9");
-                    // 微信公开课 wx-gongkaike
-                    mixedNoList.add("gh_c46cbbfa1de9");
+                    // mixedNoList.add("gh_c46cbbfa1de9");
                     // 微信运动 WeRun-WeChat
-                    mixedNoList.add("gh_43f2581f6fd6");
+                    // mixedNoList.add("gh_43f2581f6fd6");
                     // 微信游戏 game
-                    mixedNoList.add("gh_25d9ac85a4bc");
-                    // 微信游戏 game
-                    mixedNoList.add("gh_25d9ac85a4bc");
+                    // mixedNoList.add("gh_25d9ac85a4bc");
                     // 微信开发者
-                    mixedNoList.add("gh_56fc3b00cc4f");
+                    // mixedNoList.add("gh_56fc3b00cc4f");
                     // 微信搜一搜 wechat_search
-                    mixedNoList.add("gh_f08f54ae25a4");
-                    // 微信搜一搜 wechat_search
-                    mixedNoList.add("gh_f08f54ae25a4");
+                    // mixedNoList.add("gh_f08f54ae25a4");
 
                     if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.WORK.getAffix())) {
                         // 企微
@@ -194,10 +193,13 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                         vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
                     } else if ("wxid_2876568766325".equals(rpcContact.getWxid()) || "wxid_2965349653612".equals(rpcContact.getWxid())
-                        || "wxid_4302923029011".equals(rpcContact.getWxid())) {
+                        || "wxid_4302923029011".equals(rpcContact.getWxid()) || "mphelper".equals(rpcContact.getWxid())
+                        || "weixinguanhaozhushou".equals(rpcContact.getWxid())) {
                         // 应用宝 yingyongbao wxid_2876568766325
                         // i黑马 iheima wxid_2965349653612
                         // 丁香医生 DingXiangYiSheng wxid_4302923029011
+                        // 公众平台安全助手 mphelper
+                        // 微信公众平台 weixingongzhong weixinguanhaozhushou
                         vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
                         vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
                     } else {
@@ -351,6 +353,15 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 0 为成功，其他失败
         int state = wechatSocketClient.sendText(request.getMsgText(), request.getRecipient(), atUser);
         log.info("[发送消息]-[文本消息]-处理结束");
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        if ("2".equals(weChatFerryProperties.getSendMsgFwdFlag())) {
+            // 不管消息是否发送成功均转发
+            sendMsgForward(stringJson);
+        } else if ("3".equals(weChatFerryProperties.getSendMsgFwdFlag()) && 0 == state) {
+            // 发送成功才转发
+            sendMsgForward(stringJson);
+        }
         return null;
     }
 
@@ -438,6 +449,44 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             }
         }
         return atUserStr;
+    }
+
+    private void sendMsgForward(String jsonString) {
+        // 开启转发，且转发地址不为空
+        if (!CollectionUtils.isEmpty(weChatFerryProperties.getSendMsgFwdUrls())) {
+            for (String receiveMsgFwdUrl : weChatFerryProperties.getSendMsgFwdUrls()) {
+                if (!receiveMsgFwdUrl.startsWith("http")) {
+                    continue;
+                }
+                try {
+                    String responseStr = HttpClientUtil.doPostJson(receiveMsgFwdUrl, jsonString);
+                    if (judgeSuccess(responseStr)) {
+                        log.error("[发送消息]-消息转发外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
+                    }
+                    log.debug("[发送消息]-[转发接收到的消息]-转发消息至：{}", receiveMsgFwdUrl);
+                } catch (Exception e) {
+                    log.error("[发送消息]-消息转发接口[{}]服务异常：", receiveMsgFwdUrl, e);
+                }
+            }
+        }
+    }
+
+    private Boolean judgeSuccess(String responseStr) {
+        // 默认为通过
+        boolean passFlag = false;
+        if (!ObjectUtils.isEmpty(responseStr)) {
+            JSONObject jSONObject = JSONObject.parseObject(responseStr);
+            if (!ObjectUtils.isEmpty(jSONObject) && !CollectionUtils.isEmpty(weChatFerryProperties.getThirdPartyOkCodes())) {
+                Map<String, String> codeMap = weChatFerryProperties.getThirdPartyOkCodes();
+                for (Map.Entry<String, String> entry : codeMap.entrySet()) {
+                    if (!ObjectUtils.isEmpty(jSONObject.get(entry.getKey())) && jSONObject.get(entry.getKey()).equals(entry.getValue())) {
+                        passFlag = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return passFlag;
     }
 
 }
