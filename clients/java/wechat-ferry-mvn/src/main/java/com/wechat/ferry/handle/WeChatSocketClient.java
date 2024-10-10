@@ -8,25 +8,28 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import org.springframework.util.ObjectUtils;
+
 import com.alibaba.fastjson2.JSONObject;
 import com.sun.jna.Native;
-import com.wechat.ferry.entity.dto.WxMsgDTO;
-import com.wechat.ferry.entity.po.Wcf;
-import com.wechat.ferry.entity.po.Wcf.DbQuery;
-import com.wechat.ferry.entity.po.Wcf.DbRow;
-import com.wechat.ferry.entity.po.Wcf.DbTable;
-import com.wechat.ferry.entity.po.Wcf.DecPath;
-import com.wechat.ferry.entity.po.Wcf.Functions;
-import com.wechat.ferry.entity.po.Wcf.MemberMgmt;
-import com.wechat.ferry.entity.po.Wcf.Request;
-import com.wechat.ferry.entity.po.Wcf.Response;
-import com.wechat.ferry.entity.po.Wcf.RpcContact;
-import com.wechat.ferry.entity.po.Wcf.UserInfo;
-import com.wechat.ferry.entity.po.Wcf.Verification;
-import com.wechat.ferry.entity.po.Wcf.WxMsg;
+import com.wechat.ferry.entity.dto.WxPpMsgDTO;
+import com.wechat.ferry.entity.proto.Wcf;
+import com.wechat.ferry.entity.proto.Wcf.DbQuery;
+import com.wechat.ferry.entity.proto.Wcf.DbRow;
+import com.wechat.ferry.entity.proto.Wcf.DbTable;
+import com.wechat.ferry.entity.proto.Wcf.DecPath;
+import com.wechat.ferry.entity.proto.Wcf.Functions;
+import com.wechat.ferry.entity.proto.Wcf.MemberMgmt;
+import com.wechat.ferry.entity.proto.Wcf.Request;
+import com.wechat.ferry.entity.proto.Wcf.Response;
+import com.wechat.ferry.entity.proto.Wcf.RpcContact;
+import com.wechat.ferry.entity.proto.Wcf.UserInfo;
+import com.wechat.ferry.entity.proto.Wcf.Verification;
+import com.wechat.ferry.entity.proto.Wcf.WxMsg;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
+import com.wechat.ferry.utils.XmlJsonConvertUtil;
 
 import io.sisu.nng.Socket;
 import io.sisu.nng.pair.Pair1Socket;
@@ -118,7 +121,7 @@ public class WeChatSocketClient {
         }));
     }
 
-    private Response sendCmd(Request req) {
+    public Response sendCmd(Request req) {
         try {
             ByteBuffer bb = ByteBuffer.wrap(req.toByteArray());
             cmdSocket.send(bb);
@@ -528,7 +531,7 @@ public class WeChatSocketClient {
     }
 
     public void printWxMsg(WxMsg msg) {
-        WxMsgDTO dto = new WxMsgDTO();
+        WxPpMsgDTO dto = new WxPpMsgDTO();
         dto.setIsSelf(msg.getIsSelf());
         dto.setIsGroup(msg.getIsGroup());
         dto.setId(msg.getId());
@@ -561,19 +564,48 @@ public class WeChatSocketClient {
     }
 
     public void forwardMsg(WxMsg msg, String url) {
-        WxMsgDTO dto = new WxMsgDTO();
+        String xml = msg.getXml();
+        xml = xml.replaceAll(">[\\s\\p{Zs}]*<", "><");
+        String content = msg.getContent();
+        content = content.replaceAll(">[\\s\\p{Zs}]*<", "><");
+
+        WxPpMsgDTO dto = new WxPpMsgDTO();
         dto.setIsSelf(msg.getIsSelf());
         dto.setIsGroup(msg.getIsGroup());
         dto.setId(msg.getId());
         dto.setType(msg.getType());
         dto.setTs(msg.getTs());
         dto.setRoomId(msg.getRoomid());
-        dto.setContent(msg.getContent());
         dto.setSender(msg.getSender());
         dto.setSign(msg.getSign());
         dto.setThumb(msg.getThumb());
         dto.setExtra(msg.getExtra());
-        dto.setXml(msg.getXml().replace("\n", "").replace("\t", ""));
+        dto.setXml(xml);
+        // 根据消息类型判断 引用-49
+        if (!ObjectUtils.isEmpty(msg.getContent()) && "49".equals("" + msg.getType())) {
+            try {
+                dto.setQuoteContent(content);
+                JSONObject json = XmlJsonConvertUtil.xml2Json(content);
+                // 获取第一层级的JSONObject
+                JSONObject level1 = json.getJSONObject("msg");
+                if (!ObjectUtils.isEmpty(level1)) {
+                    // 获取第二层级的JSONObject
+                    JSONObject level2 = level1.getJSONObject("appmsg");
+                    if (!ObjectUtils.isEmpty(level2)) {
+                        // 获取field字段的值
+                        String fieldValue = level2.getString("title");
+                        dto.setContent(fieldValue);
+                    }
+                }
+                dto.setJsonContent(json);
+            } catch (Exception e) {
+                log.error("XML提取报错：", e);
+                // 报错就使用原值
+                dto.setContent(content);
+            }
+        } else {
+            dto.setContent(content);
+        }
 
         String jsonString = JSONObject.toJSONString(dto);
         try {

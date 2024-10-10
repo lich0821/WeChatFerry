@@ -1,16 +1,19 @@
 package com.wechat.ferry.entity.dto;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * DTO-微信消息
+ * DTO-ge微信消息
  *
  * @author chandler
  * @date 2024-09-26 19:56
  */
 @Data
-public class WxMsgDTO {
+public class WxPpMsgDTO {
 
     /**
      * 是否自己发送的
@@ -53,6 +56,21 @@ public class WxMsgDTO {
      */
     @ApiModelProperty(value = "消息内容")
     private String content;
+
+    /**
+     * 转为JSON的内容
+     * 对应DLL中的content原始内容
+     */
+    @ApiModelProperty(value = "转为JSON的内容")
+    private JSONObject jsonContent;
+
+    /**
+     * 引用内容
+     * 对应DLL中的content原始内容
+     */
+    @JsonIgnore
+    @ApiModelProperty(value = "消息内容XML")
+    private String quoteContent;
 
     /**
      * 消息发送者

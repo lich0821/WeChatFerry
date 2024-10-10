@@ -14,7 +14,13 @@
     <artifactId>wechat-ferry-mvn</artifactId>
     <packaging>jar</packaging>
     <name>wechat-ferry-mvn</name>
+    <version>39.2.4</version>
     <description>WeChatFerry客户端Java-Maven版</description>
+
+    <properties>
+        <application.main.class>com.wechat.ferry.WeChatFerryApplication</application.main.class>
+        <app.name>wechat-ferry-mvn</app.name>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -29,6 +35,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!--thymeleaf-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <!-- 日志 -->
         <dependency>
@@ -77,6 +88,35 @@
             <version>5.6.0</version>
         </dependency>
 
+        <!-- 配置文件加解密 -->
+<!--        <dependency>-->
+<!--            <groupId>com.github.ulisesbocchio</groupId>-->
+<!--            <artifactId>jasypt-spring-boot-starter</artifactId>-->
+<!--            <version>3.0.5</version>-->
+<!--        </dependency>-->
+        <!-- orm 相关 -->
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-annotation</artifactId>-->
+<!--            <version>3.5.7</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-extension</artifactId>-->
+<!--            <version>3.5.7</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-boot-starter</artifactId>-->
+<!--            <version>3.5.7</version>-->
+<!--        </dependency>-->
+        <!-- mysql数据库驱动 -->
+<!--        <dependency>-->
+<!--            <groupId>com.mysql</groupId>-->
+<!--            <artifactId>mysql-connector-j</artifactId>-->
+<!--            <version>8.0.33</version>-->
+<!--        </dependency>-->
+
         <!-- 引入本地lib -->
         <dependency>
             <groupId>io.sisu.nng</groupId>
@@ -90,6 +130,19 @@
     </dependencies>
 
     <build>
+        <!-- 最终 Jar 包的名字 -->
+        <finalName>${app.name}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 排除特定资源 -->
+                <excludes>
+                    <exclude>bin/*</exclude>
+                    <exclude>proto/*</exclude>
+                    <exclude>sql/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -98,8 +151,25 @@
             </extension>
         </extensions>
 
-        <!-- 同时添加maven插件，用于编译protobuf生成java文件 -->
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                    <!-- 主类入口 -->
+                    <mainClass>${application.main.class}</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 同时添加maven插件，用于编译protobuf生成java文件 -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
@@ -124,17 +194,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.proto</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
