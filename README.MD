@@ -133,7 +133,7 @@ vcpkg integrate install
 
 #### 安装 Python3
 
-通过微软商店或者 python.org 自行下载均可，注意配置好环境变量，确保 `python3` 在命令行下可用。
+通过微软商店或者 python.org 自行下载均可，注意安装`python`的版本不能太高，否则无法安装下方依赖，`python <= 3.10`，然后配置好环境变量，确保 `python3` 在命令行下可用。
 
 安装依赖：
 ```sh
