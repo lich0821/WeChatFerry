@@ -192,12 +192,13 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     int status = -1;
     QWORD localId;
     uint32_t dbIdx;
+    QWORD type;
 
     if (fs::exists(extra)) { // 第一道，不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
-    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
+    if (GetLocalIdandDbidx(id, &localId, &dbIdx, &type) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
         return status;
     }
@@ -224,10 +225,13 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     GetChatMgr();
     GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
 
-    QWORD type = GET_QWORD(buff + 0x38);
+     QWORD lpType = GET_QWORD(buff + 0x38);
+    //int type = GetMsgType(id);
 
     string save_path  = "";
     string thumb_path = "";
+
+    LOG_DEBUG("DownloadAttach id: {} type: {} lpType: {}", id, type, lpType);
 
     switch (type) {
         case 0x03: { // Image: extra

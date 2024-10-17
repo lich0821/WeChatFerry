@@ -7,5 +7,5 @@
 DbNames_t GetDbNames();
 DbTables_t GetDbTables(const string db);
 DbRows_t ExecDbQuery(const string db, const string sql);
-int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx);
+int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx, uint64_t* type = nullptr);
 vector<uint8_t> GetAudioData(uint64_t msgid);
