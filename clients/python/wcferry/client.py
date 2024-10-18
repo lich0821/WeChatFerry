@@ -62,7 +62,7 @@ class Wcf():
         contacts (list): 联系人缓存，调用 `get_contacts` 后更新
     """
 
-    def __init__(self, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
+    def __init__(self, host: str = None, port: int = 10086, debug: bool = True, block: bool = True, processIndex: int=-1) -> None:
         self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
@@ -78,9 +78,13 @@ class Wcf():
             self._local_mode = True
             self.host = "127.0.0.1"
             self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-            if self.sdk.WxInitSDK(debug, port) != 0:
+            if self.sdk.WxInitSDK(debug, port, processIndex) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
+            if processIndex == -1:
+                self.processIndex = 0
+            else:
+                self.processIndex = processIndex
 
         self.cmd_url = f"tcp://{self.host}:{self.port}"
 
@@ -121,9 +125,10 @@ class Wcf():
             return
 
         self.disable_recv_msg()
+        self.msg_socket.close()  # 退出前关闭通信通道, 与init配套
         self.cmd_socket.close()
 
-        if self._local_mode and self.sdk and self.sdk.WxDestroySDK() != 0:
+        if self._local_mode and self.sdk and self.sdk.WxDestroySDK(self.processIndex) != 0:
             self.LOG.error("退出失败！")
 
         self._is_running = False
@@ -528,7 +533,7 @@ class Wcf():
                     self.msgQ.put(WxMsg(rsp.wxmsg))
 
             # 退出前关闭通信通道
-            self.msg_socket.close()
+            # self.msg_socket.close()
 
         if self._is_receiving_msg:
             return True
@@ -565,7 +570,7 @@ class Wcf():
                 else:
                     callback(WxMsg(rsp.wxmsg))
             # 退出前关闭通信通道
-            self.msg_socket.close()
+            # self.msg_socket.close()
 
         if self._is_receiving_msg:
             return True
@@ -959,3 +964,8 @@ class Wcf():
                 return member.name if member.name else nickname
 
         return ""
+
+def enumWeChatProcess():
+    """列出所有的微信进程"""
+    dll = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.dirname(__file__)) + "/sdk.dll")
+    return dll.EnumWeChatProcess()
