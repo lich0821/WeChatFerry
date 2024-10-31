@@ -1,0 +1,11 @@
+{
+    "name": "WCF",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "protobuf[zlib]",
+        "spdlog",
+        "nng",
+        "magic-enum",
+        "minhook"
+    ]
+}
