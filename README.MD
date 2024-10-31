@@ -38,6 +38,7 @@
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
+* 发送 XML 消息
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
@@ -60,6 +61,10 @@
 * NodeJS
 
 </details>
+
+## 感谢大佬们贡献代码
+
+<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry)</a>
 
 ## 快速开始
 ### Python
@@ -97,6 +102,7 @@ pip install --upgrade wcferry
 ## 一起开发
 
 > 🚫 非开发用户不需要往下看。
+>
 > **开发用户**：可以根据文档和错误提示，自行解决编译错误的人员。
 
 ### 安装开发环境
@@ -202,9 +208,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.2.4
+### v39.3.0
 
-* 修复 wxid 问题
+* 适配 `3.9.11.25`
 
 <details><summary>点击查看更多</summary>
 
@@ -215,6 +221,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.2.4
+
+* 修复 wxid 问题
 
 ### v39.2.3
 

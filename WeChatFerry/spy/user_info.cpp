@@ -4,10 +4,10 @@
 
 extern UINT64 g_WeChatWinDllAddr;
 
-#define OS_USER_HOME   0x5A7E190
-#define OS_USER_WXID   0x5AB7F30
-#define OS_USER_NAME   0x5AB8098
-#define OS_USER_MOBILE 0x5AB7FD8
+#define OS_USER_HOME   0x5932770
+#define OS_USER_WXID   0x595C270
+#define OS_USER_NAME   0x595C3D8
+#define OS_USER_MOBILE 0x595C318
 
 static char home[MAX_PATH] = { 0 };
 

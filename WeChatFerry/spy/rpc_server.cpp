@@ -321,7 +321,6 @@ bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
     return true;
 }
 
-#if 0
 bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -335,7 +334,7 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
         string receiver(xml.receiver);
         string content(xml.content);
         string path(xml.path ? xml.path : "");
-        uint32_t type = (uint32_t)xml.type;
+        uint64_t type = (uint64_t)xml.type;
         SendXmlMessage(receiver, content, path, type);
         rsp.msg.status = 0;
     }
@@ -349,7 +348,6 @@ bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
 
 bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
 {
