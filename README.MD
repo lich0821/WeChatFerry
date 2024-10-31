@@ -209,7 +209,7 @@ WeChatFerry
 
 ### v39.3.0
 
-* 适配 `3.9.11.24`
+* 适配 `3.9.11.25`
 
 <details><summary>点击查看更多</summary>
 
