@@ -9,10 +9,10 @@
 using namespace std;
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_GET_CHATROOM_MGR 0x1b83bd0
+#define OS_GET_CHATROOM_MGR 0x1B83BD0
 #define OS_ADD_MEMBERS      0x2155100
 #define OS_DELETE_MEMBERS   0x2155740
-#define OS_INVITE_MEMBERS   0x2154ae0
+#define OS_INVITE_MEMBERS   0x2154AE0
 
 typedef QWORD (*GetChatRoomMgr_t)();
 typedef QWORD (*AddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);

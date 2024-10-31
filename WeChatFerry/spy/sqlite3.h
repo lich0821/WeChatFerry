@@ -159,22 +159,22 @@
 
 typedef int (*Sqlite3_callback)(void *, int, char **, char **);
 
-typedef int(__cdecl *Sqlite3_exec)(QWORD,                           /* An open database */
-                                   const char *sql,                 /* SQL to be evaluated */
-                                   Sqlite3_callback,                /* Callback function */
-                                   void *,                          /* 1st argument to callback */
-                                   char **errmsg                    /* Error msg written here */
+typedef int(__cdecl *Sqlite3_exec)(QWORD,            /* An open database */
+                                   const char *sql,  /* SQL to be evaluated */
+                                   Sqlite3_callback, /* Callback function */
+                                   void *,           /* 1st argument to callback */
+                                   char **errmsg     /* Error msg written here */
 );
 typedef QWORD(__cdecl *Sqlite3_backup_init)(QWORD *pDest,           /* Destination database handle */
                                             const char *zDestName,  /* Destination database name */
                                             QWORD *pSource,         /* Source database handle */
                                             const char *zSourceName /* Source database name */
 );
-typedef int(__cdecl *Sqlite3_prepare)(QWORD db,                     /* Database handle */
-                                      const char *zSql,             /* SQL statement, UTF-8 encoded */
-                                      int nByte,                    /* Maximum length of zSql in bytes. */
-                                      QWORD **ppStmt,               /* OUT: Statement handle */
-                                      const char **pzTail           /* OUT: Pointer to unused portion of zSql */
+typedef int(__cdecl *Sqlite3_prepare)(QWORD db,           /* Database handle */
+                                      const char *zSql,   /* SQL statement, UTF-8 encoded */
+                                      int nByte,          /* Maximum length of zSql in bytes. */
+                                      QWORD **ppStmt,     /* OUT: Statement handle */
+                                      const char **pzTail /* OUT: Pointer to unused portion of zSql */
 );
 typedef int(__cdecl *Sqlite3_open)(const char *filename, QWORD **ppDb);
 typedef int(__cdecl *Sqlite3_backup_step)(QWORD *p, int nPage);
