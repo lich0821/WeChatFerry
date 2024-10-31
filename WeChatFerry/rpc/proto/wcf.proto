@@ -117,7 +117,7 @@ message XmlMsg
     string receiver = 1; // 消息接收人
     string content  = 2; // xml 内容
     string path     = 3; // 图片路径
-    int32 type      = 4; // 消息类型
+    uint64 type     = 4; // 消息类型
 }
 
 message MsgTypes { map<int32, string> types = 1; }
