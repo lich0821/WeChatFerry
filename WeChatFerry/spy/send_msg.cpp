@@ -1,4 +1,5 @@
-﻿#include "framework.h"
+﻿
+#include "framework.h"
 #include <sstream>
 #include <vector>
 
@@ -28,7 +29,7 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 #define OS_FORWARD_MSG     0x22C60E0
 #define OS_GET_EMOTION_MGR 0x1BCEF10
 #define OS_SEND_EMOTION    0x21B52D5
-#define OS_XML_BUGSIGN     0x24F0D70
+#define OS_XML_BUFSIGN     0x24F0D70
 #define OS_SEND_XML        0x20CF360
 
 typedef QWORD (*New_t)(QWORD);
@@ -45,8 +46,8 @@ typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*GetEmotionMgr_t)();
 typedef QWORD (*SendEmotion_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-typedef QWORD (*__XmlBufSignFunc)(QWORD, QWORD, QWORD);
-typedef QWORD (*__SendXmlMsgFunc)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+typedef QWORD (*XmlBufSign_t)(QWORD, QWORD, QWORD);
+typedef QWORD (*SendXmlMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
 void SendTextMessage(string wxid, string msg, string atWxids)
 {
@@ -242,33 +243,31 @@ void SendXmlMessage(string receiver, string xml, string path, QWORD type)
     New_t funcNew   = (New_t)(g_WeChatWinDllAddr + OS_NEW);
     Free_t funcFree = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
 
-    DWORD xmlBufSign                = g_WeChatWinDllAddr + OS_XML_BUGSIGN;
-    DWORD sendXmlMsg                = g_WeChatWinDllAddr + OS_SEND_XML;
-    __XmlBufSignFunc xmlBufSignFunc = (__XmlBufSignFunc)xmlBufSign;
-    __SendXmlMsgFunc sendXmlMsgFunc = (__SendXmlMsgFunc)sendXmlMsg;
+    XmlBufSign_t xmlBufSign = (XmlBufSign_t)(g_WeChatWinDllAddr + OS_XML_BUFSIGN);
+    SendXmlMsg_t sendXmlMsg = (SendXmlMsg_t)(g_WeChatWinDllAddr + OS_SEND_XML);
 
     char buff[0x500]   = { 0 };
     char buff2[0x500]  = { 0 };
     char nullBuf[0x1C] = { 0 };
 
-    DWORD pBuf  = (DWORD)(&buff);
-    DWORD pBuf2 = (DWORD)(&buff2);
+    QWORD pBuf  = (QWORD)(&buff);
+    QWORD pBuf2 = (QWORD)(&buff2);
 
     funcNew(pBuf);
     funcNew(pBuf2);
 
-    DWORD sbuf[4] = { 0, 0, 0, 0 };
+    QWORD sbuf[4] = { 0, 0, 0, 0 };
 
-    DWORD sign = xmlBufSignFunc(pBuf2, (DWORD)(&sbuf), 0x1);
+    QWORD sign = xmlBufSign(pBuf2, (QWORD)(&sbuf), 0x1);
 
     WxString *pReceiver = NewWxStringFromStr(receiver);
     WxString *pXml      = NewWxStringFromStr(xml);
     WxString *pPath     = NewWxStringFromStr(path);
     WxString *pSender   = NewWxStringFromStr(GetSelfWxid());
 
-    sendXmlMsgFunc(pBuf, (QWORD)pSender, (QWORD)pReceiver, (QWORD)pXml, (QWORD)pPath, (QWORD)(&nullBuf), type, 0x4,
-                   sign, pBuf2);
+    sendXmlMsg(pBuf, (QWORD)pSender, (QWORD)pReceiver, (QWORD)pXml, (QWORD)pPath, (QWORD)(&nullBuf), type, 0x4, sign,
+               pBuf2);
 
-    funcFree((QWORD)&buff));
-    funcFree((QWORD)&buff2));
+    funcFree((QWORD)&buff);
+    funcFree((QWORD)&buff2);
 }
