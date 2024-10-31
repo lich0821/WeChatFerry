@@ -40,27 +40,34 @@ jobs:
           pip install grpcio-tools==1.48.2
 
       - name: 设置缓存
-        id: cache-dependencies
+        id: cache-vcpkg
         uses: actions/cache@v4
         with:
           path: |
             C:/Tools/vcpkg
-          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/WeChatFerry/spy/spy.rc') }}
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-vcpkg-
 
-      - name: 安装 vcpkg 和依赖项
+      - name: 安装 vcpkg 并初始化依赖项
         run: |
+          # 设置 vcpkg 目录
+          mkdir -p C:/Tools
           cd C:/Tools
+
+          # 克隆并引导 vcpkg
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat
-          .\vcpkg\vcpkg install protobuf[zlib]:x64-windows-static
-          .\vcpkg\vcpkg install spdlog:x64-windows-static
-          .\vcpkg\vcpkg install nng:x64-windows-static
-          .\vcpkg\vcpkg install magic-enum:x64-windows-static
-          .\vcpkg\vcpkg install minhook:x64-windows-static
-          .\vcpkg\vcpkg integrate install
+
+          # 设置 VCPKG_ROOT 环境变量
           echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
+
+          # 将 vcpkg 与 Visual Studio 集成
+          .\vcpkg\vcpkg integrate install
+
+          # 返回到项目目录并安装依赖
+          cd ${{ github.workspace }}
+          C:/Tools/vcpkg/vcpkg install --triplet x64-windows
 
       - name: 解析并构建配置
         run: |
@@ -75,7 +82,6 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
           Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
-          # Compress-Archive -Path "WeChatFerry/Out/*" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}-debug.zip"
           Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "WeChatFerry/tmp/WeChatSetup-${{ env.wechat_version }}.exe"
         shell: pwsh
 
