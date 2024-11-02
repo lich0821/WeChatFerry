@@ -1,8 +1,11 @@
 {
-    "name": "WCF",
+    "name": "wcf",
     "version-string": "1.0.0",
     "dependencies": [
-        "protobuf[zlib]",
+        {
+            "name": "protobuf",
+            "features": [ "zlib" ]
+        },
         "spdlog",
         "nng",
         "magic-enum",
