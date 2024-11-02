@@ -64,22 +64,22 @@ jobs:
           .\vcpkg\bootstrap-vcpkg.bat
 
           # 设置 VCPKG_ROOT 环境变量
-          setx VCPKG_ROOT "C:/Tools/vcpkg" /M
           echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
+          $env:VCPKG_ROOT = 'C:/Tools/vcpkg'
+
+          # 将 vcpkg 与 Visual Studio 集成
+          C:/Tools/vcpkg/vcpkg integrate install
 
           # 返回到项目目录并安装依赖
           cd ${{ github.workspace }}
-          vcpkg install --triplet x64-windows
-
-          # 将 vcpkg 与 Visual Studio 集成
-          vcpkg integrate install
+          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
 
       - name: 解析并构建配置
         run: |
           $configurations = "Release,Debug".Split(',')
           foreach ($config in $configurations) {
             Write-Host "Building configuration: $config"
-            msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /verbosity:minimal
+            msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /p:VcpkgTriplet="x64-windows-static" /p:VcpkgEnableManifest=true /verbosity:minimal
           }
         shell: pwsh
 
