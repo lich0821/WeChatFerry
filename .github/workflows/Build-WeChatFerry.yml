@@ -52,11 +52,13 @@ jobs:
       - name: 安装 vcpkg 并初始化依赖项
         run: |
           # 设置 vcpkg 目录
-          mkdir -p C:/Tools
+          if (!(Test-Path -Path 'C:/Tools')) {
+            New-Item -ItemType Directory -Force -Path 'C:/Tools'
+          }
           cd C:/Tools
 
           # 克隆并引导 vcpkg
-          git clone https://github.com/microsoft/vcpkg
+          git clone https://github.com/microsoft/vcpkg || echo "vcpkg already cloned"
           .\vcpkg\bootstrap-vcpkg.bat
 
           # 设置 VCPKG_ROOT 环境变量
