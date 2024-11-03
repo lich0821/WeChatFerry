@@ -120,20 +120,16 @@ git clone https://github.com/microsoft/vcpkg
 ```
 
 * 添加全局配置：
-环境变量增加 `vcpkg` 所在路径（本项目为：`C:\Tools\vcpkg`）。
+环境变量增加 `vcpkg` 所在路径（本文为：`C:\Tools\vcpkg`）：
+```sh
+setx VCPKG_ROOT "C:/Tools/vcpkg" /M
+```
 
 #### 安装相关组件
 
-```sh
-vcpkg install protobuf[zlib]:x64-windows-static
-vcpkg install spdlog:x64-windows-static
-vcpkg install nng:x64-windows-static
-vcpkg install magic-enum:x64-windows-static
-vcpkg install minhook:x64-windows-static
-vcpkg integrate install
-```
+编译时会自动安装。但如果需要使用 `protoc.exe`，则需要配置一下 `protoc.exe` 环境变量：`<vcpkg_package_installed_path>\x64-windows-static\x64-windows-static\tools\protobuf`。
 
-安装完毕后，需要配置 protoc 的环境变量，并确保在命令行下可用，protoc 的路径在 `<vcpkg_install_path>\installed\x86-windows-static\tools\protobuf`
+（本文为：`C:\Projs\WeChatFerry\WeChatFerry\vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf`）
 
 #### 安装 VS2019
 
