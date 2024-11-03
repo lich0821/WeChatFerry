@@ -45,7 +45,8 @@ jobs:
         with:
           path: |
             C:/Tools/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+            ${{ github.workspace }}/WeChatFerry/vcpkg_installed
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('WeChatFerry/vcpkg.json') }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-
 
@@ -71,7 +72,7 @@ jobs:
           C:/Tools/vcpkg/vcpkg integrate install
 
           # 返回到项目目录并安装依赖
-          cd ${{ github.workspace }}
+          cd ${{ github.workspace }}/WeChatFerry
           C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
 
       - name: 解析并构建配置
