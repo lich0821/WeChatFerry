@@ -39,16 +39,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install grpcio-tools==1.48.2
 
-      - name: 设置缓存
-        id: cache-vcpkg
+      - name: 设置 vcpkg 缓存
+        id: cache-vcpkg-tools
         uses: actions/cache@v4
         with:
-          path: |
-            C:/Tools/vcpkg
-            ${{ github.workspace }}/WeChatFerry/vcpkg_installed
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('WeChatFerry/vcpkg.json') }}
+          path: C:/Tools/vcpkg
+          key: ${{ runner.os }}-vcpkg-tools-${{ hashFiles('WeChatFerry/vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-
+            ${{ runner.os }}-vcpkg-tools-
+
+      - name: 设置 vcpkg_installed 缓存
+        id: cache-vcpkg-installed
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/WeChatFerry/vcpkg_installed
+          key: ${{ runner.os }}-vcpkg-installed-${{ hashFiles('WeChatFerry/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-installed-
 
       - name: 安装 vcpkg 并初始化依赖项
         run: |
