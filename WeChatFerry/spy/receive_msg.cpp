@@ -31,7 +31,7 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_RECV_MSG_THUMB   0x280
 #define OS_RECV_MSG_EXTRA   0x2A0
 #define OS_RECV_MSG_XML     0x308
-#define OS_RECV_MSG_CALL    0x2147680
+#define OS_RECV_MSG_CALL    0x213ED90
 #define OS_PYQ_MSG_START    0x30
 #define OS_PYQ_MSG_END      0x38
 #define OS_PYQ_MSG_TS       0x38
