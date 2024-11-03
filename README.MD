@@ -64,7 +64,7 @@
 
 ## 感谢大佬们贡献代码
 
-<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry)</a>
+<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry&columns=8)</a>
 
 ## 快速开始
 ### Python
@@ -206,7 +206,7 @@ WeChatFerry
 
 ### v39.3.3
 
-* 修复发送文件/图片中文路径问题
+* 修复发送文件 / 图片中文路径问题
 
 <details><summary>点击查看更多</summary>
 
