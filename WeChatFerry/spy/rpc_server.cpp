@@ -33,10 +33,6 @@
 #include "user_info.h"
 #include "util.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #define URL_SIZE   20
 #define BASE_URL   "tcp://0.0.0.0"
 #define G_BUF_SIZE (16 * 1024 * 1024)
@@ -256,35 +252,12 @@ bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
     if ((path == NULL) || (receiver == NULL)) {
         LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
+    } else if (!fs::exists(String2Wstring(path))) {
+        LOG_ERROR("Path does not exists: {}", path);
+        rsp.msg.status = -2;
     } else {
-        bool fileExist = false;
-#ifdef _WIN32
-        // 将 char* 路径转换为 wide-char 格式
-        std::wstring wpath = String2Wstring(path);
-
-        // 使用 GetFileAttributesW() 检查文件是否存在
-        DWORD attributes = GetFileAttributesW(wpath.c_str());
-        if (attributes == INVALID_FILE_ATTRIBUTES) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-        } else {
-            fileExist = true;
-        }
-#else
-        // On Linux and other systems
-        std::string spath(path);
-        if (!fs::exists(spath)) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-            return false;
-        } else {
-            fileExist = true;
-        }
-#endif
-        if(fileExist) {
-            SendImageMessage(receiver, path);
-            rsp.msg.status = 0;
-        }
+        SendImageMessage(receiver, path);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
@@ -306,38 +279,12 @@ bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
     if ((path == NULL) || (receiver == NULL)) {
         LOG_ERROR("Empty path or receiver.");
         rsp.msg.status = -1;
-    }
-    else {
-        bool fileExist = false;
-#ifdef _WIN32
-        // 将 char* 路径转换为 wide-char 格式
-        std::wstring wpath = String2Wstring(path);
-
-        // 使用 GetFileAttributesW() 检查文件是否存在
-        DWORD attributes = GetFileAttributesW(wpath.c_str());
-        if (attributes == INVALID_FILE_ATTRIBUTES) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-        }
-        else {
-            fileExist = true;
-        }
-#else
-        // On Linux and other systems
-        std::string spath(path);
-        if (!fs::exists(spath)) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-            return false;
-        }
-        else {
-            fileExist = true;
-        }
-#endif
-        if (fileExist) {
-            SendImageMessage(receiver, path);
-            rsp.msg.status = 0;
-        }
+    } else if (!fs::exists(String2Wstring(path))) {
+        LOG_ERROR("Path does not exists: {}", path);
+        rsp.msg.status = -2;
+    } else {
+        SendFileMessage(receiver, path);
+        rsp.msg.status = 0;
     }
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
