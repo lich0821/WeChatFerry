@@ -20,6 +20,7 @@ Out/
 build/
 logs/
 java/wcferry/bin/
+vcpkg_installed/
 
 *_pb2_grpc.py
 __pycache__
