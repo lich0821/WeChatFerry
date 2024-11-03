@@ -234,3 +234,21 @@ message ForwardMsg
     uint64 id       = 1 [ jstype = JS_STRING ]; // 待转发消息 ID
     string receiver = 2;                        // 转发接收目标，群为 roomId，个人为 wxid
 }
+
+message RoomData
+{
+    message RoomMember
+    {
+        string wxid = 1;
+        string name = 2;
+        int32 state = 3;
+    }
+
+    repeated RoomMember members = 1;
+
+    int32 field_2       = 2;
+    int32 room_capacity = 3;
+    int32 field_4       = 4;
+    int32 field_5       = 5;
+    string wxid         = 6;  // 不知道什么含义
+}
