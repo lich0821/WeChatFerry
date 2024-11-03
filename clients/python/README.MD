@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.2.4.0 (2024.07.08)
-* 修复 wxid 问题
+### v39.3.2.0
+* 适配 `3.9.11.25`
 
 <details><summary>点击查看更多</summary>
 
@@ -70,14 +70,15 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
-* 发送 GIF
+* 发送 XML 消息
+* 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
 * 开启接收消息
 * 关闭接收消息
 * 查询数据库
 * 获取朋友圈消息
-* 下载图片、视频、文件
+* 下载图片
 * 解密图片
 * 添加群成员
 * 删除群成员

@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.2.4.0"
+__version__ = "39.3.2.0"
 
 import atexit
 import base64
@@ -20,7 +20,7 @@ import pynng
 import requests
 from google.protobuf import json_format
 from wcferry import wcf_pb2
-from wcferry.roomdata_pb2 import RoomData
+from wcferry.wcf_pb2 import RoomData
 from wcferry.wxmsg import WxMsg
 
 
