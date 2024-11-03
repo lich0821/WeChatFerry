@@ -239,16 +239,19 @@ message RoomData
 {
     message RoomMember
     {
-        string wxid = 1;
-        string name = 2;
-        int32 state = 3;
+                 string wxid = 1;
+        optional string name = 2;  // 群昵称
+                 int32 state = 3;
     }
 
     repeated RoomMember members = 1;
 
-    int32 field_2       = 2;
-    int32 room_capacity = 3;
-    int32 field_4       = 4;
-    int32 field_5       = 5;
-    string wxid         = 6;  // 不知道什么含义
+    optional int32 field_2  = 2;
+             int32 field_3  = 3;
+    optional int32 field_4  = 4;
+             int32 capacity = 5;
+    optional string field_6 = 6;
+             int32 field_7  = 7;
+             int32 field_8  = 8;
+    repeated string admins  = 9;  // 管理员
 }
