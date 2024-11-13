@@ -20,7 +20,7 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 #define OS_SEND_MSG_MGR    0x1B53FD0
 #define OS_SEND_TEXT       0x22C6B60
 #define OS_SEND_IMAGE      0x22BC2F0
-#define OS_GET_APP_MSG_MGR 0x1B557D0
+#define OS_GET_APP_MSG_MGR 0x1B58F70
 #define OS_SEND_FILE       0x20D0230
 #define OS_RTM_NEW         0x1B5D690
 #define OS_RTM_FREE        0x1B5CA60
