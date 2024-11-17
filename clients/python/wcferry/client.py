@@ -398,7 +398,6 @@ class Wcf():
         Returns:
             int: 0 为成功，其他失败
         """
-        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_XML  # FUNC_SEND_XML
         req.xml.receiver = receiver
