@@ -125,6 +125,11 @@ git clone https://github.com/microsoft/vcpkg
 setx VCPKG_ROOT "C:/Tools/vcpkg" /M
 ```
 
+* 与 Visual Studio 集成
+```sh
+vcpkg integrate install # 失败则说明未正确安装或者未正确配置环境变量
+```
+
 #### 安装相关组件
 
 编译时会自动安装。但如果需要使用 `protoc.exe`，则需要配置一下 `protoc.exe` 环境变量：`<vcpkg_package_installed_path>\x64-windows-static\x64-windows-static\tools\protobuf`。
