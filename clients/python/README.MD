@@ -1,7 +1,7 @@
 # WeChatFerry Python 客户端
 [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/I6n_6fuQa60CrROWSgq0TA)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/YvgFFhF6D-79kXDzRqtg6w)|
 |:-:|:-:|:-:|
 
 🤖示例机器人框架：[WeChatRobot](https://github.com/lich0821/WeChatRobot)。
@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.3.3.0
-* 修复发送图片/文件中文路径问题
+### v39.3.3.1
+* 修复 `send_xml`
 
 <details><summary>点击查看更多</summary>
 
