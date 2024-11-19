@@ -80,6 +80,7 @@ pip install --upgrade wcferry
 ### HTTP
 * [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
 * [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
+* [wcf-http](https://github.com/yuxiaoli/wcf-http)（基于 Python）
 
 ### Java
 * [java](clients/java/wcferry/README.MD)
