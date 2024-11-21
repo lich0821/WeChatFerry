@@ -26,7 +26,7 @@ extern QWORD g_WeChatWinDllAddr;
 
 #define OS_LOGIN_STATUS               0x595C9E8
 #define OS_GET_SNS_DATA_MGR           0x21E2200
-#define OS_GET_SNS_FIRST_PAGE         0x2E212d0
+#define OS_GET_SNS_FIRST_PAGE         0x2E212D0
 #define OS_GET_SNS_TIMELINE_MGR       0x2DB3390
 #define OS_GET_SNS_NEXT_PAGE          0x2EC8970
 #define OS_NEW_CHAT_MSG               0x1B5E140
