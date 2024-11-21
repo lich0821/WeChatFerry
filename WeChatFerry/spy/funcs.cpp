@@ -35,6 +35,7 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x213FB00
 #define OS_GET_PRE_DOWNLOAD_MGR       0x1C0EE70
 #define OS_PUSH_ATTACH_TASK           0x1CDF4E0
+#define OS_LOGIN_QR_CODE              0x59620d8
 
 typedef QWORD (*GetSNSDataMgr_t)();
 typedef QWORD (*GetSnsTimeLineMgr_t)();
@@ -348,8 +349,17 @@ int RevokeMsg(QWORD id)
 
 string GetLoginUrl()
 {
-    char url[] = "方法还没实现";
-    return "http://weixin.qq.com/x/" + string(url);
+    LPVOID targetAddress = reinterpret_cast<LPBYTE>(g_WeChatWinDllAddr) + OS_LOGIN_QR_CODE;
+
+    char* dataPtr = *reinterpret_cast<char**>(targetAddress); // 读取指针内容
+    if (!dataPtr) {
+        LOG_ERROR("Failed to get login url");
+        return "error";
+    }
+
+    // 读取字符串内容
+    std::string data(dataPtr, 22);
+    return "http://weixin.qq.com/x/" + data;
 }
 
 int ReceiveTransfer(string wxid, string transferid, string transactionid)
