@@ -80,7 +80,7 @@ jobs:
 
           # 返回到项目目录并安装依赖
           cd ${{ github.workspace }}/WeChatFerry
-          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
+          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static --x-install-root="${{ github.workspace }}/WeChatFerry/vcpkg_installed/x64-windows-static"
 
       - name: 解析并构建配置
         run: |
