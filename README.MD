@@ -27,6 +27,7 @@
 
 <details><summary>点击查看功能清单</summary>
 
+* 获取登录二维码
 * 查询登录状态
 * 获取登录账号信息
 * 获取消息类型
@@ -80,6 +81,7 @@ pip install --upgrade wcferry
 ### HTTP
 * [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
 * [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
+* [wcf-http](https://github.com/yuxiaoli/wcf-http)（基于 Python）
 
 ### Java
 * [java](clients/java/wcferry/README.MD)
@@ -209,9 +211,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.3.3
+### v39.3.4
 
-* 修复发送文件 / 图片中文路径问题
+* 实现获取登录二维码
 
 <details><summary>点击查看更多</summary>
 
@@ -222,6 +224,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.3.3
+
+* 修复发送文件 / 图片中文路径问题
 
 ### v39.3.2
 
