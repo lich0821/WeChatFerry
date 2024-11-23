@@ -14,7 +14,11 @@ void InitLogger(std::string path)
     if (logger != nullptr) {
         return;
     }
-
+    // check and create logs folder
+    std::filesystem::path logDir = std::filesystem::path(path) / "logs";
+    if (!std::filesystem::exists(logDir)) {
+        std::filesystem::create_directory(logDir);
+    }
     auto filename = std::filesystem::path(path + LOGGER_FILE_NAME).make_preferred().string();
     try {
         logger = spdlog::rotating_logger_mt(LOGGER_NAME, filename, LOGGER_MAX_SIZE, LOGGER_MAX_FILES);

@@ -79,6 +79,9 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -96,7 +99,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +148,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -192,7 +195,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <OmitFramePointers>false</OmitFramePointers>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

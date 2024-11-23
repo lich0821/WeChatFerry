@@ -17,7 +17,7 @@ typedef struct {
 void SendTextMessage(string wxid, string msg, string atWxids);
 void SendImageMessage(string wxid, string path);
 void SendFileMessage(string wxid, string path);
-void SendXmlMessage(string receiver, string xml, string path, int type);
+void SendXmlMessage(string receiver, string xml, string path, uint64_t type);
 void SendEmotionMessage(string wxid, string path);
 int SendRichTextMessage(RichText_t &rt);
 int SendPatMessage(string roomid, string wxid);

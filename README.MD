@@ -16,7 +16,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/Y2Q37VYV730Iu9TrgiCmCw)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/YvgFFhF6D-79kXDzRqtg6w)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人框架。
@@ -27,6 +27,7 @@
 
 <details><summary>点击查看功能清单</summary>
 
+* 获取登录二维码
 * 查询登录状态
 * 获取登录账号信息
 * 获取消息类型
@@ -38,6 +39,7 @@
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
+* 发送 XML 消息
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
@@ -61,6 +63,10 @@
 
 </details>
 
+## 感谢大佬们贡献代码
+
+<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry&columns=8)</a>
+
 ## 快速开始
 ### Python
 [![PyPi](https://img.shields.io/pypi/v/wcferry.svg)](https://pypi.python.org/pypi/wcferry) [![Downloads](https://static.pepy.tech/badge/wcferry)](https://pypi.python.org/pypi/wcferry) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
@@ -75,6 +81,7 @@ pip install --upgrade wcferry
 ### HTTP
 * [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust）
 * [go_wcf_http](clients/go_wcf_http/README.MD)（基于 Go）
+* [wcf-http](https://github.com/yuxiaoli/wcf-http)（基于 Python）
 
 ### Java
 * [java](clients/java/wcferry/README.MD)
@@ -97,6 +104,7 @@ pip install --upgrade wcferry
 ## 一起开发
 
 > 🚫 非开发用户不需要往下看。
+>
 > **开发用户**：可以根据文档和错误提示，自行解决编译错误的人员。
 
 ### 安装开发环境
@@ -114,26 +122,27 @@ git clone https://github.com/microsoft/vcpkg
 ```
 
 * 添加全局配置：
-环境变量增加 `vcpkg` 所在路径（本项目为：`C:\Tools\vcpkg`）。
+环境变量增加 `vcpkg` 所在路径（本文为：`C:\Tools\vcpkg`）：
+```sh
+setx VCPKG_ROOT "C:/Tools/vcpkg" /M
+```
+
+* 与 Visual Studio 集成
+```sh
+vcpkg integrate install # 失败则说明未正确安装或者未正确配置环境变量
+```
 
 #### 安装相关组件
 
-```sh
-vcpkg install protobuf[zlib]:x64-windows-static
-vcpkg install spdlog:x64-windows-static
-vcpkg install nng:x64-windows-static
-vcpkg install magic-enum:x64-windows-static
-vcpkg install minhook:x64-windows-static
-vcpkg integrate install
-```
+编译时会自动安装。但如果需要使用 `protoc.exe`，则需要配置一下 `protoc.exe` 环境变量：`<vcpkg_package_installed_path>\x64-windows-static\x64-windows-static\tools\protobuf`。
 
-安装完毕后，需要配置 protoc 的环境变量，并确保在命令行下可用，protoc 的路径在 `<vcpkg_install_path>\installed\x86-windows-static\tools\protobuf`
+（本文为：`C:\Projs\WeChatFerry\WeChatFerry\vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf`）
 
 #### 安装 VS2019
 
 #### 安装 Python3
 
-通过微软商店或者 python.org 自行下载均可，注意配置好环境变量，确保 `python3` 在命令行下可用。
+通过微软商店或者 python.org 自行下载均可（注意 `python` 版本不能太高，否则需要自行编译依赖，建议使用 python 3.10），然后配置好环境变量，确保 `python` 在命令行下可用。
 
 安装依赖：
 ```sh
@@ -202,9 +211,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.2.4
+### v39.3.4
 
-* 修复 wxid 问题
+* 实现获取登录二维码
 
 <details><summary>点击查看更多</summary>
 
@@ -215,6 +224,22 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.3.3
+
+* 修复发送文件 / 图片中文路径问题
+
+### v39.3.2
+
+* 修复接收消息问题
+
+### v39.3.0
+
+* 适配 `3.9.11.25`
+
+### v39.2.4
+
+* 修复 wxid 问题
 
 ### v39.2.3
 

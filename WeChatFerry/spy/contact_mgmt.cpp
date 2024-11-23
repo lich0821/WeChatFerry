@@ -7,8 +7,8 @@
 using namespace std;
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_GET_CONTACT_MGR  0x1C0BDE0
-#define OS_GET_CONTACT_LIST 0x2265540
+#define OS_GET_CONTACT_MGR  0x1B417A0
+#define OS_GET_CONTACT_LIST 0x219ED10
 #define OS_CONTACT_BIN      0x200
 #define OS_CONTACT_BIN_LEN  0x208
 #define OS_CONTACT_WXID     0x10
