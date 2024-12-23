@@ -84,6 +84,16 @@ public interface WeChatDllService {
     List<WxPpWcfContactsResp> queryContactsList();
 
     /**
+     * 获取数据库所有表名称
+     *
+     * @return 数据库名称列表
+     *
+     * @author chandler
+     * @date 2024-10-02 17:53
+     */
+    List<String> queryDatabaseAllTableName();
+
+    /**
      * 获取可查询数据库
      * 
      * @param request 请求入参
@@ -93,16 +103,6 @@ public interface WeChatDllService {
      * @date 2024-10-02 17:52
      */
     List<WxPpWcfDatabaseRowResp> queryDatabaseSql(WxPpWcfDatabaseSqlReq request);
-
-    /**
-     * 获取数据库所有表名称
-     *
-     * @return 数据库名称列表
-     *
-     * @author chandler
-     * @date 2024-10-02 17:53
-     */
-    List<String> queryDatabaseAllTableName();
 
     /**
      * 获取数据库表

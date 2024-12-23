@@ -45,6 +45,7 @@ import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
+import com.wechat.ferry.enums.MsgFwdTypeEnum;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
 import com.wechat.ferry.handle.WeChatSocketClient;
@@ -216,24 +217,17 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
+    public List<String> queryDatabaseAllTableName() {
+        List<String> list = wechatSocketClient.getDbNames();
+        log.info("[查询]-[数据库名称列表]-共查到:{}条", list.size());
+        return list;
+    }
+
+    @Override
     public List<WxPpWcfDatabaseRowResp> queryDatabaseSql(WxPpWcfDatabaseSqlReq request) {
         List<WxPpWcfDatabaseRowResp> list = new ArrayList<>();
         List<Wcf.DbRow> wcfList = wechatSocketClient.querySql(request.getDatabaseName(), request.getSqlText());
         if (!CollectionUtils.isEmpty(wcfList)) {
-            // List<Map<String, Object>> result = new ArrayList<>();
-            // // 获取指定的行
-            // for (Wcf.DbRow row : wcfList) {
-            // Map<String, Object> rowMap = new HashMap<>();
-            // // 遍历每一列
-            // for (Wcf.DbField field : row.getFieldsList()) {
-            // ByteString content = field.getContent();
-            // String column = field.getColumn();
-            // int type = field.getType();
-            // rowMap.put(column, converterSqlVal(type, content));
-            // }
-            // result.add(rowMap);
-            // }
-
             for (Wcf.DbRow dbRow : wcfList) {
                 WxPpWcfDatabaseRowResp rowVo = new WxPpWcfDatabaseRowResp();
                 List<WxPpWcfDatabaseFieldResp> fieldVoList = new ArrayList<>();
@@ -249,14 +243,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 list.add(rowVo);
             }
         }
-        log.info("[查询]-[联系人]-wcfList:{}", wcfList);
-        return list;
-    }
-
-    @Override
-    public List<String> queryDatabaseAllTableName() {
-        List<String> list = wechatSocketClient.getDbNames();
-        log.info("[查询]-[数据库名称列表]-共查到:{}条", list.size());
+        log.info("[查询]-[获取可查询数据库]-wcfList:{}", wcfList);
         return list;
     }
 
@@ -264,7 +251,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public List<String> queryDatabaseTable(WxPpWcfDatabaseTableReq request) {
         log.info("[查询]-[查询表]-request:{}", request);
         Map<String, String> wcfMap = wechatSocketClient.getDbTables(request.getDatabaseName());
-
+        // TODO 待建模
         log.info("[查询]-[查询表]-查到:{}", wcfMap);
         return Collections.emptyList();
     }
@@ -323,7 +310,6 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                                     }
                                     vo.setGroupNickName(nickName);
                                     vo.setState(String.valueOf(member.getState()));
-                                    // TODO 待补充
                                     list.add(vo);
                                 }
                             } catch (InvalidProtocolBufferException e) {
@@ -356,13 +342,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.info("[发送消息]-[文本消息]-处理结束");
         // 转发处理
         String stringJson = JSON.toJSONString(request);
-        if ("2".equals(weChatFerryProperties.getSendMsgFwdFlag())) {
-            // 不管消息是否发送成功均转发
-            sendMsgForward(stringJson);
-        } else if ("3".equals(weChatFerryProperties.getSendMsgFwdFlag()) && 0 == state) {
-            // 发送成功才转发
-            sendMsgForward(stringJson);
-        }
+        sendMsgForward(stringJson, state);
         return null;
     }
 
@@ -370,18 +350,27 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public WxPpWcfSendImageMsgResp sendImageMsg(WxPpWcfSendImageMsgReq request) {
         WxPpWcfSendImageMsgResp resp = new WxPpWcfSendImageMsgResp();
         int state = wechatSocketClient.sendImage(request.getResourcePath(), request.getRecipient());
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
     @Override
     public WxPpWcfSendFileMsgResp sendFileMsg(WxPpWcfSendFileMsgReq request) {
         int state = wechatSocketClient.sendFile(request.getResourcePath(), request.getRecipient());
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
     @Override
     public WxPpWcfSendXmlMsgResp sendXmlMsg(WxPpWcfSendXmlMsgReq request) {
         int state = wechatSocketClient.sendXml(request.getRecipient(), request.getXmlContent(), request.getResourcePath(), request.getXmlType());
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
@@ -389,6 +378,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         int state = wechatSocketClient.sendEmotion(request.getResourcePath(), request.getRecipient());
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
@@ -399,6 +391,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             .build();
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_RICH_TXT_VALUE).setRt(richTextMsg).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
+        int state = judgeState(rsp);
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
@@ -407,9 +403,23 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         Wcf.PatMsg patMsg = Wcf.PatMsg.newBuilder().setRoomid(request.getRecipient()).setWxid(request.getPatUser()).build();
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
+        int state = judgeState(rsp);
+        // 转发处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgForward(stringJson, state);
         return null;
     }
 
+    /**
+     * 获取SQL类型
+     * 
+     * @return 函数
+     *
+     * @param type 转换类型
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
     public Function<byte[], Object> getSqlType(int type) {
         Map<Integer, Function<byte[], Object>> sqlTypeMap = new HashMap<>();
         // 初始化SQL_TYPES 根据类型执行不同的Func
@@ -421,6 +431,15 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return sqlTypeMap.get(type);
     }
 
+    /**
+     * SQL转换类型
+     *
+     * @param type 转换类型
+     * @param content 待转换内容
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
     public Object converterSqlVal(int type, ByteString content) {
         // 根据每一列的类型转换
         Function<byte[], Object> converter = getSqlType(type);
@@ -453,7 +472,22 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return atUserStr;
     }
 
-    private void sendMsgForward(String jsonString) {
+    /**
+     * 消息转发
+     *
+     * @param jsonString json数据
+     * @param state cmd调用状态
+     *
+     * @author chandler
+     * @date 2024-10-10 23:10
+     */
+    private void sendMsgForward(String jsonString, Integer state) {
+        // 根据配置文件决定是否转发
+        if (MsgFwdTypeEnum.CLOSE.getCode().equals(weChatFerryProperties.getSendMsgFwdFlag())
+            || (MsgFwdTypeEnum.SUCCESS.getCode().equals(weChatFerryProperties.getSendMsgFwdFlag()) && 0 != state)) {
+            // 如果是关闭 或者 配置为成功才转发但发送状态为失败 的情况则取消发送
+            return;
+        }
         // 开启转发，且转发地址不为空
         if (!CollectionUtils.isEmpty(weChatFerryProperties.getSendMsgFwdUrls())) {
             for (String receiveMsgFwdUrl : weChatFerryProperties.getSendMsgFwdUrls()) {
@@ -473,6 +507,15 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         }
     }
 
+    /**
+     * 判断调用第三方服务客户端成功状态码
+     *
+     * @param responseStr 响应参数
+     * @return 状态
+     *
+     * @author chandler
+     * @date 2024-10-10 00:10
+     */
     private Boolean judgeSuccess(String responseStr) {
         // 默认为通过
         boolean passFlag = false;
@@ -489,6 +532,23 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             }
         }
         return passFlag;
+    }
+
+    /**
+     * 判断CMD调用状态
+     *
+     * @param rsp 响应参数
+     * @return 状态
+     *
+     * @author chandler
+     * @date 2024-12-23 21:53
+     */
+    private int judgeState(Wcf.Response rsp) {
+        int state = -1;
+        if (rsp != null) {
+            state = rsp.getStatus();
+        }
+        return state;
     }
 
 }

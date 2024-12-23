@@ -93,17 +93,17 @@ public class WeChatDllController {
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
-    @ApiOperation(value = "获取可查询数据库", notes = "queryDatabaseSql")
-    @PostMapping(value = "/list/dbSql")
-    public TResponse<List<WxPpWcfDatabaseRowResp>> queryDatabaseSql(@Validated @RequestBody WxPpWcfDatabaseSqlReq request) {
-        List<WxPpWcfDatabaseRowResp> list = weChatDllService.queryDatabaseSql(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
-    }
-
     @ApiOperation(value = "获取数据库所有表名称", notes = "queryDatabaseAllTableName")
     @PostMapping(value = "/list/dbTableName")
     public TResponse<List<String>> queryDatabaseAllTableName() {
         List<String> list = weChatDllService.queryDatabaseAllTableName();
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
+    }
+
+    @ApiOperation(value = "获取可查询数据库", notes = "queryDatabaseSql")
+    @PostMapping(value = "/list/dbSql")
+    public TResponse<List<WxPpWcfDatabaseRowResp>> queryDatabaseSql(@Validated @RequestBody WxPpWcfDatabaseSqlReq request) {
+        List<WxPpWcfDatabaseRowResp> list = weChatDllService.queryDatabaseSql(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
