@@ -335,6 +335,7 @@ public class WeChatSocketClient {
      * @param receiver 消息接收者
      * @return 发送结果状态码
      */
+    @Deprecated
     public int sendEmotion(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();

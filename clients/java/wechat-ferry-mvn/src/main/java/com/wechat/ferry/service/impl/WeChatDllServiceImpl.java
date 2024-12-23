@@ -385,6 +385,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return null;
     }
 
+    @Deprecated
     @Override
     public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         int state = wechatSocketClient.sendEmotion(request.getResourcePath(), request.getRecipient());
