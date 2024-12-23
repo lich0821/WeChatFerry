@@ -323,6 +323,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                                     }
                                     vo.setGroupNickName(nickName);
                                     vo.setState(String.valueOf(member.getState()));
+                                    // TODO 待补充
                                     list.add(vo);
                                 }
                             } catch (InvalidProtocolBufferException e) {
@@ -384,6 +385,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return null;
     }
 
+    @Deprecated
     @Override
     public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         int state = wechatSocketClient.sendEmotion(request.getResourcePath(), request.getRecipient());

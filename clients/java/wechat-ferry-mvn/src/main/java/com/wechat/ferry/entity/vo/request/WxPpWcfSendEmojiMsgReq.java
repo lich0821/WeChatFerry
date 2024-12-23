@@ -16,6 +16,7 @@ public class WxPpWcfSendEmojiMsgReq {
 
     /**
      * 资源路径-本地表情路径
+     * 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
      */
     @ApiModelProperty(value = "资源路径-本地表情路径")
     private String resourcePath;

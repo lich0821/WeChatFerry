@@ -16,6 +16,7 @@ public class WxPpWcfSendImageMsgReq {
 
     /**
      * 资源路径-本地图片地址
+     * 需要确保图片路径正确，建议使用绝对路径（使用双斜杠\\）
      * 如：`C:/Projs/WeChatRobot/TEQuant.jpeg`
      * 或 `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg`
      */

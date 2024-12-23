@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 处理层-微信客户端
+ * version：39.3.3
  *
  * @author Changhua
  * @date 2023-12-06 22:11
@@ -334,6 +335,7 @@ public class WeChatSocketClient {
      * @param receiver 消息接收者
      * @return 发送结果状态码
      */
+    @Deprecated
     public int sendEmotion(String path, String receiver) {
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
