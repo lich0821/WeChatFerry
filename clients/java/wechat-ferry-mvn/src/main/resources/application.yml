@@ -14,11 +14,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  # 打成jar包必须添加如下配置才能找到页面
-  thymeleaf:
-    mode: HTML
-    cache: false
-    prefix: classpath:/templates
 
 # 日志配置
 logging:

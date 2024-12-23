@@ -117,7 +117,7 @@ message XmlMsg
     string receiver = 1; // 消息接收人
     string content  = 2; // xml 内容
     string path     = 3; // 图片路径
-    int32 type      = 4; // 消息类型
+    uint64 type     = 4; // 消息类型
 }
 
 message MsgTypes { map<int32, string> types = 1; }
@@ -236,19 +236,22 @@ message ForwardMsg
 }
 
 // RoomData内部转换
-message RoomData {
-    repeated RoomMember members = 1;
-    int32 field_2 = 2;
-    int32 field_3 = 3;
-    int32 field_4 = 4;
-    int32 room_capacity = 5;
-    int32 field_6 = 6;
-    int64 field_7 = 7;
-    int64 field_8 = 8;
-
+message RoomData
+{
     message RoomMember {
-        string wxid = 1;
-        string name = 2;
-        int32 state = 3;
+                 string wxid = 1;
+        optional string name = 2;  // 群昵称
+                 int32 state = 3;
     }
+
+    repeated RoomMember members = 1;
+
+    optional int32 field_2  = 2;
+             int32 field_3  = 3;
+    optional int32 field_4  = 4;
+             int32 capacity = 5;
+    optional string field_6 = 6;
+             int32 field_7  = 7;
+             int32 field_8  = 8;
+    repeated string admins  = 9;  // 管理员
 }

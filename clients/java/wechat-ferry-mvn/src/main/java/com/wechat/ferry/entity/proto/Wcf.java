@@ -12815,10 +12815,10 @@ public final class Wcf {
      * 消息类型
      * </pre>
      *
-     * <code>int32 type = 4;</code>
+     * <code>uint64 type = 4;</code>
      * @return The type.
      */
-    int getType();
+    long getType();
   }
   /**
    * Protobuf type {@code wcf.XmlMsg}
@@ -13000,17 +13000,17 @@ public final class Wcf {
     }
 
     public static final int TYPE_FIELD_NUMBER = 4;
-    private int type_ = 0;
+    private long type_ = 0L;
     /**
      * <pre>
      * 消息类型
      * </pre>
      *
-     * <code>int32 type = 4;</code>
+     * <code>uint64 type = 4;</code>
      * @return The type.
      */
     @java.lang.Override
-    public int getType() {
+    public long getType() {
       return type_;
     }
 
@@ -13037,8 +13037,8 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(path_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, path_);
       }
-      if (type_ != 0) {
-        output.writeInt32(4, type_);
+      if (type_ != 0L) {
+        output.writeUInt64(4, type_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -13058,9 +13058,9 @@ public final class Wcf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(path_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, path_);
       }
-      if (type_ != 0) {
+      if (type_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, type_);
+          .computeUInt64Size(4, type_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -13103,7 +13103,8 @@ public final class Wcf {
       hash = (37 * hash) + PATH_FIELD_NUMBER;
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
-      hash = (53 * hash) + getType();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getType());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -13236,7 +13237,7 @@ public final class Wcf {
         receiver_ = "";
         content_ = "";
         path_ = "";
-        type_ = 0;
+        type_ = 0L;
         return this;
       }
 
@@ -13311,7 +13312,7 @@ public final class Wcf {
           bitField0_ |= 0x00000004;
           onChanged();
         }
-        if (other.getType() != 0) {
+        if (other.getType() != 0L) {
           setType(other.getType());
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -13356,7 +13357,7 @@ public final class Wcf {
                 break;
               } // case 26
               case 32: {
-                type_ = input.readInt32();
+                type_ = input.readUInt64();
                 bitField0_ |= 0x00000008;
                 break;
               } // case 32
@@ -13653,17 +13654,17 @@ public final class Wcf {
         return this;
       }
 
-      private int type_ ;
+      private long type_ ;
       /**
        * <pre>
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 4;</code>
+       * <code>uint64 type = 4;</code>
        * @return The type.
        */
       @java.lang.Override
-      public int getType() {
+      public long getType() {
         return type_;
       }
       /**
@@ -13671,11 +13672,11 @@ public final class Wcf {
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 4;</code>
+       * <code>uint64 type = 4;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(int value) {
+      public Builder setType(long value) {
 
         type_ = value;
         bitField0_ |= 0x00000008;
@@ -13687,12 +13688,12 @@ public final class Wcf {
        * 消息类型
        * </pre>
        *
-       * <code>int32 type = 4;</code>
+       * <code>uint64 type = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        type_ = 0;
+        type_ = 0L;
         onChanged();
         return this;
       }
@@ -31514,7 +31515,12 @@ java.lang.String defaultValue) {
         int index);
 
     /**
-     * <code>int32 field_2 = 2;</code>
+     * <code>optional int32 field_2 = 2;</code>
+     * @return Whether the field2 field is set.
+     */
+    boolean hasField2();
+    /**
+     * <code>optional int32 field_2 = 2;</code>
      * @return The field2.
      */
     int getField2();
@@ -31526,34 +31532,91 @@ java.lang.String defaultValue) {
     int getField3();
 
     /**
-     * <code>int32 field_4 = 4;</code>
+     * <code>optional int32 field_4 = 4;</code>
+     * @return Whether the field4 field is set.
+     */
+    boolean hasField4();
+    /**
+     * <code>optional int32 field_4 = 4;</code>
      * @return The field4.
      */
     int getField4();
 
     /**
-     * <code>int32 room_capacity = 5;</code>
-     * @return The roomCapacity.
+     * <code>int32 capacity = 5;</code>
+     * @return The capacity.
      */
-    int getRoomCapacity();
+    int getCapacity();
 
     /**
-     * <code>int32 field_6 = 6;</code>
+     * <code>optional string field_6 = 6;</code>
+     * @return Whether the field6 field is set.
+     */
+    boolean hasField6();
+    /**
+     * <code>optional string field_6 = 6;</code>
      * @return The field6.
      */
-    int getField6();
+    java.lang.String getField6();
+    /**
+     * <code>optional string field_6 = 6;</code>
+     * @return The bytes for field6.
+     */
+    com.google.protobuf.ByteString
+        getField6Bytes();
 
     /**
-     * <code>int64 field_7 = 7;</code>
+     * <code>int32 field_7 = 7;</code>
      * @return The field7.
      */
-    long getField7();
+    int getField7();
 
     /**
-     * <code>int64 field_8 = 8;</code>
+     * <code>int32 field_8 = 8;</code>
      * @return The field8.
      */
-    long getField8();
+    int getField8();
+
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @return A list containing the admins.
+     */
+    java.util.List<java.lang.String>
+        getAdminsList();
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @return The count of admins.
+     */
+    int getAdminsCount();
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @param index The index of the element to return.
+     * @return The admins at the given index.
+     */
+    java.lang.String getAdmins(int index);
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the admins at the given index.
+     */
+    com.google.protobuf.ByteString
+        getAdminsBytes(int index);
   }
   /**
    * <pre>
@@ -31573,6 +31636,9 @@ java.lang.String defaultValue) {
     }
     private RoomData() {
       members_ = java.util.Collections.emptyList();
+      field6_ = "";
+      admins_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
     }
 
     @java.lang.Override
@@ -31612,12 +31678,29 @@ java.lang.String defaultValue) {
           getWxidBytes();
 
       /**
-       * <code>string name = 2;</code>
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
+       * @return Whether the name field is set.
+       */
+      boolean hasName();
+      /**
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
        * @return The name.
        */
       java.lang.String getName();
       /**
-       * <code>string name = 2;</code>
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
        * @return The bytes for name.
        */
       com.google.protobuf.ByteString
@@ -31666,6 +31749,7 @@ java.lang.String defaultValue) {
                 com.wechat.ferry.entity.proto.Wcf.RoomData.RoomMember.class, com.wechat.ferry.entity.proto.Wcf.RoomData.RoomMember.Builder.class);
       }
 
+      private int bitField0_;
       public static final int WXID_FIELD_NUMBER = 1;
       @SuppressWarnings("serial")
       private volatile java.lang.Object wxid_ = "";
@@ -31709,7 +31793,23 @@ java.lang.String defaultValue) {
       @SuppressWarnings("serial")
       private volatile java.lang.Object name_ = "";
       /**
-       * <code>string name = 2;</code>
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
+       * @return Whether the name field is set.
+       */
+      @java.lang.Override
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
        * @return The name.
        */
       @java.lang.Override
@@ -31726,7 +31826,11 @@ java.lang.String defaultValue) {
         }
       }
       /**
-       * <code>string name = 2;</code>
+       * <pre>
+       * 群昵称
+       * </pre>
+       *
+       * <code>optional string name = 2;</code>
        * @return The bytes for name.
        */
       @java.lang.Override
@@ -31772,7 +31876,7 @@ java.lang.String defaultValue) {
         if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
           com.google.protobuf.GeneratedMessageV3.writeString(output, 1, wxid_);
         }
-        if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        if (((bitField0_ & 0x00000001) != 0)) {
           com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
         }
         if (state_ != 0) {
@@ -31790,7 +31894,7 @@ java.lang.String defaultValue) {
         if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(wxid_)) {
           size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, wxid_);
         }
-        if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+        if (((bitField0_ & 0x00000001) != 0)) {
           size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
         }
         if (state_ != 0) {
@@ -31814,8 +31918,11 @@ java.lang.String defaultValue) {
 
         if (!getWxid()
             .equals(other.getWxid())) return false;
-        if (!getName()
-            .equals(other.getName())) return false;
+        if (hasName() != other.hasName()) return false;
+        if (hasName()) {
+          if (!getName()
+              .equals(other.getName())) return false;
+        }
         if (getState()
             != other.getState()) return false;
         if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -31831,8 +31938,10 @@ java.lang.String defaultValue) {
         hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + WXID_FIELD_NUMBER;
         hash = (53 * hash) + getWxid().hashCode();
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
+        if (hasName()) {
+          hash = (37 * hash) + NAME_FIELD_NUMBER;
+          hash = (53 * hash) + getName().hashCode();
+        }
         hash = (37 * hash) + STATE_FIELD_NUMBER;
         hash = (53 * hash) + getState();
         hash = (29 * hash) + getUnknownFields().hashCode();
@@ -32003,12 +32112,15 @@ java.lang.String defaultValue) {
           if (((from_bitField0_ & 0x00000001) != 0)) {
             result.wxid_ = wxid_;
           }
+          int to_bitField0_ = 0;
           if (((from_bitField0_ & 0x00000002) != 0)) {
             result.name_ = name_;
+            to_bitField0_ |= 0x00000001;
           }
           if (((from_bitField0_ & 0x00000004) != 0)) {
             result.state_ = state_;
           }
+          result.bitField0_ |= to_bitField0_;
         }
 
         @java.lang.Override
@@ -32028,7 +32140,7 @@ java.lang.String defaultValue) {
             bitField0_ |= 0x00000001;
             onChanged();
           }
-          if (!other.getName().isEmpty()) {
+          if (other.hasName()) {
             name_ = other.name_;
             bitField0_ |= 0x00000002;
             onChanged();
@@ -32168,7 +32280,22 @@ java.lang.String defaultValue) {
 
         private java.lang.Object name_ = "";
         /**
-         * <code>string name = 2;</code>
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
+         * @return Whether the name field is set.
+         */
+        public boolean hasName() {
+          return ((bitField0_ & 0x00000002) != 0);
+        }
+        /**
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
          * @return The name.
          */
         public java.lang.String getName() {
@@ -32184,7 +32311,11 @@ java.lang.String defaultValue) {
           }
         }
         /**
-         * <code>string name = 2;</code>
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
          * @return The bytes for name.
          */
         public com.google.protobuf.ByteString
@@ -32201,7 +32332,11 @@ java.lang.String defaultValue) {
           }
         }
         /**
-         * <code>string name = 2;</code>
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
          * @param value The name to set.
          * @return This builder for chaining.
          */
@@ -32214,7 +32349,11 @@ java.lang.String defaultValue) {
           return this;
         }
         /**
-         * <code>string name = 2;</code>
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
          * @return This builder for chaining.
          */
         public Builder clearName() {
@@ -32224,7 +32363,11 @@ java.lang.String defaultValue) {
           return this;
         }
         /**
-         * <code>string name = 2;</code>
+         * <pre>
+         * 群昵称
+         * </pre>
+         *
+         * <code>optional string name = 2;</code>
          * @param value The bytes for name to set.
          * @return This builder for chaining.
          */
@@ -32333,6 +32476,7 @@ java.lang.String defaultValue) {
 
     }
 
+    private int bitField0_;
     public static final int MEMBERS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
     private java.util.List<com.wechat.ferry.entity.proto.Wcf.RoomData.RoomMember> members_;
@@ -32377,7 +32521,15 @@ java.lang.String defaultValue) {
     public static final int FIELD_2_FIELD_NUMBER = 2;
     private int field2_ = 0;
     /**
-     * <code>int32 field_2 = 2;</code>
+     * <code>optional int32 field_2 = 2;</code>
+     * @return Whether the field2 field is set.
+     */
+    @java.lang.Override
+    public boolean hasField2() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional int32 field_2 = 2;</code>
      * @return The field2.
      */
     @java.lang.Override
@@ -32399,7 +32551,15 @@ java.lang.String defaultValue) {
     public static final int FIELD_4_FIELD_NUMBER = 4;
     private int field4_ = 0;
     /**
-     * <code>int32 field_4 = 4;</code>
+     * <code>optional int32 field_4 = 4;</code>
+     * @return Whether the field4 field is set.
+     */
+    @java.lang.Override
+    public boolean hasField4() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>optional int32 field_4 = 4;</code>
      * @return The field4.
      */
     @java.lang.Override
@@ -32407,48 +32567,137 @@ java.lang.String defaultValue) {
       return field4_;
     }
 
-    public static final int ROOM_CAPACITY_FIELD_NUMBER = 5;
-    private int roomCapacity_ = 0;
+    public static final int CAPACITY_FIELD_NUMBER = 5;
+    private int capacity_ = 0;
     /**
-     * <code>int32 room_capacity = 5;</code>
-     * @return The roomCapacity.
+     * <code>int32 capacity = 5;</code>
+     * @return The capacity.
      */
     @java.lang.Override
-    public int getRoomCapacity() {
-      return roomCapacity_;
+    public int getCapacity() {
+      return capacity_;
     }
 
     public static final int FIELD_6_FIELD_NUMBER = 6;
-    private int field6_ = 0;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object field6_ = "";
     /**
-     * <code>int32 field_6 = 6;</code>
+     * <code>optional string field_6 = 6;</code>
+     * @return Whether the field6 field is set.
+     */
+    @java.lang.Override
+    public boolean hasField6() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>optional string field_6 = 6;</code>
      * @return The field6.
      */
     @java.lang.Override
-    public int getField6() {
-      return field6_;
+    public java.lang.String getField6() {
+      java.lang.Object ref = field6_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        field6_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string field_6 = 6;</code>
+     * @return The bytes for field6.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getField6Bytes() {
+      java.lang.Object ref = field6_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        field6_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int FIELD_7_FIELD_NUMBER = 7;
-    private long field7_ = 0L;
+    private int field7_ = 0;
     /**
-     * <code>int64 field_7 = 7;</code>
+     * <code>int32 field_7 = 7;</code>
      * @return The field7.
      */
     @java.lang.Override
-    public long getField7() {
+    public int getField7() {
       return field7_;
     }
 
     public static final int FIELD_8_FIELD_NUMBER = 8;
-    private long field8_ = 0L;
+    private int field8_ = 0;
     /**
-     * <code>int64 field_8 = 8;</code>
+     * <code>int32 field_8 = 8;</code>
      * @return The field8.
      */
     @java.lang.Override
-    public long getField8() {
+    public int getField8() {
       return field8_;
+    }
+
+    public static final int ADMINS_FIELD_NUMBER = 9;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.LazyStringArrayList admins_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @return A list containing the admins.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getAdminsList() {
+      return admins_;
+    }
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @return The count of admins.
+     */
+    public int getAdminsCount() {
+      return admins_.size();
+    }
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @param index The index of the element to return.
+     * @return The admins at the given index.
+     */
+    public java.lang.String getAdmins(int index) {
+      return admins_.get(index);
+    }
+    /**
+     * <pre>
+     * 管理员
+     * </pre>
+     *
+     * <code>repeated string admins = 9;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the admins at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getAdminsBytes(int index) {
+      return admins_.getByteString(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -32468,26 +32717,29 @@ java.lang.String defaultValue) {
       for (int i = 0; i < members_.size(); i++) {
         output.writeMessage(1, members_.get(i));
       }
-      if (field2_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt32(2, field2_);
       }
       if (field3_ != 0) {
         output.writeInt32(3, field3_);
       }
-      if (field4_ != 0) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         output.writeInt32(4, field4_);
       }
-      if (roomCapacity_ != 0) {
-        output.writeInt32(5, roomCapacity_);
+      if (capacity_ != 0) {
+        output.writeInt32(5, capacity_);
       }
-      if (field6_ != 0) {
-        output.writeInt32(6, field6_);
+      if (((bitField0_ & 0x00000004) != 0)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, field6_);
       }
-      if (field7_ != 0L) {
-        output.writeInt64(7, field7_);
+      if (field7_ != 0) {
+        output.writeInt32(7, field7_);
       }
-      if (field8_ != 0L) {
-        output.writeInt64(8, field8_);
+      if (field8_ != 0) {
+        output.writeInt32(8, field8_);
+      }
+      for (int i = 0; i < admins_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, admins_.getRaw(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -32502,7 +32754,7 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, members_.get(i));
       }
-      if (field2_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, field2_);
       }
@@ -32510,25 +32762,32 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, field3_);
       }
-      if (field4_ != 0) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, field4_);
       }
-      if (roomCapacity_ != 0) {
+      if (capacity_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, roomCapacity_);
+          .computeInt32Size(5, capacity_);
       }
-      if (field6_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(6, field6_);
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, field6_);
       }
-      if (field7_ != 0L) {
+      if (field7_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, field7_);
+          .computeInt32Size(7, field7_);
       }
-      if (field8_ != 0L) {
+      if (field8_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(8, field8_);
+          .computeInt32Size(8, field8_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < admins_.size(); i++) {
+          dataSize += computeStringSizeNoTag(admins_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getAdminsList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -32547,20 +32806,31 @@ java.lang.String defaultValue) {
 
       if (!getMembersList()
           .equals(other.getMembersList())) return false;
-      if (getField2()
-          != other.getField2()) return false;
+      if (hasField2() != other.hasField2()) return false;
+      if (hasField2()) {
+        if (getField2()
+            != other.getField2()) return false;
+      }
       if (getField3()
           != other.getField3()) return false;
-      if (getField4()
-          != other.getField4()) return false;
-      if (getRoomCapacity()
-          != other.getRoomCapacity()) return false;
-      if (getField6()
-          != other.getField6()) return false;
+      if (hasField4() != other.hasField4()) return false;
+      if (hasField4()) {
+        if (getField4()
+            != other.getField4()) return false;
+      }
+      if (getCapacity()
+          != other.getCapacity()) return false;
+      if (hasField6() != other.hasField6()) return false;
+      if (hasField6()) {
+        if (!getField6()
+            .equals(other.getField6())) return false;
+      }
       if (getField7()
           != other.getField7()) return false;
       if (getField8()
           != other.getField8()) return false;
+      if (!getAdminsList()
+          .equals(other.getAdminsList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -32576,22 +32846,30 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + MEMBERS_FIELD_NUMBER;
         hash = (53 * hash) + getMembersList().hashCode();
       }
-      hash = (37 * hash) + FIELD_2_FIELD_NUMBER;
-      hash = (53 * hash) + getField2();
+      if (hasField2()) {
+        hash = (37 * hash) + FIELD_2_FIELD_NUMBER;
+        hash = (53 * hash) + getField2();
+      }
       hash = (37 * hash) + FIELD_3_FIELD_NUMBER;
       hash = (53 * hash) + getField3();
-      hash = (37 * hash) + FIELD_4_FIELD_NUMBER;
-      hash = (53 * hash) + getField4();
-      hash = (37 * hash) + ROOM_CAPACITY_FIELD_NUMBER;
-      hash = (53 * hash) + getRoomCapacity();
-      hash = (37 * hash) + FIELD_6_FIELD_NUMBER;
-      hash = (53 * hash) + getField6();
+      if (hasField4()) {
+        hash = (37 * hash) + FIELD_4_FIELD_NUMBER;
+        hash = (53 * hash) + getField4();
+      }
+      hash = (37 * hash) + CAPACITY_FIELD_NUMBER;
+      hash = (53 * hash) + getCapacity();
+      if (hasField6()) {
+        hash = (37 * hash) + FIELD_6_FIELD_NUMBER;
+        hash = (53 * hash) + getField6().hashCode();
+      }
       hash = (37 * hash) + FIELD_7_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getField7());
+      hash = (53 * hash) + getField7();
       hash = (37 * hash) + FIELD_8_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getField8());
+      hash = (53 * hash) + getField8();
+      if (getAdminsCount() > 0) {
+        hash = (37 * hash) + ADMINS_FIELD_NUMBER;
+        hash = (53 * hash) + getAdminsList().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -32735,10 +33013,12 @@ java.lang.String defaultValue) {
         field2_ = 0;
         field3_ = 0;
         field4_ = 0;
-        roomCapacity_ = 0;
-        field6_ = 0;
-        field7_ = 0L;
-        field8_ = 0L;
+        capacity_ = 0;
+        field6_ = "";
+        field7_ = 0;
+        field8_ = 0;
+        admins_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
         return this;
       }
 
@@ -32785,20 +33065,24 @@ java.lang.String defaultValue) {
 
       private void buildPartial0(com.wechat.ferry.entity.proto.Wcf.RoomData result) {
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.field2_ = field2_;
+          to_bitField0_ |= 0x00000001;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.field3_ = field3_;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
           result.field4_ = field4_;
+          to_bitField0_ |= 0x00000002;
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.roomCapacity_ = roomCapacity_;
+          result.capacity_ = capacity_;
         }
         if (((from_bitField0_ & 0x00000020) != 0)) {
           result.field6_ = field6_;
+          to_bitField0_ |= 0x00000004;
         }
         if (((from_bitField0_ & 0x00000040) != 0)) {
           result.field7_ = field7_;
@@ -32806,6 +33090,11 @@ java.lang.String defaultValue) {
         if (((from_bitField0_ & 0x00000080) != 0)) {
           result.field8_ = field8_;
         }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          admins_.makeImmutable();
+          result.admins_ = admins_;
+        }
+        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -32846,26 +33135,38 @@ java.lang.String defaultValue) {
             }
           }
         }
-        if (other.getField2() != 0) {
+        if (other.hasField2()) {
           setField2(other.getField2());
         }
         if (other.getField3() != 0) {
           setField3(other.getField3());
         }
-        if (other.getField4() != 0) {
+        if (other.hasField4()) {
           setField4(other.getField4());
         }
-        if (other.getRoomCapacity() != 0) {
-          setRoomCapacity(other.getRoomCapacity());
+        if (other.getCapacity() != 0) {
+          setCapacity(other.getCapacity());
         }
-        if (other.getField6() != 0) {
-          setField6(other.getField6());
+        if (other.hasField6()) {
+          field6_ = other.field6_;
+          bitField0_ |= 0x00000020;
+          onChanged();
         }
-        if (other.getField7() != 0L) {
+        if (other.getField7() != 0) {
           setField7(other.getField7());
         }
-        if (other.getField8() != 0L) {
+        if (other.getField8() != 0) {
           setField8(other.getField8());
+        }
+        if (!other.admins_.isEmpty()) {
+          if (admins_.isEmpty()) {
+            admins_ = other.admins_;
+            bitField0_ |= 0x00000100;
+          } else {
+            ensureAdminsIsMutable();
+            admins_.addAll(other.admins_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -32922,25 +33223,31 @@ java.lang.String defaultValue) {
                 break;
               } // case 32
               case 40: {
-                roomCapacity_ = input.readInt32();
+                capacity_ = input.readInt32();
                 bitField0_ |= 0x00000010;
                 break;
               } // case 40
-              case 48: {
-                field6_ = input.readInt32();
+              case 50: {
+                field6_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000020;
                 break;
-              } // case 48
+              } // case 50
               case 56: {
-                field7_ = input.readInt64();
+                field7_ = input.readInt32();
                 bitField0_ |= 0x00000040;
                 break;
               } // case 56
               case 64: {
-                field8_ = input.readInt64();
+                field8_ = input.readInt32();
                 bitField0_ |= 0x00000080;
                 break;
               } // case 64
+              case 74: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureAdminsIsMutable();
+                admins_.add(s);
+                break;
+              } // case 74
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -33200,7 +33507,15 @@ java.lang.String defaultValue) {
 
       private int field2_ ;
       /**
-       * <code>int32 field_2 = 2;</code>
+       * <code>optional int32 field_2 = 2;</code>
+       * @return Whether the field2 field is set.
+       */
+      @java.lang.Override
+      public boolean hasField2() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>optional int32 field_2 = 2;</code>
        * @return The field2.
        */
       @java.lang.Override
@@ -33208,7 +33523,7 @@ java.lang.String defaultValue) {
         return field2_;
       }
       /**
-       * <code>int32 field_2 = 2;</code>
+       * <code>optional int32 field_2 = 2;</code>
        * @param value The field2 to set.
        * @return This builder for chaining.
        */
@@ -33220,7 +33535,7 @@ java.lang.String defaultValue) {
         return this;
       }
       /**
-       * <code>int32 field_2 = 2;</code>
+       * <code>optional int32 field_2 = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearField2() {
@@ -33264,7 +33579,15 @@ java.lang.String defaultValue) {
 
       private int field4_ ;
       /**
-       * <code>int32 field_4 = 4;</code>
+       * <code>optional int32 field_4 = 4;</code>
+       * @return Whether the field4 field is set.
+       */
+      @java.lang.Override
+      public boolean hasField4() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <code>optional int32 field_4 = 4;</code>
        * @return The field4.
        */
       @java.lang.Override
@@ -33272,7 +33595,7 @@ java.lang.String defaultValue) {
         return field4_;
       }
       /**
-       * <code>int32 field_4 = 4;</code>
+       * <code>optional int32 field_4 = 4;</code>
        * @param value The field4 to set.
        * @return This builder for chaining.
        */
@@ -33284,7 +33607,7 @@ java.lang.String defaultValue) {
         return this;
       }
       /**
-       * <code>int32 field_4 = 4;</code>
+       * <code>optional int32 field_4 = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearField4() {
@@ -33294,85 +33617,132 @@ java.lang.String defaultValue) {
         return this;
       }
 
-      private int roomCapacity_ ;
+      private int capacity_ ;
       /**
-       * <code>int32 room_capacity = 5;</code>
-       * @return The roomCapacity.
+       * <code>int32 capacity = 5;</code>
+       * @return The capacity.
        */
       @java.lang.Override
-      public int getRoomCapacity() {
-        return roomCapacity_;
+      public int getCapacity() {
+        return capacity_;
       }
       /**
-       * <code>int32 room_capacity = 5;</code>
-       * @param value The roomCapacity to set.
+       * <code>int32 capacity = 5;</code>
+       * @param value The capacity to set.
        * @return This builder for chaining.
        */
-      public Builder setRoomCapacity(int value) {
+      public Builder setCapacity(int value) {
 
-        roomCapacity_ = value;
+        capacity_ = value;
         bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 room_capacity = 5;</code>
+       * <code>int32 capacity = 5;</code>
        * @return This builder for chaining.
        */
-      public Builder clearRoomCapacity() {
+      public Builder clearCapacity() {
         bitField0_ = (bitField0_ & ~0x00000010);
-        roomCapacity_ = 0;
+        capacity_ = 0;
         onChanged();
         return this;
       }
 
-      private int field6_ ;
+      private java.lang.Object field6_ = "";
       /**
-       * <code>int32 field_6 = 6;</code>
-       * @return The field6.
+       * <code>optional string field_6 = 6;</code>
+       * @return Whether the field6 field is set.
        */
-      @java.lang.Override
-      public int getField6() {
-        return field6_;
+      public boolean hasField6() {
+        return ((bitField0_ & 0x00000020) != 0);
       }
       /**
-       * <code>int32 field_6 = 6;</code>
+       * <code>optional string field_6 = 6;</code>
+       * @return The field6.
+       */
+      public java.lang.String getField6() {
+        java.lang.Object ref = field6_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          field6_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string field_6 = 6;</code>
+       * @return The bytes for field6.
+       */
+      public com.google.protobuf.ByteString
+          getField6Bytes() {
+        java.lang.Object ref = field6_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          field6_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string field_6 = 6;</code>
        * @param value The field6 to set.
        * @return This builder for chaining.
        */
-      public Builder setField6(int value) {
-
+      public Builder setField6(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
         field6_ = value;
         bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 field_6 = 6;</code>
+       * <code>optional string field_6 = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearField6() {
+        field6_ = getDefaultInstance().getField6();
         bitField0_ = (bitField0_ & ~0x00000020);
-        field6_ = 0;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string field_6 = 6;</code>
+       * @param value The bytes for field6 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setField6Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        field6_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
 
-      private long field7_ ;
+      private int field7_ ;
       /**
-       * <code>int64 field_7 = 7;</code>
+       * <code>int32 field_7 = 7;</code>
        * @return The field7.
        */
       @java.lang.Override
-      public long getField7() {
+      public int getField7() {
         return field7_;
       }
       /**
-       * <code>int64 field_7 = 7;</code>
+       * <code>int32 field_7 = 7;</code>
        * @param value The field7 to set.
        * @return This builder for chaining.
        */
-      public Builder setField7(long value) {
+      public Builder setField7(int value) {
 
         field7_ = value;
         bitField0_ |= 0x00000040;
@@ -33380,31 +33750,31 @@ java.lang.String defaultValue) {
         return this;
       }
       /**
-       * <code>int64 field_7 = 7;</code>
+       * <code>int32 field_7 = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearField7() {
         bitField0_ = (bitField0_ & ~0x00000040);
-        field7_ = 0L;
+        field7_ = 0;
         onChanged();
         return this;
       }
 
-      private long field8_ ;
+      private int field8_ ;
       /**
-       * <code>int64 field_8 = 8;</code>
+       * <code>int32 field_8 = 8;</code>
        * @return The field8.
        */
       @java.lang.Override
-      public long getField8() {
+      public int getField8() {
         return field8_;
       }
       /**
-       * <code>int64 field_8 = 8;</code>
+       * <code>int32 field_8 = 8;</code>
        * @param value The field8 to set.
        * @return This builder for chaining.
        */
-      public Builder setField8(long value) {
+      public Builder setField8(int value) {
 
         field8_ = value;
         bitField0_ |= 0x00000080;
@@ -33412,12 +33782,159 @@ java.lang.String defaultValue) {
         return this;
       }
       /**
-       * <code>int64 field_8 = 8;</code>
+       * <code>int32 field_8 = 8;</code>
        * @return This builder for chaining.
        */
       public Builder clearField8() {
         bitField0_ = (bitField0_ & ~0x00000080);
-        field8_ = 0L;
+        field8_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.LazyStringArrayList admins_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      private void ensureAdminsIsMutable() {
+        if (!admins_.isModifiable()) {
+          admins_ = new com.google.protobuf.LazyStringArrayList(admins_);
+        }
+        bitField0_ |= 0x00000100;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @return A list containing the admins.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getAdminsList() {
+        admins_.makeImmutable();
+        return admins_;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @return The count of admins.
+       */
+      public int getAdminsCount() {
+        return admins_.size();
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param index The index of the element to return.
+       * @return The admins at the given index.
+       */
+      public java.lang.String getAdmins(int index) {
+        return admins_.get(index);
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the admins at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getAdminsBytes(int index) {
+        return admins_.getByteString(index);
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param index The index to set the value at.
+       * @param value The admins to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAdmins(
+          int index, java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        ensureAdminsIsMutable();
+        admins_.set(index, value);
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param value The admins to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAdmins(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        ensureAdminsIsMutable();
+        admins_.add(value);
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param values The admins to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllAdmins(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureAdminsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, admins_);
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAdmins() {
+        admins_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 管理员
+       * </pre>
+       *
+       * <code>repeated string admins = 9;</code>
+       * @param value The bytes of the admins to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAdminsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        ensureAdminsIsMutable();
+        admins_.add(value);
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -33679,7 +34196,7 @@ java.lang.String defaultValue) {
       "\030\001 \001(\t\022\020\n\010receiver\030\002 \001(\t\022\r\n\005aters\030\003 \001(\t\"" +
       ")\n\007PathMsg\022\014\n\004path\030\001 \001(\t\022\020\n\010receiver\030\002 \001" +
       "(\t\"G\n\006XmlMsg\022\020\n\010receiver\030\001 \001(\t\022\017\n\007conten" +
-      "t\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004type\030\004 \001(\005\"a\n\010M" +
+      "t\030\002 \001(\t\022\014\n\004path\030\003 \001(\t\022\014\n\004type\030\004 \001(\004\"a\n\010M" +
       "sgTypes\022\'\n\005types\030\001 \003(\0132\030.wcf.MsgTypes.Ty" +
       "pesEntry\032,\n\nTypesEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005v" +
       "alue\030\002 \001(\t:\0028\001\"\207\001\n\nRpcContact\022\014\n\004wxid\030\001 " +
@@ -33709,33 +34226,35 @@ java.lang.String defaultValue) {
       "\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001(\t\022\014\n\004wxid\030\002 \001(" +
       "\t\"(\n\006OcrMsg\022\016\n\006status\030\001 \001(\005\022\016\n\006result\030\002 " +
       "\001(\t\".\n\nForwardMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\020\n\010rec" +
-      "eiver\030\002 \001(\t\"\353\001\n\010RoomData\022)\n\007members\030\001 \003(" +
-      "\0132\030.wcf.RoomData.RoomMember\022\017\n\007field_2\030\002" +
-      " \001(\005\022\017\n\007field_3\030\003 \001(\005\022\017\n\007field_4\030\004 \001(\005\022\025" +
-      "\n\rroom_capacity\030\005 \001(\005\022\017\n\007field_6\030\006 \001(\005\022\017" +
-      "\n\007field_7\030\007 \001(\003\022\017\n\007field_8\030\010 \001(\003\0327\n\nRoom" +
-      "Member\022\014\n\004wxid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\r\n\005st" +
-      "ate\030\003 \001(\005*\362\005\n\tFunctions\022\021\n\rFUNC_RESERVED" +
-      "\020\000\022\021\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF_W" +
-      "XID\020\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_GE" +
-      "T_CONTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n\022F" +
-      "UNC_GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_INF" +
-      "O\020\025\022\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SEND" +
-      "_TXT\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND_F" +
-      "ILE\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_EM" +
-      "OTION\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUNC_" +
-      "SEND_PAT_MSG\020&\022\024\n\020FUNC_FORWARD_MSG\020\'\022\030\n\024" +
-      "FUNC_ENABLE_RECV_TXT\0200\022\031\n\025FUNC_DISABLE_R" +
-      "ECV_TXT\020@\022\026\n\022FUNC_EXEC_DB_QUERY\020P\022\026\n\022FUN" +
-      "C_ACCEPT_FRIEND\020Q\022\026\n\022FUNC_RECV_TRANSFER\020" +
-      "R\022\024\n\020FUNC_REFRESH_PYQ\020S\022\030\n\024FUNC_DOWNLOAD" +
-      "_ATTACH\020T\022\031\n\025FUNC_GET_CONTACT_INFO\020U\022\023\n\017" +
-      "FUNC_REVOKE_MSG\020V\022\027\n\023FUNC_REFRESH_QRCODE" +
-      "\020W\022\026\n\022FUNC_DECRYPT_IMAGE\020`\022\021\n\rFUNC_EXEC_" +
-      "OCR\020a\022\031\n\025FUNC_ADD_ROOM_MEMBERS\020p\022\031\n\025FUNC" +
-      "_DEL_ROOM_MEMBERS\020q\022\031\n\025FUNC_INV_ROOM_MEM" +
-      "BERS\020rB\037\n\035com.wechat.ferry.entity.protob" +
-      "\006proto3"
+      "eiver\030\002 \001(\t\"\267\002\n\010RoomData\022)\n\007members\030\001 \003(" +
+      "\0132\030.wcf.RoomData.RoomMember\022\024\n\007field_2\030\002" +
+      " \001(\005H\000\210\001\001\022\017\n\007field_3\030\003 \001(\005\022\024\n\007field_4\030\004 " +
+      "\001(\005H\001\210\001\001\022\020\n\010capacity\030\005 \001(\005\022\024\n\007field_6\030\006 " +
+      "\001(\tH\002\210\001\001\022\017\n\007field_7\030\007 \001(\005\022\017\n\007field_8\030\010 \001" +
+      "(\005\022\016\n\006admins\030\t \003(\t\032E\n\nRoomMember\022\014\n\004wxid" +
+      "\030\001 \001(\t\022\021\n\004name\030\002 \001(\tH\000\210\001\001\022\r\n\005state\030\003 \001(\005" +
+      "B\007\n\005_nameB\n\n\010_field_2B\n\n\010_field_4B\n\n\010_fi" +
+      "eld_6*\362\005\n\tFunctions\022\021\n\rFUNC_RESERVED\020\000\022\021" +
+      "\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF_WXID\020" +
+      "\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_GET_CO" +
+      "NTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n\022FUNC_" +
+      "GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_INFO\020\025\022" +
+      "\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SEND_TXT" +
+      "\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND_FILE\020" +
+      "\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_EMOTIO" +
+      "N\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUNC_SEND" +
+      "_PAT_MSG\020&\022\024\n\020FUNC_FORWARD_MSG\020\'\022\030\n\024FUNC" +
+      "_ENABLE_RECV_TXT\0200\022\031\n\025FUNC_DISABLE_RECV_" +
+      "TXT\020@\022\026\n\022FUNC_EXEC_DB_QUERY\020P\022\026\n\022FUNC_AC" +
+      "CEPT_FRIEND\020Q\022\026\n\022FUNC_RECV_TRANSFER\020R\022\024\n" +
+      "\020FUNC_REFRESH_PYQ\020S\022\030\n\024FUNC_DOWNLOAD_ATT" +
+      "ACH\020T\022\031\n\025FUNC_GET_CONTACT_INFO\020U\022\023\n\017FUNC" +
+      "_REVOKE_MSG\020V\022\027\n\023FUNC_REFRESH_QRCODE\020W\022\026" +
+      "\n\022FUNC_DECRYPT_IMAGE\020`\022\021\n\rFUNC_EXEC_OCR\020" +
+      "a\022\031\n\025FUNC_ADD_ROOM_MEMBERS\020p\022\031\n\025FUNC_DEL" +
+      "_ROOM_MEMBERS\020q\022\031\n\025FUNC_INV_ROOM_MEMBERS" +
+      "\020rB\037\n\035com.wechat.ferry.entity.protob\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -33920,13 +34439,13 @@ java.lang.String defaultValue) {
     internal_static_wcf_RoomData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_RoomData_descriptor,
-        new java.lang.String[] { "Members", "Field2", "Field3", "Field4", "RoomCapacity", "Field6", "Field7", "Field8", });
+        new java.lang.String[] { "Members", "Field2", "Field3", "Field4", "Capacity", "Field6", "Field7", "Field8", "Admins", "Field2", "Field4", "Field6", });
     internal_static_wcf_RoomData_RoomMember_descriptor =
       internal_static_wcf_RoomData_descriptor.getNestedTypes().get(0);
     internal_static_wcf_RoomData_RoomMember_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_RoomData_RoomMember_descriptor,
-        new java.lang.String[] { "Wxid", "Name", "State", });
+        new java.lang.String[] { "Wxid", "Name", "State", "Name", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
