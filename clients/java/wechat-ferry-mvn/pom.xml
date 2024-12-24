@@ -53,6 +53,11 @@
             <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
+        <!-- 参数校验 -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
         <!-- swagger3包-->
         <dependency>
             <groupId>io.springfox</groupId>

@@ -1,5 +1,7 @@
 package com.wechat.ferry.entity.vo.request;
 
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class WxPpWcfDatabaseTableReq {
     /**
      * 数据库名称
      */
+    @NotBlank(message = "数据库名称不能为空")
     @ApiModelProperty(value = "数据库名称")
     private String databaseName;
 

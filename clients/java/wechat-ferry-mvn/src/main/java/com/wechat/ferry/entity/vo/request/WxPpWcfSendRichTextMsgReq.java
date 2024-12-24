@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 请求入参-个微WCF发送富文本消息
  *
@@ -19,6 +21,7 @@ public class WxPpWcfSendRichTextMsgReq {
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
      */
+    @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
 
