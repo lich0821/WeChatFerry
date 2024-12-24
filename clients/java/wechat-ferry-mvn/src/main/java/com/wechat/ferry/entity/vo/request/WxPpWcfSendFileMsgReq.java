@@ -1,5 +1,7 @@
 package com.wechat.ferry.entity.vo.request;
 
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class WxPpWcfSendFileMsgReq {
     /**
      * 资源路径-本地文件路径
      */
+    @NotBlank(message = "资源路径不能为空")
     @ApiModelProperty(value = "资源路径-本地文件路径")
     private String resourcePath;
 
@@ -25,6 +28,7 @@ public class WxPpWcfSendFileMsgReq {
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
      */
+    @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
 

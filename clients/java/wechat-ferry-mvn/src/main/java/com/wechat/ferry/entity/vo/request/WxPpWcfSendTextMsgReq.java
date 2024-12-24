@@ -1,10 +1,12 @@
 package com.wechat.ferry.entity.vo.request;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * 请求入参-个微WCF发送文本消息
@@ -21,6 +23,7 @@ public class WxPpWcfSendTextMsgReq {
      * 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
      * 换行使用 `\\\\n` （单杠）
      */
+    @NotBlank(message = "消息文本不能为空")
     @ApiModelProperty(value = "消息文本")
     private String msgText;
 
@@ -29,6 +32,7 @@ public class WxPpWcfSendTextMsgReq {
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
      */
+    @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
 

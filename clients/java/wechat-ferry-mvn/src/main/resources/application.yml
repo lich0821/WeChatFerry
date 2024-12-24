@@ -26,6 +26,12 @@ wechat:
     dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
     # socket端口
     socket-port: 10086
+    # 联系人类型-官方杂号，禁止与其他分类重复(格式：代码|名称)
+    contacts-type-mixed:
+      - filehelper|文件传输助手
+    # 联系人类型-公众号，禁止与其他分类重复(格式：代码|名称)
+    contacts-type-official:
+      - weixinguanhaozhushou|微信公众平台
     # 需要开启消息处理的群
     open-msg-groups:
       - 53257911728@chatroom
