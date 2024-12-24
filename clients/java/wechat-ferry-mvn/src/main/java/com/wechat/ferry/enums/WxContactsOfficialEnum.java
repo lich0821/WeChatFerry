@@ -1,8 +1,11 @@
 package com.wechat.ferry.enums;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.util.ObjectUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -69,7 +72,14 @@ public enum WxContactsOfficialEnum {
     /**
      * map集合 key：code val：名称
      */
-    public static final Map<String, String> codeNameMap =
-        Arrays.stream(values()).collect(Collectors.toMap(WxContactsOfficialEnum::getCode, v -> v.name));
+    public static Map<String, String> toCodeNameMap() {
+        Map<String, String> map = new HashMap<>();
+        for (WxContactsOfficialEnum val : WxContactsOfficialEnum.values()) {
+            if (!ObjectUtils.isEmpty(val.getCode())) {
+                map.put(val.getCode(), val.getName());
+            }
+        }
+        return map;
+    }
 
 }

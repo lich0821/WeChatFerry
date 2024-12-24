@@ -3,7 +3,6 @@ package com.wechat.ferry.service.impl;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,10 +175,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 // 微信类型
                 if (!ObjectUtils.isEmpty(rpcContact.getWxid())) {
                     // 官方杂号集合
-                    Map<String, String> mixedNoMap = WxContactsMixedEnum.codeNameMap;
+                    Map<String, String> mixedNoMap = WxContactsMixedEnum.toCodeNameMap();
                     mixedNoMap.putAll(convertContactsTypeProperties(weChatFerryProperties.getContactsTypeMixed()));
                     // 公众号
-                    Map<String, String> officialMap = WxContactsOfficialEnum.codeNameMap;
+                    Map<String, String> officialMap = WxContactsOfficialEnum.toCodeNameMap();
                     officialMap.putAll(convertContactsTypeProperties(weChatFerryProperties.getContactsTypeOfficial()));
 
                     // 类型判断,存在优先级的，官方杂号优先级高于微信公众号(如果定义重复了，常规禁止重复，手机端和电脑端分类不同)
@@ -248,7 +247,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         }
         long endTime = System.currentTimeMillis();
         log.info("[查询]-[数据库表列表]-共查到:{}条，耗时：{}ms", list.size(), (endTime - startTime));
-        return Collections.emptyList();
+        return list;
     }
 
     @Override
@@ -262,9 +261,15 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 List<WxPpWcfDatabaseFieldResp> fieldVoList = new ArrayList<>();
                 for (Wcf.DbField dbField : dbRow.getFieldsList()) {
                     WxPpWcfDatabaseFieldResp fieldVo = new WxPpWcfDatabaseFieldResp();
+                    Object value;
+                    if (ObjectUtils.isEmpty(dbField.getType())) {
+                        log.warn("未知的SQL类型: {}", dbField.getType());
+                        value = dbField.getContent().toByteArray();
+                    } else {
+                        value = convertSqlVal(dbField.getType(), dbField.getContent());
+                    }
                     fieldVo.setType(String.valueOf(dbField.getType()));
                     fieldVo.setColumn(dbField.getColumn());
-                    String value = (String)converterSqlVal(dbField.getType(), dbField.getContent());
                     fieldVo.setValue(value);
                     fieldVoList.add(fieldVo);
                 }
@@ -298,11 +303,11 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     for (Wcf.DbField dbField : dbFieldList) {
                         if ("UserName".equals(dbField.getColumn())) {
                             vo = new WxPpWcfGroupMemberResp();
-                            String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String)convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setWeChatUid(content);
                         }
                         if ("NickName".equals(dbField.getColumn())) {
-                            String content = (String)converterSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String)convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setGroupNickName(content);
                             dbMap.put(vo.getWeChatUid(), vo.getGroupNickName());
                         }
@@ -398,8 +403,13 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public WxPpWcfSendXmlMsgResp sendXmlMsg(WxPpWcfSendXmlMsgReq request) {
         long startTime = System.currentTimeMillis();
         log.info("[发送消息]-[XML消息]-入参打印：{}", request);
+        int xmlType = 0x21;
+        if ("21".equals(request.getXmlType())) {
+            // 小程序
+            xmlType = 0x21;
+        }
         Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(request.getXmlContent()).setReceiver(request.getRecipient())
-            .setPath(request.getResourcePath()).setType(request.getXmlType()).build();
+            .setPath(request.getResourcePath()).setType(xmlType).build();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
         log.debug("sendXml: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -510,7 +520,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
      * @author chandler
      * @date 2024-10-05 12:54
      */
-    public Object converterSqlVal(int type, ByteString content) {
+    public Object convertSqlVal(int type, ByteString content) {
         // 根据每一列的类型转换
         Function<byte[], Object> converter = getSqlType(type);
         if (converter != null) {

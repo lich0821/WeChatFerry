@@ -1,8 +1,11 @@
 package com.wechat.ferry.enums;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.util.ObjectUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,7 +64,8 @@ public enum WxContactsMixedEnum {
     /**
      * map集合 key：code val：枚举
      */
-    public static final Map<String, WxContactsMixedEnum> codeMap = Arrays.stream(values()).collect(Collectors.toMap(WxContactsMixedEnum::getCode, v -> v));
+    public static final Map<String, WxContactsMixedEnum> codeMap =
+        Arrays.stream(values()).collect(Collectors.toMap(WxContactsMixedEnum::getCode, v -> v));
 
     /**
      * 根据code获取枚举
@@ -73,7 +77,14 @@ public enum WxContactsMixedEnum {
     /**
      * map集合 key：code val：名称
      */
-    public static final Map<String, String> codeNameMap = Arrays.stream(values()).collect(Collectors.toMap(WxContactsMixedEnum::getCode, v -> v.name));
-
+    public static Map<String, String> toCodeNameMap() {
+        Map<String, String> map = new HashMap<>();
+        for (WxContactsMixedEnum val : WxContactsMixedEnum.values()) {
+            if (!ObjectUtils.isEmpty(val.getCode())) {
+                map.put(val.getCode(), val.getName());
+            }
+        }
+        return map;
+    }
 
 }

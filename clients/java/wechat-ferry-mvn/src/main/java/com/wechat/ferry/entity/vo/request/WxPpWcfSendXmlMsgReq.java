@@ -40,10 +40,10 @@ public class WxPpWcfSendXmlMsgReq {
     private String resourcePath;
 
     /**
-     * XML类型，如：0x21 为小程序
+     * XML类型，如：21 为小程序
      */
     @NotNull(message = "XML类型不能为空")
     @ApiModelProperty(value = "XML类型")
-    private Integer xmlType;
+    private String xmlType;
 
 }

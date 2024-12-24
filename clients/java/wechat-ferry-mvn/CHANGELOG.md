@@ -19,7 +19,7 @@
 | 发送XML消息        | /send/xmlMsg      | ?    | 待测试               |
 | 发送图片消息         | /send/imageMsg    | √    | 已测试               |
 | 发送表情消息         | /send/emojiMsg    | x    | 该版本不支持            |
-| 发送文件消息         | /send/fileMsg     | ?    | 待测试               |
+| 发送文件消息         | /send/fileMsg     | x    | 该版本不支持            |
 | 拍一拍群友          | /patOnePat        | √    | 已测试               |
 
 ### 已知BUG
