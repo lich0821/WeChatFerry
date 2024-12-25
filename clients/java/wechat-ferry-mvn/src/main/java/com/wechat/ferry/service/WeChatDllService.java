@@ -10,6 +10,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
@@ -201,6 +202,16 @@ public interface WeChatDllService {
     WxPpWcfSendPatOnePatMsgResp patOnePat(WxPpWcfPatOnePatMsgReq request);
 
     /**
+     * 撤回消息
+     *
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 11:59
+     */
+    String revokeMsg(WxPpWcfRevokeMsgReq request);
+
+    /**
      * 通过好友申请
      *
      * @param request 请求入参
@@ -254,5 +265,15 @@ public interface WeChatDllService {
      * @date 2024-12-25 10:03
      */
     String deleteGroupMember(WxPpWcfDeleteGroupMemberReq request);
+
+    /**
+     * 查询朋友圈
+     *
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 11:11
+     */
+    String queryFriendCircle();
 
 }

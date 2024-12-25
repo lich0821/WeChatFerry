@@ -20,11 +20,13 @@
 | 发送表情消息         | /send/emojiMsg         | x    | 该版本不支持            |
 | 发送文件消息         | /send/fileMsg          | x    | 该版本不支持            |
 | 拍一拍群友          | /patOnePat             | √    | 已测试               |
+| 撤回消息           | /revokeMsg             | ?    | 待测试               |
 | 通过好友申请         | /passFriendApply       | ?    | 待测试               |
 | 添加群成员为微信好友     | /addFriend/groupMember | ?    | 待测试               |
 | 查询群成员          | /groupMember/list      | √    | 已测试               |
 | 邀请群成员          | /groupMember/invite    | ?    | 待测试               |
 | 删除群成员          | /groupMember/delete    | ?    | 待测试               |
+| 查询朋友圈          | /friendCircle          | ?    | 待测试               |
 
 ### 已知BUG
 

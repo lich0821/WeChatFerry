@@ -29,6 +29,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
@@ -426,6 +427,22 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
+    public String revokeMsg(WxPpWcfRevokeMsgReq request) {
+        long startTime = System.currentTimeMillis();
+        log.info("[撤回消息]-[消息撤回]-入参打印：{}", request);
+        long msgId = Long.parseLong(request.getMsgId());
+        Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REVOKE_MSG_VALUE).setUi64(msgId).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
+        int state = judgeWcfCmdState(rsp);
+        // 回调处理
+        String stringJson = JSON.toJSONString(request);
+        sendMsgCallback(stringJson, state);
+        long endTime = System.currentTimeMillis();
+        log.info("[撤回消息]-[消息撤回]-处理结束，耗时：{}ms", (endTime - startTime));
+        return "";
+    }
+
+    @Override
     public String passFriendApply(WxPpWcfPassFriendApplyReq request) {
         long startTime = System.currentTimeMillis();
         log.info("[好友申请]-[通过好友申请]-入参打印：{}", request);
@@ -562,6 +579,18 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return "";
     }
 
+    @Override
+    public String queryFriendCircle() {
+        long startTime = System.currentTimeMillis();
+        log.info("[查询]-[刷新朋友圈]-开始");
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REFRESH_PYQ_VALUE).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+        int state = judgeWcfCmdState(rsp);
+        long endTime = System.currentTimeMillis();
+        log.info("[查询]-[刷新朋友圈]-处理结束，耗时：{}ms", (endTime - startTime));
+        return "";
+    }
+
     /**
      * 获取SQL类型
      *
@@ -597,7 +626,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if (converter != null) {
             return converter.apply(content.toByteArray());
         } else {
-            log.warn("未知的SQL类型: {}", type);
+            log.warn("[SQL转换类型]-未知的SQL类型: {}", type);
             return content.toByteArray();
         }
     }

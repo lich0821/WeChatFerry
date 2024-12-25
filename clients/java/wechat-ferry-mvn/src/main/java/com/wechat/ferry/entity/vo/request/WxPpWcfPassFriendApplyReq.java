@@ -19,6 +19,7 @@ public class WxPpWcfPassFriendApplyReq {
     /**
      * 申请人
      * v3 xml.attrib["encryptusername"]
+     * 加密用户名 (好友申请消息里 v3 开头的字符串)
      */
     @NotBlank(message = "申请人不能为空")
     @ApiModelProperty(value = "申请人")
@@ -27,6 +28,7 @@ public class WxPpWcfPassFriendApplyReq {
     /**
      * 审核人
      * v4 xml.attrib["ticket"]
+     * Ticket (好友申请消息里 v4 开头的字符串)
      * 一般指自己，别人申请添加，自己审核是否通过
      */
     @NotBlank(message = "审核人不能为空")
@@ -35,6 +37,7 @@ public class WxPpWcfPassFriendApplyReq {
 
     /**
      * 场景
+     * 申请方式 (好友申请消息里的 scene); 为了兼容旧接口，默认为扫码添加 (30)
      */
     @ApiModelProperty(value = "场景")
     private String scene;

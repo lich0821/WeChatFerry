@@ -18,6 +18,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
@@ -181,12 +182,12 @@ public class WeChatDllController {
     // return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     // }
 
-    // @ApiOperation(value = "撤回消息", notes = "queryMsgTypeList")
-    // @PostMapping(value = "/list/msgType")
-    // public TResponse<Object> queryMsgTypeList() {
-    // return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
-    // }
-    //
+    @ApiOperation(value = "撤回消息", notes = "revokeMsg")
+    @PostMapping(value = "/revokeMsg")
+    public TResponse<Object> revokeMsg(@Validated @RequestBody WxPpWcfRevokeMsgReq request) {
+        return TResponse.ok(ResponseCodeEnum.SUCCESS);
+    }
+
     // @ApiOperation(value = "转发消息", notes = "queryMsgTypeList")
     // @PostMapping(value = "/list/msgType")
     // public TResponse<Object> queryMsgTypeList() {
@@ -215,7 +216,7 @@ public class WeChatDllController {
 
     @ApiOperation(value = "添加群成员为微信好友", notes = "addFriendGroupMember")
     @PostMapping(value = "/addFriend/groupMember")
-    public TResponse<Object> addFriendGroupMember(WxPpWcfAddFriendGroupMemberReq request) {
+    public TResponse<Object> addFriendGroupMember(@Validated @RequestBody WxPpWcfAddFriendGroupMemberReq request) {
         weChatDllService.addFriendGroupMember(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
@@ -229,24 +230,25 @@ public class WeChatDllController {
 
     @ApiOperation(value = "邀请群成员", notes = "inviteGroupMember")
     @PostMapping(value = "/groupMember/invite")
-    public TResponse<Object> inviteGroupMember(WxPpWcfInviteGroupMemberReq request) {
+    public TResponse<Object> inviteGroupMember(@Validated @RequestBody WxPpWcfInviteGroupMemberReq request) {
         weChatDllService.inviteGroupMember(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
     @ApiOperation(value = "删除群成员", notes = "deleteGroupMember")
     @PostMapping(value = "/groupMember/delete")
-    public TResponse<Object> deleteGroupMember(WxPpWcfDeleteGroupMemberReq request) {
+    public TResponse<Object> deleteGroupMember(@Validated @RequestBody WxPpWcfDeleteGroupMemberReq request) {
         weChatDllService.deleteGroupMember(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
-    // @ApiOperation(value = "获取朋友圈消息", notes = "queryMsgTypeList")
-    // @PostMapping(value = "/list/msgType")
-    // public TResponse<Object> queryMsgTypeList() {
-    // return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
-    // }
-    //
+    @ApiOperation(value = "查询朋友圈", notes = "queryFriendCircle")
+    @PostMapping(value = "/friendCircle")
+    public TResponse<Object> queryFriendCircle() {
+        weChatDllService.queryFriendCircle();
+        return TResponse.ok(ResponseCodeEnum.SUCCESS);
+    }
+
     // @ApiOperation(value = "下载图片、视频、文件", notes = "queryMsgTypeList")
     // @PostMapping(value = "/list/msgType")
     // public TResponse<Object> queryMsgTypeList() {
