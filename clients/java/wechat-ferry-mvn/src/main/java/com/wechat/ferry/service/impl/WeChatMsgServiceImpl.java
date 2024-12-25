@@ -13,6 +13,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
 import com.wechat.ferry.service.WeChatMsgService;
+import com.wechat.ferry.strategy.msg.receive.ReceiveMsgFactory;
+import com.wechat.ferry.strategy.msg.receive.ReceiveMsgStrategy;
 import com.wechat.ferry.utils.HttpClientUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,19 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         if (!CollectionUtils.isEmpty(weChatFerryProperties.getOpenMsgGroups())) {
             // 指定处理的群聊
             if (weChatFerryProperties.getOpenMsgGroups().contains(dto.getRoomId())) {
-                // TODO 这里可以拓展自己需要的功能
+                // TODO 模式有多种 1-根据消息类型单独调用某一个 2-全部调用，各业务类中自己决定是否继续
+                if (true) {
+                    // 因为一种消息允许进行多种处理，这里采用执行所有策略，请自行在各策略中判断是否需要执行
+                    for (ReceiveMsgStrategy value : ReceiveMsgFactory.getAllStrategyContainers().values()) {
+                        value.doHandle(dto);
+                    }
+                } else {
+                    // 单独调用某一种
+                    // 这里自己把消息类型转为自己的枚举类型
+                    String handleType = "1";
+                    ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(handleType);
+                    receiveMsgStrategy.doHandle(dto);
+                }
             }
         }
         log.debug("[收到消息]-[消息内容]-打印：{}", dto);
