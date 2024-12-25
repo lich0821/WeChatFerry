@@ -15,10 +15,8 @@ import com.wechat.ferry.entity.proto.Wcf.DbQuery;
 import com.wechat.ferry.entity.proto.Wcf.DbRow;
 import com.wechat.ferry.entity.proto.Wcf.DecPath;
 import com.wechat.ferry.entity.proto.Wcf.Functions;
-import com.wechat.ferry.entity.proto.Wcf.MemberMgmt;
 import com.wechat.ferry.entity.proto.Wcf.Request;
 import com.wechat.ferry.entity.proto.Wcf.Response;
-import com.wechat.ferry.entity.proto.Wcf.Verification;
 import com.wechat.ferry.entity.proto.Wcf.WxMsg;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
@@ -157,42 +155,6 @@ public class WeChatSocketClient {
             return rsp.getRows().getRowsList();
         }
         return null;
-    }
-
-    /**
-     * 接收好友请求
-     *
-     * @param v3 xml.attrib["encryptusername"]
-     * @param v4 xml.attrib["ticket"]
-     * @return 结果状态码
-     */
-    public int acceptNewFriend(String v3, String v4) {
-        int ret = -1;
-        Verification verification = Verification.newBuilder().setV3(v3).setV4(v4).build();
-        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
-        Response rsp = sendCmd(req);
-        if (rsp != null) {
-            ret = rsp.getStatus();
-        }
-        return ret;
-    }
-
-    /**
-     * 添加群成员为微信好友
-     *
-     * @param roomID 群ID
-     * @param wxIds 要加群的人列表，逗号分隔
-     * @return 1 为成功，其他失败
-     */
-    public int addChatroomMembers(String roomID, String wxIds) {
-        int ret = -1;
-        MemberMgmt memberMgmt = MemberMgmt.newBuilder().setRoomid(roomID).setWxids(wxIds).build();
-        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
-        Response rsp = sendCmd(req);
-        if (rsp != null) {
-            ret = rsp.getStatus();
-        }
-        return ret;
     }
 
     /**
