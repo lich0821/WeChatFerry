@@ -343,6 +343,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if ("21".equals(request.getXmlType())) {
             // 小程序
             xmlType = 0x21;
+        } else {
+            xmlType = Integer.parseInt(request.getXmlType());
         }
         Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(request.getXmlContent()).setReceiver(request.getRecipient())
             .setPath(request.getResourcePath()).setType(xmlType).build();
@@ -376,7 +378,6 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         return null;
     }
 
-    @Deprecated
     @Override
     public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         long startTime = System.currentTimeMillis();
@@ -584,7 +585,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public String queryFriendCircle() {
         long startTime = System.currentTimeMillis();
         log.info("[查询]-[刷新朋友圈]-开始");
-        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REFRESH_PYQ_VALUE).build();
+        // id 开始 id，0 为最新页 (string based uint64)
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REFRESH_PYQ_VALUE).setUi64(0).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
         long endTime = System.currentTimeMillis();

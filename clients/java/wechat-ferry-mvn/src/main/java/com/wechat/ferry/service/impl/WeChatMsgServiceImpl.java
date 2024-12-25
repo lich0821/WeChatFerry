@@ -41,7 +41,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         // 有开启的群聊配置
         if (!CollectionUtils.isEmpty(weChatFerryProperties.getOpenMsgGroups())) {
             // 指定处理的群聊
-            if (weChatFerryProperties.getOpenMsgGroups().contains(dto.getRoomId())) {
+            if (weChatFerryProperties.getOpenMsgGroups().contains(dto.getRoomId()) || weChatFerryProperties.getOpenMsgGroups().contains("ALL")) {
                 // TODO 模式有多种 1-根据消息类型单独调用某一个 2-全部调用，各业务类中自己决定是否继续
                 if (true) {
                     // 因为一种消息允许进行多种处理，这里采用执行所有策略，请自行在各策略中判断是否需要执行
