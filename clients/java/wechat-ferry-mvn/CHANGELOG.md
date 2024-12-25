@@ -2,30 +2,46 @@
 
 ### 功能列表
 
-| 接口名            | 地址                | 是否支持 | 备注                |
-|----------------|-------------------|------|-------------------|
-| 查询登录状态         | /loginStatus      | √    | 已测试               |
-| 获取登录微信内部识别号UID | /loginWeChatUid   | √    | 已测试               |
-| 获取登录微信信息       | /loginWeChatInfo  | √    | 已测试               |
-| 获取消息类型列表       | /list/msgType     | √    | 已测试               |
-| 获取联系人列表        | /list/contacts    | √    | 已测试               |
-| 获取数据库表名称列表     | /list/dbTableName | √    | 已测试               |
-| 获取指定数据库中的表列表   | /list/dbTable     | √    | 已测试               |
-| 执行数据库查询SQL     | /exec/dbQuerySql  | √    | 已测试               |
-| 查询群成员          | /list/groupMember | √    | 已测试               |
-| 发送消息汇总入口       | /send/msgMaster   | x    | 预留                |
-| 发送文本消息         | /send/textMsg     | x    | 该版本不支持            |
-| 发送富文本消息        | /send/richTextMsg | x    | 缩略图参数需要为空，否则会发送失败 |
-| 发送XML消息        | /send/xmlMsg      | ?    | 待测试               |
-| 发送图片消息         | /send/imageMsg    | √    | 已测试               |
-| 发送表情消息         | /send/emojiMsg    | x    | 该版本不支持            |
-| 发送文件消息         | /send/fileMsg     | x    | 该版本不支持            |
-| 拍一拍群友          | /patOnePat        | √    | 已测试               |
+| 接口名            | 地址                     | 是否支持 | 备注                |
+|----------------|------------------------|------|-------------------|
+| 查询登录状态         | /loginStatus           | √    | 已测试               |
+| 获取登录微信内部识别号UID | /loginWeChatUid        | √    | 已测试               |
+| 获取登录微信信息       | /loginWeChatInfo       | √    | 已测试               |
+| 获取消息类型列表       | /list/msgType          | √    | 已测试               |
+| 获取联系人列表        | /list/contacts         | √    | 已测试               |
+| 获取数据库表名称列表     | /list/dbTableName      | √    | 已测试               |
+| 获取指定数据库中的表列表   | /list/dbTable          | √    | 已测试               |
+| 执行数据库查询SQL     | /exec/dbQuerySql       | √    | 已测试               |
+| 发送消息汇总入口       | /send/msgMaster        | x    | 预留                |
+| 发送文本消息         | /send/textMsg          | x    | 该版本不支持            |
+| 发送富文本消息        | /send/richTextMsg      | x    | 缩略图参数需要为空，否则会发送失败 |
+| 发送XML消息        | /send/xmlMsg           | ?    | 待测试               |
+| 发送图片消息         | /send/imageMsg         | √    | 已测试               |
+| 发送表情消息         | /send/emojiMsg         | x    | 该版本不支持            |
+| 发送文件消息         | /send/fileMsg          | x    | 该版本不支持            |
+| 拍一拍群友          | /patOnePat             | √    | 已测试               |
+| 通过好友申请         | /passFriendApply       | ?    | 待测试               |
+| 添加群成员为微信好友     | /addFriend/groupMember | ?    | 待测试               |
+| 查询群成员          | /groupMember/list      | √    | 已测试               |
+| 邀请群成员          | /groupMember/invite    | ?    | 待测试               |
+| 删除群成员          | /groupMember/delete    | ?    | 待测试               |
 
 ### 已知BUG
 
 - 1.发送表情微信客户端闪退 - `待修复`
 - 2.发送富文本包含thumbnailUrl参数会导致消息发送不出去 - `待修复`
+- 3.发送文件成功之后客户端崩溃 - `待修复`
+
+### 2024-12-25
+
+#### ⛰️ Features
+
+- 新增通过好友申请接口
+- 新增添加群成员为微信好友接口
+- 新增邀请群成员接口
+- 新增删除群成员接口
+- 消息回调配置文件参数名称修改
+-
 
 ### 2024-12-24
 
