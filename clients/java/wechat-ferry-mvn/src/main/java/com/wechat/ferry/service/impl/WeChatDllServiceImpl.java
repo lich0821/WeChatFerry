@@ -50,7 +50,7 @@ import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 import com.wechat.ferry.enums.DatabaseNameEnum;
-import com.wechat.ferry.enums.MsgFwdTypeEnum;
+import com.wechat.ferry.enums.MsgCallbackTypeEnum;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsMixedEnum;
 import com.wechat.ferry.enums.WxContactsOfficialEnum;
@@ -306,9 +306,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         // 0 为成功，其他失败
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[文本消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -325,9 +325,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.debug("sendRichText: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[富文本消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -348,9 +348,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.debug("sendXml: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[XML消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -366,9 +366,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.debug("sendImage: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[图片消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -384,9 +384,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.debug("sendEmotion: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[表情消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -401,9 +401,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.debug("sendFile: {}", wechatSocketClient.bytesToHex(req.toByteArray()));
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[文件消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -417,9 +417,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(wcfReq);
         int state = judgeWcfCmdState(rsp);
-        // 转发处理
+        // 回调处理
         String stringJson = JSON.toJSONString(request);
-        sendMsgForward(stringJson, state);
+        sendMsgCallback(stringJson, state);
         long endTime = System.currentTimeMillis();
         log.info("[发送消息]-[拍一拍消息]-处理结束，耗时：{}ms", (endTime - startTime));
         return null;
@@ -624,7 +624,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     /**
-     * 消息转发
+     * 消息回调
      *
      * @param jsonString json数据
      * @param state cmd调用状态
@@ -632,27 +632,27 @@ public class WeChatDllServiceImpl implements WeChatDllService {
      * @author chandler
      * @date 2024-10-10 23:10
      */
-    private void sendMsgForward(String jsonString, Integer state) {
-        // 根据配置文件决定是否转发
-        if (MsgFwdTypeEnum.CLOSE.getCode().equals(weChatFerryProperties.getSendMsgFwdFlag())
-            || (MsgFwdTypeEnum.SUCCESS.getCode().equals(weChatFerryProperties.getSendMsgFwdFlag()) && 0 != state)) {
-            // 如果是关闭 或者 配置为成功才转发但发送状态为失败 的情况则取消发送
+    private void sendMsgCallback(String jsonString, Integer state) {
+        // 根据配置文件决定是否回调
+        if (MsgCallbackTypeEnum.CLOSE.getCode().equals(weChatFerryProperties.getSendMsgCallbackFlag())
+            || (MsgCallbackTypeEnum.SUCCESS.getCode().equals(weChatFerryProperties.getSendMsgCallbackFlag()) && 0 != state)) {
+            // 如果是关闭 或者 配置为成功才回调但发送状态为失败 的情况则取消发送
             return;
         }
-        // 开启转发，且转发地址不为空
-        if (!CollectionUtils.isEmpty(weChatFerryProperties.getSendMsgFwdUrls())) {
-            for (String receiveMsgFwdUrl : weChatFerryProperties.getSendMsgFwdUrls()) {
+        // 开启回调，且回调地址不为空
+        if (!CollectionUtils.isEmpty(weChatFerryProperties.getSendMsgCallbackUrls())) {
+            for (String receiveMsgFwdUrl : weChatFerryProperties.getSendMsgCallbackUrls()) {
                 if (!receiveMsgFwdUrl.startsWith("http")) {
                     continue;
                 }
                 try {
                     String responseStr = HttpClientUtil.doPostJson(receiveMsgFwdUrl, jsonString);
                     if (judgeSuccess(responseStr)) {
-                        log.error("[发送消息]-消息转发外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
+                        log.error("[发送消息]-消息回调至外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
                     }
-                    log.debug("[发送消息]-[转发接收到的消息]-转发消息至：{}", receiveMsgFwdUrl);
+                    log.debug("[发送消息]-[回调接收到的消息]-回调消息至：{}", receiveMsgFwdUrl);
                 } catch (Exception e) {
-                    log.error("[发送消息]-消息转发接口[{}]服务异常：", receiveMsgFwdUrl, e);
+                    log.error("[发送消息]-消息回调接口[{}]服务异常：", receiveMsgFwdUrl, e);
                 }
             }
         }

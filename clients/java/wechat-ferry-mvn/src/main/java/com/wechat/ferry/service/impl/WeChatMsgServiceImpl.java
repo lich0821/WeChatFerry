@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -34,7 +33,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
     @Override
     public void receiveMsg(String jsonString) {
         // 转发接口处理
-        receiveMsgForward(jsonString);
+        receiveMsgCallback(jsonString);
         // 转为JSON对象
         WxPpMsgDTO dto = JSON.parseObject(jsonString, WxPpMsgDTO.class);
         // 有开启的群聊配置
@@ -47,21 +46,21 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         log.debug("[收到消息]-[消息内容]-打印：{}", dto);
     }
 
-    private void receiveMsgForward(String jsonString) {
-        // 开启转发，且转发地址不为空
-        if (weChatFerryProperties.getReceiveMsgFwdSwitch() && !CollectionUtils.isEmpty(weChatFerryProperties.getReceiveMsgFwdUrls())) {
-            for (String receiveMsgFwdUrl : weChatFerryProperties.getReceiveMsgFwdUrls()) {
+    private void receiveMsgCallback(String jsonString) {
+        // 开启回调，且回调地址不为空
+        if (weChatFerryProperties.getReceiveMsgCallbackSwitch() && !CollectionUtils.isEmpty(weChatFerryProperties.getReceiveMsgCallbackUrls())) {
+            for (String receiveMsgFwdUrl : weChatFerryProperties.getReceiveMsgCallbackUrls()) {
                 if (!receiveMsgFwdUrl.startsWith("http")) {
                     continue;
                 }
                 try {
                     String responseStr = HttpClientUtil.doPostJson(receiveMsgFwdUrl, jsonString);
                     if (judgeSuccess(responseStr)) {
-                        log.error("[接收消息]-消息转发外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
+                        log.error("[接收消息]-消息回调至外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
                     }
-                    log.debug("[接收消息]-[转发接收到的消息]-转发消息至：{}", receiveMsgFwdUrl);
+                    log.debug("[接收消息]-[回调接收到的消息]-回调消息至：{}", receiveMsgFwdUrl);
                 } catch (Exception e) {
-                    log.error("[接收消息]-消息转发接口[{}]服务异常：", receiveMsgFwdUrl, e);
+                    log.error("[接收消息]-消息回调接口[{}]服务异常：", receiveMsgFwdUrl, e);
                 }
             }
         }
