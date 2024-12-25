@@ -29,6 +29,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
@@ -588,6 +589,20 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         int state = judgeWcfCmdState(rsp);
         long endTime = System.currentTimeMillis();
         log.info("[查询]-[刷新朋友圈]-处理结束，耗时：{}ms", (endTime - startTime));
+        return "";
+    }
+
+    @Override
+    public String receiveTransfer(WxPpWcfReceiveTransferReq request) {
+        long startTime = System.currentTimeMillis();
+        log.info("[转账]-[接收转账]-开始");
+        Wcf.Transfer transfer =
+            Wcf.Transfer.newBuilder().setWxid(request.getWeChatUid()).setTfid(request.getTransferId()).setTaid(request.getTransferId()).build();
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_RECV_TRANSFER_VALUE).setTf(transfer).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+        int state = judgeWcfCmdState(rsp);
+        long endTime = System.currentTimeMillis();
+        log.info("[转账]-[接收转账]-处理结束，耗时：{}ms", (endTime - startTime));
         return "";
     }
 

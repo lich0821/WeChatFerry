@@ -10,6 +10,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
@@ -275,5 +276,16 @@ public interface WeChatDllService {
      * @date 2024-12-25 11:11
      */
     String queryFriendCircle();
+
+    /**
+     * 接收转账
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 13:48
+     */
+    String receiveTransfer(WxPpWcfReceiveTransferReq request);
 
 }

@@ -18,6 +18,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
@@ -246,6 +247,13 @@ public class WeChatDllController {
     @PostMapping(value = "/friendCircle")
     public TResponse<Object> queryFriendCircle() {
         weChatDllService.queryFriendCircle();
+        return TResponse.ok(ResponseCodeEnum.SUCCESS);
+    }
+
+    @ApiOperation(value = "接收转账", notes = "receiveTransfer")
+    @PostMapping(value = "/receiveTransfer")
+    public TResponse<Object> receiveTransfer(@Validated @RequestBody WxPpWcfReceiveTransferReq request) {
+        weChatDllService.receiveTransfer(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
