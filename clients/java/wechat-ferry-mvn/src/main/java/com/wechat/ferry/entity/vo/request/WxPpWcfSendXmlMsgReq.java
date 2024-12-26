@@ -1,5 +1,8 @@
 package com.wechat.ferry.entity.vo.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,12 +22,14 @@ public class WxPpWcfSendXmlMsgReq {
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
      */
+    @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
 
     /**
      * XML报文内容
      */
+    @NotBlank(message = "XML报文内容不能为空")
     @ApiModelProperty(value = "XML报文内容")
     private String xmlContent;
 
@@ -35,9 +40,10 @@ public class WxPpWcfSendXmlMsgReq {
     private String resourcePath;
 
     /**
-     * xml类型，如：0x21 为小程序
+     * XML类型，如：21 为小程序
      */
-    @ApiModelProperty(value = "xml类型")
-    private Integer xmlType;
+    @NotNull(message = "XML类型不能为空")
+    @ApiModelProperty(value = "XML类型")
+    private String xmlType;
 
 }

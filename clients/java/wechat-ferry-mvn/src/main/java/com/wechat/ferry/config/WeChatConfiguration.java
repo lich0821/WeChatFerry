@@ -48,7 +48,7 @@ public class WeChatConfiguration {
         // client.printContacts(client.getContacts());
 
         // 获取数据库
-        log.info("dbs: {}", wechatSocketClient.getDbNames());
+        // log.info("dbs: {}", wechatSocketClient.getDbNames());
 
         // 获取数据库下的表
         String db = "MicroMsg.db";

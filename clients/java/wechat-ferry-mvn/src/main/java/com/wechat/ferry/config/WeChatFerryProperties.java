@@ -30,6 +30,18 @@ public class WeChatFerryProperties {
     private Integer socketPort;
 
     /**
+     * 联系人类型-官方杂号，禁止与其他分类重复(格式：代码|名称)
+     * 使用时记得需要提取代码或者名称匹配
+     */
+    private List<String> contactsTypeMixed;
+
+    /**
+     * 联系人类型-公众号，禁止与其他分类重复(格式：代码|名称)
+     * 使用时记得需要提取代码或者名称匹配
+     */
+    private List<String> contactsTypeOfficial;
+
+    /**
      * 需要开启消息处理的群
      */
     private List<String> openMsgGroups;

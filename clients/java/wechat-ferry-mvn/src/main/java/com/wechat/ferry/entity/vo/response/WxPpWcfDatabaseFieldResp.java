@@ -30,6 +30,6 @@ public class WxPpWcfDatabaseFieldResp {
      * 字段值
      */
     @ApiModelProperty(value = "字段值")
-    private String value;
+    private Object value;
 
 }

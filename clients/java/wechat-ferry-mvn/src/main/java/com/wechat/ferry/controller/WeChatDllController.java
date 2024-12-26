@@ -22,6 +22,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
 import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
+import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseTableResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
@@ -79,46 +80,40 @@ public class WeChatDllController {
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
-    @ApiOperation(value = "获取消息类型", notes = "queryMsgTypeList")
+    @ApiOperation(value = "获取消息类型列表", notes = "queryMsgTypeList")
     @PostMapping(value = "/list/msgType")
     public TResponse<List<WxPpWcfMsgTypeResp>> queryMsgTypeList() {
         List<WxPpWcfMsgTypeResp> list = weChatDllService.queryMsgTypeList();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
-    @ApiOperation(value = "获取联系人", notes = "queryContactsList")
+    @ApiOperation(value = "获取联系人列表", notes = "queryContactsList")
     @PostMapping(value = "/list/contacts")
     public TResponse<List<WxPpWcfContactsResp>> queryContactsList() {
         List<WxPpWcfContactsResp> list = weChatDllService.queryContactsList();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
-    @ApiOperation(value = "获取可查询数据库", notes = "queryDatabaseSql")
-    @PostMapping(value = "/list/dbSql")
-    public TResponse<List<WxPpWcfDatabaseRowResp>> queryDatabaseSql(@Validated @RequestBody WxPpWcfDatabaseSqlReq request) {
-        List<WxPpWcfDatabaseRowResp> list = weChatDllService.queryDatabaseSql(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
-    }
-
-    @ApiOperation(value = "获取数据库所有表名称", notes = "queryDatabaseAllTableName")
+    @ApiOperation(value = "获取数据库表名称列表", notes = "queryDbTableNameList")
     @PostMapping(value = "/list/dbTableName")
-    public TResponse<List<String>> queryDatabaseAllTableName() {
-        List<String> list = weChatDllService.queryDatabaseAllTableName();
+    public TResponse<List<String>> queryDbTableNameList() {
+        List<String> list = weChatDllService.queryDbTableNameList();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
-    @ApiOperation(value = "获取指定数据库中的表", notes = "queryDatabaseTable")
+    @ApiOperation(value = "获取指定数据库中的表列表", notes = "queryDbTableList")
     @PostMapping(value = "/list/dbTable")
-    public TResponse<List<String>> queryDatabaseTable(@Validated @RequestBody WxPpWcfDatabaseTableReq request) {
-        List<String> list = weChatDllService.queryDatabaseTable(request);
+    public TResponse<List<WxPpWcfDatabaseTableResp>> queryDbTableList(@Validated @RequestBody WxPpWcfDatabaseTableReq request) {
+        List<WxPpWcfDatabaseTableResp> list = weChatDllService.queryDbTableList(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
     }
 
-    // @ApiOperation(value = "获取语音消息", notes = "queryMsgTypeList")
-    // @PostMapping(value = "/list/voiceMsg")
-    // public TResponse<Object> queryVoiceMsg() {
-    // return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
-    // }
+    @ApiOperation(value = "执行数据库查询SQL", notes = "execDbQuerySql")
+    @PostMapping(value = "/exec/dbQuerySql")
+    public TResponse<List<WxPpWcfDatabaseRowResp>> execDbQuerySql(@Validated @RequestBody WxPpWcfDatabaseSqlReq request) {
+        List<WxPpWcfDatabaseRowResp> list = weChatDllService.execDbQuerySql(request);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
+    }
 
     @ApiOperation(value = "查询群成员", notes = "queryGroupMember")
     @PostMapping(value = "/list/groupMember")
@@ -130,42 +125,14 @@ public class WeChatDllController {
     @ApiOperation(value = "发送消息汇总入口", notes = "sendMsgMaster")
     @PostMapping(value = "/send/msgMaster")
     public TResponse<WxPpWcfSendTextMsgResp> sendMsgMaster(@Validated @RequestBody String jsonString) {
-
+        // todo
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
-    @ApiOperation(value = "发送文本消息（可 @）", notes = "sendTextMsg")
+    @ApiOperation(value = "发送文本消息", notes = "sendTextMsg")
     @PostMapping(value = "/send/textMsg")
     public TResponse<WxPpWcfSendTextMsgResp> sendTextMsg(@Validated @RequestBody WxPpWcfSendTextMsgReq request) {
         WxPpWcfSendTextMsgResp resp = weChatDllService.sendTextMsg(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
-    }
-
-    @ApiOperation(value = "发送图片消息", notes = "sendImageMsg")
-    @PostMapping(value = "/send/imageMsg")
-    public TResponse<WxPpWcfSendImageMsgResp> sendImageMsg(@Validated @RequestBody WxPpWcfSendImageMsgReq request) {
-        WxPpWcfSendImageMsgResp resp = weChatDllService.sendImageMsg(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
-    }
-
-    @ApiOperation(value = "发送文件消息", notes = "sendFileMsg")
-    @PostMapping(value = "/send/fileMsg")
-    public TResponse<WxPpWcfSendFileMsgResp> sendFileMsg(@Validated @RequestBody WxPpWcfSendFileMsgReq request) {
-        WxPpWcfSendFileMsgResp resp = weChatDllService.sendFileMsg(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
-    }
-
-    @ApiOperation(value = "发送XML消息", notes = "sendXmlMsg")
-    @PostMapping(value = "/send/xmlMsg")
-    public TResponse<WxPpWcfSendXmlMsgResp> sendXmlMsg(@Validated @RequestBody WxPpWcfSendXmlMsgReq request) {
-        WxPpWcfSendXmlMsgResp resp = weChatDllService.sendXmlMsg(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
-    }
-
-    @ApiOperation(value = "发送表情消息", notes = "sendEmojiMsg")
-    @PostMapping(value = "/send/emojiMsg")
-    public TResponse<WxPpWcfSendEmojiMsgResp> sendEmojiMsg(@Validated @RequestBody WxPpWcfSendEmojiMsgReq request) {
-        WxPpWcfSendEmojiMsgResp resp = weChatDllService.sendEmojiMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
@@ -176,12 +143,46 @@ public class WeChatDllController {
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
 
+    @ApiOperation(value = "发送XML消息", notes = "sendXmlMsg")
+    @PostMapping(value = "/send/xmlMsg")
+    public TResponse<WxPpWcfSendXmlMsgResp> sendXmlMsg(@Validated @RequestBody WxPpWcfSendXmlMsgReq request) {
+        WxPpWcfSendXmlMsgResp resp = weChatDllService.sendXmlMsg(request);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
+    }
+
+    @ApiOperation(value = "发送图片消息", notes = "sendImageMsg")
+    @PostMapping(value = "/send/imageMsg")
+    public TResponse<WxPpWcfSendImageMsgResp> sendImageMsg(@Validated @RequestBody WxPpWcfSendImageMsgReq request) {
+        WxPpWcfSendImageMsgResp resp = weChatDllService.sendImageMsg(request);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
+    }
+
+    @ApiOperation(value = "发送表情消息", notes = "sendEmojiMsg")
+    @PostMapping(value = "/send/emojiMsg")
+    public TResponse<WxPpWcfSendEmojiMsgResp> sendEmojiMsg(@Validated @RequestBody WxPpWcfSendEmojiMsgReq request) {
+        WxPpWcfSendEmojiMsgResp resp = weChatDllService.sendEmojiMsg(request);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
+    }
+
+    @ApiOperation(value = "发送文件消息", notes = "sendFileMsg")
+    @PostMapping(value = "/send/fileMsg")
+    public TResponse<WxPpWcfSendFileMsgResp> sendFileMsg(@Validated @RequestBody WxPpWcfSendFileMsgReq request) {
+        WxPpWcfSendFileMsgResp resp = weChatDllService.sendFileMsg(request);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
+    }
+
     @ApiOperation(value = "拍一拍群友", notes = "patOnePat")
     @PostMapping(value = "/patOnePat")
     public TResponse<WxPpWcfSendPatOnePatMsgResp> patOnePat(@Validated @RequestBody WxPpWcfPatOnePatMsgReq request) {
         WxPpWcfSendPatOnePatMsgResp resp = weChatDllService.patOnePat(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
+
+    // @ApiOperation(value = "获取语音消息", notes = "queryMsgTypeList")
+    // @PostMapping(value = "/list/voiceMsg")
+    // public TResponse<Object> queryVoiceMsg() {
+    // return TResponse.ok(ResponseCodeEnum.SUCCESS, list);
+    // }
 
     // @ApiOperation(value = "撤回消息", notes = "queryMsgTypeList")
     // @PostMapping(value = "/list/msgType")

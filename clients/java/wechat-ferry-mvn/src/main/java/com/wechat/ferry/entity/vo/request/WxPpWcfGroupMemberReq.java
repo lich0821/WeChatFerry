@@ -1,5 +1,7 @@
 package com.wechat.ferry.entity.vo.request;
 
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class WxPpWcfGroupMemberReq {
     /**
      * 群编号
      */
+    @NotBlank(message = "群编号不能为空")
     @ApiModelProperty(value = "群编号")
     private String groupNo;
 
