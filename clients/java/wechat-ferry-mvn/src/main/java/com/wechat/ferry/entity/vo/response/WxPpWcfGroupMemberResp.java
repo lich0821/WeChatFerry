@@ -33,4 +33,16 @@ public class WxPpWcfGroupMemberResp {
     @ApiModelProperty(value = "状态")
     private String state;
 
+    /**
+     * 是否自己
+     */
+    @ApiModelProperty(value = "是否自己")
+    private Boolean whetherSelf;
+
+    /**
+     * 是否企微
+     */
+    @ApiModelProperty(value = "是否企微")
+    private Boolean whetherWork;
+
 }

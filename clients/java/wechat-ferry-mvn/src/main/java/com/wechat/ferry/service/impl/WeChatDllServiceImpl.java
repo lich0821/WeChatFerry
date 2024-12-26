@@ -479,6 +479,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     public List<WxPpWcfGroupMemberResp> queryGroupMemberList(WxPpWcfGroupMemberReq request) {
         long startTime = System.currentTimeMillis();
         List<WxPpWcfGroupMemberResp> list = new ArrayList<>();
+        String weChatUid = queryLoginWeChatUid();
         // 查询群成员
         List<Wcf.DbRow> wcfList = new ArrayList<>();
         if (!ObjectUtils.isEmpty(request.getGroupNo())) {
@@ -523,6 +524,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                                 for (Wcf.RoomData.RoomMember member : roomData.getMembersList()) {
                                     vo = new WxPpWcfGroupMemberResp();
                                     vo.setWeChatUid(member.getWxid());
+                                    // 是否为自己微信
+                                    vo.setWhetherSelf(weChatUid.equals(member.getWxid()));
+                                    // 是否为企微
+                                    vo.setWhetherWork(member.getWxid().endsWith(WxContactsTypeEnum.WORK.getAffix()));
                                     String nickName = member.getName();
                                     if (ObjectUtils.isEmpty(nickName)) {
                                         // 如果没有设置群昵称则默认为微信名称
