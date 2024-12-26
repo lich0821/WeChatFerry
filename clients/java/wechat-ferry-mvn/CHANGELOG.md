@@ -1,5 +1,14 @@
 ## v39.3.3
 
+### 版本列表
+
+下载地址：[v39.3.3](https://github.com/lich0821/WeChatFerry/releases/tag/v39.3.3)
+
+| 名称              | 版本        | 文件名                       |
+|-----------------|-----------|---------------------------|
+| 微信客户端           | 3.9.11.25 | WeChatSetup-3.9.11.25.exe |
+| WeChatFerry-SDK | 39.3.3    | v39.3.3.zip               |
+
 ### 功能列表
 
 | 接口名            | 地址                     | 是否支持 | 备注                |
@@ -13,7 +22,7 @@
 | 获取指定数据库中的表列表   | /list/dbTable          | ✔️   | 已测试               |
 | 执行数据库查询SQL     | /exec/dbQuerySql       | ✔️   | 已测试               |
 | 发送消息汇总入口       | /send/msgMaster        | ❌    | 预留                |
-| 发送文本消息         | /send/textMsg          | ❌    | 该版本不支持            |
+| 发送文本消息         | /send/textMsg          | ✔️   | 已测试               |
 | 发送富文本消息        | /send/richTextMsg      | ❌    | 缩略图参数需要为空，否则会发送失败 |
 | 发送XML消息        | /send/xmlMsg           | ❌    | 该版本不支持            |
 | 发送图片消息         | /send/imageMsg         | ✔️   | 已测试               |
@@ -68,3 +77,53 @@
 - 适配SDK39.3.3版本
 - wcf.proto文件部分字段类型修改
 - 消息转发适配多种消息类型
+
+<br/>
+
+___
+
+<br/><br/>
+
+## v39.2.4 - 推荐✨
+
+### 版本列表
+
+下载地址：[v39.2.4](https://github.com/lich0821/WeChatFerry/releases/tag/v39.2.4)
+
+| 名称              | 版本        | 文件名                       |
+|-----------------|-----------|---------------------------|
+| 微信客户端           | 3.9.10.27 | WeChatSetup-3.9.10.27.exe |
+| WeChatFerry-SDK | 39.2.4    | v39.2.4.zip               |
+
+### 功能列表
+
+| 接口名            | 地址                     | 是否支持 | 备注     |
+|----------------|------------------------|------|--------|
+| 查询登录状态         | /loginStatus           | ✔️   | 已测试    |
+| 获取登录微信内部识别号UID | /loginWeChatUid        | ✔️   | 已测试    |
+| 获取登录微信信息       | /loginWeChatInfo       | ✔️   | 已测试    |
+| 获取消息类型列表       | /list/msgType          | ✔️   | 已测试    |
+| 获取联系人列表        | /list/contacts         | ✔️   | 已测试    |
+| 获取数据库表名称列表     | /list/dbTableName      | ✔️   | 已测试    |
+| 获取指定数据库中的表列表   | /list/dbTable          | ✔️   | 已测试    |
+| 执行数据库查询SQL     | /exec/dbQuerySql       | ✔️   | 已测试    |
+| 发送消息汇总入口       | /send/msgMaster        | ❌    | 预留     |
+| 发送文本消息         | /send/textMsg          | ✔️   | 已测试    |
+| 发送富文本消息        | /send/richTextMsg      | ✔️   | 已测试    |
+| 发送XML消息        | /send/xmlMsg           | ❌    | 该版本不支持 |
+| 发送图片消息         | /send/imageMsg         | ✔️   | 已测试    |
+| 发送表情消息         | /send/emojiMsg         | ✔️   | 已测试    |
+| 发送文件消息         | /send/fileMsg          | ✔️   | 已测试    |
+| 拍一拍群友          | /patOnePat             | ✔️   | 已测试    |
+| 撤回消息           | /revokeMsg             | ❌    | 该版本不支持 |
+| 通过好友申请         | /passFriendApply       | ❌    | 该版本不支持 |
+| 添加群成员为微信好友     | /addFriend/groupMember | ❔    | 待测试    |
+| 查询群成员          | /groupMember/list      | ✔️   | 已测试    |
+| 邀请群成员          | /groupMember/invite    | ❔    | 待测试    |
+| 删除群成员          | /groupMember/delete    | ❔    | 待测试    |
+| 查询朋友圈          | /friendCircle          | ❔    | 待测试    |
+| 接收转账           | /receiveTransfer       | ❌    | 该版本不支持 |
+
+<br/>
+
+___
