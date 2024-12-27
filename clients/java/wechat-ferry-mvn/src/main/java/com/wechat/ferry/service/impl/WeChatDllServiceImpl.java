@@ -15,6 +15,7 @@ import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.wechat.ferry.aggregation.facade.ContactDo;
 import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
@@ -50,8 +51,6 @@ import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 import com.wechat.ferry.enums.DatabaseNameEnum;
 import com.wechat.ferry.enums.MsgCallbackTypeEnum;
 import com.wechat.ferry.enums.SexEnum;
-import com.wechat.ferry.enums.WxContactsMixedEnum;
-import com.wechat.ferry.enums.WxContactsOfficialEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
 import com.wechat.ferry.handle.WeChatSocketClient;
 import com.wechat.ferry.service.WeChatDllService;
@@ -176,38 +175,9 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                 }
                 // 微信类型
                 if (!ObjectUtils.isEmpty(rpcContact.getWxid())) {
-                    // 官方杂号集合
-                    Map<String, String> mixedNoMap = WxContactsMixedEnum.toCodeNameMap();
-                    mixedNoMap.putAll(convertContactsTypeProperties(weChatFerryProperties.getContactsTypeMixed()));
-                    // 公众号
-                    Map<String, String> officialMap = WxContactsOfficialEnum.toCodeNameMap();
-                    officialMap.putAll(convertContactsTypeProperties(weChatFerryProperties.getContactsTypeOfficial()));
-
-                    // 类型判断,存在优先级的，官方杂号优先级高于微信公众号(如果定义重复了，常规禁止重复，手机端和电脑端分类不同)
-                    if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.WORK.getAffix())) {
-                        // 企微
-                        vo.setType(WxContactsTypeEnum.WORK.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.WORK.getName());
-                    } else if (rpcContact.getWxid().endsWith(WxContactsTypeEnum.GROUP.getAffix()) || rpcContact.getWxid().endsWith("@im.chatroom")) {
-                        // 群聊 @im.chatroom 这种是很早之前的格式，单独例举
-                        vo.setType(WxContactsTypeEnum.GROUP.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.GROUP.getName());
-                    } else if (mixedNoMap.containsKey(rpcContact.getWxid())) {
-                        // 官方杂号
-                        vo.setType(WxContactsTypeEnum.OFFICIAL_MIXED_NO.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_MIXED_NO.getName());
-                    } else if (rpcContact.getWxid().startsWith(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getAffix())) {
-                        // 微信公众号
-                        vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
-                    } else if (officialMap.containsKey(rpcContact.getWxid())) {
-                        vo.setType(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.OFFICIAL_ACCOUNT.getName());
-                    } else {
-                        // 个微
-                        vo.setType(WxContactsTypeEnum.PERSON.getCode());
-                        vo.setTypeLabel(WxContactsTypeEnum.PERSON.getName());
-                    }
+                    String type = ContactDo.convertContactType(rpcContact.getWxid(), weChatFerryProperties);
+                    vo.setType(type);
+                    vo.setTypeLabel(WxContactsTypeEnum.getCodeMap(rpcContact.getWxid()).getName());
                 }
                 list.add(vo);
             }
