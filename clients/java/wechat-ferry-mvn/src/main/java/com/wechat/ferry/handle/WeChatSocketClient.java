@@ -1,14 +1,19 @@
 package com.wechat.ferry.handle;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Function;
 
 import org.springframework.util.ObjectUtils;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.protobuf.ByteString;
 import com.sun.jna.Native;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
 import com.wechat.ferry.entity.proto.Wcf.DbQuery;
@@ -310,7 +315,16 @@ public class WeChatSocketClient {
         }
     }
 
-    public void forwardMsg(WxMsg msg, String url) {
+    /**
+     * 本机回调解析消息
+     *
+     * @param msg 消息内容
+     * @param url 回调地址
+     *
+     * @author chandler
+     * @date 2024-10-05 12:50
+     */
+    public void localCallbackAnalyzeMsg(WxMsg msg, String url) {
         String xml = msg.getXml();
         xml = xml.replaceAll(">[\\s\\p{Zs}]*<", "><");
         String content = msg.getContent();
@@ -358,10 +372,50 @@ public class WeChatSocketClient {
         try {
             String responseStr = HttpClientUtil.doPostJson(url, jsonString);
             if (!JSONObject.parseObject(responseStr).getString("code").equals("200")) {
-                log.error("本机消息转发失败！-URL：{}", url);
+                log.error("本机消息回调失败！-URL：{}", url);
             }
         } catch (Exception e) {
-            log.error("转发接口报错：", e);
+            log.error("本机消息回调接口报错：", e);
+        }
+    }
+
+    /**
+     * 获取SQL类型
+     *
+     * @param type 转换类型
+     * @return 函数
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
+    public Function<byte[], Object> getSqlType(int type) {
+        Map<Integer, Function<byte[], Object>> sqlTypeMap = new HashMap<>();
+        // 初始化SQL_TYPES 根据类型执行不同的Func
+        sqlTypeMap.put(1, bytes -> ByteBuffer.wrap(bytes).getInt());
+        sqlTypeMap.put(2, bytes -> ByteBuffer.wrap(bytes).getFloat());
+        sqlTypeMap.put(3, bytes -> new String(bytes, StandardCharsets.UTF_8));
+        sqlTypeMap.put(4, bytes -> bytes);
+        sqlTypeMap.put(5, bytes -> null);
+        return sqlTypeMap.get(type);
+    }
+
+    /**
+     * SQL转换类型
+     *
+     * @param type 转换类型
+     * @param content 待转换内容
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
+    public Object convertSqlVal(int type, ByteString content) {
+        // 根据每一列的类型转换
+        Function<byte[], Object> converter = getSqlType(type);
+        if (converter != null) {
+            return converter.apply(content.toByteArray());
+        } else {
+            log.warn("[SQL转换类型]-未知的SQL类型: {}", type);
+            return content.toByteArray();
         }
     }
 

@@ -1,12 +1,9 @@
 package com.wechat.ferry.service.impl;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.annotation.Resource;
 
@@ -17,7 +14,6 @@ import org.springframework.util.ObjectUtils;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.proto.Wcf;
@@ -272,7 +268,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                         log.warn("未知的SQL类型: {}", dbField.getType());
                         value = dbField.getContent().toByteArray();
                     } else {
-                        value = convertSqlVal(dbField.getType(), dbField.getContent());
+                        value = wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                     }
                     fieldVo.setType(String.valueOf(dbField.getType()));
                     fieldVo.setColumn(dbField.getColumn());
@@ -497,11 +493,11 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     for (Wcf.DbField dbField : dbFieldList) {
                         if ("UserName".equals(dbField.getColumn())) {
                             vo = new WxPpWcfGroupMemberResp();
-                            String content = (String)convertSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String)wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setWeChatUid(content);
                         }
                         if ("NickName".equals(dbField.getColumn())) {
-                            String content = (String)convertSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String)wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setGroupNickName(content);
                             dbMap.put(vo.getWeChatUid(), vo.getGroupNickName());
                         }
@@ -611,46 +607,6 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         long endTime = System.currentTimeMillis();
         log.info("[转账]-[接收转账]-处理结束，耗时：{}ms", (endTime - startTime));
         return "";
-    }
-
-    /**
-     * 获取SQL类型
-     *
-     * @param type 转换类型
-     * @return 函数
-     *
-     * @author chandler
-     * @date 2024-10-05 12:54
-     */
-    public Function<byte[], Object> getSqlType(int type) {
-        Map<Integer, Function<byte[], Object>> sqlTypeMap = new HashMap<>();
-        // 初始化SQL_TYPES 根据类型执行不同的Func
-        sqlTypeMap.put(1, bytes -> ByteBuffer.wrap(bytes).getInt());
-        sqlTypeMap.put(2, bytes -> ByteBuffer.wrap(bytes).getFloat());
-        sqlTypeMap.put(3, bytes -> new String(bytes, StandardCharsets.UTF_8));
-        sqlTypeMap.put(4, bytes -> bytes);
-        sqlTypeMap.put(5, bytes -> null);
-        return sqlTypeMap.get(type);
-    }
-
-    /**
-     * SQL转换类型
-     *
-     * @param type 转换类型
-     * @param content 待转换内容
-     *
-     * @author chandler
-     * @date 2024-10-05 12:54
-     */
-    public Object convertSqlVal(int type, ByteString content) {
-        // 根据每一列的类型转换
-        Function<byte[], Object> converter = getSqlType(type);
-        if (converter != null) {
-            return converter.apply(content.toByteArray());
-        } else {
-            log.warn("[SQL转换类型]-未知的SQL类型: {}", type);
-            return content.toByteArray();
-        }
     }
 
     /**
