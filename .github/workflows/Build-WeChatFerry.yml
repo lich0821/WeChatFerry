@@ -70,7 +70,7 @@ jobs:
 
           # 返回到项目目录并安装依赖
           cd ${{ github.workspace }}/WeChatFerry
-          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static --manifest
+          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
 
           # 将 vcpkg 与 Visual Studio 集成
           C:/Tools/vcpkg/vcpkg integrate install
