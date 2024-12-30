@@ -11,7 +11,7 @@
 #include <string>
 #include <thread>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <nng/nng.h>
 #include <nng/protocol/pair1/pair.h>
 #include <nng/supplemental/util/platform.h>
