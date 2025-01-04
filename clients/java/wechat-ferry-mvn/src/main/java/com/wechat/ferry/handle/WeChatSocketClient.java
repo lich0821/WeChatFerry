@@ -23,6 +23,7 @@ import com.wechat.ferry.entity.proto.Wcf.Functions;
 import com.wechat.ferry.entity.proto.Wcf.Request;
 import com.wechat.ferry.entity.proto.Wcf.Response;
 import com.wechat.ferry.entity.proto.Wcf.WxMsg;
+import com.wechat.ferry.exception.BizException;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
 import com.wechat.ferry.utils.XmlJsonConvertUtil;
@@ -120,14 +121,21 @@ public class WeChatSocketClient {
 
     public Response sendCmd(Request req) {
         try {
+            // 设置超时时间 20s
+            cmdSocket.setSendTimeout(20000);
             ByteBuffer bb = ByteBuffer.wrap(req.toByteArray());
             cmdSocket.send(bb);
             ByteBuffer ret = ByteBuffer.allocate(BUFFER_SIZE);
             long size = cmdSocket.receive(ret, true);
             return Response.parseFrom(Arrays.copyOfRange(ret.array(), 0, (int)size));
         } catch (Exception e) {
-            log.error("命令调用失败: ", e);
-            return null;
+            if ("Timed out".equals(e.getMessage())) {
+                log.error("请求超时: ", e);
+                throw new BizException("请求超时:1.接口耗时太长，2.服务与客户端失去联系，请重启本服务！详细异常信息：" + e.getMessage());
+            } else {
+                log.error("命令调用失败: ", e);
+                throw new BizException("命令调用失败:" + e.getMessage());
+            }
         }
     }
 
