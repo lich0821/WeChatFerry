@@ -68,10 +68,4 @@ public class Contact {
     @ApiModelProperty(value = "群类型")
     private Integer chatRoomType;
 
-    /**
-     * 头像MD5
-     */
-    @ApiModelProperty(value = "头像MD5")
-    private String headImgMd5;
-
 }

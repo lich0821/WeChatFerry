@@ -391,7 +391,7 @@ public class WeChatSocketClient {
     public Function<byte[], Object> getSqlType(int type) {
         Map<Integer, Function<byte[], Object>> sqlTypeMap = new HashMap<>();
         // 初始化SQL_TYPES 根据类型执行不同的Func
-        sqlTypeMap.put(1, bytes -> ByteBuffer.wrap(bytes).getInt());
+        sqlTypeMap.put(1, bytes -> new String(bytes, StandardCharsets.UTF_8));
         sqlTypeMap.put(2, bytes -> ByteBuffer.wrap(bytes).getFloat());
         sqlTypeMap.put(3, bytes -> new String(bytes, StandardCharsets.UTF_8));
         sqlTypeMap.put(4, bytes -> bytes);

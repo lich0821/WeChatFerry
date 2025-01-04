@@ -44,6 +44,13 @@ public class ContactDo extends Contact {
     private String contactType;
 
     /**
+     * 展示名称
+     * 有备注优先展示备注
+     */
+    @ApiModelProperty(value = "展示名称")
+    private String showName;
+
+    /**
      * 根据自定义SQL查询联系人列表
      *
      * @param wechatSocketClient 通信客户端
@@ -56,14 +63,13 @@ public class ContactDo extends Contact {
         List<ContactDo> list = new ArrayList<>();
         // 查询联系人
         List<Wcf.DbRow> dbContactList = wechatSocketClient.querySql(DatabaseNameEnum.MICRO_MSG.getCode(),
-            "SELECT UserName, Alias, NickName, DelFlag, VerifyFlag, Remark, LabelIDList, DomainList, ChatRoomType, HeadImgMd5, Type FROM Contact;");
+            "SELECT UserName, Alias, DelFlag, Type, VerifyFlag, Remark, NickName, LabelIDList, DomainList, ChatRoomType, PYInitial, QuanPin, RemarkPYInitial, RemarkQuanPin, ChatRoomNotify FROM Contact;");
         if (!CollectionUtils.isEmpty(dbContactList)) {
             for (Wcf.DbRow dbRow : dbContactList) {
                 List<Wcf.DbField> dbFieldList = dbRow.getFieldsList();
                 if (!ObjectUtils.isEmpty(dbFieldList)) {
-                    ContactDo po;
+                    ContactDo po = new ContactDo();
                     for (Wcf.DbField dbField : dbFieldList) {
-                        po = new ContactDo();
                         String content = (String)wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                         // 用户名
                         if ("UserName".equals(dbField.getColumn())) {
@@ -105,11 +111,8 @@ public class ContactDo extends Contact {
                         if ("ChatRoomType".equals(dbField.getColumn())) {
                             po.setChatRoomType(Integer.valueOf(content));
                         }
-                        //
-                        if ("HeadImgMd5".equals(dbField.getColumn())) {
-                            po.setHeadImgMd5(content);
-                        }
                     }
+                    list.add(po);
                 }
             }
         }
