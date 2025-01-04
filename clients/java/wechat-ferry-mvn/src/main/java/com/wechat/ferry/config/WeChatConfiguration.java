@@ -81,7 +81,7 @@ public class WeChatConfiguration {
                     // 只打印
                     // wechatSocketClient.printWxMsg(wechatSocketClient.getMsg());
                     // 转发到boot项目进行消息处理
-                    wechatSocketClient.forwardMsg(wechatSocketClient.getMsg(), url);
+                    wechatSocketClient.localCallbackAnalyzeMsg(wechatSocketClient.getMsg(), url);
                 }
             }
         });

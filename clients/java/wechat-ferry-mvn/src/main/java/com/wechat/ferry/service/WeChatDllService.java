@@ -2,10 +2,16 @@ package com.wechat.ferry.service;
 
 import java.util.List;
 
+import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
@@ -118,17 +124,6 @@ public interface WeChatDllService {
     List<WxPpWcfDatabaseRowResp> execDbQuerySql(WxPpWcfDatabaseSqlReq request);
 
     /**
-     * 查询群成员
-     *
-     * @param request 请求入参
-     * @return 数据库记录
-     *
-     * @author chandler
-     * @date 2024-10-02 20:59
-     */
-    List<WxPpWcfGroupMemberResp> queryGroupMember(WxPpWcfGroupMemberReq request);
-
-    /**
      * 发送文本消息（可 @）
      *
      * @param request 请求入参
@@ -206,5 +201,91 @@ public interface WeChatDllService {
      * @date 2024-10-06 15:54
      */
     WxPpWcfSendPatOnePatMsgResp patOnePat(WxPpWcfPatOnePatMsgReq request);
+
+    /**
+     * 撤回消息
+     *
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 11:59
+     */
+    String revokeMsg(WxPpWcfRevokeMsgReq request);
+
+    /**
+     * 通过好友申请
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 09:38
+     */
+    String passFriendApply(WxPpWcfPassFriendApplyReq request);
+
+    /**
+     * 添加群成员为微信好友
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 09:38
+     */
+    String addFriendGroupMember(WxPpWcfAddFriendGroupMemberReq request);
+
+    /**
+     * 查询群成员列表
+     *
+     * @param request 请求入参
+     * @return 数据库记录
+     *
+     * @author chandler
+     * @date 2024-10-02 20:59
+     */
+    List<WxPpWcfGroupMemberResp> queryGroupMemberList(WxPpWcfGroupMemberReq request);
+
+    /**
+     * 邀请群成员
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 10:02
+     */
+    String inviteGroupMember(WxPpWcfInviteGroupMemberReq request);
+
+    /**
+     * 删除群成员
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 10:03
+     */
+    String deleteGroupMember(WxPpWcfDeleteGroupMemberReq request);
+
+    /**
+     * 查询朋友圈
+     *
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 11:11
+     */
+    String queryFriendCircle();
+
+    /**
+     * 接收转账
+     *
+     * @param request 请求入参
+     * @return 结果状态
+     *
+     * @author chandler
+     * @date 2024-12-25 13:48
+     */
+    String receiveTransfer(WxPpWcfReceiveTransferReq request);
 
 }
