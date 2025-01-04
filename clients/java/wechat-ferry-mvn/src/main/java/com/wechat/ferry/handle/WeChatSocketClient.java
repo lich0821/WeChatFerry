@@ -1,24 +1,27 @@
 package com.wechat.ferry.handle;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Function;
 
 import org.springframework.util.ObjectUtils;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.protobuf.ByteString;
 import com.sun.jna.Native;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
 import com.wechat.ferry.entity.proto.Wcf.DbQuery;
 import com.wechat.ferry.entity.proto.Wcf.DbRow;
 import com.wechat.ferry.entity.proto.Wcf.DecPath;
 import com.wechat.ferry.entity.proto.Wcf.Functions;
-import com.wechat.ferry.entity.proto.Wcf.MemberMgmt;
 import com.wechat.ferry.entity.proto.Wcf.Request;
 import com.wechat.ferry.entity.proto.Wcf.Response;
-import com.wechat.ferry.entity.proto.Wcf.Verification;
 import com.wechat.ferry.entity.proto.Wcf.WxMsg;
 import com.wechat.ferry.service.SDK;
 import com.wechat.ferry.utils.HttpClientUtil;
@@ -157,42 +160,6 @@ public class WeChatSocketClient {
             return rsp.getRows().getRowsList();
         }
         return null;
-    }
-
-    /**
-     * 接收好友请求
-     *
-     * @param v3 xml.attrib["encryptusername"]
-     * @param v4 xml.attrib["ticket"]
-     * @return 结果状态码
-     */
-    public int acceptNewFriend(String v3, String v4) {
-        int ret = -1;
-        Verification verification = Verification.newBuilder().setV3(v3).setV4(v4).build();
-        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
-        Response rsp = sendCmd(req);
-        if (rsp != null) {
-            ret = rsp.getStatus();
-        }
-        return ret;
-    }
-
-    /**
-     * 添加群成员为微信好友
-     *
-     * @param roomID 群ID
-     * @param wxIds 要加群的人列表，逗号分隔
-     * @return 1 为成功，其他失败
-     */
-    public int addChatroomMembers(String roomID, String wxIds) {
-        int ret = -1;
-        MemberMgmt memberMgmt = MemberMgmt.newBuilder().setRoomid(roomID).setWxids(wxIds).build();
-        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
-        Response rsp = sendCmd(req);
-        if (rsp != null) {
-            ret = rsp.getStatus();
-        }
-        return ret;
     }
 
     /**
@@ -348,7 +315,16 @@ public class WeChatSocketClient {
         }
     }
 
-    public void forwardMsg(WxMsg msg, String url) {
+    /**
+     * 本机回调解析消息
+     *
+     * @param msg 消息内容
+     * @param url 回调地址
+     *
+     * @author chandler
+     * @date 2024-10-05 12:50
+     */
+    public void localCallbackAnalyzeMsg(WxMsg msg, String url) {
         String xml = msg.getXml();
         xml = xml.replaceAll(">[\\s\\p{Zs}]*<", "><");
         String content = msg.getContent();
@@ -396,10 +372,50 @@ public class WeChatSocketClient {
         try {
             String responseStr = HttpClientUtil.doPostJson(url, jsonString);
             if (!JSONObject.parseObject(responseStr).getString("code").equals("200")) {
-                log.error("本机消息转发失败！-URL：{}", url);
+                log.error("本机消息回调失败！-URL：{}", url);
             }
         } catch (Exception e) {
-            log.error("转发接口报错：", e);
+            log.error("本机消息回调接口报错：", e);
+        }
+    }
+
+    /**
+     * 获取SQL类型
+     *
+     * @param type 转换类型
+     * @return 函数
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
+    public Function<byte[], Object> getSqlType(int type) {
+        Map<Integer, Function<byte[], Object>> sqlTypeMap = new HashMap<>();
+        // 初始化SQL_TYPES 根据类型执行不同的Func
+        sqlTypeMap.put(1, bytes -> new String(bytes, StandardCharsets.UTF_8));
+        sqlTypeMap.put(2, bytes -> ByteBuffer.wrap(bytes).getFloat());
+        sqlTypeMap.put(3, bytes -> new String(bytes, StandardCharsets.UTF_8));
+        sqlTypeMap.put(4, bytes -> bytes);
+        sqlTypeMap.put(5, bytes -> null);
+        return sqlTypeMap.get(type);
+    }
+
+    /**
+     * SQL转换类型
+     *
+     * @param type 转换类型
+     * @param content 待转换内容
+     *
+     * @author chandler
+     * @date 2024-10-05 12:54
+     */
+    public Object convertSqlVal(int type, ByteString content) {
+        // 根据每一列的类型转换
+        Function<byte[], Object> converter = getSqlType(type);
+        if (converter != null) {
+            return converter.apply(content.toByteArray());
+        } else {
+            log.warn("[SQL转换类型]-未知的SQL类型: {}", type);
+            return content.toByteArray();
         }
     }
 

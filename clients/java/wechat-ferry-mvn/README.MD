@@ -13,7 +13,7 @@
 |-----------------|-----------|----|
 | JDK             | 1.8+      | √  |
 | Maven           | 3.8+      | √  |
-| 微信              | 3.9.11.25 | √  |
+| 微信客户端           | 3.9.11.25 | √  |
 | WeChatFerry-SDK | 39.3.3    | √  |
 | MySQL           | 8.0+      | 备用 |
 
@@ -34,6 +34,15 @@
 ### 替换对应版本的dll
 
 把刚下载的最新发布文件解压到本项目中的 dll 文件目录下，直接替换原因文件即可
+
+替换 `clients/java/wechat-ferry-mvn/dll` 目录下(也可以在配置文件中改为自定义的目录)
+
+- sdk.dll
+- spy.dll
+- spy_debug.dll
+
+> 如果之前已经使用本项目启动过微信，此时替换发现替换不了，是因为正则运行的微信客户端正在使用该文件，
+> 请退出并关闭微信客户端之后再进行替换
 
 ### 修改配置文件
 
@@ -71,15 +80,17 @@ swagger地址：http://localhost:9201/swagger-ui/index.html
 
 ### 核心依赖
 
-| 依赖            | 版本     | 说明       |
-|---------------|--------|----------|
-| Spring Boot   | 2.7.18 | 基础框架     |
-| protobuf-java | 3.22.2 | rpc      |
-| jna           | 5.6.0  | 态访问系统本地库 |
-| nng-java      | 1.4.0  | 本地包      |
-| fastjson2     | 2.0.52 | 序列化      |
-| dom4j         | 2.1.3  | XML解析包   |
-| httpclient    | 4.5.13 | 客户端请求    |
+| 依赖            | 版本          | 说明       |
+|---------------|-------------|----------|
+| Spring Boot   | 2.7.18      | 基础框架     |
+| protobuf-java | 3.22.2      | rpc      |
+| jna           | 5.6.0       | 态访问系统本地库 |
+| nng-java      | 1.4.0       | 本地包      |
+| fastjson2     | 2.0.52      | 序列化      |
+| dom4j         | 2.1.3       | XML解析包   |
+| httpclient    | 4.5.13      | 客户端请求    |
+| validation    | 2.0.1.Final | 参数校验     |
+| springfox     | 3.0.0       | swagger3 |
 
 ### 模块结构
 
@@ -93,16 +104,22 @@ wechat-ferry-mvn
 │  ├─main                                   重启命令
 │  │  ├─java(com.wechat.ferry)              java代码目录
 │  │  │  ├─config                           配置
+│  │  │  ├─constant                         常量
+│  │  │  ├─controller                       控制层(API接口)
 │  │  │  ├─entity                           聚合模型
 │  │  │  │  ├─dto                           DTO模型
 │  │  │  │  ├─po                            数据库实体(与表结构一一对应,否则请使用DTO)
 │  │  │  │  ├─proto                         PB实体
 │  │  │  │  └─vo                            视图层返回体目录
 │  │  │  ├─enums                            枚举
+│  │  │  ├─exception                        异常封装
 │  │  │  ├─handle                           处理层
-│  │  │  ├─service                          业务接口
+│  │  │  ├─service                          业务层
 │  │  │  │  └─impl                          业务实现类
-│  │  │  ├─utils                            工具类
+│  │  │  ├─strategy                         策略层
+│  │  │  │  └─impl                          策略实现类(如接收到消息之后的事件处理可以放在这里)
+│  │  │  ├─task                             定时任务
+│  │  │  ├─utils                            工具层
 │  │  │  └─WcferryApplication.java          启动类
 │  │  │
 │  │  │resources                            资源目录

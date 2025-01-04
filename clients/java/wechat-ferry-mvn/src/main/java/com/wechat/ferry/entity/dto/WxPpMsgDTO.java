@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * DTO-ge微信消息
+ * DTO-个微信消息
  *
  * @author chandler
  * @date 2024-09-26 19:56
