@@ -3,6 +3,8 @@
 #include "framework.h"
 #include <filesystem>
 #include <fstream>
+#include <io.h>
+#include <direct.h>
 
 #include "codec.h"
 #include "exec_sql.h"
@@ -75,6 +77,37 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
     return ""; // 错误
 }
 
+// 创建多级目录
+bool CreateDir(const char* dir)
+{
+    int m = 0, n;
+    string str1, str2;
+    str1 = dir;
+    str2 = str1.substr(0, 2);
+    str1 = str1.substr(3, str1.size());
+    while (m >= 0)
+    {
+        m = str1.find('/');
+
+        str2 += '/' + str1.substr(0, m);
+        //判断该目录是否存在
+        n = _access(str2.c_str(), 0);
+        if (n == -1)
+        {
+            //创建目录文件
+            int flag = _mkdir(str2.c_str());
+            if (flag != 0) { //创建失败
+                LOG_ERROR("Failed to CreateDir:{}", dir);
+                return false;
+            }
+        }
+
+        str1 = str1.substr(m + 1, str1.size());
+    }
+    LOG_DEBUG("CreateDir {} success.", dir);
+    return true;
+}
+
 string DecryptImage(string src, string dir)
 {
     if (!fs::exists(src)) {
@@ -116,6 +149,17 @@ string DecryptImage(string src, string dir)
             dst = fs::path(src).replace_extension(ext).string();
         } else {
             dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+            replace(dst.begin(), dst.end(), '\\', '/');
+
+            // 判断dir文件夹是否存在，若不存在则创建（否则将无法创建出文件）
+            if (_access(dst.c_str(), 0) == -1) {//判断该文件夹是否存在
+                bool success = CreateDir(dst.c_str()); //Windows创建文件夹
+                if (!success) { //创建失败
+                    LOG_ERROR("Failed to mkdir:{}", dst);
+                    return "";
+                }
+            }
+            
             dst += fs::path(src).stem().string() + ext;
         }
 
@@ -291,6 +335,37 @@ string GetAudio(QWORD id, string dir)
 
     return mp3path;
 }
+
+string GetPCMAudio(uint64_t id, string dir, int32_t sr)
+{
+    string pcmpath = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+    pcmpath += to_string(id) + ".pcm";
+    replace(pcmpath.begin(), pcmpath.end(), '\\', '/');
+    if (fs::exists(pcmpath)) { // 不重复下载
+        return pcmpath;
+    }
+    vector<uint8_t> pcm;
+    vector<uint8_t> silk = GetAudioData(id);
+    if (silk.size() == 0) {
+        LOG_ERROR("Empty audio data.");
+        return "";
+    }
+
+    SilkDecode(silk, pcm, sr);
+    errno_t err;
+    FILE* fPCM;
+    err = fopen_s(&fPCM, pcmpath.c_str(), "wb");
+    if (err != 0) {
+        printf("Error: could not open input file %s\n", pcmpath.c_str());
+        exit(0);
+    }
+
+    fwrite(pcm.data(), sizeof(uint8_t), pcm.size(), fPCM);
+    fclose(fPCM);
+
+    return pcmpath;
+}
+
 
 OcrResult_t GetOcrResult(string path)
 {
