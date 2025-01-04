@@ -46,9 +46,9 @@ jobs:
           path: |
             C:/Tools/vcpkg
             ${{ github.workspace }}/WeChatFerry/vcpkg_installed
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('WeChatFerry/vcpkg.json') }}
+          key: vcpkg-${{ hashFiles('WeChatFerry/vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-
+            vcpkg-
 
       - name: 安装 vcpkg 并初始化依赖项
         run: |
@@ -68,19 +68,24 @@ jobs:
           echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
           $env:VCPKG_ROOT = 'C:/Tools/vcpkg'
 
-          # 将 vcpkg 与 Visual Studio 集成
-          C:/Tools/vcpkg/vcpkg integrate install
-
           # 返回到项目目录并安装依赖
           cd ${{ github.workspace }}/WeChatFerry
           C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
+
+          # 将 vcpkg 与 Visual Studio 集成
+          C:/Tools/vcpkg/vcpkg integrate install
 
       - name: 解析并构建配置
         run: |
           $configurations = "Release,Debug".Split(',')
           foreach ($config in $configurations) {
             Write-Host "Building configuration: $config"
-            msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=$config /p:Platform="x64" /p:VcpkgTriplet="x64-windows-static" /p:VcpkgEnableManifest=true /verbosity:minimal
+            msbuild WeChatFerry/WeChatFerry.sln `
+              /p:Configuration=$config `
+              /p:Platform="x64" `
+              /p:VcpkgTriplet="x64-windows-static" `
+              /p:VcpkgEnableManifest=true `
+              /verbosity:minimal
           }
         shell: pwsh
 
