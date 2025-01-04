@@ -52,6 +52,7 @@ import com.wechat.ferry.enums.DatabaseNameEnum;
 import com.wechat.ferry.enums.MsgCallbackTypeEnum;
 import com.wechat.ferry.enums.SexEnum;
 import com.wechat.ferry.enums.WxContactsTypeEnum;
+import com.wechat.ferry.exception.BizException;
 import com.wechat.ferry.handle.WeChatSocketClient;
 import com.wechat.ferry.service.WeChatDllService;
 import com.wechat.ferry.utils.HttpClientUtil;
@@ -81,6 +82,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public Boolean loginStatus() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         Boolean status = wechatSocketClient.isLogin();
         long endTime = System.currentTimeMillis();
         log.info("[查询]-[登录状态]-耗时：{}ms，status:{}", (endTime - startTime), status);
@@ -90,6 +93,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String queryLoginWeChatUid() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         String weChatUid = "";
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_SELF_WXID_VALUE).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -104,6 +109,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfLoginInfoResp queryLoginWeChatInfo() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         WxPpWcfLoginInfoResp resp = new WxPpWcfLoginInfoResp();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_USER_INFO_VALUE).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -122,6 +129,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<WxPpWcfMsgTypeResp> queryMsgTypeList() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         List<WxPpWcfMsgTypeResp> list = new ArrayList<>();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_MSG_TYPES_VALUE).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -143,6 +152,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<WxPpWcfContactsResp> queryContactsList() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         List<WxPpWcfContactsResp> list = new ArrayList<>();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_CONTACTS_VALUE).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -190,6 +201,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<String> queryDbTableNameList() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         List<String> list = new ArrayList<>();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_DB_NAMES_VALUE).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -204,6 +217,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<WxPpWcfDatabaseTableResp> queryDbTableList(WxPpWcfDatabaseTableReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[查询]-[数据库表列表]-request:{}", request);
         List<WxPpWcfDatabaseTableResp> list = new ArrayList<>();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_GET_DB_TABLES_VALUE).setStr(request.getDatabaseName()).build();
@@ -225,6 +240,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<WxPpWcfDatabaseRowResp> execDbQuerySql(WxPpWcfDatabaseSqlReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         List<WxPpWcfDatabaseRowResp> list = new ArrayList<>();
         List<Wcf.DbRow> wcfList = wechatSocketClient.querySql(request.getDatabaseName(), request.getSqlText());
         if (!CollectionUtils.isEmpty(wcfList)) {
@@ -257,6 +274,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendTextMsgResp sendTextMsg(WxPpWcfSendTextMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[文本消息]-入参打印：{}", request);
         String atUser = "";
         if (request.getIsAtAll()) {
@@ -285,6 +304,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendRichTextMsgResp sendRichTextMsg(WxPpWcfSendRichTextMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[富文本消息]-入参打印：{}", request);
         Wcf.RichText richTextMsg = Wcf.RichText.newBuilder().setName(request.getName()).setAccount(request.getAccount()).setTitle(request.getTitle())
             .setDigest(request.getDigest()).setUrl(request.getJumpUrl()).setThumburl(request.getThumbnailUrl()).setReceiver(request.getRecipient())
@@ -304,6 +325,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendXmlMsgResp sendXmlMsg(WxPpWcfSendXmlMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[XML消息]-入参打印：{}", request);
         int xmlType = 0x21;
         if ("21".equals(request.getXmlType())) {
@@ -329,6 +352,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendImageMsgResp sendImageMsg(WxPpWcfSendImageMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[图片消息]-入参打印：{}", request);
         WxPpWcfSendImageMsgResp resp = new WxPpWcfSendImageMsgResp();
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(request.getResourcePath()).setReceiver(request.getRecipient()).build();
@@ -347,6 +372,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendEmojiMsgResp sendEmojiMsg(WxPpWcfSendEmojiMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[表情消息]-入参打印：{}", request);
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(request.getResourcePath()).setReceiver(request.getRecipient()).build();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
@@ -364,6 +391,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendFileMsgResp sendFileMsg(WxPpWcfSendFileMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[文件消息]-入参打印：{}", request);
         Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(request.getResourcePath()).setReceiver(request.getRecipient()).build();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
@@ -381,6 +410,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public WxPpWcfSendPatOnePatMsgResp patOnePat(WxPpWcfPatOnePatMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[发送消息]-[拍一拍消息]-入参打印：{}", request);
         Wcf.PatMsg patMsg = Wcf.PatMsg.newBuilder().setRoomid(request.getRecipient()).setWxid(request.getPatUser()).build();
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
@@ -397,6 +428,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String revokeMsg(WxPpWcfRevokeMsgReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[撤回消息]-[消息撤回]-入参打印：{}", request);
         long msgId = Long.parseLong(request.getMsgId());
         Wcf.Request wcfReq = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REVOKE_MSG_VALUE).setUi64(msgId).build();
@@ -413,6 +446,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String passFriendApply(WxPpWcfPassFriendApplyReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[好友申请]-[通过好友申请]-入参打印：{}", request);
         Wcf.Verification verification = Wcf.Verification.newBuilder().setV3(request.getApplicant()).setV4(request.getReviewer()).build();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
@@ -426,6 +461,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String addFriendGroupMember(WxPpWcfAddFriendGroupMemberReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[添加好友]-[添加群成员为好友]-入参打印：{}", request);
         if (CollectionUtils.isEmpty(request.getGroupMembers())) {
             log.error("[添加好友]-[添加群成员为好友]-待添加人员为空，本次操作取消");
@@ -444,6 +481,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public List<WxPpWcfGroupMemberResp> queryGroupMemberList(WxPpWcfGroupMemberReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         List<WxPpWcfGroupMemberResp> list = new ArrayList<>();
         String weChatUid = queryLoginWeChatUid();
         // 查询群成员
@@ -519,6 +558,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String inviteGroupMember(WxPpWcfInviteGroupMemberReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[群成员]-[邀请群成员加入]-入参打印：{}", request);
         if (CollectionUtils.isEmpty(request.getGroupMembers())) {
             log.error("[群成员]-[邀请群成员加入]-待邀请进群的人员为空，本次操作取消");
@@ -537,6 +578,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String deleteGroupMember(WxPpWcfDeleteGroupMemberReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[群成员]-[删除群成员]-入参打印：{}", request);
         if (CollectionUtils.isEmpty(request.getGroupMembers())) {
             log.error("[群成员]-[删除群成员]-待删除的人员为空，本次操作取消");
@@ -555,6 +598,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String queryFriendCircle() {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[查询]-[刷新朋友圈]-开始");
         // id 开始 id，0 为最新页 (string based uint64)
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REFRESH_PYQ_VALUE).setUi64(0).build();
@@ -568,6 +613,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     @Override
     public String receiveTransfer(WxPpWcfReceiveTransferReq request) {
         long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
         log.info("[转账]-[接收转账]-开始");
         Wcf.Transfer transfer =
             Wcf.Transfer.newBuilder().setWxid(request.getWeChatUid()).setTfid(request.getTransferId()).setTaid(request.getTransferId()).build();
@@ -577,27 +624,6 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         long endTime = System.currentTimeMillis();
         log.info("[转账]-[接收转账]-处理结束，耗时：{}ms", (endTime - startTime));
         return "";
-    }
-
-    /**
-     * 转换艾特用户
-     *
-     * @param groupNo 群组编号
-     * @param atUsers 艾特的用户(名称/微信编号)
-     * @return 组装后的艾特用户
-     *
-     * @author chandler
-     * @date 2024-10-03 11:35
-     */
-    public String dealAtUser(String groupNo, List<String> atUsers) {
-        String atUserStr = "";
-        if (!CollectionUtils.isEmpty(atUsers)) {
-            // 取出要艾特的用户
-            for (String atUser : atUsers) {
-
-            }
-        }
-        return atUserStr;
     }
 
     /**
@@ -706,6 +732,18 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             }
         }
         return map;
+    }
+
+    /**
+     * 请求前检测客户端状态
+     *
+     * @author chandler
+     * @date 2025-01-04 18:34
+     */
+    private void checkClientStatus() {
+        if (!wechatSocketClient.isLogin()) {
+            throw new BizException("微信客户端未登录或状态异常，请人工关闭本服务之后，退出微信客户端在重启本服务！");
+        }
     }
 
 }
