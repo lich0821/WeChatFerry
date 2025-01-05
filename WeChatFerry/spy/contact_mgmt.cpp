@@ -96,7 +96,6 @@ vector<RpcContact_t> GetContacts()
     return contacts;
 }
 
-#if 0
 int AcceptNewFriend(string v3, string v4, int scene)
 {
     int success = 0;
@@ -189,4 +188,3 @@ RpcContact_t GetContactByWxid(string wxid)
 
     return contact;
 }
-#endif
