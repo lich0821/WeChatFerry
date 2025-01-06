@@ -668,7 +668,6 @@ bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, siz
     return true;
 }
 
-#if 0
 bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
     Response rsp  = Response_init_default;
@@ -714,7 +713,6 @@ bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
 
     return true;
 }
-#endif
 
 bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
 {
@@ -912,12 +910,10 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_SEND_XML: {
             ret = func_send_xml(req.msg.xml, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_ENABLE_RECV_TXT: {
             ret = func_enable_recv_txt(req.msg.flag, out, out_len);
             break;
@@ -950,7 +946,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_refresh_qrcode(out, out_len);
             break;
         }
-#if 0
         case Functions_FUNC_ACCEPT_FRIEND: {
             ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
             break;
@@ -959,7 +954,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
             ret = func_get_contact_info(req.msg.str, out, out_len);
             break;
         }
-#endif
         case Functions_FUNC_DECRYPT_IMAGE: {
             ret = func_decrypt_image(req.msg.dec, out, out_len);
             break;
