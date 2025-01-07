@@ -832,11 +832,9 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        if self.download_attach(id, "", extra) != 0:
-            self.LOG.error(f"下载失败")
-            return ""
         cnt = 0
         while cnt < timeout:
+            self.download_attach(id, "", extra)
             path = self.decrypt_image(extra, dir)
             if path:
                 return path
