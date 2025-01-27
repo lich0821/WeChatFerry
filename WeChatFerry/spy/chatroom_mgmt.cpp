@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "chatroom_mgmt.h"
-#include "log.h"
+#include "log.hpp"
 #include "util.h"
 
 using namespace std;

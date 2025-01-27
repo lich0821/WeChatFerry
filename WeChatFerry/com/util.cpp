@@ -8,7 +8,7 @@
 #include <vector>
 #include <wchar.h>
 
-#include "log.h"
+#include "log.hpp"
 #include "util.h"
 
 #pragma comment(lib, "shlwapi")

@@ -1,7 +1,7 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "contact_mgmt.h"
-#include "log.h"
+#include "log.hpp"
 #include "util.h"
 
 using namespace std;

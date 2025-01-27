@@ -1,5 +1,5 @@
 ﻿#include "user_info.h"
-#include "log.h"
+#include "log.hpp"
 #include "util.h"
 
 extern UINT64 g_WeChatWinDllAddr;

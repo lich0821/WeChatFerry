@@ -237,7 +237,7 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\com\log.h" />
+    <ClInclude Include="..\com\log.hpp" />
     <ClInclude Include="..\com\util.h" />
     <ClInclude Include="..\rpc\nanopb\pb.h" />
     <ClInclude Include="..\rpc\nanopb\pb_common.h" />
@@ -262,7 +262,6 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
     <ClInclude Include="user_info.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\com\log.cpp" />
     <ClCompile Include="..\com\util.cpp" />
     <ClCompile Include="..\rpc\nanopb\pb_common.c" />
     <ClCompile Include="..\rpc\nanopb\pb_decode.c" />

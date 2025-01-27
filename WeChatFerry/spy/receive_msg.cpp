@@ -6,7 +6,7 @@
 #include <mutex>
 #include <queue>
 
-#include "log.h"
+#include "log.hpp"
 #include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"

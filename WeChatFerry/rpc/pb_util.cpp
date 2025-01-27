@@ -1,5 +1,5 @@
 ﻿#include "pb_util.h"
-#include "log.h"
+#include "log.hpp"
 #include "pb_types.h"
 #include "wcf.pb.h"
 

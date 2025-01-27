@@ -7,7 +7,7 @@
 #include "codec.h"
 #include "exec_sql.h"
 #include "funcs.h"
-#include "log.h"
+#include "log.hpp"
 #include "spy_types.h"
 #include "util.h"
 
