@@ -24,10 +24,10 @@
     <ClInclude Include="injector.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\com\log.h">
+    <ClInclude Include="..\com\util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\com\util.h">
+    <ClInclude Include="..\com\log.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,9 +39,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="injector.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\com\log.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\com\util.cpp">

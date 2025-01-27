@@ -17,8 +17,8 @@ static HANDLE wcProcess = NULL;
 static HMODULE spyBase  = NULL;
 static std::wstring spyDllPath;
 
-const char *DISCLAIMER_FILE      = ".license_accepted.flag";
-const char *DISCLAIMER_TEXT_FILE = "DISCLAIMER.md";
+constexpr char DISCLAIMER_FILE[]      = ".license_accepted.flag";
+constexpr char DISCLAIMER_TEXT_FILE[] = "DISCLAIMER.md";
 
 static std::optional<std::wstring> ReadDisclaimerText(const char *filePath)
 {

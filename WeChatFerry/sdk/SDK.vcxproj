@@ -141,14 +141,13 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\com\log.h" />
+    <ClInclude Include="..\com\log.hpp" />
     <ClInclude Include="..\com\util.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="injector.h" />
     <ClInclude Include="sdk.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\com\log.cpp" />
     <ClCompile Include="..\com\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="injector.cpp" />
