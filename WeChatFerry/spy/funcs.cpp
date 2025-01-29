@@ -8,13 +8,13 @@
 #include "exec_sql.h"
 #include "funcs.h"
 #include "log.hpp"
+#include "receive_msg.h"
 #include "spy_types.h"
 #include "util.h"
 
 using namespace std;
 namespace fs = std::filesystem;
 
-extern bool gIsListeningPyq;
 extern QWORD g_WeChatWinDllAddr;
 
 #define HEADER_PNG1 0x89
@@ -111,31 +111,24 @@ string DecryptImage(string src, string dir)
 
     string dst = "";
 
-    try {
-        if (dir.empty()) {
-            dst = fs::path(src).replace_extension(ext).string();
-        } else {
-            dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
-            
-            // 判断dir文件夹是否存在，若不存在则创建（否则将无法创建出文件）
-            if (!fs::exists(dst)) {//判断该文件夹是否存在
-                bool success = fs::create_directories(dst); //Windows创建文件夹
-                if (!success) { //创建失败
-                    LOG_ERROR("Failed to mkdir:{}", dst);
-                    return "";
-                }
+    if (dir.empty()) {
+        dst = fs::path(src).replace_extension(ext).string();
+    } else {
+        dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+
+        // 判断dir文件夹是否存在，若不存在则创建（否则将无法创建出文件）
+        if (!fs::exists(dst)) {                         // 判断该文件夹是否存在
+            bool success = fs::create_directories(dst); // Windows创建文件夹
+            if (!success) {                             // 创建失败
+                LOG_ERROR("Failed to mkdir:{}", dst);
+                return "";
             }
-            
-            dst += fs::path(src).stem().string() + ext;
         }
 
-        replace(dst.begin(), dst.end(), '\\', '/');
-    } catch (const std::exception &e) {
-        LOG_ERROR(GB2312ToUtf8(e.what()));
-    } catch (...) {
-        LOG_ERROR("Unknow exception.");
-        return "";
+        dst += fs::path(src).stem().string() + ext;
     }
+
+    replace(dst.begin(), dst.end(), '\\', '/');
 
     ofstream out(dst.c_str(), ios::binary);
     if (!out.is_open()) {
@@ -178,7 +171,8 @@ static int GetNextPage(QWORD id)
 
 int RefreshPyq(QWORD id)
 {
-    if (!gIsListeningPyq) {
+    auto &msgHandler = MessageHandler::getInstance();
+    if (!msgHandler.isPyqListening()) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
         return -1;
     }
@@ -319,7 +313,7 @@ string GetPCMAudio(uint64_t id, string dir, int32_t sr)
 
     SilkDecode(silk, pcm, sr);
     errno_t err;
-    FILE* fPCM;
+    FILE *fPCM;
     err = fopen_s(&fPCM, pcmpath.c_str(), "wb");
     if (err != 0) {
         printf("Error: could not open input file %s\n", pcmpath.c_str());
@@ -331,7 +325,6 @@ string GetPCMAudio(uint64_t id, string dir, int32_t sr)
 
     return pcmpath;
 }
-
 
 OcrResult_t GetOcrResult(string path)
 {
