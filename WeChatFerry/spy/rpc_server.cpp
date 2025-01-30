@@ -48,12 +48,14 @@ auto &msgHandler = MessageHandler::getInstance();
 
 static std::string BuildUrl(int port) { return "tcp://0.0.0.0:" + std::to_string(port); }
 
-bool func_is_login(uint8_t *out, size_t *len)
+template <Functions funcType, typename AssignFunc>
+static bool FillResponse(int which_msg, uint8_t *out, size_t *len, AssignFunc assign)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_IS_LOGIN;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = IsLogin();
+    Response rsp  = Response_init_default;
+    rsp.func      = funcType;
+    rsp.which_msg = which_msg;
+
+    assign(rsp);
 
     pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
     if (!pb_encode(&stream, Response_fields, &rsp)) {
@@ -61,366 +63,199 @@ bool func_is_login(uint8_t *out, size_t *len)
         return false;
     }
     *len = stream.bytes_written;
-
     return true;
 }
 
-bool func_get_self_wxid(uint8_t *out, size_t *len)
+static bool func_is_login(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_SELF_WXID;
-    rsp.which_msg = Response_str_tag;
-
-    string wxid = GetSelfWxid();
-    rsp.msg.str = (char *)wxid.c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_IS_LOGIN>(Response_status_tag, out, len,
+                                                 [](Response &rsp) { rsp.msg.status = IsLogin(); });
 }
 
-bool func_get_user_info(uint8_t *out, size_t *len)
+static bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_USER_INFO;
-    rsp.which_msg = Response_ui_tag;
-
-    UserInfo_t ui     = GetUserInfo();
-    rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
-    rsp.msg.ui.name   = (char *)ui.name.c_str();
-    rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
-    rsp.msg.ui.home   = (char *)ui.home.c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_SELF_WXID>(Response_str_tag, out, len, [](Response &rsp) {
+        std::string wxid = GetSelfWxid();
+        rsp.msg.str      = wxid.empty() ? nullptr : (char *)wxid.c_str();
+    });
 }
 
-bool func_get_msg_types(uint8_t *out, size_t *len)
+static bool func_get_user_info(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_MSG_TYPES;
-    rsp.which_msg = Response_types_tag;
-
-    MsgTypes_t types                 = msgHandler.GetMsgTypes();
-    rsp.msg.types.types.funcs.encode = encode_types;
-    rsp.msg.types.types.arg          = &types;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_USER_INFO>(Response_ui_tag, out, len, [](Response &rsp) {
+        UserInfo_t ui     = GetUserInfo();
+        rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
+        rsp.msg.ui.name   = (char *)ui.name.c_str();
+        rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
+        rsp.msg.ui.home   = (char *)ui.home.c_str();
+    });
 }
 
-bool func_get_contacts(uint8_t *out, size_t *len)
+static bool func_get_msg_types(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_CONTACTS;
-    rsp.which_msg = Response_contacts_tag;
-
-    vector<RpcContact_t> contacts          = GetContacts();
-    rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
-    rsp.msg.contacts.contacts.arg          = &contacts;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_MSG_TYPES>(Response_types_tag, out, len, [](Response &rsp) {
+        static MsgTypes_t types          = msgHandler.GetMsgTypes();
+        rsp.msg.types.types.funcs.encode = encode_types;
+        rsp.msg.types.types.arg          = &types;
+    });
 }
 
-bool func_get_db_names(uint8_t *out, size_t *len)
+static bool func_get_contacts(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_DB_NAMES;
-    rsp.which_msg = Response_dbs_tag;
-
-    DbNames_t dbnames              = GetDbNames();
-    rsp.msg.dbs.names.funcs.encode = encode_dbnames;
-    rsp.msg.dbs.names.arg          = &dbnames;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_CONTACTS>(Response_contacts_tag, out, len, [](Response &rsp) {
+        static std::vector<RpcContact_t> contacts = GetContacts();
+        rsp.msg.contacts.contacts.funcs.encode    = encode_contacts;
+        rsp.msg.contacts.contacts.arg             = &contacts;
+    });
 }
 
-bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
+static bool func_get_db_names(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_DB_TABLES;
-    rsp.which_msg = Response_tables_tag;
-
-    DbTables_t tables                  = GetDbTables(db);
-    rsp.msg.tables.tables.funcs.encode = encode_tables;
-    rsp.msg.tables.tables.arg          = &tables;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_DB_NAMES>(Response_dbs_tag, out, len, [](Response &rsp) {
+        static DbNames_t dbnames       = GetDbNames();
+        rsp.msg.dbs.names.funcs.encode = encode_dbnames;
+        rsp.msg.dbs.names.arg          = &dbnames;
+    });
 }
 
-bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
+static bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_AUDIO_MSG;
-    rsp.which_msg = Response_str_tag;
-    string path   = "";
-
-    if (dir == NULL) {
-        LOG_ERROR("Empty dir.");
-    } else {
-        path = GetAudio(id, dir);
-    }
-
-    rsp.msg.str = (char *)path.c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_DB_TABLES>(Response_tables_tag, out, len, [db](Response &rsp) {
+        static DbTables_t tables           = GetDbTables(db);
+        rsp.msg.tables.tables.funcs.encode = encode_tables;
+        rsp.msg.tables.tables.arg          = &tables;
+    });
 }
 
-bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
+static bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_TXT;
-    rsp.which_msg = Response_status_tag;
-
-    if ((txt.msg == NULL) || (txt.receiver == NULL)) {
-        LOG_ERROR("Empty message or receiver.");
-        rsp.msg.status = -1; // Empty message or empty receiver
-    } else {
-        string msg(txt.msg);
-        string receiver(txt.receiver);
-        string aters(txt.aters ? txt.aters : "");
-
-        SendTextMessage(receiver, msg, aters);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_GET_AUDIO_MSG>(Response_str_tag, out, len, [id, dir](Response &rsp) {
+        std::string path = (dir == nullptr) ? "" : GetAudio(id, dir);
+        rsp.msg.str      = path.empty() ? nullptr : (char *)path.c_str();
+    });
 }
 
-bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
+static bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_IMG;
-    rsp.which_msg = Response_status_tag;
-
-    if ((path == NULL) || (receiver == NULL)) {
-        LOG_ERROR("Empty path or receiver.");
-        rsp.msg.status = -1;
-    } else if (!fs::exists(String2Wstring(path))) {
-        LOG_ERROR("Path does not exists: {}", path);
-        rsp.msg.status = -2;
-    } else {
-        SendImageMessage(receiver, path);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_SEND_TXT>(Response_status_tag, out, len, [txt](Response &rsp) {
+        if ((txt.msg == NULL) || (txt.receiver == NULL)) {
+            LOG_ERROR("Empty message or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            std::string msg(txt.msg);
+            std::string receiver(txt.receiver);
+            std::string aters(txt.aters ? txt.aters : "");
+            SendTextMessage(receiver, msg, aters);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
+static bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_FILE;
-    rsp.which_msg = Response_status_tag;
-
-    if ((path == NULL) || (receiver == NULL)) {
-        LOG_ERROR("Empty path or receiver.");
-        rsp.msg.status = -1;
-    } else if (!fs::exists(String2Wstring(path))) {
-        LOG_ERROR("Path does not exists: {}", path);
-        rsp.msg.status = -2;
-    } else {
-        SendFileMessage(receiver, path);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_SEND_IMG>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
+        if ((path == NULL) || (receiver == NULL)) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else if (!fs::exists(String2Wstring(path))) {
+            LOG_ERROR("Path does not exist: {}", path);
+            rsp.msg.status = -2;
+        } else {
+            SendImageMessage(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
+static bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_EMOTION;
-    rsp.which_msg = Response_status_tag;
-
-    if ((path == NULL) || (receiver == NULL)) {
-        LOG_ERROR("Empty path or receiver.");
-        rsp.msg.status = -1;
-    } else {
-        SendEmotionMessage(receiver, path);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_SEND_FILE>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
+        if ((path == nullptr) || (receiver == nullptr)) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else if (!fs::exists(String2Wstring(path))) {
+            LOG_ERROR("Path does not exist: {}", path);
+            rsp.msg.status = -2;
+        } else {
+            SendFileMessage(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
+static bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_XML;
-    rsp.which_msg = Response_status_tag;
-
-    if ((xml.content == NULL) || (xml.receiver == NULL)) {
-        LOG_ERROR("Empty content or receiver.");
-        rsp.msg.status = -1;
-    } else {
-        string receiver(xml.receiver);
-        string content(xml.content);
-        string path(xml.path ? xml.path : "");
-        uint64_t type = (uint64_t)xml.type;
-        SendXmlMessage(receiver, content, path, type);
-        rsp.msg.status = 0;
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_SEND_EMOTION>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
+        if ((path == nullptr) || (receiver == nullptr)) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            SendEmotionMessage(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
+static bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_RICH_TXT;
-    rsp.which_msg = Response_status_tag;
-
-    if (rt.receiver == NULL) {
-        LOG_ERROR("Empty receiver.");
-        rsp.msg.status = -1;
-    } else {
-        RichText_t rtt;
-        rtt.account  = string(rt.account ? rt.account : "");
-        rtt.digest   = string(rt.digest ? rt.digest : "");
-        rtt.name     = string(rt.name ? rt.name : "");
-        rtt.receiver = string(rt.receiver ? rt.receiver : "");
-        rtt.thumburl = string(rt.thumburl ? rt.thumburl : "");
-        rtt.title    = string(rt.title ? rt.title : "");
-        rtt.url      = string(rt.url ? rt.url : "");
-
-        rsp.msg.status = SendRichTextMessage(rtt);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_SEND_XML>(Response_status_tag, out, len, [xml](Response &rsp) {
+        if ((xml.content == nullptr) || (xml.receiver == nullptr)) {
+            LOG_ERROR("Empty content or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            std::string receiver(xml.receiver);
+            std::string content(xml.content);
+            std::string path(xml.path ? xml.path : "");
+            uint64_t type = static_cast<uint64_t>(xml.type);
+            SendXmlMessage(receiver, content, path, type);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
+static bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_SEND_PAT_MSG;
-    rsp.which_msg = Response_status_tag;
+    return FillResponse<Functions_FUNC_SEND_RICH_TXT>(Response_status_tag, out, len, [rt](Response &rsp) {
+        if (rt.receiver == nullptr) {
+            LOG_ERROR("Empty receiver.");
+            rsp.msg.status = -1;
+        } else {
+            RichText_t rtt;
+            rtt.account  = std::string(rt.account ? rt.account : "");
+            rtt.digest   = std::string(rt.digest ? rt.digest : "");
+            rtt.name     = std::string(rt.name ? rt.name : "");
+            rtt.receiver = std::string(rt.receiver ? rt.receiver : "");
+            rtt.thumburl = std::string(rt.thumburl ? rt.thumburl : "");
+            rtt.title    = std::string(rt.title ? rt.title : "");
+            rtt.url      = std::string(rt.url ? rt.url : "");
 
-    if ((roomid == NULL) || (wxid == NULL)) {
-        LOG_ERROR("Empty roomid or wxid.");
-        rsp.msg.status = -1;
-    } else {
-        rsp.msg.status = SendPatMessage(roomid, wxid);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+            rsp.msg.status = SendRichTextMessage(rtt);
+        }
+    });
 }
 
-bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
+static bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_FORWARD_MSG;
-    rsp.which_msg = Response_status_tag;
+    return FillResponse<Functions_FUNC_SEND_PAT_MSG>(Response_status_tag, out, len, [roomid, wxid](Response &rsp) {
+        if ((roomid == nullptr) || (wxid == nullptr)) {
+            LOG_ERROR("Empty roomid or wxid.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = SendPatMessage(roomid, wxid);
+        }
+    });
+}
 
-    if (receiver == NULL) {
-        LOG_ERROR("Empty roomid or wxid.");
-        rsp.msg.status = -1;
-    } else {
-        rsp.msg.status = ForwardMessage(id, receiver);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+static bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
+{
+    return FillResponse<Functions_FUNC_FORWARD_MSG>(Response_status_tag, out, len, [id, receiver](Response &rsp) {
+        if (receiver == nullptr) {
+            LOG_ERROR("Empty receiver.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = ForwardMessage(id, receiver);
+        }
+    });
 }
 
 static void PushMessage()
@@ -489,351 +324,179 @@ static void PushMessage()
     }
 }
 
-bool func_enable_recv_txt(bool pyq, uint8_t *out, size_t *len)
+static bool func_enable_recv_txt(bool pyq, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_ENABLE_RECV_TXT;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = msgHandler.ListenMsg();
-
-    if (rsp.msg.status == 0) {
-        if (pyq) {
-            msgHandler.ListenPyq();
+    return FillResponse<Functions_FUNC_ENABLE_RECV_TXT>(Response_status_tag, out, len, [pyq](Response &rsp) {
+        rsp.msg.status = msgHandler.ListenMsg();
+        if (rsp.msg.status == 0) {
+            if (pyq) {
+                msgHandler.ListenPyq();
+            }
+            msgThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)PushMessage, nullptr, 0, nullptr);
+            if (msgThread == nullptr) {
+                rsp.msg.status = GetLastError();
+                LOG_ERROR("func_enable_recv_txt failed: {}", rsp.msg.status);
+            }
         }
-        msgThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PushMessage, NULL, NULL, NULL);
-        if (msgThread == NULL) {
-            rsp.msg.status = GetLastError();
-            LOG_ERROR("func_enable_recv_txt failed: {}", rsp.msg.status);
+    });
+}
+
+static bool func_disable_recv_txt(uint8_t *out, size_t *len)
+{
+    return FillResponse<Functions_FUNC_DISABLE_RECV_TXT>(Response_status_tag, out, len, [](Response &rsp) {
+        rsp.msg.status = msgHandler.UnListenMsg();
+        if (rsp.msg.status == 0) {
+            msgHandler.UnListenPyq();
+            if (msgThread != nullptr) {
+                TerminateThread(msgThread, 0);
+                msgThread = nullptr;
+            }
         }
-    }
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    });
 }
 
-bool func_disable_recv_txt(uint8_t *out, size_t *len)
+static bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_DISABLE_RECV_TXT;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = msgHandler.UnListenMsg();
-
-    if (rsp.msg.status == 0) {
-        msgHandler.UnListenPyq();
-        if (msgThread != NULL) {
-            TerminateThread(msgThread, 0);
-            msgThread = NULL;
+    return FillResponse<Functions_FUNC_EXEC_DB_QUERY>(Response_rows_tag, out, len, [db, sql](Response &rsp) {
+        static DbRows_t rows;
+        if ((db == nullptr) || (sql == nullptr)) {
+            LOG_ERROR("Empty db or sql.");
+        } else {
+            rows = ExecDbQuery(db, sql);
         }
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+        rsp.msg.rows.rows.arg          = &rows;
+        rsp.msg.rows.rows.funcs.encode = encode_rows;
+    });
 }
 
-bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
+static bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_EXEC_DB_QUERY;
-    rsp.which_msg = Response_rows_tag;
-    DbRows_t rows;
-
-    if ((db == NULL) || (sql == NULL)) {
-        LOG_ERROR("Empty db or sql.");
-    } else {
-        rows = ExecDbQuery(db, sql);
-    }
-
-    rsp.msg.rows.rows.arg          = &rows;
-    rsp.msg.rows.rows.funcs.encode = encode_rows;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_REFRESH_PYQ>(Response_status_tag, out, len,
+                                                    [id](Response &rsp) { rsp.msg.status = RefreshPyq(id); });
 }
 
-bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
+static bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REFRESH_PYQ;
-    rsp.which_msg = Response_status_tag;
-
-    rsp.msg.status = RefreshPyq(id);
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_DOWNLOAD_ATTACH>(Response_status_tag, out, len, [att](Response &rsp) {
+        std::string thumb = att.thumb ? att.thumb : "";
+        std::string extra = att.extra ? att.extra : "";
+        rsp.msg.status    = DownloadAttach(att.id, thumb, extra);
+    });
 }
 
-bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
+static bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_DOWNLOAD_ATTACH;
-    rsp.which_msg = Response_status_tag;
-
-    uint64_t id  = att.id;
-    string thumb = string(att.thumb ? att.thumb : "");
-    string extra = string(att.extra ? att.extra : "");
-
-    rsp.msg.status = DownloadAttach(id, thumb, extra);
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_REVOKE_MSG>(Response_status_tag, out, len,
+                                                   [id](Response &rsp) { rsp.msg.status = RevokeMsg(id); });
 }
 
-bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
+static bool func_refresh_qrcode(uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REVOKE_MSG;
-    rsp.which_msg = Response_status_tag;
-
-    rsp.msg.status = RevokeMsg(id);
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_REFRESH_QRCODE>(Response_str_tag, out, len, [](Response &rsp) {
+        std::string url = GetLoginUrl();
+        rsp.msg.str     = url.empty() ? nullptr : (char *)url.c_str();
+    });
 }
 
-bool func_refresh_qrcode(uint8_t *out, size_t *len)
+static bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_REFRESH_QRCODE;
-    rsp.which_msg = Response_str_tag;
-
-    rsp.msg.str = (char *)GetLoginUrl().c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
-}
-
-bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_RECV_TRANSFER;
-    rsp.which_msg = Response_status_tag;
-
-    if ((wxid == NULL) || (tfid == NULL) || (taid == NULL)) {
-        rsp.msg.status = -1;
-        LOG_ERROR("Empty wxid, tfid or taid.");
-    } else {
-        rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_RECV_TRANSFER>(Response_status_tag, out, len, [wxid, tfid, taid](Response &rsp) {
+        if ((wxid == nullptr) || (tfid == nullptr) || (taid == nullptr)) {
+            LOG_ERROR("Empty wxid, tfid, or taid.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
+        }
+    });
 }
 
 #if 0
-bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
+static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_ACCEPT_FRIEND;
-    rsp.which_msg = Response_status_tag;
-
-    if ((v3 == NULL) || (v4 == NULL)) {
-        rsp.msg.status = -1;
-        LOG_ERROR("Empty V3 or V4.");
-    } else {
-        rsp.msg.status = AcceptNewFriend(v3, v4, scene);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_ACCEPT_FRIEND>(Response_status_tag, out, len, [v3, v4, scene](Response &rsp) {
+        if ((v3 == nullptr) || (v4 == nullptr)) {
+            LOG_ERROR("Empty V3 or V4.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = AcceptNewFriend(v3, v4, scene);
+        }
+    });
 }
 
-bool func_get_contact_info(string wxid, uint8_t *out, size_t *len)
+static bool func_get_contact_info(std::string wxid, uint8_t *out, size_t *len)
 {
-    /*借用 Functions_FUNC_GET_CONTACTS */
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_GET_CONTACT_INFO;
-    rsp.which_msg = Response_contacts_tag;
+    return FillResponse<Functions_FUNC_GET_CONTACT_INFO>(Response_contacts_tag, out, len, [wxid](Response &rsp) {
+        static std::vector<RpcContact_t> contacts;
+        contacts.clear();
+        contacts.push_back(GetContactByWxid(wxid));
 
-    vector<RpcContact_t> contacts;
-    contacts.push_back(GetContactByWxid(wxid));
-
-    rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
-    rsp.msg.contacts.contacts.arg          = &contacts;
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+        rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
+        rsp.msg.contacts.contacts.arg          = &contacts;
+    });
 }
 #endif
 
-bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
+static bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
 {
-    Response rsp  = Response_init_default;
-    rsp.func      = Functions_FUNC_DECRYPT_IMAGE;
-    rsp.which_msg = Response_str_tag;
-    string path   = "";
-
-    if ((dec.src == NULL) || (dec.dst == NULL)) {
-        LOG_ERROR("Empty src or dst.");
-    } else {
-        path = DecryptImage(dec.src, dec.dst);
-    }
-
-    rsp.msg.str = (char *)path.c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_DECRYPT_IMAGE>(Response_str_tag, out, len, [dec](Response &rsp) {
+        std::string path;
+        if ((dec.src == nullptr) || (dec.dst == nullptr)) {
+            LOG_ERROR("Empty src or dst.");
+        } else {
+            path = DecryptImage(dec.src, dec.dst);
+        }
+        rsp.msg.str = path.empty() ? nullptr : (char *)path.c_str();
+    });
 }
 
-bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
+static bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
 {
-    Response rsp    = Response_init_default;
-    rsp.func        = Functions_FUNC_EXEC_OCR;
-    rsp.which_msg   = Response_ocr_tag;
-    OcrResult_t ret = { -1, "" };
-
-    if (path == NULL) {
-        LOG_ERROR("Empty path.");
-    } else {
-        ret = GetOcrResult(path);
-    }
-
-    rsp.msg.ocr.status = ret.status;
-    rsp.msg.ocr.result = (char *)ret.result.c_str();
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-    return true;
+    return FillResponse<Functions_FUNC_EXEC_OCR>(Response_ocr_tag, out, len, [path](Response &rsp) {
+        OcrResult_t ret = { -1, "" };
+        if (path == nullptr) {
+            LOG_ERROR("Empty path.");
+        } else {
+            ret = GetOcrResult(path);
+        }
+        rsp.msg.ocr.status = ret.status;
+        rsp.msg.ocr.result = ret.result.empty() ? nullptr : (char *)ret.result.c_str();
+    });
 }
 
-bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+static bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_ADD_ROOM_MEMBERS;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
-
-    if ((roomid == NULL) || (wxids == NULL)) {
-        LOG_ERROR("Empty roomid or wxids.");
-        rsp.msg.status = -1;
-    } else {
-        rsp.msg.status = AddChatroomMember(roomid, wxids);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_ADD_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
+        if ((roomid == nullptr) || (wxids == nullptr)) {
+            LOG_ERROR("Empty roomid or wxids.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = AddChatroomMember(roomid, wxids);
+        }
+    });
 }
 
-bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+static bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_DEL_ROOM_MEMBERS;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
-
-    if ((roomid == NULL) || (wxids == NULL)) {
-        LOG_ERROR("Empty roomid or wxids.");
-        rsp.msg.status = -1;
-    } else {
-        rsp.msg.status = DelChatroomMember(roomid, wxids);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_DEL_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
+        if ((roomid == nullptr) || (wxids == nullptr)) {
+            LOG_ERROR("Empty roomid or wxids.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = DelChatroomMember(roomid, wxids);
+        }
+    });
 }
 
-bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
+static bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
 {
-    Response rsp   = Response_init_default;
-    rsp.func       = Functions_FUNC_INV_ROOM_MEMBERS;
-    rsp.which_msg  = Response_status_tag;
-    rsp.msg.status = 0;
-
-    if ((roomid == NULL) || (wxids == NULL)) {
-        LOG_ERROR("Empty roomid or wxids.");
-        rsp.msg.status = -1;
-    } else {
-        rsp.msg.status = InviteChatroomMember(roomid, wxids);
-    }
-
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-
-    return true;
+    return FillResponse<Functions_FUNC_INV_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
+        if ((roomid == nullptr) || (wxids == nullptr)) {
+            LOG_ERROR("Empty roomid or wxids.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = InviteChatroomMember(roomid, wxids);
+        }
+    });
 }
 
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
