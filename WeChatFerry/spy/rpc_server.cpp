@@ -33,21 +33,16 @@
 #include "user_info.h"
 #include "util.h"
 
-#define URL_SIZE   20
-#define BASE_URL   "tcp://0.0.0.0"
-#define G_BUF_SIZE (16 * 1024 * 1024)
-
 namespace fs = std::filesystem;
 
 constexpr size_t DEFAULT_BUF_SIZE = 16 * 1024 * 1024;
 
-static int cmdPort         = 0;
-static bool isRpcRunning   = false;
-static bool isReveivingMsg = false;
-static HANDLE cmdThread    = NULL;
-static HANDLE msgThread    = NULL;
-static nng_socket cmdSock  = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
-static nng_socket msgSock  = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
+static int cmdPort        = 0;
+static bool isRpcRunning  = false;
+static HANDLE cmdThread   = NULL;
+static HANDLE msgThread   = NULL;
+static nng_socket cmdSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
+static nng_socket msgSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 
 auto &msgHandler = MessageHandler::getInstance();
 
