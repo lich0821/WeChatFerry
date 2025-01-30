@@ -75,7 +75,7 @@ static bool func_is_login(uint8_t *out, size_t *len)
 static bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_SELF_WXID>(Response_str_tag, out, len, [](Response &rsp) {
-        std::string wxid = GetSelfWxid();
+        std::string wxid = user_info::get_self_wxid();
         rsp.msg.str      = wxid.empty() ? nullptr : (char *)wxid.c_str();
     });
 }
@@ -83,7 +83,7 @@ static bool func_get_self_wxid(uint8_t *out, size_t *len)
 static bool func_get_user_info(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_USER_INFO>(Response_ui_tag, out, len, [](Response &rsp) {
-        UserInfo_t ui     = GetUserInfo();
+        UserInfo_t ui     = user_info::get_user_info();
         rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
         rsp.msg.ui.name   = (char *)ui.name.c_str();
         rsp.msg.ui.mobile = (char *)ui.mobile.c_str();

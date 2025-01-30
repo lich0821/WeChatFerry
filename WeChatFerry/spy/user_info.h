@@ -1,12 +1,24 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include "pb_types.h"
 
-using namespace std;
+namespace user_info
+{
 
-string GetHomePath();
-string GetSelfWxid();
+// 获取 WeChat 数据存储路径
+std::string get_home_path();
 
-UserInfo_t GetUserInfo();
+// 获取自身 wxid
+std::optional<std::string> get_self_wxid();
+
+// 获取用户信息
+UserInfo_t get_user_info();
+
+// RPC 方法
+bool rpc_get_self_wxid(uint8_t *out, size_t *len);
+bool rpc_get_user_info(uint8_t *out, size_t *len);
+
+} // namespace user_info
