@@ -465,7 +465,7 @@ static bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = AddChatroomMember(roomid, wxids);
+            rsp.msg.status = chatroom_mgmt::add_chatroom_member(roomid, wxids);
         }
     });
 }
@@ -477,7 +477,7 @@ static bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = DelChatroomMember(roomid, wxids);
+            rsp.msg.status = chatroom_mgmt::del_chatroom_member(roomid, wxids);
         }
     });
 }
@@ -489,7 +489,7 @@ static bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, si
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = InviteChatroomMember(roomid, wxids);
+            rsp.msg.status = chatroom_mgmt::invite_chatroom_member(roomid, wxids);
         }
     });
 }

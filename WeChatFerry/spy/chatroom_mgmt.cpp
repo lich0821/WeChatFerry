@@ -1,113 +1,109 @@
-﻿#include "framework.h"
-#include <sstream>
-#include <vector>
+﻿#pragma execution_character_set("utf-8")
 
 #include "chatroom_mgmt.h"
+#include "fill_response.h"
 #include "log.hpp"
+#include "pb_util.h"
 #include "util.h"
 
 using namespace std;
 extern QWORD g_WeChatWinDllAddr;
 
+namespace chatroom_mgmt
+{
 #define OS_GET_CHATROOM_MGR 0x1B83BD0
 #define OS_ADD_MEMBERS      0x2155100
 #define OS_DELETE_MEMBERS   0x2155740
 #define OS_INVITE_MEMBERS   0x2154AE0
 
-typedef QWORD (*GetChatRoomMgr_t)();
-typedef QWORD (*AddMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*DelMemberFromChatRoom_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*InviteMemberToChatRoom_t)(QWORD, QWORD, QWORD, QWORD);
+using get_chatroom_mgr_t          = QWORD (*)();
+using add_member_to_chatroom_t    = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
+using del_member_from_chatroom_t  = QWORD (*)(QWORD, QWORD, QWORD);
+using invite_member_to_chatroom_t = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 
-int AddChatroomMember(string roomid, string wxids)
+static vector<WxString> parse_wxids(const string &wxids)
 {
-    int status = -1;
-
-    if (roomid.empty() || wxids.empty()) {
-        LOG_ERROR("Empty roomid or wxids.");
-        return status;
-    }
-
-    GetChatRoomMgr_t GetChatRoomMgr  = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
-    AddMemberToChatRoom_t AddMembers = (AddMemberToChatRoom_t)(g_WeChatWinDllAddr + OS_ADD_MEMBERS);
-
-    vector<wstring> vMembers;
-    vector<WxString> vWxMembers;
+    vector<WxString> wx_members;
     wstringstream wss(String2Wstring(wxids));
-    while (wss.good()) {
-        wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString wxMember(vMembers.back());
-        vWxMembers.push_back(wxMember);
+    wstring wstr;
+    while (getline(wss, wstr, L',')) {
+        wx_members.emplace_back(wstr);
     }
-
-    QWORD temp[2]       = { 0 };
-    WxString *pWxRoomid = NewWxStringFromStr(roomid);
-    QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
-
-    QWORD mgr = GetChatRoomMgr();
-    status    = (int)AddMembers(mgr, pMembers, (QWORD)pWxRoomid, (QWORD)temp);
-    return status;
+    return wx_members;
 }
 
-int DelChatroomMember(string roomid, string wxids)
+int add_chatroom_member(const string &roomid, const string &wxids)
 {
-    int status = -1;
-
     if (roomid.empty() || wxids.empty()) {
         LOG_ERROR("Empty roomid or wxids.");
-        return status;
+        return -1;
     }
 
-    GetChatRoomMgr_t GetChatRoomMgr    = (GetChatRoomMgr_t)(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
-    DelMemberFromChatRoom_t DelMembers = (DelMemberFromChatRoom_t)(g_WeChatWinDllAddr + OS_DELETE_MEMBERS);
+    get_chatroom_mgr_t get_chatroom_mgr
+        = reinterpret_cast<get_chatroom_mgr_t>(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
+    add_member_to_chatroom_t add_members
+        = reinterpret_cast<add_member_to_chatroom_t>(g_WeChatWinDllAddr + OS_ADD_MEMBERS);
 
-    vector<wstring> vMembers;
-    vector<WxString> vWxMembers;
-    wstringstream wss(String2Wstring(wxids));
-    while (wss.good()) {
-        wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString wxMember(vMembers.back());
-        vWxMembers.push_back(wxMember);
-    }
+    vector<WxString> wx_members = parse_wxids(wxids);
+    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    WxString *pWxRoomid = NewWxStringFromStr(roomid);
-    QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
-
-    QWORD mgr = GetChatRoomMgr();
-    status    = (int)DelMembers(mgr, pMembers, (QWORD)pWxRoomid);
-    return status;
+    return static_cast<int>(add_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(p_wx_roomid), 0));
 }
 
-int InviteChatroomMember(string roomid, string wxids)
+int del_chatroom_member(const string &roomid, const string &wxids)
 {
-    int status = -1;
-
     if (roomid.empty() || wxids.empty()) {
         LOG_ERROR("Empty roomid or wxids.");
-        return status;
+        return -1;
     }
 
-    InviteMemberToChatRoom_t InviteMembers = (InviteMemberToChatRoom_t)(g_WeChatWinDllAddr + OS_INVITE_MEMBERS);
+    get_chatroom_mgr_t get_chatroom_mgr
+        = reinterpret_cast<get_chatroom_mgr_t>(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
+    del_member_from_chatroom_t del_members
+        = reinterpret_cast<del_member_from_chatroom_t>(g_WeChatWinDllAddr + OS_DELETE_MEMBERS);
 
-    vector<wstring> vMembers;
-    vector<WxString> vWxMembers;
-    wstringstream wss(String2Wstring(wxids));
-    while (wss.good()) {
-        wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString wxMember(vMembers.back());
-        vWxMembers.push_back(wxMember);
-    }
-    QWORD temp[2]       = { 0 };
-    wstring wsRoomid    = String2Wstring(roomid);
-    WxString *pWxRoomid = NewWxStringFromWstr(wsRoomid);
-    QWORD pMembers      = (QWORD) & ((RawVector_t *)&vWxMembers)->start;
+    vector<WxString> wx_members = parse_wxids(wxids);
+    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    status = (int)InviteMembers((QWORD)wsRoomid.c_str(), pMembers, (QWORD)pWxRoomid, (QWORD)temp);
-    return status;
+    return static_cast<int>(del_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(p_wx_roomid)));
 }
+
+int invite_chatroom_member(const string &roomid, const string &wxids)
+{
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
+    invite_member_to_chatroom_t invite_members
+        = reinterpret_cast<invite_member_to_chatroom_t>(g_WeChatWinDllAddr + OS_INVITE_MEMBERS);
+
+    vector<WxString> wx_members = parse_wxids(wxids);
+    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
+
+    return static_cast<int>(invite_members(reinterpret_cast<QWORD>(p_wx_roomid->c_str()), p_members,
+                                           reinterpret_cast<QWORD>(p_wx_roomid), 0));
+}
+
+bool rpc_add_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_ADD_ROOM_MEMBERS>(
+        out, len, [&](Response &rsp) { rsp.msg.status = add_chatroom_member(roomid, wxids); });
+}
+
+bool rpc_del_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_DEL_ROOM_MEMBERS>(
+        out, len, [&](Response &rsp) { rsp.msg.status = del_chatroom_member(roomid, wxids); });
+}
+
+bool rpc_invite_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_INV_ROOM_MEMBERS>(
+        out, len, [&](Response &rsp) { rsp.msg.status = invite_chatroom_member(roomid, wxids); });
+}
+
+} // namespace chatroom_mgmt
