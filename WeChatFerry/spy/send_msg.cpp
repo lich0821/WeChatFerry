@@ -7,11 +7,11 @@
 #include "log.hpp"
 #include "send_msg.h"
 #include "spy_types.h"
+#include "user_info.h"
 #include "util.h"
 
 extern HANDLE g_hEvent;
 extern QWORD g_WeChatWinDllAddr;
-extern string GetSelfWxid(); // Defined in spy.cpp
 
 #define SRTM_SIZE 0x3F0
 
@@ -263,7 +263,7 @@ void SendXmlMessage(string receiver, string xml, string path, QWORD type)
     WxString *pReceiver = NewWxStringFromStr(receiver);
     WxString *pXml      = NewWxStringFromStr(xml);
     WxString *pPath     = NewWxStringFromStr(path);
-    WxString *pSender   = NewWxStringFromStr(GetSelfWxid());
+    WxString *pSender   = NewWxStringFromStr(user_info::get_self_wxid());
 
     sendXmlMsg(pBuf, (QWORD)pSender, (QWORD)pReceiver, (QWORD)pXml, (QWORD)pPath, (QWORD)(&nullBuf), type, 0x4, sign,
                pBuf2);

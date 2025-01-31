@@ -49,10 +49,10 @@ QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
 
         if (wxMsg.roomid.find("@chatroom") != std::string::npos) {
             wxMsg.is_group = true;
-            wxMsg.sender   = wxMsg.is_self ? GetSelfWxid() : GetStringByWstrAddr(arg2 + OS_RECV_MSG_WXID);
+            wxMsg.sender   = wxMsg.is_self ? user_info::get_self_wxid() : GetStringByWstrAddr(arg2 + OS_RECV_MSG_WXID);
         } else {
             wxMsg.is_group = false;
-            wxMsg.sender   = wxMsg.is_self ? GetSelfWxid() : wxMsg.roomid;
+            wxMsg.sender   = wxMsg.is_self ? user_info::get_self_wxid() : wxMsg.roomid;
         }
     } catch (const std::exception &e) {
         LOG_ERROR(GB2312ToUtf8(e.what()));

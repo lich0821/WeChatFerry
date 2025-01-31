@@ -12,7 +12,7 @@ namespace user_info
 std::string get_home_path();
 
 // 获取自身 wxid
-std::optional<std::string> get_self_wxid();
+std::string get_self_wxid();
 
 // 获取用户信息
 UserInfo_t get_user_info();
