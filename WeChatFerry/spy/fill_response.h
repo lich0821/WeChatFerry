@@ -1,6 +1,9 @@
 #pragma once
 
+#include <magic_enum/magic_enum.hpp>
 #include <unordered_map>
+
+#include "wcf.pb.h"
 
 #include "log.hpp"
 #include "pb_encode.h"
@@ -43,7 +46,7 @@ template <Functions FuncType, typename AssignFunc> bool fill_response(uint8_t *o
 
     auto it = rpc_function_map.find(FuncType);
     if (it == rpc_function_map.end()) {
-        LOG_ERROR("Unknown function type: {}", FuncType);
+        LOG_ERROR("Unknown function type: {}", magic_enum::enum_name(rsp.func));
         return false;
     }
     rsp.which_msg = it->second;
