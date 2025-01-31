@@ -15,7 +15,7 @@ std::vector<RpcContact_t> get_contacts();
 RpcContact_t get_contact_by_wxid(const std::string &wxid);
 
 // 接受好友请求
-int accept_friend(const std::string &v3, const std::string &v4, int scene);
+int accept_new_friend(const std::string &v3, const std::string &v4, int scene);
 
 // 发送好友请求
 // int add_friend_by_wxid(const std::string &wxid, const std::string &msg);

@@ -103,9 +103,9 @@ static bool func_get_msg_types(uint8_t *out, size_t *len)
 static bool func_get_contacts(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_CONTACTS>(Response_contacts_tag, out, len, [](Response &rsp) {
-        static std::vector<RpcContact_t> contacts = contact_mgmt::get_contacts();
-        rsp.msg.contacts.contacts.funcs.encode    = encode_contacts;
-        rsp.msg.contacts.contacts.arg             = &contacts;
+        std::vector<RpcContact_t> contacts     = contact_mgmt::get_contacts();
+        rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
+        rsp.msg.contacts.contacts.arg          = &contacts;
     });
 }
 
@@ -417,7 +417,7 @@ static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, 
             LOG_ERROR("Empty V3 or V4.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = contact_mgmt::accept_friend(v3, v4, scene);
+            rsp.msg.status = contact_mgmt::accept_new_friend(v3, v4, scene);
         }
     });
 }
@@ -425,7 +425,7 @@ static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, 
 static bool func_get_contact_info(std::string wxid, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_CONTACT_INFO>(Response_contacts_tag, out, len, [wxid](Response &rsp) {
-        std::vector<RpcContact_t> contacts     = contact_mgmt::get_contact_by_wxid(wxid);
+        std::vector<RpcContact_t> contacts     = { contact_mgmt::get_contact_by_wxid(wxid) };
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });

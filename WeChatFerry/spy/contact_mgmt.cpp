@@ -3,15 +3,15 @@
 #include "contact_mgmt.h"
 #include "fill_response.h"
 #include "log.hpp"
+#include "pb_util.h"
 #include "util.h"
 
 using namespace std;
 
-namespace contact_mgmt
-{
-
 extern QWORD g_WeChatWinDllAddr;
 
+namespace contact_mgmt
+{
 #define OS_GET_CONTACT_MGR  0x1B417A0
 #define OS_GET_CONTACT_LIST 0x219ED10
 #define OS_CONTACT_BIN      0x200
@@ -98,7 +98,7 @@ vector<RpcContact_t> get_contacts()
     return contacts;
 }
 
-int accept_new_friend(string v3, string v4, int scene)
+int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 {
     int success = -1;
 #if 0
@@ -149,7 +149,7 @@ int accept_new_friend(string v3, string v4, int scene)
     return success; // 成功返回 1
 }
 
-RpcContact_t get_contact_by_wxid(string wxid)
+RpcContact_t get_contact_by_wxid(const string &wxid)
 {
     RpcContact_t contact;
 #if 0
@@ -214,7 +214,7 @@ bool rpc_get_contact_info(const string &wxid, uint8_t *out, size_t *len)
 bool rpc_accept_friend(const string &v3, const string &v4, int scene, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_ACCEPT_FRIEND>(
-        out, len, [&](Response &rsp) { rsp.msg.status = accept_friend(v3, v4, scene); });
+        out, len, [&](Response &rsp) { rsp.msg.status = accept_new_friend(v3, v4, scene); });
 }
 
 } // namespace contact_mgmt
