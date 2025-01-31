@@ -1,11 +1,28 @@
 ﻿#pragma once
 
-#include "string"
+#include <string>
 #include <vector>
 
 #include "pb_types.h"
 
-vector<RpcContact_t> GetContacts();
-int AcceptNewFriend(std::string v3, std::string v4, int scene);
-int AddFriendByWxid(std::string wxid, std::string msg);
-RpcContact_t GetContactByWxid(std::string wxid);
+namespace contact_mgmt
+{
+
+// 获取所有联系人
+std::vector<RpcContact_t> get_contacts();
+
+// 根据 wxid 获取联系人信息
+RpcContact_t get_contact_by_wxid(const std::string &wxid);
+
+// 接受好友请求
+int accept_friend(const std::string &v3, const std::string &v4, int scene);
+
+// 发送好友请求
+// int add_friend_by_wxid(const std::string &wxid, const std::string &msg);
+
+// RPC 方法
+bool rpc_get_contacts(uint8_t *out, size_t *len);
+bool rpc_get_contact_info(const std::string &wxid, uint8_t *out, size_t *len);
+bool rpc_accept_friend(const std::string &v3, const std::string &v4, int scene, uint8_t *out, size_t *len);
+
+} // namespace contact_mgmt
