@@ -84,7 +84,7 @@ int invite_chatroom_member(const string &roomid, const string &wxids)
     WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
     QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    return static_cast<int>(invite_members(reinterpret_cast<QWORD>(p_wx_roomid->c_str()), p_members,
+    return static_cast<int>(invite_members(reinterpret_cast<QWORD>(p_wx_roomid->wptr), p_members,
                                            reinterpret_cast<QWORD>(p_wx_roomid), 0));
 }
 
