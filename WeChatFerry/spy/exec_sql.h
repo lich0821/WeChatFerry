@@ -1,11 +1,32 @@
 ﻿#pragma once
 
+#include <optional>
+#include <string>
 #include <vector>
 
 #include "pb_types.h"
 
-DbNames_t GetDbNames();
-DbTables_t GetDbTables(const string db);
-DbRows_t ExecDbQuery(const string db, const string sql);
-int GetLocalIdandDbidx(uint64_t id, uint64_t *localId, uint32_t *dbIdx);
-vector<uint8_t> GetAudioData(uint64_t msgid);
+namespace exec_sql
+{
+
+// 获取数据库名称列表
+DbNames_t get_db_names();
+
+// 获取指定数据库的表列表
+DbTables_t get_db_tables(const std::string &db);
+
+// 执行 SQL 查询
+DbRows_t exec_db_query(const std::string &db, const std::string &sql);
+
+// 获取本地消息 ID 和数据库索引
+std::optional<std::pair<uint64_t, uint32_t>> get_local_id_and_dbidx(uint64_t id);
+
+// 获取音频数据
+std::vector<uint8_t> get_audio_data(uint64_t msg_id);
+
+// RPC 方法
+bool rpc_get_db_names(uint8_t *out, size_t *len);
+bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len);
+bool rpc_exec_db_query(const std::string &db, const std::string &sql, uint8_t *out, size_t *len);
+
+} // namespace exec_sql

@@ -112,7 +112,7 @@ static bool func_get_contacts(uint8_t *out, size_t *len)
 static bool func_get_db_names(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_DB_NAMES>(Response_dbs_tag, out, len, [](Response &rsp) {
-        static DbNames_t dbnames       = GetDbNames();
+        static DbNames_t dbnames       = exec_sql::get_db_names();
         rsp.msg.dbs.names.funcs.encode = encode_dbnames;
         rsp.msg.dbs.names.arg          = &dbnames;
     });
@@ -121,7 +121,7 @@ static bool func_get_db_names(uint8_t *out, size_t *len)
 static bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_DB_TABLES>(Response_tables_tag, out, len, [db](Response &rsp) {
-        static DbTables_t tables           = GetDbTables(db);
+        static DbTables_t tables           = exec_sql::get_db_tables(db);
         rsp.msg.tables.tables.funcs.encode = encode_tables;
         rsp.msg.tables.tables.arg          = &tables;
     });
@@ -362,7 +362,7 @@ static bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
         if ((db == nullptr) || (sql == nullptr)) {
             LOG_ERROR("Empty db or sql.");
         } else {
-            rows = ExecDbQuery(db, sql);
+            rows = exec_sql::exec_db_query(db, sql);
         }
         rsp.msg.rows.rows.arg          = &rows;
         rsp.msg.rows.rows.funcs.encode = encode_rows;
