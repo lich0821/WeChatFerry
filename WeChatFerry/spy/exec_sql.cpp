@@ -4,6 +4,7 @@
 #include "exec_sql.h"
 #include "fill_response.h"
 #include "log.hpp"
+#include "pb_util.h"
 #include "sqlite3.h"
 #include "util.h"
 

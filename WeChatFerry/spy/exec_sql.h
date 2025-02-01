@@ -19,7 +19,7 @@ DbTables_t get_db_tables(const std::string &db);
 DbRows_t exec_db_query(const std::string &db, const std::string &sql);
 
 // 获取本地消息 ID 和数据库索引
-std::optional<std::pair<uint64_t, uint32_t>> get_local_id_and_dbidx(uint64_t id);
+int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx);
 
 // 获取音频数据
 std::vector<uint8_t> get_audio_data(uint64_t msg_id);
