@@ -262,24 +262,27 @@ std::vector<uint8_t> get_audio_data(uint64_t id)
 bool rpc_get_db_names(uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_GET_DB_NAMES>(out, len, [&](Response &rsp) {
+        DbNames_t names                = get_db_names();
         rsp.msg.dbs.names.funcs.encode = encode_dbnames;
-        rsp.msg.dbs.names.arg          = &get_db_names();
+        rsp.msg.dbs.names.arg          = &names;
     });
 }
 
 bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_GET_DB_TABLES>(out, len, [&](Response &rsp) {
+        DbTables_t tables                  = get_db_tables(db);
         rsp.msg.tables.tables.funcs.encode = encode_tables;
-        rsp.msg.tables.tables.arg          = &get_db_tables(db);
+        rsp.msg.tables.tables.arg          = &tables;
     });
 }
 
 bool rpc_exec_db_query(const std::string &db, const std::string &sql, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_EXEC_DB_QUERY>(out, len, [&](Response &rsp) {
+        DbRows_t rows                  = exec_db_query(db, sql);
         rsp.msg.rows.rows.funcs.encode = encode_rows;
-        rsp.msg.rows.rows.arg          = &exec_db_query(db, sql);
+        rsp.msg.rows.rows.arg          = &rows;
     });
 }
 
