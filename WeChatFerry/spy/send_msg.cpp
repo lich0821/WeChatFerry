@@ -10,10 +10,7 @@
 #include "user_info.h"
 #include "util.h"
 
-extern HANDLE g_hEvent;
 extern QWORD g_WeChatWinDllAddr;
-
-#define SRTM_SIZE 0x3F0
 
 #define OS_NEW             0x1B5E140
 #define OS_FREE            0x1B55850
@@ -53,6 +50,10 @@ SendMsgManager::SendMsgManager()
     func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OS_SEND_XML);
 }
 
+std::unique_ptr<WxString> SendMsgManager::new_wx_string(const char *str)
+{
+    return new_wx_string(str ? std::string(str) : std::string());
+}
 std::unique_ptr<WxString> SendMsgManager::new_wx_string(const std::string &str)
 {
     return std::make_unique<WxString>(String2Wstring(str));
@@ -108,8 +109,8 @@ void SendMsgManager::send_image(const std::string &wxid, const std::string &path
     QWORD pMsg    = func_new(reinterpret_cast<QWORD>(&msg));
     QWORD sendMgr = func_send_msg_mgr();
 
-    funcSendImage(sendMgr, pMsg, reinterpret_cast<QWORD>(wxWxid.get()), reinterpret_cast<QWORD>(wxPath.get()),
-                  reinterpret_cast<QWORD>(&flag));
+    func_send_image(sendMgr, pMsg, reinterpret_cast<QWORD>(wxWxid.get()), reinterpret_cast<QWORD>(wxPath.get()),
+                    reinterpret_cast<QWORD>(&flag));
 
     func_free(pMsg);
     func_free(pMsgTmp);
@@ -179,8 +180,9 @@ void SendMsgManager::send_emotion(const std::string &wxid, const std::string &pa
                       reinterpret_cast<QWORD>(buff.get()));
 }
 
-int SendMsgManager::send_rich_text(RichText_t &rt)
+int SendMsgManager::send_rich_text(const RichText &rt)
 {
+#define SRTM_SIZE 0x3F0
     QWORD status = -1;
 
     char *buff = static_cast<char *>(HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE));
@@ -226,7 +228,7 @@ int SendMsgManager::send_pat(const std::string &roomid, const std::string &wxid)
     return static_cast<int>(status);
 }
 
-int SendMsgManager::forward_message(QWORD msgid, const std::string &receiver)
+int SendMsgManager::forward(QWORD msgid, const std::string &receiver)
 {
     uint32_t dbIdx = 0;
     QWORD localId  = 0;
@@ -245,15 +247,14 @@ int SendMsgManager::forward_message(QWORD msgid, const std::string &receiver)
 }
 
 // RPC 方法
-
-bool SendMsgManager::rpc_send_text(TextMsg &text, uint8_t *out, size_t *len)
+bool SendMsgManager::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_TXT>(out, len, [&](Response &rsp) {
-        if (text.msg.empty() || text.receiver.empty()) {
+        if (text.msg == nullptr || text.receiver == nullptr || strlen(text.msg) == 0 || strlen(text.receiver) == 0) {
             LOG_ERROR("Empty message or receiver.");
             rsp.msg.status = -1;
         } else {
-            send_text(text.receiver, text.msg, text.aters);
+            send_text(text.receiver, text.msg, text.aters ? text.aters : "");
             rsp.msg.status = 0;
         }
     });
@@ -298,14 +299,14 @@ bool SendMsgManager::rpc_send_emotion(const std::string &path, const std::string
     });
 }
 
-bool SendMsgManager::rpc_send_xml(const XmlMsg &rt, uint8_t *out, size_t *len)
+bool SendMsgManager::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_XML>(out, len, [&](Response &rsp) {
-        if (rt.content.empty() || rt.receiver.empty()) {
+        if (xml.content == nullptr || xml.receiver == nullptr) {
             LOG_ERROR("Empty content or receiver.");
             rsp.msg.status = -1;
         } else {
-            send_xml(rt.receiver, rt.content, rt.path, rt.type);
+            send_xml(xml.receiver, xml.content, xml.path, xml.type);
             rsp.msg.status = 0;
         }
     });
@@ -314,20 +315,11 @@ bool SendMsgManager::rpc_send_xml(const XmlMsg &rt, uint8_t *out, size_t *len)
 bool SendMsgManager::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_RICH_TXT>(out, len, [&](Response &rsp) {
-        if (rt.receiver.empty()) {
+        if (rt.receiver == nullptr) {
             LOG_ERROR("Empty receiver.");
             rsp.msg.status = -1;
         } else {
-            RichText_t rtt {
-                .name     = rt.name,
-                .account  = rt.account,
-                .title    = rt.title,
-                .digest   = rt.digest,
-                .url      = rt.url,
-                .thumburl = rt.thumburl,
-                .receiver = rt.receiver,
-            };
-            rsp.msg.status = send_rich_text(rtt);
+            rsp.msg.status = send_rich_text(rt);
         }
     });
 }

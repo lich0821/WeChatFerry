@@ -7,15 +7,15 @@
 #include "spy_types.h"
 #include "wcf.pb.h"
 
-struct RichText_t {
-    std::string name;
-    std::string account;
-    std::string title;
-    std::string digest;
-    std::string url;
-    std::string thumburl;
-    std::string receiver;
-};
+// struct RichText_t {
+//     std::string name;
+//     std::string account;
+//     std::string title;
+//     std::string digest;
+//     std::string url;
+//     std::string thumburl;
+//     std::string receiver;
+// };
 
 class SendMsgManager
 {
@@ -27,12 +27,12 @@ public:
     void send_file(const std::string &wxid, const std::string &path);
     void send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type);
     void send_emotion(const std::string &wxid, const std::string &path);
-    int send_rich_text(RichText_t &rt);
+    int send_rich_text(const RichText &rt);
     int send_pat(const std::string &roomid, const std::string &wxid);
     int forward(uint64_t msgid, const std::string &receiver);
 
     // RPC 方法
-    bool rpc_send_text(TextMsg &text, uint8_t *out, size_t *len);
+    bool rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len);
     bool rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
     bool rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
     bool rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
@@ -79,6 +79,7 @@ private:
     XmlBufSign_t func_xml_buf_sign;
     SendXml_t func_send_xml;
 
+    std::unique_ptr<WxString> new_wx_string(const char *str);
     std::unique_ptr<WxString> new_wx_string(const std::string &str);
     std::vector<WxString> parse_wxids(const std::string &wxids);
 };
