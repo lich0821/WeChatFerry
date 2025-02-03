@@ -221,16 +221,7 @@ static bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
             LOG_ERROR("Empty receiver.");
             rsp.msg.status = -1;
         } else {
-            RichText_t rtt;
-            rtt.account  = std::string(rt.account ? rt.account : "");
-            rtt.digest   = std::string(rt.digest ? rt.digest : "");
-            rtt.name     = std::string(rt.name ? rt.name : "");
-            rtt.receiver = std::string(rt.receiver ? rt.receiver : "");
-            rtt.thumburl = std::string(rt.thumburl ? rt.thumburl : "");
-            rtt.title    = std::string(rt.title ? rt.title : "");
-            rtt.url      = std::string(rt.url ? rt.url : "");
-
-            rsp.msg.status = sendMgr.send_rich_text(rtt);
+            rsp.msg.status = sendMgr.send_rich_text(rt);
         }
     });
 }
