@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "spy_types.h"
 #include "wcf.pb.h"

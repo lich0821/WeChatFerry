@@ -145,7 +145,7 @@ static bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
             std::string msg(txt.msg);
             std::string receiver(txt.receiver);
             std::string aters(txt.aters ? txt.aters : "");
-            SendTextMessage(receiver, msg, aters);
+            SendMsgManager::send_text(receiver, msg, aters);
             rsp.msg.status = 0;
         }
     });
@@ -161,7 +161,7 @@ static bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
             LOG_ERROR("Path does not exist: {}", path);
             rsp.msg.status = -2;
         } else {
-            SendImageMessage(receiver, path);
+            SendMsgManager::send_image(receiver, path);
             rsp.msg.status = 0;
         }
     });
@@ -177,7 +177,7 @@ static bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len
             LOG_ERROR("Path does not exist: {}", path);
             rsp.msg.status = -2;
         } else {
-            SendFileMessage(receiver, path);
+            SendMsgManager::send_file(receiver, path);
             rsp.msg.status = 0;
         }
     });
@@ -190,7 +190,7 @@ static bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
         } else {
-            SendEmotionMessage(receiver, path);
+            SendMsgManager::send_emotion(receiver, path);
             rsp.msg.status = 0;
         }
     });
@@ -207,7 +207,7 @@ static bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
             std::string content(xml.content);
             std::string path(xml.path ? xml.path : "");
             uint64_t type = static_cast<uint64_t>(xml.type);
-            SendXmlMessage(receiver, content, path, type);
+            SendMsgManager::send_xml(receiver, content, path, type);
             rsp.msg.status = 0;
         }
     });
@@ -229,7 +229,7 @@ static bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
             rtt.title    = std::string(rt.title ? rt.title : "");
             rtt.url      = std::string(rt.url ? rt.url : "");
 
-            rsp.msg.status = SendRichTextMessage(rtt);
+            rsp.msg.status = SendMsgManager::send_rich_text(rtt);
         }
     });
 }
@@ -241,7 +241,7 @@ static bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *le
             LOG_ERROR("Empty roomid or wxid.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = SendPatMessage(roomid, wxid);
+            rsp.msg.status = SendMsgManager::send_pat(roomid, wxid);
         }
     });
 }
@@ -253,7 +253,7 @@ static bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *
             LOG_ERROR("Empty receiver.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = ForwardMessage(id, receiver);
+            rsp.msg.status = SendMsgManager::forward(id, receiver);
         }
     });
 }
