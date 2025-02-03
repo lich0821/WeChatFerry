@@ -1,11 +1,11 @@
-﻿
-#include "framework.h"
+﻿#include "send_msg.h"
+
 #include <sstream>
 #include <vector>
 
 #include "exec_sql.h"
+#include "fill_response.h"
 #include "log.hpp"
-#include "send_msg.h"
 #include "spy_types.h"
 #include "user_info.h"
 #include "util.h"
@@ -32,242 +32,326 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_XML_BUFSIGN     0x24F0D70
 #define OS_SEND_XML        0x20CF360
 
-typedef QWORD (*New_t)(QWORD);
-typedef QWORD (*Free_t)(QWORD);
-typedef QWORD (*SendMsgMgr_t)();
-typedef QWORD (*GetAppMsgMgr_t)();
-typedef QWORD (*SendTextMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*SendImageMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*SendFileMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD,
-                               QWORD);
-typedef QWORD (*SendRichTextMsg_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*SendPatMsg_t)(QWORD, QWORD);
-typedef QWORD (*ForwardMsg_t)(QWORD, QWORD, QWORD, QWORD);
-typedef QWORD (*GetEmotionMgr_t)();
-typedef QWORD (*SendEmotion_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-
-typedef QWORD (*XmlBufSign_t)(QWORD, QWORD, QWORD);
-typedef QWORD (*SendXmlMsg_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-
-void SendTextMessage(string wxid, string msg, string atWxids)
+SendMsgManager &SendMsgManager::get_instance()
 {
-    QWORD success  = 0;
-    wstring wsWxid = String2Wstring(wxid);
-    wstring wsMsg  = String2Wstring(msg);
-    WxString wxMsg(wsMsg);
-    WxString wxWxid(wsWxid);
-
-    vector<wstring> vAtWxids;
-    vector<WxString> vWxAtWxids;
-    if (!atWxids.empty()) {
-        wstringstream wss(String2Wstring(atWxids));
-        while (wss.good()) {
-            wstring wstr;
-            getline(wss, wstr, L',');
-            vAtWxids.push_back(wstr);
-            WxString wxAtWxid(vAtWxids.back());
-            vWxAtWxids.push_back(wxAtWxid);
-        }
-    } else {
-        WxString wxEmpty = WxString();
-        vWxAtWxids.push_back(wxEmpty);
-    }
-
-    QWORD wxAters = (QWORD) & ((RawVector_t *)&vWxAtWxids)->start;
-
-    char buffer[0x460]            = { 0 };
-    SendMsgMgr_t funcSendMsgMgr   = (SendMsgMgr_t)(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
-    SendTextMsg_t funcSendTextMsg = (SendTextMsg_t)(g_WeChatWinDllAddr + OS_SEND_TEXT);
-    Free_t funcFree               = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
-    funcSendMsgMgr();
-    success = funcSendTextMsg((QWORD)(&buffer), (QWORD)(&wxWxid), (QWORD)(&wxMsg), wxAters, 1, 1, 0, 0);
-    funcFree((QWORD)(&buffer));
+    static SendMsgManager instance;
+    return instance;
 }
 
-void SendImageMessage(string wxid, string path)
+SendMsgManager::SendMsgManager()
 {
-    wstring wsWxid = String2Wstring(wxid);
-    wstring wsPath = String2Wstring(path);
+    func_new            = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OS_NEW);
+    func_free           = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OS_FREE);
+    func_send_msg_mgr   = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
+    func_send_text      = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OS_SEND_TEXT);
+    func_send_image     = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OS_SEND_IMAGE);
+    func_send_file      = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OS_SEND_FILE);
+    func_send_rich_text = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
+    func_send_pat       = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
+    func_forward        = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
+    func_send_emotion   = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OS_SEND_EMOTION);
+    func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OS_SEND_XML);
+}
 
-    WxString wxWxid(wsWxid);
-    WxString wxPath(wsPath);
+std::unique_ptr<WxString> SendMsgManager::new_wx_string(const std::string &str)
+{
+    return std::make_unique<WxString>(String2Wstring(str));
+}
 
-    New_t funcNew                = (New_t)(g_WeChatWinDllAddr + OS_NEW);
-    Free_t funcFree              = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
-    SendMsgMgr_t funcSendMsgMgr  = (SendMsgMgr_t)(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
-    SendImageMsg_t funcSendImage = (SendImageMsg_t)(g_WeChatWinDllAddr + OS_SEND_IMAGE);
+std::vector<WxString> SendMsgManager::parse_wxids(const string &wxids)
+{
+    vector<WxString> wx_members;
+    wstringstream wss(String2Wstring(wxids));
+    wstring wstr;
+    while (getline(wss, wstr, L',')) {
+        wx_members.emplace_back(wstr);
+    }
+    return wx_members;
+}
+
+void SendMsgManager::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
+{
+    auto wxWxid = new_wx_string(wxid);
+    auto wxMsg  = new_wx_string(msg);
+
+    std::vector<WxString> wx_at_wxids;
+    if (!at_wxids.empty()) {
+        wx_at_wxids = parse_wxids(at_wxids);
+    } else {
+        wx_at_wxids.emplace_back();
+    }
+
+    QWORD wx_ater_list = reinterpret_cast<QWORD>(&(wx_at_wxids.front()));
+
+    char buffer[0x460] = { 0 };
+    func_send_msg_mgr();
+    func_send_text(reinterpret_cast<QWORD>(&buffer), reinterpret_cast<QWORD>(wxWxid.get()),
+                   reinterpret_cast<QWORD>(wxMsg.get()), wx_ater_list, 1, 1, 0, 0);
+    func_free(reinterpret_cast<QWORD>(&buffer));
+}
+
+void SendMsgManager::send_image(const std::string &wxid, const std::string &path)
+{
+    auto wxWxid = new_wx_string(wxid);
+    auto wxPath = new_wx_string(path);
 
     char msg[0x460]    = { 0 };
     char msgTmp[0x460] = { 0 };
-    QWORD *flag[10]    = { 0 };
+    QWORD *flag[10]    = { nullptr };
 
     QWORD tmp1 = 0, tmp2 = 0;
-    QWORD pMsgTmp = funcNew((QWORD)(&msgTmp));
+    QWORD pMsgTmp = func_new(reinterpret_cast<QWORD>(&msgTmp));
     flag[8]       = &tmp1;
     flag[9]       = &tmp2;
-    flag[1]       = (QWORD *)(pMsgTmp);
+    flag[1]       = reinterpret_cast<QWORD *>(pMsgTmp);
 
-    QWORD pMsg    = funcNew((QWORD)(&msg));
-    QWORD sendMgr = funcSendMsgMgr();
-    funcSendImage(sendMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), (QWORD)(&flag));
-    funcFree(pMsg);
-    funcFree(pMsgTmp);
+    QWORD pMsg    = func_new(reinterpret_cast<QWORD>(&msg));
+    QWORD sendMgr = func_send_msg_mgr();
+
+    funcSendImage(sendMgr, pMsg, reinterpret_cast<QWORD>(wxWxid.get()), reinterpret_cast<QWORD>(wxPath.get()),
+                  reinterpret_cast<QWORD>(&flag));
+
+    func_free(pMsg);
+    func_free(pMsgTmp);
 }
 
-void SendFileMessage(string wxid, string path)
+void SendMsgManager::send_file(const std::string &wxid, const std::string &path)
 {
-    wstring wsWxid = String2Wstring(wxid);
-    wstring wsPath = String2Wstring(path);
-
-    WxString wxWxid(wsWxid);
-    WxString wxPath(wsPath);
-
-    New_t funcNew                   = (New_t)(g_WeChatWinDllAddr + OS_NEW);
-    Free_t funcFree                 = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
-    GetAppMsgMgr_t funcGetAppMsgMgr = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + OS_GET_APP_MSG_MGR);
-    SendFileMsg_t funcSendFile      = (SendFileMsg_t)(g_WeChatWinDllAddr + OS_SEND_FILE);
+    auto wxWxid = new_wx_string(wxid);
+    auto wxPath = new_wx_string(path);
 
     char msg[0x460] = { 0 };
     QWORD tmp1[4]   = { 0 };
     QWORD tmp2[4]   = { 0 };
     QWORD tmp3[4]   = { 0 };
 
-    QWORD pMsg   = funcNew((QWORD)(&msg));
-    QWORD appMgr = funcGetAppMsgMgr();
-    funcSendFile(appMgr, pMsg, (QWORD)(&wxWxid), (QWORD)(&wxPath), 1, tmp1, 0, tmp2, 0, tmp3, 0, 0);
-    funcFree(pMsg);
+    QWORD pMsg   = func_new(reinterpret_cast<QWORD>(&msg));
+    QWORD appMgr = func_get_app_mgr();
+
+    func_send_file(appMgr, pMsg, reinterpret_cast<QWORD>(wxWxid.get()), reinterpret_cast<QWORD>(wxPath.get()), 1, tmp1,
+                   0, tmp2, 0, tmp3, 0, 0);
+
+    func_free(pMsg);
 }
 
-int SendRichTextMessage(RichText_t &rt)
-{ // TODO: Fix memory leak
+void SendMsgManager::send_xml(const std::string &receiver, const std::string &xml, const std::string &path,
+                              uint64_t type)
+{
+    std::unique_ptr<char[]> buff(new char[0x500]());
+    std::unique_ptr<char[]> buff2(new char[0x500]());
+    char nullBuf[0x1C] = { 0 };
+
+    func_new(reinterpret_cast<QWORD>(buff.get()));
+    func_new(reinterpret_cast<QWORD>(buff2.get()));
+
+    QWORD sbuf[4] = { 0, 0, 0, 0 };
+    QWORD sign    = func_xml_buf_sign(reinterpret_cast<QWORD>(buff2.get()), reinterpret_cast<QWORD>(sbuf), 0x1);
+
+    auto wxReceiver = new_wx_string(receiver);
+    auto wxXml      = new_wx_string(xml);
+    auto wxPath     = new_wx_string(path);
+    auto wxSender   = new_wx_string(user_info::get_self_wxid());
+
+    func_send_xml(reinterpret_cast<QWORD>(buff.get()), reinterpret_cast<QWORD>(wxSender.get()),
+                  reinterpret_cast<QWORD>(wxReceiver.get()), reinterpret_cast<QWORD>(wxXml.get()),
+                  reinterpret_cast<QWORD>(wxPath.get()), reinterpret_cast<QWORD>(nullBuf), type, 0x4, sign,
+                  reinterpret_cast<QWORD>(buff2.get()));
+
+    func_free(reinterpret_cast<QWORD>(buff.get()));
+    func_free(reinterpret_cast<QWORD>(buff2.get()));
+}
+
+void SendMsgManager::send_emotion(const std::string &wxid, const std::string &path)
+{
+    auto wxWxid = new_wx_string(wxid);
+    auto wxPath = new_wx_string(path);
+
+    std::unique_ptr<QWORD[]> buff(new QWORD[8]()); // 0x20 bytes = 8 * QWORD
+
+    if (!buff) {
+        LOG_ERROR("Out of Memory...");
+        return;
+    }
+
+    QWORD mgr = func_get_emotion_mgr();
+    func_send_emotion(mgr, reinterpret_cast<QWORD>(wxPath.get()), reinterpret_cast<QWORD>(buff.get()),
+                      reinterpret_cast<QWORD>(wxWxid.get()), 2, reinterpret_cast<QWORD>(buff.get()), 0,
+                      reinterpret_cast<QWORD>(buff.get()));
+}
+
+int SendMsgManager::send_rich_text(RichText_t &rt)
+{
     QWORD status = -1;
 
-    New_t funcNew                          = (New_t)(g_WeChatWinDllAddr + OS_RTM_NEW);
-    Free_t funcFree                        = (Free_t)(g_WeChatWinDllAddr + OS_RTM_FREE);
-    GetAppMsgMgr_t funcGetAppMsgMgr        = (GetAppMsgMgr_t)(g_WeChatWinDllAddr + OS_GET_APP_MSG_MGR);
-    SendRichTextMsg_t funcForwordPublicMsg = (SendRichTextMsg_t)(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
-
-    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE);
-    if (buff == NULL) {
+    char *buff = static_cast<char *>(HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE));
+    if (!buff) {
         LOG_ERROR("Out of Memory...");
         return -1;
     }
 
     memset(buff, 0, SRTM_SIZE);
-    funcNew((QWORD)buff);
-    WxString *pReceiver = NewWxStringFromStr(rt.receiver);
-    WxString *pTitle    = NewWxStringFromStr(rt.title);
-    WxString *pUrl      = NewWxStringFromStr(rt.url);
-    WxString *pThumburl = NewWxStringFromStr(rt.thumburl);
-    WxString *pDigest   = NewWxStringFromStr(rt.digest);
-    WxString *pAccount  = NewWxStringFromStr(rt.account);
-    WxString *pName     = NewWxStringFromStr(rt.name);
+    func_new(reinterpret_cast<QWORD>(buff));
 
-    memcpy(buff + 0x8, pTitle, sizeof(WxString));
-    memcpy(buff + 0x48, pUrl, sizeof(WxString));
-    memcpy(buff + 0xB0, pThumburl, sizeof(WxString));
-    memcpy(buff + 0xF0, pDigest, sizeof(WxString));
-    memcpy(buff + 0x2C0, pAccount, sizeof(WxString));
-    memcpy(buff + 0x2E0, pName, sizeof(WxString));
+    auto pReceiver = new_wx_string(rt.receiver);
+    auto pTitle    = new_wx_string(rt.title);
+    auto pUrl      = new_wx_string(rt.url);
+    auto pThumburl = new_wx_string(rt.thumburl);
+    auto pDigest   = new_wx_string(rt.digest);
+    auto pAccount  = new_wx_string(rt.account);
+    auto pName     = new_wx_string(rt.name);
 
-    QWORD mgr = funcGetAppMsgMgr();
-    status    = funcForwordPublicMsg(mgr, (QWORD)(pReceiver), (QWORD)(buff));
-    funcFree((QWORD)buff);
+    memcpy(buff + 0x8, pTitle.get(), sizeof(WxString));
+    memcpy(buff + 0x48, pUrl.get(), sizeof(WxString));
+    memcpy(buff + 0xB0, pThumburl.get(), sizeof(WxString));
+    memcpy(buff + 0xF0, pDigest.get(), sizeof(WxString));
+    memcpy(buff + 0x2C0, pAccount.get(), sizeof(WxString));
+    memcpy(buff + 0x2E0, pName.get(), sizeof(WxString));
 
-    return (int)status;
+    QWORD mgr = func_get_app_mgr();
+    status    = func_send_rich_text(mgr, reinterpret_cast<QWORD>(pReceiver.get()), reinterpret_cast<QWORD>(buff));
+    func_free(reinterpret_cast<QWORD>(buff));
+
+    return static_cast<int>(status);
 }
 
-int SendPatMessage(string roomid, string wxid)
+int SendMsgManager::send_pat(const std::string &roomid, const std::string &wxid)
 {
     QWORD status = -1;
 
-    wstring wsRoomid = String2Wstring(roomid);
-    wstring wsWxid   = String2Wstring(wxid);
-    WxString wxRoomid(wsRoomid);
-    WxString wxWxid(wsWxid);
+    auto wxRoomid = new_wx_string(roomid);
+    auto wxWxid   = new_wx_string(wxid);
 
-    SendPatMsg_t funcSendPatMsg = (SendPatMsg_t)(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
+    status = func_send_pat(reinterpret_cast<QWORD>(wxRoomid.get()), reinterpret_cast<QWORD>(wxWxid.get()));
 
-    status = funcSendPatMsg((QWORD)(&wxRoomid), (QWORD)(&wxWxid));
-    return (int)status;
+    return static_cast<int>(status);
 }
 
-int ForwardMessage(QWORD msgid, string receiver)
+int SendMsgManager::forward_message(QWORD msgid, const std::string &receiver)
 {
-    int status     = -1;
     uint32_t dbIdx = 0;
     QWORD localId  = 0;
 
-    ForwardMsg_t funcForwardMsg = (ForwardMsg_t)(g_WeChatWinDllAddr + OS_FORWARD_MSG);
-    if (GetLocalIdandDbidx(msgid, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
-        return status;
+    if (exec_sql::get_local_id_and_dbidx(msgid, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", msgid);
+        return -1;
     }
-
-    WxString *pReceiver = NewWxStringFromStr(receiver);
 
     LARGE_INTEGER l;
-    l.HighPart = dbIdx;
-    l.LowPart  = (DWORD)localId;
+    l.HighPart      = dbIdx;
+    l.LowPart       = static_cast<DWORD>(localId);
+    auto wxReceiver = new_wx_string(receiver);
 
-    status = (int)funcForwardMsg((QWORD)pReceiver, l.QuadPart, 0x4, 0x0);
-
-    return status;
+    return static_cast<int>(func_forward(reinterpret_cast<QWORD>(wxReceiver.get()), l.QuadPart, 0x4, 0x0));
 }
 
-void SendEmotionMessage(string wxid, string path)
+// RPC 方法
+
+bool SendMsgManager::rpc_send_text(TextMsg &text, uint8_t *out, size_t *len)
 {
-    GetEmotionMgr_t GetEmotionMgr = (GetEmotionMgr_t)(g_WeChatWinDllAddr + OS_GET_EMOTION_MGR);
-    SendEmotion_t SendEmotion     = (SendEmotion_t)(g_WeChatWinDllAddr + OS_SEND_EMOTION);
-
-    WxString *pWxPath = NewWxStringFromStr(path);
-    WxString *pWxWxid = NewWxStringFromStr(wxid);
-
-    QWORD *buff = (QWORD *)HeapAlloc(GetProcessHeap(), 0, 0x20);
-    if (buff == NULL) {
-        LOG_ERROR("Out of Memory...");
-        return;
-    }
-
-    memset(buff, 0, 0x20);
-    QWORD mgr = GetEmotionMgr();
-    SendEmotion(mgr, (QWORD)pWxPath, (QWORD)buff, (QWORD)pWxWxid, 2, (QWORD)buff, 0, (QWORD)buff);
+    return fill_response<Functions_FUNC_SEND_TXT>(out, len, [&](Response &rsp) {
+        if (text.msg.empty() || text.receiver.empty()) {
+            LOG_ERROR("Empty message or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            send_text(text.receiver, text.msg, text.aters);
+            rsp.msg.status = 0;
+        }
+    });
 }
 
-void SendXmlMessage(string receiver, string xml, string path, QWORD type)
+bool SendMsgManager::rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
 {
-    if (g_WeChatWinDllAddr == 0) {
-        return;
-    }
+    return fill_response<Functions_FUNC_SEND_IMG>(out, len, [&](Response &rsp) {
+        if (path.empty() || receiver.empty()) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            send_image(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
+}
 
-    New_t funcNew   = (New_t)(g_WeChatWinDllAddr + OS_NEW);
-    Free_t funcFree = (Free_t)(g_WeChatWinDllAddr + OS_FREE);
+bool SendMsgManager::rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SEND_FILE>(out, len, [&](Response &rsp) {
+        if (path.empty() || receiver.empty()) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            send_file(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
+}
 
-    XmlBufSign_t xmlBufSign = (XmlBufSign_t)(g_WeChatWinDllAddr + OS_XML_BUFSIGN);
-    SendXmlMsg_t sendXmlMsg = (SendXmlMsg_t)(g_WeChatWinDllAddr + OS_SEND_XML);
+bool SendMsgManager::rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SEND_EMOTION>(out, len, [&](Response &rsp) {
+        if (path.empty() || receiver.empty()) {
+            LOG_ERROR("Empty path or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            send_emotion(receiver, path);
+            rsp.msg.status = 0;
+        }
+    });
+}
 
-    char buff[0x500]   = { 0 };
-    char buff2[0x500]  = { 0 };
-    char nullBuf[0x1C] = { 0 };
+bool SendMsgManager::rpc_send_xml(const XmlMsg &rt, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SEND_XML>(out, len, [&](Response &rsp) {
+        if (rt.content.empty() || rt.receiver.empty()) {
+            LOG_ERROR("Empty content or receiver.");
+            rsp.msg.status = -1;
+        } else {
+            send_xml(rt.receiver, rt.content, rt.path, rt.type);
+            rsp.msg.status = 0;
+        }
+    });
+}
 
-    QWORD pBuf  = (QWORD)(&buff);
-    QWORD pBuf2 = (QWORD)(&buff2);
+bool SendMsgManager::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SEND_RICH_TXT>(out, len, [&](Response &rsp) {
+        if (rt.receiver.empty()) {
+            LOG_ERROR("Empty receiver.");
+            rsp.msg.status = -1;
+        } else {
+            RichText_t rtt {
+                .name     = rt.name,
+                .account  = rt.account,
+                .title    = rt.title,
+                .digest   = rt.digest,
+                .url      = rt.url,
+                .thumburl = rt.thumburl,
+                .receiver = rt.receiver,
+            };
+            rsp.msg.status = send_rich_text(rtt);
+        }
+    });
+}
 
-    funcNew(pBuf);
-    funcNew(pBuf2);
+bool SendMsgManager::rpc_send_pat(const std::string &roomid, const std::string &wxid, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SEND_PAT_MSG>(out, len, [&](Response &rsp) {
+        if (roomid.empty() || wxid.empty()) {
+            LOG_ERROR("Empty roomid or wxid.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = send_pat(roomid, wxid);
+        }
+    });
+}
 
-    QWORD sbuf[4] = { 0, 0, 0, 0 };
-
-    QWORD sign = xmlBufSign(pBuf2, (QWORD)(&sbuf), 0x1);
-
-    WxString *pReceiver = NewWxStringFromStr(receiver);
-    WxString *pXml      = NewWxStringFromStr(xml);
-    WxString *pPath     = NewWxStringFromStr(path);
-    WxString *pSender   = NewWxStringFromStr(user_info::get_self_wxid());
-
-    sendXmlMsg(pBuf, (QWORD)pSender, (QWORD)pReceiver, (QWORD)pXml, (QWORD)pPath, (QWORD)(&nullBuf), type, 0x4, sign,
-               pBuf2);
-
-    funcFree((QWORD)&buff);
-    funcFree((QWORD)&buff2);
+bool SendMsgManager::rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_FORWARD_MSG>(out, len, [&](Response &rsp) {
+        if (receiver.empty()) {
+            LOG_ERROR("Empty receiver.");
+            rsp.msg.status = -1;
+        } else {
+            rsp.msg.status = forward(msgid, receiver);
+        }
+    });
 }
