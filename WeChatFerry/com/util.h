@@ -9,13 +9,6 @@
 
 namespace util
 {
-
-inline constexpr char WECHATEXE[]          = "WeChat.exe";
-inline constexpr char WECHATWINDLL[]       = "WeChatWin.dll";
-inline constexpr wchar_t WCFSDKDLL[]       = L"sdk.dll";
-inline constexpr wchar_t WCFSPYDLL[]       = L"spy.dll";
-inline constexpr wchar_t WCFSPYDLL_DEBUG[] = L"spy_debug.dll";
-
 struct PortPath {
     int port;
     char path[MAX_PATH];

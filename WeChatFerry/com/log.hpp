@@ -3,13 +3,12 @@
 #include <filesystem>
 #include <iomanip>
 #include <memory>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
 
-#include "util.h"
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 #define LOG_DEBUG(...) SPDLOG_DEBUG(__VA_ARGS__)
 #define LOG_INFO(...)  SPDLOG_INFO(__VA_ARGS__)
@@ -48,7 +47,7 @@ inline void InitLogger(const std::string &path)
         logger = spdlog::rotating_logger_mt(DEFAULT_LOGGER_NAME, filename.string(), DEFAULT_LOGGER_MAX_SIZE,
                                             DEFAULT_LOGGER_MAX_FILES);
     } catch (const spdlog::spdlog_ex &ex) {
-        MessageBox(NULL, util::s2w(ex.what()).c_str(), L"Init LOGGER ERROR", MB_ICONERROR);
+        MessageBoxA(NULL, ex.what(), "Init LOGGER ERROR", MB_ICONERROR);
         return;
     }
 
