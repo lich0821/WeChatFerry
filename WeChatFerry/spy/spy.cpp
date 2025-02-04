@@ -24,7 +24,7 @@ void InitSpy(LPVOID args)
     }
 
     std::string version = util::get_wechat_version();
-    std::string msg = "WCF 支持版本: " + SUPPORT_VERSION + "，当前版本: " + version;
+    std::string msg     = fmt::format("WCF 支持版本: {}，当前版本: {}", SUPPORT_VERSION, version);
     if (version != SUPPORT_VERSION) {
         LOG_ERROR(msg);
         MessageBoxA(NULL, msg.c_str(), "错误", MB_ICONERROR);

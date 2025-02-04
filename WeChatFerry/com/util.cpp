@@ -52,7 +52,7 @@ std::string gb2312_to_utf8(const char *gb2312)
     return s;
 }
 
-DWORD get_wechat_pid()
+static DWORD get_wechat_pid()
 {
     DWORD pid        = 0;
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -69,34 +69,7 @@ DWORD get_wechat_pid()
     return pid;
 }
 
-int open_wechat(DWORD &pid)
-{
-    pid = get_wechat_pid();
-    if (pid != 0) {
-        return ERROR_SUCCESS;
-    }
-
-    auto wechat_path = util::get_wechat_path();
-    if (!wechat_path) {
-        LOG_ERROR("获取 WeChat 安装路径失败");
-        return ERROR_FILE_NOT_FOUND;
-    }
-
-    STARTUPINFO si         = { sizeof(si) };
-    PROCESS_INFORMATION pi = {};
-    if (!CreateProcessA(wechat_path->c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr,
-                        &si, &pi)) {
-        return GetLastError();
-    }
-
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
-
-    pid = pi.dwProcessId;
-    return ERROR_SUCCESS;
-}
-
-std::optional<std::string> get_wechat_path()
+static std::optional<std::string> get_wechat_path()
 {
     HKEY hKey;
     if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Tencent\\WeChat", 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
@@ -118,7 +91,7 @@ std::optional<std::string> get_wechat_path()
     return std::string(path);
 }
 
-std::optional<std::string> get_wechat_win_dll_path()
+static std::optional<std::string> get_wechat_win_dll_path()
 {
     auto wechat_path = get_wechat_path();
     if (!wechat_path) {
@@ -146,7 +119,7 @@ std::optional<std::string> get_wechat_win_dll_path()
     return PathFileExistsA(versioned_path.c_str()) ? std::optional<std::string>(versioned_path) : std::nullopt;
 }
 
-std::optional<std::string> get_file_version(const std::string &file_path)
+static std::optional<std::string> get_file_version(const std::string &file_path)
 {
     if (!PathFileExistsA(file_path.c_str())) {
         return std::nullopt;
@@ -188,6 +161,35 @@ std::string get_wechat_version()
     }
 
     return *version;
+}
+
+int open_wechat(DWORD &pid)
+{
+    pid = get_wechat_pid();
+    if (pid != 0) {
+        return ERROR_SUCCESS;
+    }
+
+    auto wechat_path = util::get_wechat_path();
+    if (!wechat_path) {
+        LOG_ERROR("获取 WeChat 安装路径失败");
+        return ERROR_FILE_NOT_FOUND;
+    }
+
+    STARTUPINFOA si        = { sizeof(si) };
+    PROCESS_INFORMATION pi = {};
+
+    std::string command_line = *wechat_path;
+    if (!CreateProcessA(nullptr, command_line.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr,
+                        &si, &pi)) {
+        return GetLastError();
+    }
+
+    CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
+
+    pid = pi.dwProcessId;
+    return ERROR_SUCCESS;
 }
 
 uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr)
