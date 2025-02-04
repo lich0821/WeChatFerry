@@ -20,7 +20,7 @@ int InitSpy(LPVOID args)
         g_WeChatWinDllAddr = reinterpret_cast<UINT64>(dll_addr);
     } else {
         LOG_ERROR("获取 WeChatWin.dll 模块地址失败");
-        return; // TODO: 退出进程，避免后面操作失败
+        return -1;
     }
 
     std::string version = util::get_wechat_version();
@@ -28,7 +28,7 @@ int InitSpy(LPVOID args)
     if (version != SUPPORT_VERSION) {
         LOG_ERROR(msg);
         MessageBoxA(NULL, msg.c_str(), "错误", MB_ICONERROR);
-        return -1;
+        return -2;
     }
 
     LOG_INFO(msg);

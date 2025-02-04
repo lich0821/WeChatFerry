@@ -108,20 +108,20 @@ int WxInitSDK(bool debug, int port)
         MessageBoxA(NULL, "注入失败", "WxInitSDK", 0);
         return -1;
     }
+    injected = true;
 
     util::PortPath pp = { 0 };
     pp.port           = port;
     snprintf(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    bool ok = call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath), &status);
-    if (!ok || status != 0) {
-        MessageBoxA(NULL, "初始化失败", "WxInitSDK", 0);
+    status       = -3; // TODO: 统一错误码
+    bool success = call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath),
+                                    (DWORD *)&status);
+    if (!success || status != 0) {
         WxDestroySDK();
-        return -1;
     }
 
-    injected = true;
-    return 0;
+    return status;
 }
 
 int WxDestroySDK()
@@ -137,6 +137,7 @@ int WxDestroySDK()
     if (!eject_dll(wcProcess, spyBase)) {
         return -2;
     }
+    injected = false;
 
     return 0;
 }
