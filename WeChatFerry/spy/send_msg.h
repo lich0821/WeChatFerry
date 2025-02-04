@@ -7,16 +7,6 @@
 #include "spy_types.h"
 #include "wcf.pb.h"
 
-// struct RichText_t {
-//     std::string name;
-//     std::string account;
-//     std::string title;
-//     std::string digest;
-//     std::string url;
-//     std::string thumburl;
-//     std::string receiver;
-// };
-
 class SendMsgManager
 {
 public:
