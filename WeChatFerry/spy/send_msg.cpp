@@ -56,13 +56,13 @@ std::unique_ptr<WxString> SendMsgManager::new_wx_string(const char *str)
 }
 std::unique_ptr<WxString> SendMsgManager::new_wx_string(const std::string &str)
 {
-    return std::make_unique<WxString>(String2Wstring(str));
+    return std::make_unique<WxString>(util::s2w(str));
 }
 
 std::vector<WxString> SendMsgManager::parse_wxids(const string &wxids)
 {
     vector<WxString> wx_members;
-    wstringstream wss(String2Wstring(wxids));
+    wstringstream wss(util::s2w(wxids));
     wstring wstr;
     while (getline(wss, wstr, L',')) {
         wx_members.emplace_back(wstr);

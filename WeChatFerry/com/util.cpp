@@ -1,177 +1,67 @@
-﻿#include "Shlwapi.h"
-#include "framework.h"
+﻿#include "util.h"
+
 #include <codecvt>
 #include <locale>
+#include <memory>
 #include <string.h>
 #include <strsafe.h>
 #include <tlhelp32.h>
 #include <vector>
 #include <wchar.h>
 
+#include "framework.h"
+
 #include "log.hpp"
-#include "util.h"
 
 #pragma comment(lib, "shlwapi")
 #pragma comment(lib, "Version.lib")
 
-using namespace std;
-
-wstring String2Wstring(string s)
+namespace util
 {
-    if (s.empty())
-        return wstring();
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &s[0], (int)s.size(), NULL, 0);
-    wstring ws(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &s[0], (int)s.size(), &ws[0], size_needed);
+
+std::wstring s2w(const std::string &s)
+{
+    if (s.empty()) return std::wstring();
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), nullptr, 0);
+    std::wstring ws(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), &ws[0], size_needed);
     return ws;
 }
 
-string Wstring2String(wstring ws)
+std::string w2s(const std::wstring &ws)
 {
-    if (ws.empty())
-        return string();
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &ws[0], (int)ws.size(), NULL, 0, NULL, NULL);
-    string s(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &ws[0], (int)ws.size(), &s[0], size_needed, NULL, NULL);
+    if (ws.empty()) return std::string();
+    int size_needed
+        = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), static_cast<int>(ws.size()), nullptr, 0, nullptr, nullptr);
+    std::string s(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), static_cast<int>(ws.size()), &s[0], size_needed, nullptr, nullptr);
     return s;
 }
 
-string GB2312ToUtf8(const char *gb2312)
+std::string gb2312_to_utf8(const char *gb2312)
 {
-    int size_needed = 0;
+    if (!gb2312) return "";
 
-    size_needed = MultiByteToWideChar(CP_ACP, 0, gb2312, -1, NULL, 0);
-    wstring ws(size_needed, 0);
+    int size_needed = MultiByteToWideChar(CP_ACP, 0, gb2312, -1, nullptr, 0);
+    std::wstring ws(size_needed, 0);
     MultiByteToWideChar(CP_ACP, 0, gb2312, -1, &ws[0], size_needed);
 
-    size_needed = WideCharToMultiByte(CP_UTF8, 0, &ws[0], -1, NULL, 0, NULL, NULL);
-    string s(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &ws[0], -1, &s[0], size_needed, NULL, NULL);
+    size_needed = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string s(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, &s[0], size_needed, nullptr, nullptr);
 
     return s;
 }
 
-static int GetWeChatPath(wchar_t *path)
+DWORD get_wechat_pid()
 {
-    int ret   = -1;
-    HKEY hKey = NULL;
-    // HKEY_CURRENT_USER\Software\Tencent\WeChat InstallPath = xx
-    if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, L"Software\\Tencent\\WeChat", &hKey)) {
-        ret = GetLastError();
-        return ret;
-    }
+    DWORD pid        = 0;
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (hSnapshot == INVALID_HANDLE_VALUE) return 0;
 
-    DWORD Type   = REG_SZ;
-    DWORD cbData = MAX_PATH * sizeof(WCHAR);
-    if (ERROR_SUCCESS != RegQueryValueEx(hKey, L"InstallPath", 0, &Type, (LPBYTE)path, &cbData)) {
-        ret = GetLastError();
-        goto __exit;
-    }
-
-    if (path != NULL) {
-        PathAppend(path, WECHAREXE);
-    }
-
-__exit:
-    if (hKey) {
-        RegCloseKey(hKey);
-    }
-
-    return ERROR_SUCCESS;
-}
-
-static int GetWeChatWinDLLPath(wchar_t *path)
-{
-    int ret = GetWeChatPath(path);
-    if (ret != ERROR_SUCCESS) {
-        return ret;
-    }
-
-    PathRemoveFileSpecW(path);
-    PathAppendW(path, WECHATWINDLL);
-    if (!PathFileExists(path)) {
-        // 微信从（大约）3.7开始，增加了一层版本目录: [3.7.0.29]
-        PathRemoveFileSpec(path);
-        _wfinddata_t findData;
-        wstring dir     = wstring(path) + L"\\[*.*";
-        intptr_t handle = _wfindfirst(dir.c_str(), &findData);
-        if (handle == -1) { // 检查是否成功
-            return -1;
-        }
-        wstring dllPath = wstring(path) + L"\\" + findData.name;
-        wcscpy_s(path, MAX_PATH, dllPath.c_str());
-        PathAppend(path, WECHATWINDLL);
-    }
-
-    return ret;
-}
-
-static bool GetFileVersion(const wchar_t *filePath, wchar_t *version)
-{
-    if (wcslen(filePath) > 0 && PathFileExists(filePath)) {
-        VS_FIXEDFILEINFO *pVerInfo = NULL;
-        DWORD dwTemp, dwSize;
-        BYTE *pData = NULL;
-        UINT uLen;
-
-        dwSize = GetFileVersionInfoSize(filePath, &dwTemp);
-        if (dwSize == 0) {
-            return false;
-        }
-
-        pData = new BYTE[dwSize + 1];
-        if (pData == NULL) {
-            return false;
-        }
-
-        if (!GetFileVersionInfo(filePath, 0, dwSize, pData)) {
-            delete[] pData;
-            return false;
-        }
-
-        if (!VerQueryValue(pData, TEXT("\\"), (void **)&pVerInfo, &uLen)) {
-            delete[] pData;
-            return false;
-        }
-
-        UINT64 verMS    = pVerInfo->dwFileVersionMS;
-        UINT64 verLS    = pVerInfo->dwFileVersionLS;
-        UINT64 major    = HIWORD(verMS);
-        UINT64 minor    = LOWORD(verMS);
-        UINT64 build    = HIWORD(verLS);
-        UINT64 revision = LOWORD(verLS);
-        delete[] pData;
-
-        StringCbPrintf(version, 0x20, TEXT("%d.%d.%d.%d"), major, minor, build, revision);
-
-        return true;
-    }
-
-    return false;
-}
-
-int GetWeChatVersion(wchar_t *version)
-{
-    WCHAR Path[MAX_PATH] = { 0 };
-
-    int ret = GetWeChatWinDLLPath(Path);
-    if (ret != ERROR_SUCCESS) {
-        return ret;
-    }
-
-    ret = GetFileVersion(Path, version);
-
-    return ret;
-}
-
-DWORD GetWeChatPid()
-{
-    DWORD pid           = 0;
-    HANDLE hSnapshot    = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
     while (Process32Next(hSnapshot, &pe32)) {
-        wstring strProcess = pe32.szExeFile;
-        if (strProcess == WECHAREXE) {
+        if (std::wstring(pe32.szExeFile) == WECHATEXE) {
             pid = pe32.th32ProcessID;
             break;
         }
@@ -180,52 +70,20 @@ DWORD GetWeChatPid()
     return pid;
 }
 
-enum class WindowsArchiture { x32, x64 };
-static WindowsArchiture GetWindowsArchitecture()
+int open_wechat(DWORD *pid)
 {
-#ifdef _WIN64
-    return WindowsArchiture::x64;
-#else
-    return WindowsArchiture::x32;
-#endif
-}
+    *pid = get_wechat_pid();
+    if (*pid) return ERROR_SUCCESS;
 
-BOOL IsProcessX64(DWORD pid)
-{
-    BOOL isWow64    = false;
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
-    if (!hProcess)
-        return false;
-    BOOL result = IsWow64Process(hProcess, &isWow64);
-    CloseHandle(hProcess);
-    if (!result)
-        return false;
-    if (isWow64)
-        return false;
-    else if (GetWindowsArchitecture() == WindowsArchiture::x32)
-        return false;
-    else
-        return true;
-}
-
-int OpenWeChat(DWORD *pid)
-{
-    *pid = GetWeChatPid();
-    if (*pid) {
-        return ERROR_SUCCESS;
+    WCHAR path[MAX_PATH] = { 0 };
+    if (GetModuleFileNameW(nullptr, path, MAX_PATH) == 0) {
+        return GetLastError();
     }
 
-    int ret                = -1;
     STARTUPINFO si         = { sizeof(si) };
-    WCHAR Path[MAX_PATH]   = { 0 };
     PROCESS_INFORMATION pi = { 0 };
 
-    ret = GetWeChatPath(Path);
-    if (ERROR_SUCCESS != ret) {
-        return ret;
-    }
-
-    if (!CreateProcess(NULL, Path, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+    if (!CreateProcessW(nullptr, path, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi)) {
         return GetLastError();
     }
 
@@ -233,115 +91,153 @@ int OpenWeChat(DWORD *pid)
     CloseHandle(pi.hProcess);
 
     *pid = pi.dwProcessId;
-
     return ERROR_SUCCESS;
 }
 
-size_t GetWstringByAddress(UINT64 addr, wchar_t *buffer, UINT64 buffer_size)
+static std::optional<std::string> get_wechat_win_dll_path()
 {
-    size_t strLength = GET_DWORD(addr + 8);
-    if (strLength == 0) {
-        return 0;
-    } else if (strLength > buffer_size) {
-        strLength = buffer_size - 1;
+    char path[MAX_PATH] = { 0 };
+    if (GetWeChatPath(path) != ERROR_SUCCESS) {
+        return std::nullopt;
     }
 
-    wmemcpy_s(buffer, strLength + 1, GET_WSTRING(addr), strLength + 1);
+    PathRemoveFileSpecA(path);
+    PathAppendA(path, WECHATWINDLL);
 
-    return strLength;
+    if (!PathFileExistsA(path)) {
+        // 微信 3.7+ 版本增加了一层目录
+        PathRemoveFileSpecA(path);
+        _finddata_t findData;
+        std::string dir = std::string(path) + "\\[*.*";
+        intptr_t handle = _findfirst(dir.c_str(), &findData);
+        if (handle == -1) {
+            return std::nullopt;
+        }
+        _findclose(handle);
+
+        std::string dllPath = std::string(path) + "\\" + findData.name + "\\" + WECHATWINDLL;
+        return dllPath;
+    }
+
+    return std::string(path);
 }
 
-string GetStringByAddress(UINT64 addr)
+static std::optional<std::string> get_file_version(const std::string &filePath)
 {
-    size_t strLength = GET_DWORD(addr + 8);
-    return Wstring2String(wstring(GET_WSTRING(addr), strLength));
+    if (filePath.empty() || !PathFileExistsA(filePath.c_str())) {
+        return std::nullopt;
+    }
+
+    DWORD handle = 0;
+    DWORD size   = GetFileVersionInfoSizeA(filePath.c_str(), &handle);
+    if (size == 0) {
+        return std::nullopt;
+    }
+
+    std::vector<BYTE> data(size);
+    if (!GetFileVersionInfoA(filePath.c_str(), 0, size, data.data())) {
+        return std::nullopt;
+    }
+
+    VS_FIXEDFILEINFO *verInfo = nullptr;
+    UINT len                  = 0;
+    if (!VerQueryValueA(data.data(), "\\", reinterpret_cast<void **>(&verInfo), &len) || len == 0) {
+        return std::nullopt;
+    }
+
+    char version[32];
+    StringCbPrintfA(version, sizeof(version), "%d.%d.%d.%d", HIWORD(verInfo->dwFileVersionMS),
+                    LOWORD(verInfo->dwFileVersionMS), HIWORD(verInfo->dwFileVersionLS),
+                    LOWORD(verInfo->dwFileVersionLS));
+
+    return std::string(version);
 }
 
-string GetStringByStrAddr(UINT64 addr)
+std::string get_wechat_version()
 {
-    size_t strLength = GET_DWORD(addr + 8);
-    return strLength ? string(GET_STRING(addr), strLength) : string();
+    std::string version = "";
+
+    auto dllPath = get_wechat_win_dll_path();
+    if (!dllPath) {
+        return version;
+    }
+
+    version = get_file_version(*dllPath);
+    return version ? version : "";
 }
 
-string GetStringByWstrAddr(UINT64 addr)
+uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr)
 {
-    size_t strLength = GET_DWORD(addr + 8);
-    return strLength ? Wstring2String(wstring(GET_WSTRING(addr), strLength)) : string();
-}
-
-UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 addr)
-{
-    UINT32 value = 0;
+    uint32_t value = 0;
+    if (!addr || !hProcess) return value;
 
     unsigned char data[4] = { 0 };
-    if (ReadProcessMemory(hProcess, (LPVOID)addr, data, 4, 0)) {
-        value = data[0] & 0xFF;
-        value |= ((data[1] << 8) & 0xFF00);
-        value |= ((data[2] << 16) & 0xFF0000);
-        value |= ((data[3] << 24) & 0xFF000000);
+    if (ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(addr), data, sizeof(data), nullptr)) {
+        value = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
     }
 
     return value;
 }
 
-wstring GetUnicodeInfoByAddress(HANDLE hProcess, UINT64 address)
+std::wstring get_unicode_info_by_address(HANDLE hProcess, uint64_t address)
 {
-    wstring value = L"";
+    if (!hProcess || !address) return L"";
 
-    UINT64 strAddress = GetMemoryIntByAddress(hProcess, address);
-    UINT64 strLen     = GetMemoryIntByAddress(hProcess, address + 0x4);
-    if (strLen > 500)
-        return value;
+    uint64_t str_address = get_memory_int_by_address(hProcess, address);
+    uint64_t str_len     = get_memory_int_by_address(hProcess, address + 0x4);
+    if (str_len > 500) return L"";
 
     wchar_t cValue[500] = { 0 };
-    memset(cValue, 0, sizeof(cValue) / sizeof(wchar_t));
-    if (ReadProcessMemory(hProcess, (LPVOID)strAddress, cValue, (strLen + 1) * 2, 0)) {
-        value = wstring(cValue);
+    if (ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(str_address), cValue, (str_len + 1) * sizeof(wchar_t),
+                          nullptr)) {
+        return std::wstring(cValue);
     }
 
-    return value;
+    return L"";
 }
 
-void DbgMsg(const char *zcFormat, ...)
+void dbg_msg(const char *format, ...)
 {
-    // initialize use of the variable argument array
-    va_list vaArgs;
-    va_start(vaArgs, zcFormat);
+    if (!format) return;
 
-    // reliably acquire the size
-    // from a copy of the variable argument array
-    // and a functionally reliable call to mock the formatting
-    va_list vaArgsCopy;
-    va_copy(vaArgsCopy, vaArgs);
-    const int iLen = std::vsnprintf(NULL, 0, zcFormat, vaArgsCopy);
-    va_end(vaArgsCopy);
+    va_list args;
+    va_start(args, format);
 
-    // return a formatted string without risking memory mismanagement
-    // and without assuming any compiler or platform specific behavior
-    std::vector<char> zc(iLen + 1);
-    std::vsnprintf(zc.data(), zc.size(), zcFormat, vaArgs);
-    va_end(vaArgs);
-    std::string strText(zc.data(), iLen);
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int len = vsnprintf(nullptr, 0, format, args_copy);
+    va_end(args_copy);
 
-    OutputDebugStringA(strText.c_str());
+    std::vector<char> buffer(len + 1);
+    vsnprintf(buffer.data(), buffer.size(), format, args);
+    va_end(args);
+
+    OutputDebugStringA(buffer.data());
 }
 
-WxString *NewWxStringFromStr(const string &str) { return NewWxStringFromWstr(String2Wstring(str)); }
-
-WxString *NewWxStringFromWstr(const wstring &ws)
+std::unique_ptr<WxString> new_wx_string(const char *str)
 {
-    WxString *p       = (WxString *)HeapAlloc(GetProcessHeap(), 0, sizeof(WxString));
-    wchar_t *pWstring = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, (ws.size() + 1) * 2);
-    if (p == NULL || pWstring == NULL) {
-        LOG_ERROR("Out of Memory...");
-        return NULL;
+    return new_wx_string(str ? std::string(str) : std::string());
+}
+
+std::unique_ptr<WxString> new_wx_string(const std::string &str) { return std::make_unique<WxString>(s2w(str)); }
+
+std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr)
+{
+    return new_wx_string(wstr ? std::wstring(wstr) : std::wstring());
+}
+
+std::unique_ptr<WxString> new_wx_string(const std::wstring &wstr) { return std::make_unique<WxString>(wstr); }
+
+std::vector<WxString> parse_wxids(const std::string &wxids)
+{
+    std::vector<WxString> wx_members;
+    std::wstringstream wss(s2w(wxids));
+    std::wstring wstr;
+    while (getline(wss, wstr, L',')) {
+        wx_members.emplace_back(wstr);
     }
-
-    wmemcpy(pWstring, ws.c_str(), ws.size() + 1);
-    p->wptr     = pWstring;
-    p->size     = (DWORD)ws.size();
-    p->capacity = (DWORD)ws.size();
-    p->ptr      = 0;
-    p->clen     = 0;
-    return p;
+    return wx_members;
 }
+
+} // namespace util

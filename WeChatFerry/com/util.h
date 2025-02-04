@@ -1,41 +1,81 @@
 ﻿#pragma once
 
+#include <cstdint>
 #include <string>
 
 #include "spy_types.h"
 
-#define WECHAREXE       L"WeChat.exe"
-#define WECHATWINDLL    L"WeChatWin.dll"
-#define WCFSDKDLL       L"sdk.dll"
-#define WCFSPYDLL       L"spy.dll"
-#define WCFSPYDLL_DEBUG L"spy_debug.dll"
+namespace util
+{
 
-#define GET_UINT64(addr)         ((UINT64) * (UINT64 *)(addr))
-#define GET_DWORD(addr)          ((DWORD) * (UINT64 *)(addr))
-#define GET_QWORD(addr)          ((UINT64) * (UINT64 *)(addr))
-#define GET_STRING(addr)         ((CHAR *)(*(UINT64 *)(addr)))
-#define GET_WSTRING(addr)        ((WCHAR *)(*(UINT64 *)(addr)))
-#define GET_STRING_FROM_P(addr)  ((CHAR *)(addr))
-#define GET_WSTRING_FROM_P(addr) ((WCHAR *)(addr))
+inline constexpr wchar_t WECHATEXE[]       = L"WeChat.exe";
+inline constexpr wchar_t WECHATWINDLL[]    = L"WeChatWin.dll";
+inline constexpr wchar_t WCFSDKDLL[]       = L"sdk.dll";
+inline constexpr wchar_t WCFSPYDLL[]       = L"spy.dll";
+inline constexpr wchar_t WCFSPYDLL_DEBUG[] = L"spy_debug.dll";
 
-typedef struct PortPath {
+struct PortPath {
     int port;
     char path[MAX_PATH];
-} PortPath_t;
+};
 
-DWORD GetWeChatPid();
-BOOL IsProcessX64(DWORD pid);
-int OpenWeChat(DWORD *pid);
-int GetWeChatVersion(wchar_t *version);
-size_t GetWstringByAddress(UINT64 address, wchar_t *buffer, UINT64 buffer_size);
-UINT32 GetMemoryIntByAddress(HANDLE hProcess, UINT64 address);
-std::wstring GetUnicodeInfoByAddress(HANDLE hProcess, UINT64 address);
-std::wstring String2Wstring(std::string s);
-std::string Wstring2String(std::wstring ws);
-std::string GB2312ToUtf8(const char *gb2312);
-std::string GetStringByAddress(UINT64 address);
-std::string GetStringByStrAddr(UINT64 addr);
-std::string GetStringByWstrAddr(UINT64 addr);
-void DbgMsg(const char *zcFormat, ...);
-WxString *NewWxStringFromStr(const std::string &str);
-WxString *NewWxStringFromWstr(const std::wstring &ws);
+inline DWORD get_dword(uint64_t addr) { return addr ? *reinterpret_cast<DWORD *>(addr) : 0; }
+inline QWORD get_qword(uint64_t addr) { return addr ? *reinterpret_cast<QWORD *>(addr) : 0; }
+inline uint64_t get_uint64(uint64_t addr) { return addr ? *reinterpret_cast<uint64_t *>(addr) : 0; }
+inline std::string get_p_string(uint64_t addr) { return addr ? std::string(reinterpret_cast<const char *>(addr)) : ""; }
+inline std::string get_p_string(uint64_t addr, size_t len)
+{
+    return addr ? std::string(reinterpret_cast<const char *>(addr), len) : "";
+}
+inline std::wstring get_p_wstring(uint64_t addr)
+{
+    return addr ? std::wstring(reinterpret_cast<const wchar_t *>(addr)) : L"";
+}
+inline std::wstring get_p_wstring(uint64_t addr, size_t len)
+{
+    return addr ? std::wstring(reinterpret_cast<const wchar_t *>(addr), len) : L"";
+}
+inline std::string get_pp_string(uint64_t addr)
+{
+    if (!addr) return "";
+
+    const char *ptr = *reinterpret_cast<const char **>(addr);
+    return (ptr && *ptr) ? std::string(ptr) : "";
+}
+inline std::wstring get_pp_wstring(uint64_t addr)
+{
+    if (!addr) return L"";
+
+    const wchar_t *ptr = *reinterpret_cast<const wchar_t **>(addr);
+    return (ptr && *ptr) ? std::wstring(ptr) : "";
+}
+inline std::string get_pp_len_string(uint64_t addr)
+{
+    size_t len = get_dword(addr + 8);
+    return (addr && len) ? std::string(*reinterpret_cast<const char **>(addr), len) : L"";
+}
+inline std::wstring get_pp_len_wstring(uint64_t addr)
+{
+    size_t len = get_dword(addr + 8);
+    return (addr && len) ? std::wstring(*reinterpret_cast<const wchar_t **>(addr), len) : L"";
+}
+inline std::string get_str_by_wstr_addr(uint64_t addr) { return w2s(get_pp_len_wstring(addr)); }
+
+DWORD get_wechat_pid();
+int open_wechat(DWORD *pid);
+std::string get_wechat_version();
+uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr);
+std::wstring get_unicode_info_by_address(HANDLE hProcess, uint64_t addr);
+std::wstring s2w(const std::string &s);
+std::string w2s(const std::wstring &ws);
+std::string gb2312_to_utf8(const char *gb2312);
+void dbg_msg(const char *format, ...);
+
+std::unique_ptr<WxString> new_wx_string(const char *str);
+std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr);
+std::unique_ptr<WxString> new_wx_string(const std::string &str);
+std::unique_ptr<WxString> new_wx_string(const std::wstring &wstr);
+
+std::vector<WxString> parse_wxids(const std::string &wxids);
+
+} // namespace util

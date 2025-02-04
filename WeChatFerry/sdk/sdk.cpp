@@ -28,7 +28,7 @@ static std::optional<std::wstring> ReadDisclaimerText(const char *filePath)
     }
 
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    return String2Wstring(content);
+    return util::s2w(content);
 }
 
 static bool ShowDisclaimer()
@@ -94,7 +94,7 @@ int WxInitSDK(bool debug, int port)
         return ERROR_FILE_NOT_FOUND; // DLL 文件路径不存在
     }
 
-    status = OpenWeChat(&wcPid);
+    status = util::open_wechat(&wcPid);
     if (status != 0) {
         MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
         return status;

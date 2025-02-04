@@ -1,5 +1,7 @@
 ﻿#pragma warning(disable : 4251)
 
+#include "rpc_server.h"
+
 #include <chrono>
 #include <condition_variable>
 #include <filesystem>
@@ -26,7 +28,6 @@
 #include "pb_types.h"
 #include "pb_util.h"
 #include "receive_msg.h"
-#include "rpc_server.h"
 #include "send_msg.h"
 #include "spy.h"
 #include "spy_types.h"
@@ -158,7 +159,7 @@ static bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
         if ((path == NULL) || (receiver == NULL)) {
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
-        } else if (!fs::exists(String2Wstring(path))) {
+        } else if (!fs::exists(util::s2w(path))) {
             LOG_ERROR("Path does not exist: {}", path);
             rsp.msg.status = -2;
         } else {
@@ -174,7 +175,7 @@ static bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len
         if ((path == nullptr) || (receiver == nullptr)) {
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
-        } else if (!fs::exists(String2Wstring(path))) {
+        } else if (!fs::exists(util::s2w(path))) {
             LOG_ERROR("Path does not exist: {}", path);
             rsp.msg.status = -2;
         } else {
@@ -685,7 +686,7 @@ static int RunRpcServer()
                 }
             }
         } catch (const std::exception &e) {
-            LOG_ERROR(GB2312ToUtf8(e.what()));
+            LOG_ERROR(util::gb2312_to_utf8(e.what()));
         } catch (...) {
             LOG_ERROR("Unknow exception.");
         }

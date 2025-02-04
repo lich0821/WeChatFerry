@@ -48,7 +48,7 @@ inline void InitLogger(const std::string &path)
         logger = spdlog::rotating_logger_mt(DEFAULT_LOGGER_NAME, filename.string(), DEFAULT_LOGGER_MAX_SIZE,
                                             DEFAULT_LOGGER_MAX_FILES);
     } catch (const spdlog::spdlog_ex &ex) {
-        MessageBox(NULL, String2Wstring(ex.what()).c_str(), L"Init LOGGER ERROR", MB_ICONERROR);
+        MessageBox(NULL, util::s2w(ex.what()).c_str(), L"Init LOGGER ERROR", MB_ICONERROR);
         return;
     }
 

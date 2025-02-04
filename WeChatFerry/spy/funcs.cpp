@@ -1,12 +1,13 @@
 ﻿#pragma warning(disable : 4244)
+#include "funcs.h"
 
-#include "framework.h"
 #include <filesystem>
 #include <fstream>
 
+#include "framework.h"
+
 #include "codec.h"
 #include "exec_sql.h"
-#include "funcs.h"
 #include "log.hpp"
 #include "receive_msg.h"
 #include "spy_types.h"
@@ -342,7 +343,7 @@ OcrResult_t GetOcrResult(string path)
     QWORD *pUnk1 = &unk1;
     QWORD *pUnk2 = &unk2;
     // 路径分隔符有要求，必须为 `\`
-    wstring wsPath = String2Wstring(fs::path(path).make_preferred().string());
+    wstring wsPath = util::s2w(fs::path(path).make_preferred().string());
     WxString wxPath(wsPath);
     vector<QWORD> *pv = (vector<QWORD> *)HeapAlloc(GetProcessHeap(), 0, 0x20);
     RawVector_t *pRv  = (RawVector_t *)pv;
@@ -358,7 +359,7 @@ OcrResult_t GetOcrResult(string path)
         QWORD header = GET_QWORD(buff);
         for (QWORD i = 0; i < count; i++) {
             QWORD content = GET_QWORD(header);
-            ret.result += Wstring2String(GET_WSTRING(content + 0x28));
+            ret.result += util::w2s(get_pp_wstring(content + 0x28));
             ret.result += "\n";
             header = content;
         }

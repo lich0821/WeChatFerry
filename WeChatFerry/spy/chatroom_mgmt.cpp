@@ -24,7 +24,7 @@ using invite_member_to_chatroom_t = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 static vector<WxString> parse_wxids(const string &wxids)
 {
     vector<WxString> wx_members;
-    wstringstream wss(String2Wstring(wxids));
+    wstringstream wss(util::s2w(wxids));
     wstring wstr;
     while (getline(wss, wstr, L',')) {
         wx_members.emplace_back(wstr);

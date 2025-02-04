@@ -80,7 +80,7 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     WaitForSingleObject(hThread, -1);
     CloseHandle(hThread);
 
-    *injectedBase = GetTargetModuleBase(hProcess, filesystem::path(Wstring2String(dllPath)).filename().string());
+    *injectedBase = GetTargetModuleBase(hProcess, filesystem::path(util::w2s(dllPath)).filename().string());
 
     VirtualFreeEx(hProcess, pRemoteAddress, 0, MEM_RELEASE);
     // CloseHandle(hProcess); // Close when exit

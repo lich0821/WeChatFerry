@@ -1,6 +1,7 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "contact_mgmt.h"
+
 #include "fill_response.h"
 #include "log.hpp"
 #include "pb_util.h"
@@ -55,7 +56,7 @@ static string get_cnt_string(QWORD start, QWORD end, const uint8_t *feat, size_t
         return "";
     }
 
-    return Wstring2String(wstring(GET_WSTRING_FROM_P(pfeat + FEAT_LEN + 4), lfeat));
+    return util::w2s(util::get_p_wstring(pfeat + FEAT_LEN + 4, lfeat));
 }
 
 vector<RpcContact_t> get_contacts()
@@ -80,10 +81,10 @@ vector<RpcContact_t> get_contacts()
         QWORD pbin   = GET_QWORD(pstart + OS_CONTACT_BIN);
         QWORD lenbin = GET_DWORD(pstart + OS_CONTACT_BIN_LEN);
 
-        cnt.wxid   = GetStringByWstrAddr(pstart + OS_CONTACT_WXID);
-        cnt.code   = GetStringByWstrAddr(pstart + OS_CONTACT_CODE);
-        cnt.remark = GetStringByWstrAddr(pstart + OS_CONTACT_REMARK);
-        cnt.name   = GetStringByWstrAddr(pstart + OS_CONTACT_NAME);
+        cnt.wxid   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_WXID);
+        cnt.code   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_CODE);
+        cnt.remark = util::get_str_by_wstr_addr(pstart + OS_CONTACT_REMARK);
+        cnt.name   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_NAME);
 
         cnt.country  = get_cnt_string(pbin, pbin + lenbin, FEAT_COUNTRY, FEAT_LEN);
         cnt.province = get_cnt_string(pbin, pbin + lenbin, FEAT_PROVINCE, FEAT_LEN);
@@ -112,8 +113,8 @@ int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 
     LOG_DEBUG("\nv3: {}\nv4: {}\nscene: {}", v3, v4, scene);
 
-    wstring ws_v3 = String2Wstring(v3);
-    wstring ws_v4 = String2Wstring(v4);
+    wstring ws_v3 = util::s2w(v3);
+    wstring ws_v4 = util::s2w(v4);
     WxString wx_v3(ws_v3);
     WxString wx_v4(ws_v4);
 
@@ -154,7 +155,7 @@ RpcContact_t get_contact_by_wxid(const string &wxid)
     RpcContact_t contact;
 #if 0
     char buff[0x440] = { 0 };
-    wstring ws_wxid  = String2Wstring(wxid);
+    wstring ws_wxid  = util::s2w(wxid);
     WxString pri(ws_wxid);
 
     DWORD contact_mgr_addr  = g_WeChatWinDllAddr + 0x75A4A0;
@@ -176,9 +177,9 @@ RpcContact_t get_contact_by_wxid(const string &wxid)
     }
 
     contact.wxid   = wxid;
-    contact.code   = GetStringByWstrAddr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxCode);
-    contact.remark = GetStringByWstrAddr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxRemark);
-    contact.name   = GetStringByWstrAddr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxName);
+    contact.code   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxCode);
+    contact.remark = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxRemark);
+    contact.name   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxName);
     contact.gender = GET_DWORD(reinterpret_cast<DWORD>(buff) + 0x148);
 
     __asm {

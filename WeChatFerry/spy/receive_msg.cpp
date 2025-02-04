@@ -1,4 +1,5 @@
-﻿
+﻿#include "receive_msg.h"
+
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -6,7 +7,6 @@
 #include "framework.h"
 
 #include "log.hpp"
-#include "receive_msg.h"
 #include "user_info.h"
 #include "util.h"
 
@@ -42,20 +42,21 @@ QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
         wxMsg.type    = GET_DWORD(arg2 + OS_RECV_MSG_TYPE);
         wxMsg.is_self = GET_DWORD(arg2 + OS_RECV_MSG_SELF);
         wxMsg.ts      = GET_DWORD(arg2 + OS_RECV_MSG_TS);
-        wxMsg.content = GetStringByWstrAddr(arg2 + OS_RECV_MSG_CONTENT);
-        wxMsg.sign    = GetStringByWstrAddr(arg2 + OS_RECV_MSG_SIGN);
-        wxMsg.xml     = GetStringByWstrAddr(arg2 + OS_RECV_MSG_XML);
-        wxMsg.roomid  = GetStringByWstrAddr(arg2 + OS_RECV_MSG_ROOMID);
+        wxMsg.content = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_CONTENT);
+        wxMsg.sign    = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_SIGN);
+        wxMsg.xml     = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_XML);
+        wxMsg.roomid  = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_ROOMID);
 
         if (wxMsg.roomid.find("@chatroom") != std::string::npos) {
             wxMsg.is_group = true;
-            wxMsg.sender   = wxMsg.is_self ? user_info::get_self_wxid() : GetStringByWstrAddr(arg2 + OS_RECV_MSG_WXID);
+            wxMsg.sender
+                = wxMsg.is_self ? user_info::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
         } else {
             wxMsg.is_group = false;
             wxMsg.sender   = wxMsg.is_self ? user_info::get_self_wxid() : wxMsg.roomid;
         }
     } catch (const std::exception &e) {
-        LOG_ERROR(GB2312ToUtf8(e.what()));
+        LOG_ERROR(util::gb2312_to_utf8(e.what()));
     }
 
     {
@@ -77,7 +78,7 @@ QWORD MessageHandler::PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a
         return p;
     }
 
-    LOG_INFO("【WX】\n{}", GB2312ToUtf8((char *)p));
+    LOG_INFO("【WX】\n{}", util::gb2312_to_utf8((char *)p));
     return p;
 }
 
@@ -99,9 +100,9 @@ void MessageHandler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
         wxMsg.is_group = false;
         wxMsg.id       = GET_QWORD(startAddr);
         wxMsg.ts       = GET_DWORD(startAddr + OS_PYQ_MSG_TS);
-        wxMsg.xml      = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_XML);
-        wxMsg.sender   = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_SENDER);
-        wxMsg.content  = GetStringByWstrAddr(startAddr + OS_PYQ_MSG_CONTENT);
+        wxMsg.xml      = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_XML);
+        wxMsg.sender   = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_SENDER);
+        wxMsg.content  = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_CONTENT);
 
         {
             std::unique_lock<std::mutex> lock(handler.mutex_);

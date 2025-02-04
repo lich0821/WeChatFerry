@@ -1,7 +1,8 @@
-﻿#include <algorithm>
+﻿#include "exec_sql.h"
+
+#include <algorithm>
 #include <iterator>
 
-#include "exec_sql.h"
 #include "fill_response.h"
 #include "log.hpp"
 #include "pb_util.h"
@@ -29,7 +30,7 @@ static db_map_t db_map;
 static void get_db_handle(QWORD base, QWORD offset)
 {
     auto *wsp          = reinterpret_cast<wchar_t *>(*(QWORD *)(base + offset + OFFSET_DB_NAME));
-    std::string dbname = Wstring2String(std::wstring(wsp));
+    std::string dbname = util::w2s(std::wstring(wsp));
     db_map[dbname]     = GET_QWORD(base + offset);
 }
 
@@ -41,12 +42,12 @@ static void get_msg_db_handle(QWORD msg_mgr_addr)
         QWORD db_addr = GET_QWORD(p_start + i * 0x08);
         if (db_addr) {
             // MSGi.db
-            std::string dbname = Wstring2String(GET_WSTRING(db_addr));
+            std::string dbname = util::w2s(get_pp_wstring(db_addr));
             db_map[dbname]     = GET_QWORD(db_addr + 0x78);
 
             // MediaMsgi.db
             QWORD mmdb_addr      = GET_QWORD(db_addr + 0x20);
-            std::string mmdbname = Wstring2String(GET_WSTRING(mmdb_addr + 0x78));
+            std::string mmdbname = util::w2s(get_pp_wstring(mmdb_addr + 0x78));
             db_map[mmdbname]     = GET_QWORD(mmdb_addr + 0x50);
         }
     }
@@ -199,7 +200,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
             continue;
         }
 
-        std::string dbname = Wstring2String(GET_WSTRING(db_addr));
+        std::string dbname = util::w2s(get_pp_wstring(db_addr));
         db_map[dbname]     = GET_QWORD(db_addr + 0x78);
 
         std::string sql = "SELECT localId FROM MSG WHERE MsgSvrID=" + std::to_string(id) + ";";
