@@ -51,7 +51,7 @@ typedef QWORD (*PushAttachTask_t)(QWORD, QWORD, QWORD, QWORD);
 typedef QWORD (*GetOCRManager_t)();
 typedef QWORD (*DoOCRTask_t)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-int IsLogin(void) { return (int)GET_QWORD(g_WeChatWinDllAddr + OS_LOGIN_STATUS); }
+int IsLogin(void) { return (int)util::get_qword(g_WeChatWinDllAddr + OS_LOGIN_STATUS); }
 
 static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
@@ -230,7 +230,7 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     GetChatMgr();
     GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
 
-    QWORD type = GET_QWORD(buff + 0x38);
+    QWORD type = util::get_qword(reinterpret_cast<QWORD>(buff) + 0x38);
 
     string save_path  = "";
     string thumb_path = "";
@@ -262,12 +262,12 @@ int DownloadAttach(QWORD id, string thumb, string extra)
     // 创建父目录，由于路径来源于微信，不做检查
     fs::create_directory(fs::path(save_path).parent_path().string());
 
-    int temp             = 1;
-    WxString *pSavePath  = NewWxStringFromStr(save_path);
-    WxString *pThumbPath = NewWxStringFromStr(thumb_path);
+    int temp           = 1;
+    auto wx_save_path  = util::new_wx_string(save_path);
+    auto wx_thumb_path = util::new_wx_string(thumb_path);
 
-    memcpy(&buff[0x280], pThumbPath, sizeof(WxString));
-    memcpy(&buff[0x2A0], pSavePath, sizeof(WxString));
+    memcpy(&buff[0x280], wx_thumb_path.get(), sizeof(WxString));
+    memcpy(&buff[0x2A0], wx_save_path.get(), sizeof(WxString));
     memcpy(&buff[0x40C], &temp, sizeof(temp));
 
     QWORD mgr = GetPreDownLoadMgr();
@@ -354,11 +354,11 @@ OcrResult_t GetOcrResult(string path)
     QWORD mgr  = GetOCRManager();
     ret.status = (int)DoOCRTask(mgr, (QWORD)&wxPath, unused, (QWORD)buff, (QWORD)&pUnk1, (QWORD)&pUnk2);
 
-    QWORD count = GET_QWORD(buff + 0x8);
+    QWORD count = util::get_qword(buff + 0x8);
     if (count > 0) {
-        QWORD header = GET_QWORD(buff);
+        QWORD header = util::get_qword(buff);
         for (QWORD i = 0; i < count; i++) {
-            QWORD content = GET_QWORD(header);
+            QWORD content = util::get_qword(header);
             ret.result += util::w2s(get_pp_wstring(content + 0x28));
             ret.result += "\n";
             header = content;

@@ -45,10 +45,10 @@ int add_chatroom_member(const string &roomid, const string &wxids)
         = reinterpret_cast<add_member_to_chatroom_t>(g_WeChatWinDllAddr + OS_ADD_MEMBERS);
 
     vector<WxString> wx_members = parse_wxids(wxids);
-    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    auto wx_roomid              = util::new_wx_string(roomid);
     QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    return static_cast<int>(add_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(p_wx_roomid), 0));
+    return static_cast<int>(add_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(wx_roomid.get()), 0));
 }
 
 int del_chatroom_member(const string &roomid, const string &wxids)
@@ -64,10 +64,10 @@ int del_chatroom_member(const string &roomid, const string &wxids)
         = reinterpret_cast<del_member_from_chatroom_t>(g_WeChatWinDllAddr + OS_DELETE_MEMBERS);
 
     vector<WxString> wx_members = parse_wxids(wxids);
-    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    auto wx_roomid              = util::new_wx_string(roomid);
     QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    return static_cast<int>(del_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(p_wx_roomid)));
+    return static_cast<int>(del_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(wx_roomid.get())));
 }
 
 int invite_chatroom_member(const string &roomid, const string &wxids)
@@ -81,11 +81,11 @@ int invite_chatroom_member(const string &roomid, const string &wxids)
         = reinterpret_cast<invite_member_to_chatroom_t>(g_WeChatWinDllAddr + OS_INVITE_MEMBERS);
 
     vector<WxString> wx_members = parse_wxids(wxids);
-    WxString *p_wx_roomid       = NewWxStringFromStr(roomid);
+    auto wx_roomid              = util::new_wx_string(roomid);
     QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
 
-    return static_cast<int>(invite_members(reinterpret_cast<QWORD>(p_wx_roomid->wptr), p_members,
-                                           reinterpret_cast<QWORD>(p_wx_roomid), 0));
+    return static_cast<int>(invite_members(reinterpret_cast<QWORD>(wx_roomid.get()->wptr), p_members,
+                                           reinterpret_cast<QWORD>(wx_roomid.get()), 0));
 }
 
 bool rpc_add_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)

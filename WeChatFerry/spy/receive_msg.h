@@ -5,11 +5,11 @@
 #include <mutex>
 #include <optional>
 #include <queue>
-#include <windows.h>
 
 #include "MinHook.h"
 
 #include "pb_types.h"
+#include "spy_types.h"
 
 class MessageHandler
 {

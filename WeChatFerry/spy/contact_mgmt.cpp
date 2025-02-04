@@ -51,7 +51,7 @@ static string get_cnt_string(QWORD start, QWORD end, const uint8_t *feat, size_t
         return "";
     }
 
-    DWORD lfeat = GET_DWORD(pfeat + len);
+    DWORD lfeat = util::get_dword(pfeat + len);
     if (lfeat <= 2) {
         return "";
     }
@@ -78,8 +78,8 @@ vector<RpcContact_t> get_contacts()
     QWORD pend   = addr[2];
     while (pstart < pend) {
         RpcContact_t cnt;
-        QWORD pbin   = GET_QWORD(pstart + OS_CONTACT_BIN);
-        QWORD lenbin = GET_DWORD(pstart + OS_CONTACT_BIN_LEN);
+        QWORD pbin   = util::get_qword(pstart + OS_CONTACT_BIN);
+        QWORD lenbin = util::get_dword(pstart + OS_CONTACT_BIN_LEN);
 
         cnt.wxid   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_WXID);
         cnt.code   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_CODE);
@@ -180,7 +180,7 @@ RpcContact_t get_contact_by_wxid(const string &wxid)
     contact.code   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxCode);
     contact.remark = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxRemark);
     contact.name   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxName);
-    contact.gender = GET_DWORD(reinterpret_cast<DWORD>(buff) + 0x148);
+    contact.gender = util::get_dword(reinterpret_cast<DWORD>(buff) + 0x148);
 
     __asm {
         PUSHAD

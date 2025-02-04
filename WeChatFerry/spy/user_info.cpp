@@ -22,7 +22,7 @@ std::string get_home_path()
     static std::string home_path;
 
     std::call_once(flag, [] {
-        std::string path = util::w2s(get_pp_wstring(g_WeChatWinDllAddr + OS_USER_HOME)) + "\\WeChat Files\\";
+        std::string path = util::w2s(util::get_pp_wstring(g_WeChatWinDllAddr + OS_USER_HOME)) + "\\WeChat Files\\";
         home_path        = std::filesystem::absolute(path).string();
     });
 
@@ -37,7 +37,7 @@ std::string get_self_wxid()
     std::call_once(flag, [] {
         UINT64 wxid_type = 0;
         try {
-            wxid_type = GET_UINT64(g_WeChatWinDllAddr + OS_USER_WXID + 0x18);
+            wxid_type = util::get_qword(g_WeChatWinDllAddr + OS_USER_WXID + 0x18);
             if (wxid_type == 0xF) {
                 wxid = util::get_p_string(g_WeChatWinDllAddr + OS_USER_WXID);
             } else {
@@ -58,7 +58,7 @@ UserInfo_t get_user_info()
     UserInfo_t ui;
     ui.wxid = get_self_wxid();
 
-    UINT64 name_type = GET_UINT64(g_WeChatWinDllAddr + OS_USER_NAME + 0x18);
+    UINT64 name_type = util::get_qword(g_WeChatWinDllAddr + OS_USER_NAME + 0x18);
     ui.name          = (name_type == 0xF) ? util::get_p_string(g_WeChatWinDllAddr + OS_USER_NAME)
                                           : util::get_pp_string(g_WeChatWinDllAddr + OS_USER_NAME);
 

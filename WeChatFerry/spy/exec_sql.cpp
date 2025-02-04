@@ -31,24 +31,24 @@ static void get_db_handle(QWORD base, QWORD offset)
 {
     auto *wsp          = reinterpret_cast<wchar_t *>(*(QWORD *)(base + offset + OFFSET_DB_NAME));
     std::string dbname = util::w2s(std::wstring(wsp));
-    db_map[dbname]     = GET_QWORD(base + offset);
+    db_map[dbname]     = util::get_qword(base + offset);
 }
 
 static void get_msg_db_handle(QWORD msg_mgr_addr)
 {
-    QWORD db_index = GET_QWORD(msg_mgr_addr + 0x68);
-    QWORD p_start  = GET_QWORD(msg_mgr_addr + 0x50);
+    QWORD db_index = util::get_qword(msg_mgr_addr + 0x68);
+    QWORD p_start  = util::get_qword(msg_mgr_addr + 0x50);
     for (uint32_t i = 0; i < db_index; i++) {
-        QWORD db_addr = GET_QWORD(p_start + i * 0x08);
+        QWORD db_addr = util::get_qword(p_start + i * 0x08);
         if (db_addr) {
             // MSGi.db
-            std::string dbname = util::w2s(get_pp_wstring(db_addr));
-            db_map[dbname]     = GET_QWORD(db_addr + 0x78);
+            std::string dbname = util::w2s(util::get_pp_wstring(db_addr));
+            db_map[dbname]     = util::get_qword(db_addr + 0x78);
 
             // MediaMsgi.db
-            QWORD mmdb_addr      = GET_QWORD(db_addr + 0x20);
-            std::string mmdbname = util::w2s(get_pp_wstring(mmdb_addr + 0x78));
-            db_map[mmdbname]     = GET_QWORD(mmdb_addr + 0x50);
+            QWORD mmdb_addr      = util::get_qword(db_addr + 0x20);
+            std::string mmdbname = util::w2s(util::get_pp_wstring(mmdb_addr + 0x78));
+            db_map[mmdbname]     = util::get_qword(mmdb_addr + 0x50);
         }
     }
 }
@@ -56,7 +56,7 @@ static void get_msg_db_handle(QWORD msg_mgr_addr)
 db_map_t get_db_handles()
 {
     db_map.clear();
-    QWORD db_instance_addr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
+    QWORD db_instance_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
 
     get_db_handle(db_instance_addr, OFFSET_DB_MICROMSG);     // MicroMsg.db
     get_db_handle(db_instance_addr, OFFSET_DB_CHAT_MSG);     // ChatMsg.db
@@ -65,7 +65,7 @@ db_map_t get_db_handles()
     get_db_handle(db_instance_addr, OFFSET_DB_MEDIA);        // Media.db
     get_db_handle(db_instance_addr, OFFSET_DB_FUNCTION_MSG); // Function.db
 
-    get_msg_db_handle(GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR)); // MSGi.db & MediaMsgi.db
+    get_msg_db_handle(util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR)); // MSGi.db & MediaMsgi.db
 
     return db_map;
 }
@@ -189,19 +189,19 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
         return -1;
     }
 
-    QWORD msg_mgr_addr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    int db_index       = static_cast<int>(GET_QWORD(msg_mgr_addr + 0x68)); // 总不能 int 还不够吧？
-    QWORD p_start      = GET_QWORD(msg_mgr_addr + 0x50);
+    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68)); // 总不能 int 还不够吧？
+    QWORD p_start      = util::get_qword(msg_mgr_addr + 0x50);
 
     *db_idx = 0;
     for (int i = db_index - 1; i >= 0; i--) { // 从后往前遍历
-        QWORD db_addr = GET_QWORD(p_start + i * 0x08);
+        QWORD db_addr = util::get_qword(p_start + i * 0x08);
         if (!db_addr) {
             continue;
         }
 
-        std::string dbname = util::w2s(get_pp_wstring(db_addr));
-        db_map[dbname]     = GET_QWORD(db_addr + 0x78);
+        std::string dbname = util::w2s(util::get_pp_wstring(db_addr));
+        db_map[dbname]     = util::get_qword(db_addr + 0x78);
 
         std::string sql = "SELECT localId FROM MSG WHERE MsgSvrID=" + std::to_string(id) + ";";
         DbRows_t rows   = exec_db_query(dbname, sql);
@@ -223,7 +223,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
             continue;
         }
 
-        *db_idx = static_cast<uint32_t>(GET_QWORD(GET_QWORD(db_addr + 0x28) + 0x1E8) >> 32);
+        *db_idx = static_cast<uint32_t>(util::get_qword(util::get_qword(db_addr + 0x28) + 0x1E8) >> 32);
         return 0;
     }
 
@@ -232,8 +232,8 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
 
 std::vector<uint8_t> get_audio_data(uint64_t id)
 {
-    QWORD msg_mgr_addr = GET_QWORD(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
-    int db_index       = static_cast<int>(GET_QWORD(msg_mgr_addr + 0x68));
+    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68));
 
     std::string sql = "SELECT Buf FROM Media WHERE Reserved0=" + std::to_string(id) + ";";
     for (int i = db_index - 1; i >= 0; i--) {

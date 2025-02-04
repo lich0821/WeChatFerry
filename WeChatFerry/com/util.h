@@ -1,15 +1,17 @@
 ﻿#pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "spy_types.h"
 
 namespace util
 {
 
-inline constexpr wchar_t WECHATEXE[]       = L"WeChat.exe";
-inline constexpr wchar_t WECHATWINDLL[]    = L"WeChatWin.dll";
+inline constexpr char WECHATEXE[]          = "WeChat.exe";
+inline constexpr char WECHATWINDLL[]       = "WeChatWin.dll";
 inline constexpr wchar_t WCFSDKDLL[]       = L"sdk.dll";
 inline constexpr wchar_t WCFSPYDLL[]       = L"spy.dll";
 inline constexpr wchar_t WCFSPYDLL_DEBUG[] = L"spy_debug.dll";
@@ -18,6 +20,16 @@ struct PortPath {
     int port;
     char path[MAX_PATH];
 };
+
+DWORD get_wechat_pid();
+int open_wechat(DWORD *pid);
+std::string get_wechat_version();
+uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr);
+std::wstring get_unicode_info_by_address(HANDLE hProcess, uint64_t addr);
+std::wstring s2w(const std::string &s);
+std::string w2s(const std::wstring &ws);
+std::string gb2312_to_utf8(const char *gb2312);
+void dbg_msg(const char *format, ...);
 
 inline DWORD get_dword(uint64_t addr) { return addr ? *reinterpret_cast<DWORD *>(addr) : 0; }
 inline QWORD get_qword(uint64_t addr) { return addr ? *reinterpret_cast<QWORD *>(addr) : 0; }
@@ -47,12 +59,12 @@ inline std::wstring get_pp_wstring(uint64_t addr)
     if (!addr) return L"";
 
     const wchar_t *ptr = *reinterpret_cast<const wchar_t **>(addr);
-    return (ptr && *ptr) ? std::wstring(ptr) : "";
+    return (ptr && *ptr) ? std::wstring(ptr) : L"";
 }
 inline std::string get_pp_len_string(uint64_t addr)
 {
     size_t len = get_dword(addr + 8);
-    return (addr && len) ? std::string(*reinterpret_cast<const char **>(addr), len) : L"";
+    return (addr && len) ? std::string(*reinterpret_cast<const char **>(addr), len) : "";
 }
 inline std::wstring get_pp_len_wstring(uint64_t addr)
 {
@@ -60,16 +72,6 @@ inline std::wstring get_pp_len_wstring(uint64_t addr)
     return (addr && len) ? std::wstring(*reinterpret_cast<const wchar_t **>(addr), len) : L"";
 }
 inline std::string get_str_by_wstr_addr(uint64_t addr) { return w2s(get_pp_len_wstring(addr)); }
-
-DWORD get_wechat_pid();
-int open_wechat(DWORD *pid);
-std::string get_wechat_version();
-uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr);
-std::wstring get_unicode_info_by_address(HANDLE hProcess, uint64_t addr);
-std::wstring s2w(const std::string &s);
-std::string w2s(const std::wstring &ws);
-std::string gb2312_to_utf8(const char *gb2312);
-void dbg_msg(const char *format, ...);
 
 std::unique_ptr<WxString> new_wx_string(const char *str);
 std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr);

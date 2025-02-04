@@ -2,14 +2,13 @@
 
 #include <codecvt>
 #include <locale>
-#include <memory>
-#include <string.h>
+#include <optional>
 #include <strsafe.h>
-#include <tlhelp32.h>
-#include <vector>
 #include <wchar.h>
 
 #include "framework.h"
+#include <Shlwapi.h>
+#include <tlhelp32.h>
 
 #include "log.hpp"
 
@@ -61,7 +60,7 @@ DWORD get_wechat_pid()
 
     PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
     while (Process32Next(hSnapshot, &pe32)) {
-        if (std::wstring(pe32.szExeFile) == WECHATEXE) {
+        if (w2s(pe32.szExeFile) == WECHATEXE) {
             pid = pe32.th32ProcessID;
             break;
         }
@@ -70,100 +69,125 @@ DWORD get_wechat_pid()
     return pid;
 }
 
-int open_wechat(DWORD *pid)
+int open_wechat(DWORD &pid)
 {
-    *pid = get_wechat_pid();
-    if (*pid) return ERROR_SUCCESS;
+    pid = get_wechat_pid();
+    if (pid != 0) {
+        return ERROR_SUCCESS;
+    }
 
-    WCHAR path[MAX_PATH] = { 0 };
-    if (GetModuleFileNameW(nullptr, path, MAX_PATH) == 0) {
-        return GetLastError();
+    auto wechat_path = util::get_wechat_path();
+    if (!wechat_path) {
+        LOG_ERROR("获取 WeChat 安装路径失败");
+        return ERROR_FILE_NOT_FOUND;
     }
 
     STARTUPINFO si         = { sizeof(si) };
-    PROCESS_INFORMATION pi = { 0 };
-
-    if (!CreateProcessW(nullptr, path, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi)) {
+    PROCESS_INFORMATION pi = {};
+    if (!CreateProcessA(wechat_path->c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr,
+                        &si, &pi)) {
         return GetLastError();
     }
 
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
 
-    *pid = pi.dwProcessId;
+    pid = pi.dwProcessId;
     return ERROR_SUCCESS;
 }
 
-static std::optional<std::string> get_wechat_win_dll_path()
+std::optional<std::string> get_wechat_path()
 {
-    char path[MAX_PATH] = { 0 };
-    if (GetWeChatPath(path) != ERROR_SUCCESS) {
+    HKEY hKey;
+    if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Tencent\\WeChat", 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
+        LOG_ERROR("无法打开注册表项");
         return std::nullopt;
     }
 
-    PathRemoveFileSpecA(path);
-    PathAppendA(path, WECHATWINDLL);
-
-    if (!PathFileExistsA(path)) {
-        // 微信 3.7+ 版本增加了一层目录
-        PathRemoveFileSpecA(path);
-        _finddata_t findData;
-        std::string dir = std::string(path) + "\\[*.*";
-        intptr_t handle = _findfirst(dir.c_str(), &findData);
-        if (handle == -1) {
-            return std::nullopt;
-        }
-        _findclose(handle);
-
-        std::string dllPath = std::string(path) + "\\" + findData.name + "\\" + WECHATWINDLL;
-        return dllPath;
+    char path[MAX_PATH] = { 0 };
+    DWORD type          = REG_SZ;
+    DWORD size          = sizeof(path);
+    if (RegQueryValueExA(hKey, "InstallPath", nullptr, &type, reinterpret_cast<LPBYTE>(path), &size) != ERROR_SUCCESS) {
+        RegCloseKey(hKey);
+        LOG_ERROR("无法读取注册表中的 InstallPath");
+        return std::nullopt;
     }
+    RegCloseKey(hKey);
 
+    PathAppendA(path, WECHATEXE);
     return std::string(path);
 }
 
-static std::optional<std::string> get_file_version(const std::string &filePath)
+std::optional<std::string> get_wechat_win_dll_path()
 {
-    if (filePath.empty() || !PathFileExistsA(filePath.c_str())) {
+    auto wechat_path = get_wechat_path();
+    if (!wechat_path) {
         return std::nullopt;
     }
 
-    DWORD handle = 0;
-    DWORD size   = GetFileVersionInfoSizeA(filePath.c_str(), &handle);
+    std::string dll_path = *wechat_path;
+    PathRemoveFileSpecA(dll_path.data());
+    PathAppendA(dll_path.data(), WECHATWINDLL);
+
+    if (PathFileExistsA(dll_path.c_str())) {
+        return dll_path;
+    }
+
+    // 微信从（大约）3.7开始，增加了一层版本目录: [3.7.0.29]
+    PathRemoveFileSpecA(dll_path.data());
+    WIN32_FIND_DATAA find_data;
+    HANDLE hFind = FindFirstFileA((dll_path + "\\*.*").c_str(), &find_data);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        return std::nullopt;
+    }
+    FindClose(hFind);
+
+    std::string versioned_path = dll_path + "\\" + find_data.cFileName + WECHATWINDLL;
+    return PathFileExistsA(versioned_path.c_str()) ? std::optional<std::string>(versioned_path) : std::nullopt;
+}
+
+std::optional<std::string> get_file_version(const std::string &file_path)
+{
+    if (!PathFileExistsA(file_path.c_str())) {
+        return std::nullopt;
+    }
+
+    DWORD dummy = 0;
+    DWORD size  = GetFileVersionInfoSizeA(file_path.c_str(), &dummy);
     if (size == 0) {
         return std::nullopt;
     }
 
-    std::vector<BYTE> data(size);
-    if (!GetFileVersionInfoA(filePath.c_str(), 0, size, data.data())) {
+    std::vector<BYTE> buffer(size);
+    if (!GetFileVersionInfoA(file_path.c_str(), 0, size, buffer.data())) {
         return std::nullopt;
     }
 
-    VS_FIXEDFILEINFO *verInfo = nullptr;
-    UINT len                  = 0;
-    if (!VerQueryValueA(data.data(), "\\", reinterpret_cast<void **>(&verInfo), &len) || len == 0) {
+    VS_FIXEDFILEINFO *ver_info = nullptr;
+    UINT ver_size              = 0;
+    if (!VerQueryValueA(buffer.data(), "\\", reinterpret_cast<LPVOID *>(&ver_info), &ver_size)) {
         return std::nullopt;
     }
 
-    char version[32];
-    StringCbPrintfA(version, sizeof(version), "%d.%d.%d.%d", HIWORD(verInfo->dwFileVersionMS),
-                    LOWORD(verInfo->dwFileVersionMS), HIWORD(verInfo->dwFileVersionLS),
-                    LOWORD(verInfo->dwFileVersionLS));
-
-    return std::string(version);
+    return fmt::format("{}.{}.{}.{}", HIWORD(ver_info->dwFileVersionMS), LOWORD(ver_info->dwFileVersionMS),
+                       HIWORD(ver_info->dwFileVersionLS), LOWORD(ver_info->dwFileVersionLS));
 }
 
 std::string get_wechat_version()
 {
-    std::string version = "";
-
-    auto dllPath = get_wechat_win_dll_path();
-    if (!dllPath) {
-        return version;
+    auto dll_path = get_wechat_win_dll_path();
+    if (!dll_path) {
+        LOG_ERROR("无法获取 WeChatWin.dll 路径");
+        return "";
     }
 
-    version = get_file_version(*dllPath);
-    return version ? version : "";
+    auto version = get_file_version(*dll_path);
+    if (!version) {
+        LOG_ERROR("无法获取 WeChat 版本信息");
+        return "";
+    }
+
+    return *version;
 }
 
 uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr)
@@ -171,10 +195,7 @@ uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr)
     uint32_t value = 0;
     if (!addr || !hProcess) return value;
 
-    unsigned char data[4] = { 0 };
-    if (ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(addr), data, sizeof(data), nullptr)) {
-        value = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
-    }
+    ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(addr), &value, sizeof(value), nullptr);
 
     return value;
 }

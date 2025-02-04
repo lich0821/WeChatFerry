@@ -38,10 +38,10 @@ QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
     auto &handler = getInstance();
     WxMsg_t wxMsg = {};
     try {
-        wxMsg.id      = GET_QWORD(arg2 + OS_RECV_MSG_ID);
-        wxMsg.type    = GET_DWORD(arg2 + OS_RECV_MSG_TYPE);
-        wxMsg.is_self = GET_DWORD(arg2 + OS_RECV_MSG_SELF);
-        wxMsg.ts      = GET_DWORD(arg2 + OS_RECV_MSG_TS);
+        wxMsg.id      = util::get_qword(arg2 + OS_RECV_MSG_ID);
+        wxMsg.type    = util::get_dword(arg2 + OS_RECV_MSG_TYPE);
+        wxMsg.is_self = util::get_dword(arg2 + OS_RECV_MSG_SELF);
+        wxMsg.ts      = util::get_dword(arg2 + OS_RECV_MSG_TS);
         wxMsg.content = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_CONTENT);
         wxMsg.sign    = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_SIGN);
         wxMsg.xml     = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_XML);
@@ -98,8 +98,8 @@ void MessageHandler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
         wxMsg.type     = 0x00;
         wxMsg.is_self  = false;
         wxMsg.is_group = false;
-        wxMsg.id       = GET_QWORD(startAddr);
-        wxMsg.ts       = GET_DWORD(startAddr + OS_PYQ_MSG_TS);
+        wxMsg.id       = util::get_qword(startAddr);
+        wxMsg.ts       = util::get_dword(startAddr + OS_PYQ_MSG_TS);
         wxMsg.xml      = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_XML);
         wxMsg.sender   = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_SENDER);
         wxMsg.content  = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_CONTENT);

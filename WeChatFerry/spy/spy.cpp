@@ -13,7 +13,7 @@ UINT64 g_WeChatWinDllAddr = 0;
 
 void InitSpy(LPVOID args)
 {
-    auto *pp = static_cast<PortPath_t *>(args);
+    auto *pp = static_cast<util::PortPath *>(args);
 
     Log::InitLogger(pp->path);
     if (auto dll_addr = GetModuleHandle(L"WeChatWin.dll")) {
