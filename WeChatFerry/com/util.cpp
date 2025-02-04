@@ -1,6 +1,7 @@
 ﻿#include "util.h"
 
 #include <codecvt>
+#include <filesystem>
 #include <locale>
 #include <optional>
 #include <strsafe.h>
@@ -14,6 +15,8 @@
 
 #pragma comment(lib, "shlwapi")
 #pragma comment(lib, "Version.lib")
+
+namespace fs = std::filesystem;
 
 namespace util
 {
@@ -101,47 +104,57 @@ static std::optional<std::string> get_wechat_win_dll_path()
         return std::nullopt;
     }
 
-    std::string dll_path = *wechat_path;
-    PathRemoveFileSpecA(dll_path.data());
-    PathAppendA(dll_path.data(), WECHATWINDLL);
+    fs::path dll_path = *wechat_path;
+    dll_path          = dll_path.parent_path();
 
-    if (PathFileExistsA(dll_path.c_str())) {
-        return dll_path;
+    fs::path wechat_dll_path = dll_path / WECHATWINDLL;
+    if (fs::exists(wechat_dll_path)) { // 尝试直接查找 WeChatWin.dll
+        return wechat_dll_path.string();
     }
 
     // 微信从（大约）3.7开始，增加了一层版本目录: [3.7.0.29]
-    PathRemoveFileSpecA(dll_path.data());
-    WIN32_FIND_DATAA find_data;
-    HANDLE hFind = FindFirstFileA((dll_path + "\\*.*").c_str(), &find_data);
-    if (hFind == INVALID_HANDLE_VALUE) {
-        return std::nullopt;
+    std::optional<std::string> found_path;
+    for (const auto &entry : fs::directory_iterator(dll_path)) {
+        if (entry.is_directory()) {
+            fs::path possible_dll = entry.path() / WECHATWINDLL;
+            if (fs::exists(possible_dll)) {
+                found_path = possible_dll.string();
+                break; // 取第一个找到的版本号文件夹
+            }
+        }
     }
-    FindClose(hFind);
 
-    std::string versioned_path = dll_path + "\\" + find_data.cFileName + WECHATWINDLL;
-    return PathFileExistsA(versioned_path.c_str()) ? std::optional<std::string>(versioned_path) : std::nullopt;
+    if (!found_path) {
+        LOG_ERROR("未找到 WeChatWin.dll");
+    }
+
+    return found_path;
 }
 
-static std::optional<std::string> get_file_version(const std::string &file_path)
+static std::optional<std::string> get_file_version(const std::string &path)
 {
-    if (!PathFileExistsA(file_path.c_str())) {
+    if (!PathFileExistsA(path.c_str())) {
+        LOG_ERROR("文件不存在: {}", path);
         return std::nullopt;
     }
 
     DWORD dummy = 0;
-    DWORD size  = GetFileVersionInfoSizeA(file_path.c_str(), &dummy);
+    DWORD size  = GetFileVersionInfoSizeA(path.c_str(), &dummy);
     if (size == 0) {
+        LOG_ERROR("无法获取文件版本信息大小: {}", path);
         return std::nullopt;
     }
 
     std::vector<BYTE> buffer(size);
-    if (!GetFileVersionInfoA(file_path.c_str(), 0, size, buffer.data())) {
+    if (!GetFileVersionInfoA(path.c_str(), 0, size, buffer.data())) {
+        LOG_ERROR("无法获取文件版本信息: {}", path);
         return std::nullopt;
     }
 
     VS_FIXEDFILEINFO *ver_info = nullptr;
     UINT ver_size              = 0;
     if (!VerQueryValueA(buffer.data(), "\\", reinterpret_cast<LPVOID *>(&ver_info), &ver_size)) {
+        LOG_ERROR("无法获取文件版本信息: {}", path);
         return std::nullopt;
     }
 

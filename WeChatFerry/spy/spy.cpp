@@ -11,7 +11,7 @@ constexpr std::string_view SUPPORT_VERSION = "3.9.11.25";
 
 UINT64 g_WeChatWinDllAddr = 0;
 
-void InitSpy(LPVOID args)
+int InitSpy(LPVOID args)
 {
     auto *pp = static_cast<util::PortPath *>(args);
 
@@ -28,11 +28,12 @@ void InitSpy(LPVOID args)
     if (version != SUPPORT_VERSION) {
         LOG_ERROR(msg);
         MessageBoxA(NULL, msg.c_str(), "错误", MB_ICONERROR);
-        return;
+        return -1;
     }
 
     LOG_INFO(msg);
     RpcStartServer(pp->port);
+    return 0;
 }
 
 void CleanupSpy()

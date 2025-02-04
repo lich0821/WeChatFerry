@@ -2,5 +2,5 @@
 
 #include "framework.h"
 
-void InitSpy(int port);
+int InitSpy(int port);
 void CleanupSpy();

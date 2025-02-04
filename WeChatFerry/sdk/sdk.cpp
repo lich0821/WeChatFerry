@@ -113,8 +113,10 @@ int WxInitSDK(bool debug, int port)
     pp.port           = port;
     snprintf(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    if (!call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath), NULL)) {
+    bool ok = call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath), &status);
+    if (!ok || status != 0) {
         MessageBoxA(NULL, "初始化失败", "WxInitSDK", 0);
+        WxDestroySDK();
         return -1;
     }
 
