@@ -19,9 +19,10 @@ static HANDLE wcProcess = NULL;
 static HMODULE spyBase  = NULL;
 static std::string spyDllPath;
 
-constexpr std::string_view WCFSDKDLL            = "sdk.dll";
-constexpr std::string_view WCFSPYDLL            = "spy.dll";
-constexpr std::string_view WCFSPYDLL_DEBUG      = "spy_debug.dll";
+constexpr char WCFSDKDLL[]       = "sdk.dll";
+constexpr char WCFSPYDLL[]       = "spy.dll";
+constexpr char WCFSPYDLL_DEBUG[] = "spy_debug.dll";
+
 constexpr std::string_view DISCLAIMER_FLAG      = ".license_accepted.flag";
 constexpr std::string_view DISCLAIMER_TEXT_FILE = "DISCLAIMER.md";
 
@@ -95,7 +96,7 @@ int WxInitSDK(bool debug, int port)
         return ERROR_FILE_NOT_FOUND; // DLL 文件路径不存在
     }
 
-    status = util::open_wechat(&wcPid);
+    status = util::open_wechat(wcPid);
     if (status != 0) {
         MessageBoxA(NULL, "打开微信失败", "WxInitSDK", 0);
         return status;
@@ -112,7 +113,7 @@ int WxInitSDK(bool debug, int port)
     pp.port           = port;
     snprintf(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
 
-    if (!call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+    if (!call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath), NULL)) {
         MessageBoxA(NULL, "初始化失败", "WxInitSDK", 0);
         return -1;
     }

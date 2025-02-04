@@ -18,8 +18,8 @@
 namespace util
 {
 
-constexpr std::wstring_view WECHATEXE   = L"WeChat.exe";
-constexpr std::string_view WECHATWINDLL = "WeChatWin.dll";
+constexpr char WECHATEXE[]    = "WeChat.exe";
+constexpr char WECHATWINDLL[] = "WeChatWin.dll";
 
 std::wstring s2w(const std::string &s)
 {
@@ -63,7 +63,7 @@ static DWORD get_wechat_pid()
 
     PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
     while (Process32Next(hSnapshot, &pe32)) {
-        if (pe32.szExeFile == WECHATEXE) {
+        if (pe32.szExeFile == s2w(WECHATEXE)) {
             pid = pe32.th32ProcessID;
             break;
         }

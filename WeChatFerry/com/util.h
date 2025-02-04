@@ -15,7 +15,7 @@ struct PortPath {
 };
 
 DWORD get_wechat_pid();
-int open_wechat(DWORD *pid);
+int open_wechat(DWORD &pid);
 std::string get_wechat_version();
 uint32_t get_memory_int_by_address(HANDLE hProcess, uint64_t addr);
 std::wstring get_unicode_info_by_address(HANDLE hProcess, uint64_t addr);
