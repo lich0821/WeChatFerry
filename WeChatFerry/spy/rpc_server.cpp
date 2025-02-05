@@ -23,12 +23,12 @@
 #include "chatroom_manager.h"
 #include "contact_manager.h"
 #include "database_executor.h"
-#include "misc_manager.h"
 #include "log.hpp"
-#include "pb_types.h"
-#include "pb_util.h"
 #include "message_handler.h"
 #include "message_sender.h"
+#include "misc_manager.h"
+#include "pb_types.h"
+#include "pb_util.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "userinfo_manager.h"
@@ -71,7 +71,7 @@ static bool FillResponse(int which_msg, uint8_t *out, size_t *len, AssignFunc as
 static bool func_is_login(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_IS_LOGIN>(Response_status_tag, out, len,
-                                                 [](Response &rsp) { rsp.msg.status = IsLogin(); });
+                                                 [](Response &rsp) { rsp.msg.status = misc::is_logged_in(); });
 }
 
 static bool func_get_self_wxid(uint8_t *out, size_t *len)
@@ -132,7 +132,7 @@ static bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
 static bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_AUDIO_MSG>(Response_str_tag, out, len, [id, dir](Response &rsp) {
-        std::string path = (dir == nullptr) ? "" : GetAudio(id, dir);
+        std::string path = (dir == nullptr) ? "" : misc::get_audio(id, dir);
         rsp.msg.str      = path.empty() ? nullptr : (char *)path.c_str();
     });
 }
@@ -365,7 +365,7 @@ static bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
 static bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_REFRESH_PYQ>(Response_status_tag, out, len,
-                                                    [id](Response &rsp) { rsp.msg.status = RefreshPyq(id); });
+                                                    [id](Response &rsp) { rsp.msg.status = misc::refresh_pyq(id); });
 }
 
 static bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
@@ -373,20 +373,20 @@ static bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
     return FillResponse<Functions_FUNC_DOWNLOAD_ATTACH>(Response_status_tag, out, len, [att](Response &rsp) {
         std::string thumb = att.thumb ? att.thumb : "";
         std::string extra = att.extra ? att.extra : "";
-        rsp.msg.status    = DownloadAttach(att.id, thumb, extra);
+        rsp.msg.status    = misc::download_attachment(att.id, thumb, extra);
     });
 }
 
 static bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_REVOKE_MSG>(Response_status_tag, out, len,
-                                                   [id](Response &rsp) { rsp.msg.status = RevokeMsg(id); });
+                                                   [id](Response &rsp) { rsp.msg.status = misc::revoke_message(id); });
 }
 
 static bool func_refresh_qrcode(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_REFRESH_QRCODE>(Response_str_tag, out, len, [](Response &rsp) {
-        std::string url = GetLoginUrl();
+        std::string url = misc::get_login_url();
         rsp.msg.str     = url.empty() ? nullptr : (char *)url.c_str();
     });
 }
@@ -398,7 +398,7 @@ static bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *o
             LOG_ERROR("Empty wxid, tfid, or taid.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = ReceiveTransfer(wxid, tfid, taid);
+            rsp.msg.status = misc::receive_transfer(wxid, tfid, taid);
         }
     });
 }
@@ -431,7 +431,7 @@ static bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
         if ((dec.src == nullptr) || (dec.dst == nullptr)) {
             LOG_ERROR("Empty src or dst.");
         } else {
-            path = DecryptImage(dec.src, dec.dst);
+            path = misc::decrypt_image(dec.src, dec.dst);
         }
         rsp.msg.str = path.empty() ? nullptr : (char *)path.c_str();
     });
@@ -444,7 +444,7 @@ static bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
         if (path == nullptr) {
             LOG_ERROR("Empty path.");
         } else {
-            ret = GetOcrResult(path);
+            ret = misc::get_ocr_result(path);
         }
         rsp.msg.ocr.status = ret.status;
         rsp.msg.ocr.result = ret.result.empty() ? nullptr : (char *)ret.result.c_str();

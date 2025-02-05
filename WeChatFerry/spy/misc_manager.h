@@ -1,17 +1,39 @@
 #pragma once
 
-#include "stdint.h"
+#include <cstdint>
+#include <filesystem>
+#include <optional>
 #include <string>
+#include <vector>
 
 #include "pb_types.h"
 
-int IsLogin(void);
-std::string GetAudio(uint64_t id, std::string dir);
-std::string GetPCMAudio(uint64_t id, std::string dir, int32_t sr);
-std::string DecryptImage(std::string src, std::string dst);
-int RefreshPyq(uint64_t id);
-int DownloadAttach(uint64_t id, std::string thumb, std::string extra);
-int RevokeMsg(uint64_t id);
-OcrResult_t GetOcrResult(std::string path);
-std::string GetLoginUrl();
-int ReceiveTransfer(std::string wxid, std::string transferid, std::string transactionid);
+namespace misc
+{
+
+bool is_logged_in();
+
+std::string get_audio(uint64_t id, const std::filesystem::path &dir);
+std::string get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr);
+std::string decrypt_image(const std::filesystem::path &src, const std::filesystem::path &dst);
+std::string get_login_url();
+
+int refresh_pyq(uint64_t id);
+int download_attachment(uint64_t id, const std::filesystem::path &thumb, const std::filesystem::path &extra);
+int revoke_message(uint64_t id);
+
+OcrResult_t get_ocr_result(const std::filesystem::path &path);
+int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid);
+
+// RPC
+bool rpc_is_logged_in(uint8_t *out, size_t *len);
+bool rpc_get_audio(uint64_t id, const std::filesystem::path &dir, uint8_t *out, size_t *len);
+bool rpc_get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr, uint8_t *out, size_t *len);
+bool rpc_decrypt_image(const DecPath &dec, uint8_t *out, size_t *len);
+bool rpc_get_login_url(uint8_t *out, size_t *len);
+bool rpc_refresh_pyq(uint64_t id, uint8_t *out, size_t *len);
+bool rpc_download_attachment(uint64_t id, const std::filesystem::path &thumb, const std::filesystem::path &extra, uint8_t *out, size_t *len);
+bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len);
+bool rpc_get_ocr_result(const std::filesystem::path &path, uint8_t *out, size_t *len);
+bool rpc_receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid, uint8_t *out, size_t *len);
+} // namespace misc
