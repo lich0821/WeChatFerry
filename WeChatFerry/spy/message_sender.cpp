@@ -1,13 +1,13 @@
-﻿#include "send_msg.h"
+﻿#include "message_sender.h"
 
 #include <sstream>
 #include <vector>
 
-#include "exec_sql.h"
+#include "database_executor.h"
 #include "log.hpp"
 #include "rpc_helper.h"
 #include "spy_types.h"
-#include "user_info.h"
+#include "userinfo_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;

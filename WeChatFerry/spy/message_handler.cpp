@@ -1,4 +1,4 @@
-﻿#include "receive_msg.h"
+﻿#include "message_handler.h"
 
 #include <condition_variable>
 #include <mutex>
@@ -7,7 +7,7 @@
 #include "framework.h"
 
 #include "log.hpp"
-#include "user_info.h"
+#include "userinfo_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;

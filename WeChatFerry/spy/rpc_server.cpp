@@ -20,18 +20,18 @@
 
 #include "wcf.pb.h"
 
-#include "chatroom_mgmt.h"
-#include "contact_mgmt.h"
-#include "exec_sql.h"
-#include "funcs.h"
+#include "chatroom_manager.h"
+#include "contact_manager.h"
+#include "database_executor.h"
+#include "misc_manager.h"
 #include "log.hpp"
 #include "pb_types.h"
 #include "pb_util.h"
-#include "receive_msg.h"
-#include "send_msg.h"
+#include "message_handler.h"
+#include "message_sender.h"
 #include "spy.h"
 #include "spy_types.h"
-#include "user_info.h"
+#include "userinfo_manager.h"
 #include "util.h"
 
 namespace fs = std::filesystem;

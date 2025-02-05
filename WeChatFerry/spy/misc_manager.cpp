@@ -1,5 +1,5 @@
 ﻿#pragma warning(disable : 4244)
-#include "funcs.h"
+#include "misc_manager.h"
 
 #include <filesystem>
 #include <fstream>
@@ -7,9 +7,9 @@
 #include "framework.h"
 
 #include "codec.h"
-#include "exec_sql.h"
+#include "database_executor.h"
 #include "log.hpp"
-#include "receive_msg.h"
+#include "message_handler.h"
 #include "spy_types.h"
 #include "util.h"
 
