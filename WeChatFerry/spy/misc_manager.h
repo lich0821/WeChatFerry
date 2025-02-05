@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "wcf.pb.h"
+
 #include "pb_types.h"
 
 namespace misc
@@ -26,6 +28,7 @@ OcrResult_t get_ocr_result(const std::filesystem::path &path);
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid);
 
 // RPC
+// clang-format off
 bool rpc_is_logged_in(uint8_t *out, size_t *len);
 bool rpc_get_audio(uint64_t id, const std::filesystem::path &dir, uint8_t *out, size_t *len);
 bool rpc_get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr, uint8_t *out, size_t *len);
@@ -36,4 +39,5 @@ bool rpc_download_attachment(uint64_t id, const std::filesystem::path &thumb, co
 bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len);
 bool rpc_get_ocr_result(const std::filesystem::path &path, uint8_t *out, size_t *len);
 bool rpc_receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid, uint8_t *out, size_t *len);
+// clang-format on
 } // namespace misc

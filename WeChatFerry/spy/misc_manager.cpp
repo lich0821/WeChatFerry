@@ -81,14 +81,14 @@ std::string decrypt_image(const fs::path &src, const fs::path &dst_dir)
 
     uint8_t key = 0x00;
     auto ext    = detect_image_extension(buffer[0], buffer[1], key);
-    if (!ext) {
+    if (!ext.empty()) {
         LOG_ERROR("无法检测文件类型.");
         return "";
     }
 
     std::for_each(buffer.begin(), buffer.end(), [key](char &c) { c ^= key; });
 
-    fs::path dst_path = dst_dir / (src.stem().string() + *ext);
+    fs::path dst_path = dst_dir / (src.stem().string() + ext);
     if (!fs::exists(dst_dir)) fs::create_directories(dst_dir);
 
     std::ofstream out(dst_path, std::ios::binary);
@@ -163,7 +163,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
     }
 
     if (db::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
+        LOG_ERROR("获取 localId 失败, 请检查消息 id: {} 是否正确", to_string(id));
         return status;
     }
 
@@ -181,7 +181,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
 
     char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, 0x460);
     if (buff == nullptr) {
-        LOG_ERROR("Failed to allocate memory.");
+        LOG_ERROR("申请内存失败.");
         return status;
     }
 
@@ -191,9 +191,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
 
     QWORD type = util::get_qword(reinterpret_cast<QWORD>(buff) + 0x38);
 
-    string save_path  = "";
-    string thumb_path = "";
-
+    fs::path save_path, thumb_path;
     switch (type) {
         case 0x03: { // Image: extra
             save_path = extra;
@@ -210,20 +208,21 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
             break;
         }
         default:
-            break;
+            LOG_ERROR("不支持的文件类型: {}", type);
+            return -2;
     }
 
     if (fs::exists(save_path)) { // 不重复下载。TODO: 通过文件大小来判断
         return 0;
     }
 
-    LOG_DEBUG("path: {}", save_path);
+    LOG_DEBUG("保存路径: {}", save_path.string());
     // 创建父目录，由于路径来源于微信，不做检查
-    fs::create_directory(fs::path(save_path).parent_path());
+    fs::create_directory(save_path.parent_path());
 
     int temp           = 1;
-    auto wx_save_path  = util::new_wx_string(save_path);
-    auto wx_thumb_path = util::new_wx_string(thumb_path);
+    auto wx_save_path  = util::new_wx_string(save_path.string());
+    auto wx_thumb_path = util::new_wx_string(thumb_path.string());
 
     memcpy(&buff[0x280], wx_thumb_path.get(), sizeof(WxString));
     memcpy(&buff[0x2A0], wx_save_path.get(), sizeof(WxString));
@@ -245,7 +244,7 @@ std::string get_audio(uint64_t id, const fs::path &dir)
 
     auto silk = db::get_audio_data(id);
     if (silk.empty()) {
-        LOG_ERROR("Empty audio data.");
+        LOG_ERROR("没有获取到语音数据.");
         return "";
     }
 
@@ -262,8 +261,8 @@ std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
 
     auto silk = db::get_audio_data(id);
     if (silk.empty()) {
-        LOG_ERROR("Empty audio data.");
-        return std::nullopt;
+        LOG_ERROR("没有获取到语音数据.");
+        return "";
     }
 
     std::vector<uint8_t> pcm;
@@ -271,8 +270,8 @@ std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
 
     std::ofstream out(pcmpath, std::ios::binary);
     if (!out) {
-        LOG_ERROR("Failed to write file: {}", pcmpath.string());
-        return std::nullopt;
+        LOG_ERROR("创建文件失败: {}", pcmpath.string());
+        return "";
     }
 
     out.write(reinterpret_cast<char *>(pcm.data()), pcm.size());
@@ -339,7 +338,7 @@ std::string get_login_url()
     LPVOID targetAddress = reinterpret_cast<LPBYTE>(g_WeChatWinDllAddr) + OS_LOGIN_QR_CODE;
     char *dataPtr        = *reinterpret_cast<char **>(targetAddress);
     if (!dataPtr) {
-        LOG_ERROR("Failed to get login URL.");
+        LOG_ERROR("获取二维码失败.");
         return "";
     }
     return "http://weixin.qq.com/x/" + std::string(dataPtr, 22);
