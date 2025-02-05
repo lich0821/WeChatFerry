@@ -27,7 +27,7 @@ int InitSpy(LPVOID args)
     std::string msg     = fmt::format("WCF 支持版本: {}，当前版本: {}", SUPPORT_VERSION, version);
     if (version != SUPPORT_VERSION) {
         LOG_ERROR(msg);
-        MessageBoxA(NULL, msg.c_str(), "错误", MB_ICONERROR);
+        MessageBoxA(NULL, msg.c_str(), "微信版本错误", MB_ICONERROR);
         return -2;
     }
 
