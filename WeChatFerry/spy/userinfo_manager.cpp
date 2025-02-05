@@ -9,7 +9,7 @@
 
 extern UINT64 g_WeChatWinDllAddr;
 
-namespace user_info
+namespace userinfo
 {
 #define OS_USER_HOME   0x5932770
 #define OS_USER_WXID   0x595C270
@@ -85,4 +85,4 @@ bool rpc_get_user_info(uint8_t *out, size_t *len)
     });
 }
 
-} // namespace user_info
+} // namespace userinfo

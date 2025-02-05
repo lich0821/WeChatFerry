@@ -9,7 +9,7 @@
 using namespace std;
 extern QWORD g_WeChatWinDllAddr;
 
-namespace chatroom_mgmt
+namespace chatroom
 {
 #define OS_GET_CHATROOM_MGR 0x1B83BD0
 #define OS_ADD_MEMBERS      0x2155100
@@ -106,4 +106,4 @@ bool rpc_invite_chatroom_member(const string &roomid, const string &wxids, uint8
         out, len, [&](Response &rsp) { rsp.msg.status = invite_chatroom_member(roomid, wxids); });
 }
 
-} // namespace chatroom_mgmt
+} // namespace chatroom

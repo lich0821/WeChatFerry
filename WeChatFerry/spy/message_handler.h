@@ -11,10 +11,12 @@
 #include "pb_types.h"
 #include "spy_types.h"
 
-class MessageHandler
+namespace message {
+
+class Handler
 {
 public:
-    static MessageHandler &getInstance();
+    static Handler &getInstance();
 
     // 0: 成功, -1: 失败, 1: 已经开启
     int EnableLog();
@@ -35,8 +37,8 @@ public:
     std::mutex &getMutex() { return mutex_; };
 
 private:
-    MessageHandler();
-    ~MessageHandler();
+    Handler();
+    ~Handler();
 
     mutable std::mutex mutex_;
     std::condition_variable cv_;
@@ -64,3 +66,5 @@ private:
                             QWORD a10, QWORD a11, QWORD a12);
     static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3);
 };
+
+} // namespace message

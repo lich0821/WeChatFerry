@@ -33,7 +33,9 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_PYQ_MSG_CALL     0x2E42C90
 #define OS_WXLOG            0x2613D20
 
-QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
+namespace message
+{
+QWORD Handler::DispatchMsg(QWORD arg1, QWORD arg2)
 {
     auto &handler = getInstance();
     WxMsg_t wxMsg = {};
@@ -50,10 +52,10 @@ QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
         if (wxMsg.roomid.find("@chatroom") != std::string::npos) {
             wxMsg.is_group = true;
             wxMsg.sender
-                = wxMsg.is_self ? user_info::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
+                = wxMsg.is_self ? userinfo::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
         } else {
             wxMsg.is_group = false;
-            wxMsg.sender   = wxMsg.is_self ? user_info::get_self_wxid() : wxMsg.roomid;
+            wxMsg.sender   = wxMsg.is_self ? userinfo::get_self_wxid() : wxMsg.roomid;
         }
     } catch (const std::exception &e) {
         LOG_ERROR(util::gb2312_to_utf8(e.what()));
@@ -68,8 +70,8 @@ QWORD MessageHandler::DispatchMsg(QWORD arg1, QWORD arg2)
     return handler.realRecvMsg(arg1, arg2);
 }
 
-QWORD MessageHandler::PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWORD a6, QWORD a7, QWORD a8,
-                                 QWORD a9, QWORD a10, QWORD a11, QWORD a12)
+QWORD Handler::PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWORD a6, QWORD a7, QWORD a8, QWORD a9,
+                          QWORD a10, QWORD a11, QWORD a12)
 {
     auto &handler = getInstance();
 
@@ -82,7 +84,7 @@ QWORD MessageHandler::PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a
     return p;
 }
 
-void MessageHandler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
+void Handler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
 {
     auto &handler   = getInstance();
     QWORD startAddr = *(QWORD *)(arg2 + OS_PYQ_MSG_START);
@@ -114,27 +116,27 @@ void MessageHandler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
     }
 }
 
-MessageHandler &MessageHandler::getInstance()
+Handler &Handler::getInstance()
 {
-    static MessageHandler instance;
+    static Handler instance;
     return instance;
 }
 
-MessageHandler::MessageHandler()
+Handler::Handler()
 {
     isLogging      = false;
     isListeningMsg = false;
     isListeningPyq = false;
 }
 
-MessageHandler::~MessageHandler()
+Handler::~Handler()
 {
     DisableLog();
     UnListenMsg();
     UnListenPyq();
 }
 
-MsgTypes_t MessageHandler::GetMsgTypes()
+MsgTypes_t Handler::GetMsgTypes()
 {
     return { { 0x00, "朋友圈消息" },
              { 0x01, "文字" },
@@ -171,7 +173,7 @@ MsgTypes_t MessageHandler::GetMsgTypes()
              { 0x41000031, "文件" } };
 }
 
-std::optional<WxMsg_t> MessageHandler::popMessage()
+std::optional<WxMsg_t> Handler::popMessage()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (msgQueue_.empty()) {
@@ -182,7 +184,7 @@ std::optional<WxMsg_t> MessageHandler::popMessage()
     return msg;
 }
 
-int MessageHandler::EnableLog()
+int Handler::EnableLog()
 {
     if (isLogging) return 1;
 
@@ -196,7 +198,7 @@ int MessageHandler::EnableLog()
     return 0;
 }
 
-int MessageHandler::DisableLog()
+int Handler::DisableLog()
 {
     if (!isLogging) return 1;
     if (MH_DisableHook(funcWxLog) != MH_OK) return -1;
@@ -205,7 +207,7 @@ int MessageHandler::DisableLog()
     return 0;
 }
 
-int MessageHandler::ListenMsg()
+int Handler::ListenMsg()
 {
     if (isListeningMsg) return 1;
 
@@ -218,7 +220,7 @@ int MessageHandler::ListenMsg()
     return 0;
 }
 
-int MessageHandler::UnListenMsg()
+int Handler::UnListenMsg()
 {
     if (!isListeningMsg) return 1;
     if (MH_DisableHook(funcRecvMsg) != MH_OK) return -1;
@@ -227,7 +229,7 @@ int MessageHandler::UnListenMsg()
     return 0;
 }
 
-int MessageHandler::ListenPyq()
+int Handler::ListenPyq()
 {
     if (isListeningPyq) return 1;
 
@@ -240,7 +242,7 @@ int MessageHandler::ListenPyq()
     return 0;
 }
 
-int MessageHandler::UnListenPyq()
+int Handler::UnListenPyq()
 {
     if (!isListeningPyq) return 1;
     if (MH_DisableHook(funcRecvPyq) != MH_OK) return -1;
@@ -249,7 +251,7 @@ int MessageHandler::UnListenPyq()
     return 0;
 }
 
-MH_STATUS MessageHandler::InitializeHook()
+MH_STATUS Handler::InitializeHook()
 {
     if (isMH_Initialized) return MH_OK;
     MH_STATUS status = MH_Initialize();
@@ -257,10 +259,11 @@ MH_STATUS MessageHandler::InitializeHook()
     return status;
 }
 
-MH_STATUS MessageHandler::UninitializeHook()
+MH_STATUS Handler::UninitializeHook()
 {
     if (!isMH_Initialized || isLogging || isListeningMsg || isListeningPyq) return MH_OK;
     MH_STATUS status = MH_Uninitialize();
     if (status == MH_OK) isMH_Initialized = false;
     return status;
+}
 }

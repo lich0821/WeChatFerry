@@ -29,13 +29,16 @@ extern QWORD g_WeChatWinDllAddr;
 #define OS_XML_BUFSIGN     0x24F0D70
 #define OS_SEND_XML        0x20CF360
 
-SendMsgManager &SendMsgManager::get_instance()
+namespace message
 {
-    static SendMsgManager instance;
+
+Sender &Sender::get_instance()
+{
+    static Sender instance;
     return instance;
 }
 
-SendMsgManager::SendMsgManager()
+Sender::Sender()
 {
     func_new            = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OS_NEW);
     func_free           = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OS_FREE);
@@ -50,16 +53,16 @@ SendMsgManager::SendMsgManager()
     func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OS_SEND_XML);
 }
 
-std::unique_ptr<WxString> SendMsgManager::new_wx_string(const char *str)
+std::unique_ptr<WxString> Sender::new_wx_string(const char *str)
 {
     return new_wx_string(str ? std::string(str) : std::string());
 }
-std::unique_ptr<WxString> SendMsgManager::new_wx_string(const std::string &str)
+std::unique_ptr<WxString> Sender::new_wx_string(const std::string &str)
 {
     return std::make_unique<WxString>(util::s2w(str));
 }
 
-std::vector<WxString> SendMsgManager::parse_wxids(const string &wxids)
+std::vector<WxString> Sender::parse_wxids(const string &wxids)
 {
     vector<WxString> wx_members;
     wstringstream wss(util::s2w(wxids));
@@ -70,7 +73,7 @@ std::vector<WxString> SendMsgManager::parse_wxids(const string &wxids)
     return wx_members;
 }
 
-void SendMsgManager::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
+void Sender::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
 {
     auto wxWxid = new_wx_string(wxid);
     auto wxMsg  = new_wx_string(msg);
@@ -91,7 +94,7 @@ void SendMsgManager::send_text(const std::string &wxid, const std::string &msg, 
     func_free(reinterpret_cast<QWORD>(&buffer));
 }
 
-void SendMsgManager::send_image(const std::string &wxid, const std::string &path)
+void Sender::send_image(const std::string &wxid, const std::string &path)
 {
     auto wxWxid = new_wx_string(wxid);
     auto wxPath = new_wx_string(path);
@@ -116,7 +119,7 @@ void SendMsgManager::send_image(const std::string &wxid, const std::string &path
     func_free(pMsgTmp);
 }
 
-void SendMsgManager::send_file(const std::string &wxid, const std::string &path)
+void Sender::send_file(const std::string &wxid, const std::string &path)
 {
     auto wxWxid = new_wx_string(wxid);
     auto wxPath = new_wx_string(path);
@@ -135,8 +138,7 @@ void SendMsgManager::send_file(const std::string &wxid, const std::string &path)
     func_free(pMsg);
 }
 
-void SendMsgManager::send_xml(const std::string &receiver, const std::string &xml, const std::string &path,
-                              uint64_t type)
+void Sender::send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type)
 {
     std::unique_ptr<char[]> buff(new char[0x500]());
     std::unique_ptr<char[]> buff2(new char[0x500]());
@@ -151,7 +153,7 @@ void SendMsgManager::send_xml(const std::string &receiver, const std::string &xm
     auto wxReceiver = new_wx_string(receiver);
     auto wxXml      = new_wx_string(xml);
     auto wxPath     = new_wx_string(path);
-    auto wxSender   = new_wx_string(user_info::get_self_wxid());
+    auto wxSender   = new_wx_string(userinfo::get_self_wxid());
 
     func_send_xml(reinterpret_cast<QWORD>(buff.get()), reinterpret_cast<QWORD>(wxSender.get()),
                   reinterpret_cast<QWORD>(wxReceiver.get()), reinterpret_cast<QWORD>(wxXml.get()),
@@ -162,7 +164,7 @@ void SendMsgManager::send_xml(const std::string &receiver, const std::string &xm
     func_free(reinterpret_cast<QWORD>(buff2.get()));
 }
 
-void SendMsgManager::send_emotion(const std::string &wxid, const std::string &path)
+void Sender::send_emotion(const std::string &wxid, const std::string &path)
 {
     auto wxWxid = new_wx_string(wxid);
     auto wxPath = new_wx_string(path);
@@ -180,7 +182,7 @@ void SendMsgManager::send_emotion(const std::string &wxid, const std::string &pa
                       reinterpret_cast<QWORD>(buff.get()));
 }
 
-int SendMsgManager::send_rich_text(const RichText &rt)
+int Sender::send_rich_text(const RichText &rt)
 {
 #define SRTM_SIZE 0x3F0
     QWORD status = -1;
@@ -216,7 +218,7 @@ int SendMsgManager::send_rich_text(const RichText &rt)
     return static_cast<int>(status);
 }
 
-int SendMsgManager::send_pat(const std::string &roomid, const std::string &wxid)
+int Sender::send_pat(const std::string &roomid, const std::string &wxid)
 {
     QWORD status = -1;
 
@@ -228,12 +230,12 @@ int SendMsgManager::send_pat(const std::string &roomid, const std::string &wxid)
     return static_cast<int>(status);
 }
 
-int SendMsgManager::forward(QWORD msgid, const std::string &receiver)
+int Sender::forward(QWORD msgid, const std::string &receiver)
 {
     uint32_t dbIdx = 0;
     QWORD localId  = 0;
 
-    if (exec_sql::get_local_id_and_dbidx(msgid, &localId, &dbIdx) != 0) {
+    if (db::get_local_id_and_dbidx(msgid, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", msgid);
         return -1;
     }
@@ -247,7 +249,7 @@ int SendMsgManager::forward(QWORD msgid, const std::string &receiver)
 }
 
 // RPC 方法
-bool SendMsgManager::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
+bool Sender::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_TXT>(out, len, [&](Response &rsp) {
         if (text.msg == nullptr || text.receiver == nullptr || strlen(text.msg) == 0 || strlen(text.receiver) == 0) {
@@ -260,7 +262,7 @@ bool SendMsgManager::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *le
     });
 }
 
-bool SendMsgManager::rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_IMG>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
@@ -273,7 +275,7 @@ bool SendMsgManager::rpc_send_image(const std::string &path, const std::string &
     });
 }
 
-bool SendMsgManager::rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_FILE>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
@@ -286,7 +288,7 @@ bool SendMsgManager::rpc_send_file(const std::string &path, const std::string &r
     });
 }
 
-bool SendMsgManager::rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_EMOTION>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
@@ -299,7 +301,7 @@ bool SendMsgManager::rpc_send_emotion(const std::string &path, const std::string
     });
 }
 
-bool SendMsgManager::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
+bool Sender::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_XML>(out, len, [&](Response &rsp) {
         if (xml.content == nullptr || xml.receiver == nullptr) {
@@ -312,7 +314,7 @@ bool SendMsgManager::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
     });
 }
 
-bool SendMsgManager::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
+bool Sender::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_RICH_TXT>(out, len, [&](Response &rsp) {
         if (rt.receiver == nullptr) {
@@ -324,7 +326,7 @@ bool SendMsgManager::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t
     });
 }
 
-bool SendMsgManager::rpc_send_pat(const std::string &roomid, const std::string &wxid, uint8_t *out, size_t *len)
+bool Sender::rpc_send_pat(const std::string &roomid, const std::string &wxid, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_SEND_PAT_MSG>(out, len, [&](Response &rsp) {
         if (roomid.empty() || wxid.empty()) {
@@ -336,7 +338,7 @@ bool SendMsgManager::rpc_send_pat(const std::string &roomid, const std::string &
     });
 }
 
-bool SendMsgManager::rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_FORWARD_MSG>(out, len, [&](Response &rsp) {
         if (receiver.empty()) {
@@ -346,4 +348,6 @@ bool SendMsgManager::rpc_forward(uint64_t msgid, const std::string &receiver, ui
             rsp.msg.status = forward(msgid, receiver);
         }
     });
+}
+
 }

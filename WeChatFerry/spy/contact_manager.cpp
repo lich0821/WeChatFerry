@@ -11,7 +11,7 @@ using namespace std;
 
 extern QWORD g_WeChatWinDllAddr;
 
-namespace contact_mgmt
+namespace contact
 {
 #define OS_GET_CONTACT_MGR  0x1B417A0
 #define OS_GET_CONTACT_LIST 0x219ED10
@@ -218,4 +218,4 @@ bool rpc_accept_friend(const string &v3, const string &v4, int scene, uint8_t *o
         out, len, [&](Response &rsp) { rsp.msg.status = accept_new_friend(v3, v4, scene); });
 }
 
-} // namespace contact_mgmt
+} // namespace contact

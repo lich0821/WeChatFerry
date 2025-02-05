@@ -6,7 +6,7 @@
 
 #include "pb_types.h"
 
-namespace exec_sql
+namespace db
 {
 
 // 获取数据库名称列表
@@ -29,4 +29,4 @@ bool rpc_get_db_names(uint8_t *out, size_t *len);
 bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len);
 bool rpc_exec_db_query(const std::string &db, const std::string &sql, uint8_t *out, size_t *len);
 
-} // namespace exec_sql
+} // namespace db

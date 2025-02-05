@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace chatroom_mgmt
+namespace chatroom
 {
 
 // 添加成员到群聊
@@ -19,4 +19,4 @@ bool rpc_add_chatroom_member(const std::string &roomid, const std::string &wxids
 bool rpc_del_chatroom_member(const std::string &roomid, const std::string &wxids, uint8_t *out, size_t *len);
 bool rpc_invite_chatroom_member(const std::string &roomid, const std::string &wxids, uint8_t *out, size_t *len);
 
-} // namespace chatroom_mgmt
+} // namespace chatroom

@@ -11,7 +11,7 @@
 
 extern UINT64 g_WeChatWinDllAddr;
 
-namespace exec_sql
+namespace db
 {
 #define OFFSET_DB_INSTANCE     0x5902000
 #define OFFSET_DB_MICROMSG     0xB8
@@ -287,4 +287,4 @@ bool rpc_exec_db_query(const std::string &db, const std::string &sql, uint8_t *o
     });
 }
 
-} // namespace exec_sql
+} // namespace db

@@ -45,8 +45,8 @@ static HANDLE msgThread   = NULL;
 static nng_socket cmdSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 static nng_socket msgSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 
-auto &msgHandler = MessageHandler::getInstance();
-auto &sendMgr    = SendMsgManager::get_instance();
+auto &msgHandler = message::Handler::getInstance();
+auto &sendMgr    = message::Sender::get_instance();
 
 static std::string BuildUrl(int port) { return "tcp://0.0.0.0:" + std::to_string(port); }
 
@@ -77,7 +77,7 @@ static bool func_is_login(uint8_t *out, size_t *len)
 static bool func_get_self_wxid(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_SELF_WXID>(Response_str_tag, out, len, [](Response &rsp) {
-        std::string wxid = user_info::get_self_wxid();
+        std::string wxid = userinfo::get_self_wxid();
         rsp.msg.str      = wxid.empty() ? nullptr : (char *)wxid.c_str();
     });
 }
@@ -85,7 +85,7 @@ static bool func_get_self_wxid(uint8_t *out, size_t *len)
 static bool func_get_user_info(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_USER_INFO>(Response_ui_tag, out, len, [](Response &rsp) {
-        UserInfo_t ui     = user_info::get_user_info();
+        UserInfo_t ui     = userinfo::get_user_info();
         rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
         rsp.msg.ui.name   = (char *)ui.name.c_str();
         rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
@@ -105,7 +105,7 @@ static bool func_get_msg_types(uint8_t *out, size_t *len)
 static bool func_get_contacts(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_CONTACTS>(Response_contacts_tag, out, len, [](Response &rsp) {
-        std::vector<RpcContact_t> contacts     = contact_mgmt::get_contacts();
+        std::vector<RpcContact_t> contacts     = contact::get_contacts();
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
@@ -114,7 +114,7 @@ static bool func_get_contacts(uint8_t *out, size_t *len)
 static bool func_get_db_names(uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_DB_NAMES>(Response_dbs_tag, out, len, [](Response &rsp) {
-        static DbNames_t dbnames       = exec_sql::get_db_names();
+        static DbNames_t dbnames       = db::get_db_names();
         rsp.msg.dbs.names.funcs.encode = encode_dbnames;
         rsp.msg.dbs.names.arg          = &dbnames;
     });
@@ -123,7 +123,7 @@ static bool func_get_db_names(uint8_t *out, size_t *len)
 static bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_DB_TABLES>(Response_tables_tag, out, len, [db](Response &rsp) {
-        static DbTables_t tables           = exec_sql::get_db_tables(db);
+        static DbTables_t tables           = db::get_db_tables(db);
         rsp.msg.tables.tables.funcs.encode = encode_tables;
         rsp.msg.tables.tables.arg          = &tables;
     });
@@ -355,7 +355,7 @@ static bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
         if ((db == nullptr) || (sql == nullptr)) {
             LOG_ERROR("Empty db or sql.");
         } else {
-            rows = exec_sql::exec_db_query(db, sql);
+            rows = db::exec_db_query(db, sql);
         }
         rsp.msg.rows.rows.arg          = &rows;
         rsp.msg.rows.rows.funcs.encode = encode_rows;
@@ -410,7 +410,7 @@ static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, 
             LOG_ERROR("Empty V3 or V4.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = contact_mgmt::accept_new_friend(v3, v4, scene);
+            rsp.msg.status = contact::accept_new_friend(v3, v4, scene);
         }
     });
 }
@@ -418,7 +418,7 @@ static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, 
 static bool func_get_contact_info(std::string wxid, uint8_t *out, size_t *len)
 {
     return FillResponse<Functions_FUNC_GET_CONTACT_INFO>(Response_contacts_tag, out, len, [wxid](Response &rsp) {
-        std::vector<RpcContact_t> contacts     = { contact_mgmt::get_contact_by_wxid(wxid) };
+        std::vector<RpcContact_t> contacts     = { contact::get_contact_by_wxid(wxid) };
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
@@ -458,7 +458,7 @@ static bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = chatroom_mgmt::add_chatroom_member(roomid, wxids);
+            rsp.msg.status = chatroom::add_chatroom_member(roomid, wxids);
         }
     });
 }
@@ -470,7 +470,7 @@ static bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = chatroom_mgmt::del_chatroom_member(roomid, wxids);
+            rsp.msg.status = chatroom::del_chatroom_member(roomid, wxids);
         }
     });
 }
@@ -482,7 +482,7 @@ static bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, si
             LOG_ERROR("Empty roomid or wxids.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = chatroom_mgmt::invite_chatroom_member(roomid, wxids);
+            rsp.msg.status = chatroom::invite_chatroom_member(roomid, wxids);
         }
     });
 }

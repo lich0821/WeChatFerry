@@ -7,10 +7,13 @@
 #include "spy_types.h"
 #include "wcf.pb.h"
 
-class SendMsgManager
+namespace message
+{
+
+class Sender
 {
 public:
-    static SendMsgManager &get_instance();
+    static Sender &get_instance();
 
     void send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids = "");
     void send_image(const std::string &wxid, const std::string &path);
@@ -32,11 +35,11 @@ public:
     bool rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len);
 
 private:
-    SendMsgManager();
-    ~SendMsgManager() = default;
+    Sender();
+    ~Sender() = default;
 
-    SendMsgManager(const SendMsgManager &)            = delete;
-    SendMsgManager &operator=(const SendMsgManager &) = delete;
+    Sender(const Sender &)            = delete;
+    Sender &operator=(const Sender &) = delete;
 
     using New_t        = QWORD (*)(QWORD);
     using Free_t       = QWORD (*)(QWORD);
@@ -73,3 +76,5 @@ private:
     std::unique_ptr<WxString> new_wx_string(const std::string &str);
     std::vector<WxString> parse_wxids(const std::string &wxids);
 };
+
+}

@@ -172,7 +172,7 @@ static int GetNextPage(QWORD id)
 
 int RefreshPyq(QWORD id)
 {
-    auto &msgHandler = MessageHandler::getInstance();
+    auto &msgHandler = message::Handler::getInstance();
     if (!msgHandler.isPyqListening()) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
         return -1;
@@ -203,7 +203,7 @@ int DownloadAttach(QWORD id, string thumb, string extra)
         return 0;
     }
 
-    if (exec_sql::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
+    if (db::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
         return status;
     }
@@ -286,7 +286,7 @@ string GetAudio(QWORD id, string dir)
         return mp3path;
     }
 
-    vector<uint8_t> silk = exec_sql::get_audio_data(id);
+    vector<uint8_t> silk = db::get_audio_data(id);
     if (silk.size() == 0) {
         LOG_ERROR("Empty audio data.");
         return "";
@@ -306,7 +306,7 @@ string GetPCMAudio(uint64_t id, string dir, int32_t sr)
         return pcmpath;
     }
     vector<uint8_t> pcm;
-    vector<uint8_t> silk = exec_sql::get_audio_data(id);
+    vector<uint8_t> silk = db::get_audio_data(id);
     if (silk.size() == 0) {
         LOG_ERROR("Empty audio data.");
         return "";
