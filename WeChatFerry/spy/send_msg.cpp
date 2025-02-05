@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "exec_sql.h"
-#include "fill_response.h"
 #include "log.hpp"
+#include "rpc_helper.h"
 #include "spy_types.h"
 #include "user_info.h"
 #include "util.h"

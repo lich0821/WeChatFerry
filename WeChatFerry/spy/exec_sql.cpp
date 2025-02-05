@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <iterator>
 
-#include "fill_response.h"
 #include "log.hpp"
 #include "pb_util.h"
+#include "rpc_helper.h"
 #include "sqlite3.h"
 #include "util.h"
 

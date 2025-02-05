@@ -1,9 +1,9 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "chatroom_mgmt.h"
-#include "fill_response.h"
 #include "log.hpp"
 #include "pb_util.h"
+#include "rpc_helper.h"
 #include "util.h"
 
 using namespace std;

@@ -3,8 +3,8 @@
 #include <filesystem>
 #include <mutex>
 
-#include "fill_response.h"
 #include "log.hpp"
+#include "rpc_helper.h"
 #include "util.h"
 
 extern UINT64 g_WeChatWinDllAddr;
