@@ -212,8 +212,11 @@ bool rpc_get_contact_info(const string &wxid, uint8_t *out, size_t *len)
     });
 }
 
-bool rpc_accept_friend(const string &v3, const string &v4, int scene, uint8_t *out, size_t *len)
+bool rpc_accept_friend(const Verification &v, uint8_t *out, size_t *len)
 {
+    const string v3 = v.v3;
+    const string v4 = v.v4;
+    int scene       = v.scene;
     return fill_response<Functions_FUNC_ACCEPT_FRIEND>(
         out, len, [&](Response &rsp) { rsp.msg.status = accept_new_friend(v3, v4, scene); });
 }

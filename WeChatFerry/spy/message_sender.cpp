@@ -262,8 +262,10 @@ bool Sender::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
     });
 }
 
-bool Sender::rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_image(const PathMsg &file, uint8_t *out, size_t *len)
 {
+    std::string path(file.path);
+    std::string receiver(file.receiver);
     return fill_response<Functions_FUNC_SEND_IMG>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
             LOG_ERROR("Empty path or receiver.");
@@ -275,8 +277,10 @@ bool Sender::rpc_send_image(const std::string &path, const std::string &receiver
     });
 }
 
-bool Sender::rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_file(const PathMsg &file, uint8_t *out, size_t *len)
 {
+    std::string path(file.path);
+    std::string receiver(file.receiver);
     return fill_response<Functions_FUNC_SEND_FILE>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
             LOG_ERROR("Empty path or receiver.");
@@ -288,8 +292,10 @@ bool Sender::rpc_send_file(const std::string &path, const std::string &receiver,
     });
 }
 
-bool Sender::rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_send_emotion(const PathMsg &file, uint8_t *out, size_t *len)
 {
+    std::string path(file.path);
+    std::string receiver(file.receiver);
     return fill_response<Functions_FUNC_SEND_EMOTION>(out, len, [&](Response &rsp) {
         if (path.empty() || receiver.empty()) {
             LOG_ERROR("Empty path or receiver.");
@@ -326,8 +332,10 @@ bool Sender::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
     });
 }
 
-bool Sender::rpc_send_pat(const std::string &roomid, const std::string &wxid, uint8_t *out, size_t *len)
+bool Sender::rpc_send_pat(const PatMsg &pat, uint8_t *out, size_t *len)
 {
+    std::string wxid(pat.wxid);
+    std::string roomid(pat.roomid);
     return fill_response<Functions_FUNC_SEND_PAT_MSG>(out, len, [&](Response &rsp) {
         if (roomid.empty() || wxid.empty()) {
             LOG_ERROR("Empty roomid or wxid.");
@@ -338,8 +346,10 @@ bool Sender::rpc_send_pat(const std::string &roomid, const std::string &wxid, ui
     });
 }
 
-bool Sender::rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len)
+bool Sender::rpc_forward(const ForwardMsg &fm, uint8_t *out, size_t *len)
 {
+    uint64_t msgid = fm.id;
+    std::string receiver(fm.receiver);
     return fill_response<Functions_FUNC_FORWARD_MSG>(out, len, [&](Response &rsp) {
         if (receiver.empty()) {
             LOG_ERROR("Empty receiver.");

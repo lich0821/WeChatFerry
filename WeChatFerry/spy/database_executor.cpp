@@ -278,8 +278,10 @@ bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len)
     });
 }
 
-bool rpc_exec_db_query(const std::string &db, const std::string &sql, uint8_t *out, size_t *len)
+bool rpc_exec_db_query(const DbQuery query, uint8_t *out, size_t *len)
 {
+    const std::string db(query.db);
+    const std::string sql(query.sql);
     return fill_response<Functions_FUNC_EXEC_DB_QUERY>(out, len, [&](Response &rsp) {
         DbRows_t rows                  = exec_db_query(db, sql);
         rsp.msg.rows.rows.funcs.encode = encode_rows;

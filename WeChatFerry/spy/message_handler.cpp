@@ -7,6 +7,7 @@
 #include "framework.h"
 
 #include "log.hpp"
+#include "pb_util.h"
 #include "rpc_helper.h"
 #include "userinfo_manager.h"
 #include "util.h"
@@ -268,43 +269,12 @@ MH_STATUS Handler::UninitializeHook()
     return status;
 }
 
-bool Handler::rpc_get_msg_types()
+bool Handler::rpc_get_msg_types(uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_GET_MSG_TYPES>(out, len, [&](Response &rsp) {
         MsgTypes_t types                 = GetMsgTypes();
         rsp.msg.types.types.funcs.encode = encode_types;
         rsp.msg.types.types.arg          = &types;
-    });
-}
-
-bool rpc_enable_recv_msg(void *cb, bool pyq, uint8_t *out, size_t *len)
-{
-    return fill_response<Functions_FUNC_ENABLE_RECV_TXT>(out, len, [cb, pyq](Response &rsp) {
-        auto &handler  = Handler::getInstance();
-        rsp.msg.status = handler.ListenMsg();
-        if (rsp.msg.status == 0) {
-            if (pyq) {
-                msgHandler.ListenPyq();
-            }
-            msgThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)cb, nullptr, 0, nullptr);
-            if (msgThread == nullptr) {
-                rsp.msg.status = GetLastError();
-                LOG_ERROR("func_enable_recv_txt failed: {}", rsp.msg.status);
-            }
-        }
-    });
-}
-bool Handler::rpc_disable_recv_msg(uint8_t *out, size_t *len)
-{
-    return fill_response<Functions_FUNC_DISABLE_RECV_TXT>(out, len, [](Response &rsp) {
-        rsp.msg.status = UnListenMsg();
-        if (rsp.msg.status == 0) {
-            UnListenPyq();
-            if (msgThread != nullptr) {
-                TerminateThread(msgThread, 0);
-                msgThread = nullptr;
-            }
-        }
     });
 }
 }

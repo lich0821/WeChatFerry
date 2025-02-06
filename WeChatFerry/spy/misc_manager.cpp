@@ -10,6 +10,7 @@
 #include "database_executor.h"
 #include "log.hpp"
 #include "message_handler.h"
+#include "rpc_helper.h"
 #include "spy_types.h"
 #include "util.h"
 
@@ -348,5 +349,67 @@ int receive_transfer(const std::string &wxid, const std::string &transferid, con
 {
     // 别想了，这个不实现了
     return -1;
+}
+
+bool rpc_is_logged_in(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_IS_LOGIN>(out, len, [](Response &rsp) { rsp.msg.status = is_logged_in(); });
+}
+
+bool rpc_get_audio(const AudioMsg &am, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_GET_AUDIO_MSG>(
+        out, len, [&](Response &rsp) { rsp.msg.str = (char *)get_audio(am.id, am.dir).c_str(); });
+}
+
+bool rpc_get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr, uint8_t *out, size_t *len)
+{
+    return false;
+}
+
+bool rpc_decrypt_image(const DecPath &dec, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_DECRYPT_IMAGE>(
+        out, len, [&](Response &rsp) { rsp.msg.str = (char *)decrypt_image(dec.src, dec.dst).c_str(); });
+}
+
+bool rpc_get_login_url(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_REFRESH_QRCODE>(
+        out, len, [&](Response &rsp) { rsp.msg.str = (char *)get_login_url().c_str(); });
+}
+
+bool rpc_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_REFRESH_PYQ>(out, len,
+                                                     [&](Response &rsp) { rsp.msg.status = refresh_pyq(id); });
+}
+
+bool rpc_download_attachment(const AttachMsg &att, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_DOWNLOAD_ATTACH>(
+        out, len, [&](Response &rsp) { rsp.msg.status = download_attachment(att.id, att.thumb, att.extra); });
+}
+
+bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_REVOKE_MSG>(out, len,
+                                                    [&](Response &rsp) { rsp.msg.status = revoke_message(id); });
+}
+
+bool rpc_get_ocr_result(const std::filesystem::path &path, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_EXEC_OCR>(out, len, [&](Response &rsp) {
+        OcrResult_t ret    = { -1, "" };
+        ret                = get_ocr_result(path);
+        rsp.msg.ocr.status = ret.status;
+        rsp.msg.ocr.result = (char *)ret.result.c_str();
+    });
+}
+
+bool rpc_receive_transfer(const Transfer &tf, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_RECV_TRANSFER>(
+        out, len, [&](Response &rsp) { rsp.msg.status = receive_transfer(tf.wxid, tf.tfid, tf.taid); });
 }
 } // namespace misc

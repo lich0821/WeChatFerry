@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "spy_types.h"
 #include "wcf.pb.h"
+
+#include "spy_types.h"
 
 namespace message
 {
@@ -26,13 +27,13 @@ public:
 
     // RPC 方法
     bool rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len);
-    bool rpc_send_image(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
-    bool rpc_send_file(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
-    bool rpc_send_emotion(const std::string &path, const std::string &receiver, uint8_t *out, size_t *len);
+    bool rpc_send_image(const PathMsg &file, uint8_t *out, size_t *len);
+    bool rpc_send_file(const PathMsg &file, uint8_t *out, size_t *len);
+    bool rpc_send_emotion(const PathMsg &file, uint8_t *out, size_t *len);
     bool rpc_send_xml(const XmlMsg &rt, uint8_t *out, size_t *len);
     bool rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len);
-    bool rpc_send_pat(const std::string &roomid, const std::string &wxid, uint8_t *out, size_t *len);
-    bool rpc_forward(uint64_t msgid, const std::string &receiver, uint8_t *out, size_t *len);
+    bool rpc_send_pat(const PatMsg &pat, uint8_t *out, size_t *len);
+    bool rpc_forward(const ForwardMsg &fm, uint8_t *out, size_t *len);
 
 private:
     Sender();
@@ -76,5 +77,4 @@ private:
     std::unique_ptr<WxString> new_wx_string(const std::string &str);
     std::vector<WxString> parse_wxids(const std::string &wxids);
 };
-
 }

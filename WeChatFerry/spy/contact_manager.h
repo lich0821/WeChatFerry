@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "wcf.pb.h"
+
 #include "pb_types.h"
 
 namespace contact
@@ -23,6 +25,6 @@ int accept_new_friend(const std::string &v3, const std::string &v4, int scene);
 // RPC 方法
 bool rpc_get_contacts(uint8_t *out, size_t *len);
 bool rpc_get_contact_info(const std::string &wxid, uint8_t *out, size_t *len);
-bool rpc_accept_friend(const std::string &v3, const std::string &v4, int scene, uint8_t *out, size_t *len);
+bool rpc_accept_friend(const Verification &v, uint8_t *out, size_t *len);
 
 } // namespace contact

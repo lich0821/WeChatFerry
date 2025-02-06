@@ -29,6 +29,7 @@
 #include "misc_manager.h"
 #include "pb_types.h"
 #include "pb_util.h"
+#include "rpc_helper.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "userinfo_manager.h"
@@ -44,52 +45,14 @@ static HANDLE cmdThread   = NULL;
 static HANDLE msgThread   = NULL;
 static nng_socket cmdSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 static nng_socket msgSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
+auto &handler             = message::Handler::getInstance();
+auto &sender              = message::Sender::get_instance();
 
 using FunctionHandler = std::function<bool(const Request &, uint8_t *, size_t *)>;
 
 inline std::string build_url(int port) { return "tcp://0.0.0.0:" + std::to_string(port); }
-void receive_message_callback();
 
-auto &handler = message::Handler::getInstance();
-auto &sender  = message::Sender::get_instance();
-
-const std::unordered_map<Functions, FunctionHandler> rpc_function_map = {
-    // clang-format off
-    { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_is_logged_in(out, len); } },
-    { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_self_wxid(out, len)} },
-    { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_user_info(out, len); } },
-    { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
-    { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
-    { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
-    { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
-    { Functions_FUNC_GET_AUDIO_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_audio(r.msg.am.id, r.msg.am.dir, out, len); } },
-    { Functions_FUNC_SEND_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_text(r.msg.txt, out, len); } },
-    { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_image(r.msg.file.path, r.msg.file.receiver, out, len); } },
-    { Functions_FUNC_SEND_FILE, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_file(r.msg.file.path, r.msg.file.receiver, out, len); } },
-    { Functions_FUNC_SEND_XML, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_xml(r.msg.xml, out, len); } },
-    { Functions_FUNC_SEND_RICH_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_rich_text(r.msg.rt, out, len); } },
-    { Functions_FUNC_SEND_PAT_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_pat(r.msg.pm.roomid, r.msg.pm.wxid, out, len); } },
-    { Functions_FUNC_FORWARD_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_forward(r.msg.fm.id, r.msg.fm.receiver, out, len); } },
-    { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_emotion(r.msg.file.path, r.msg.file.receiver, out, len); } },
-    { Functions_FUNC_ENABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_enable_recv_msg(receive_message_callback, r.msg.flag, out, len); } },
-    { Functions_FUNC_DISABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_disable_recv_msg(out, len); } },
-    { Functions_FUNC_EXEC_DB_QUERY, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_exec_db_query(r.msg.query.db, r.msg.query.sql, out, len); } },
-    { Functions_FUNC_REFRESH_PYQ, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_refresh_pyq(r.msg.ui64, out, len); } },
-    { Functions_FUNC_DOWNLOAD_ATTACH, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_download_attachment(r.msg.att, out, len); } },
-    { Functions_FUNC_GET_CONTACT_INFO, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contact_info(r.msg.str, out, len); } },
-    { Functions_FUNC_ACCEPT_FRIEND, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_accept_friend(r.msg.v, out, len); } },
-    { Functions_FUNC_RECV_TRANSFER, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_receive_transfer(r.msg.tf, out, len); } },
-    { Functions_FUNC_REVOKE_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::revoke_message(r.msg.ui64, out, len); } },
-    { Functions_FUNC_REFRESH_QRCODE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_login_url(out, len); } },
-    { Functions_FUNC_DECRYPT_IMAGE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_decrypt_image(r.msg.dec, out, len); } },
-    { Functions_FUNC_EXEC_OCR, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_ocr_result(r.msg.str, out, len); } },
-    { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
-    { Functions_FUNC_DEL_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_del_chatroom_member(r.msg.m, out, len); } },
-    { Functions_FUNC_INV_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_invite_chatroom_memberr.msg.m, out, len); } },
-    // clang-format on
-};
-
-void receive_message_callback()
+static void receive_message_callback()
 {
     int rv;
     Response rsp  = Response_init_default;
@@ -154,6 +117,73 @@ void receive_message_callback()
         }
     }
 }
+
+static bool rpc_enable_recv_msg(bool pyq, uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_ENABLE_RECV_TXT>(out, len, [&](Response &rsp) {
+        rsp.msg.status = handler.ListenMsg();
+        if (rsp.msg.status == 0) {
+            if (pyq) {
+                handler.ListenPyq();
+            }
+            msgThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)receive_message_callback, nullptr, 0, nullptr);
+            if (msgThread == nullptr) {
+                rsp.msg.status = GetLastError();
+                LOG_ERROR("func_enable_recv_txt failed: {}", rsp.msg.status);
+            }
+        }
+    });
+}
+
+static bool rpc_disable_recv_msg(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_DISABLE_RECV_TXT>(out, len, [](Response &rsp) {
+        rsp.msg.status = handler.UnListenMsg();
+        if (rsp.msg.status == 0) {
+            handler.UnListenPyq();
+            if (msgThread != nullptr) {
+                TerminateThread(msgThread, 0);
+                msgThread = nullptr;
+            }
+        }
+    });
+}
+
+const std::unordered_map<Functions, FunctionHandler> rpc_function_map = {
+    // clang-format off
+    { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_is_logged_in(out, len); } },
+    { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_self_wxid(out, len); } },
+    { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_user_info(out, len); } },
+    { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
+    { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
+    { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
+    { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
+    { Functions_FUNC_GET_AUDIO_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_audio(r.msg.am, out, len); } },
+    { Functions_FUNC_SEND_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_text(r.msg.txt, out, len); } },
+    { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_image(r.msg.file, out, len); } },
+    { Functions_FUNC_SEND_FILE, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_file(r.msg.file, out, len); } },
+    { Functions_FUNC_SEND_XML, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_xml(r.msg.xml, out, len); } },
+    { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_emotion(r.msg.file, out, len); } },
+    { Functions_FUNC_SEND_RICH_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_rich_text(r.msg.rt, out, len); } },
+    { Functions_FUNC_SEND_PAT_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_pat(r.msg.pm, out, len); } },
+    { Functions_FUNC_FORWARD_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_forward(r.msg.fm, out, len); } },
+    { Functions_FUNC_ENABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return rpc_enable_recv_msg(r.msg.flag, out, len); } },
+    { Functions_FUNC_DISABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return rpc_disable_recv_msg(out, len); } },
+    { Functions_FUNC_EXEC_DB_QUERY, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_exec_db_query(r.msg.query, out, len); } },
+    { Functions_FUNC_ACCEPT_FRIEND, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_accept_friend(r.msg.v, out, len); } },
+    { Functions_FUNC_RECV_TRANSFER, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_receive_transfer(r.msg.tf, out, len); } },
+    { Functions_FUNC_REFRESH_PYQ, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_refresh_pyq(r.msg.ui64, out, len); } },
+    { Functions_FUNC_DOWNLOAD_ATTACH, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_download_attachment(r.msg.att, out, len); } },
+    { Functions_FUNC_GET_CONTACT_INFO, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contact_info(r.msg.str, out, len); } },
+    { Functions_FUNC_REVOKE_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_revoke_message(r.msg.ui64, out, len); } },
+    { Functions_FUNC_REFRESH_QRCODE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_login_url(out, len); } },
+    { Functions_FUNC_DECRYPT_IMAGE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_decrypt_image(r.msg.dec, out, len); } },
+    { Functions_FUNC_EXEC_OCR, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_ocr_result(r.msg.str, out, len); } },
+    { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_DEL_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_delete_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_INV_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_invite_chatroom_member(r.msg.m, out, len); } },
+    // clang-format on
+};
 
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {

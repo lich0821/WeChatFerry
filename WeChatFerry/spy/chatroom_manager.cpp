@@ -88,20 +88,26 @@ int invite_chatroom_member(const string &roomid, const string &wxids)
                                            reinterpret_cast<QWORD>(wx_roomid.get()), 0));
 }
 
-bool rpc_add_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+bool rpc_add_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
 {
+    const std::string wxids  = m.wxids;
+    const std::string roomid = m.roomid;
     return fill_response<Functions_FUNC_ADD_ROOM_MEMBERS>(
         out, len, [&](Response &rsp) { rsp.msg.status = add_chatroom_member(roomid, wxids); });
 }
 
-bool rpc_del_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+bool rpc_delete_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
 {
+    const std::string wxids  = m.wxids;
+    const std::string roomid = m.roomid;
     return fill_response<Functions_FUNC_DEL_ROOM_MEMBERS>(
         out, len, [&](Response &rsp) { rsp.msg.status = del_chatroom_member(roomid, wxids); });
 }
 
-bool rpc_invite_chatroom_member(const string &roomid, const string &wxids, uint8_t *out, size_t *len)
+bool rpc_invite_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
 {
+    const std::string wxids  = m.wxids;
+    const std::string roomid = m.roomid;
     return fill_response<Functions_FUNC_INV_ROOM_MEMBERS>(
         out, len, [&](Response &rsp) { rsp.msg.status = invite_chatroom_member(roomid, wxids); });
 }

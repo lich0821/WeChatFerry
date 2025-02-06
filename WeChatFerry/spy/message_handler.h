@@ -37,9 +37,7 @@ public:
     std::condition_variable &getConditionVariable() { return cv_; };
     std::mutex &getMutex() { return mutex_; };
 
-    bool rpc_get_msg_types();
-    bool rpc_enable_recv_msg(void *cb, bool pyq, uint8_t *out, size_t *len);
-    bool rpc_disable_recv_msg(uint8_t *out, size_t *len);
+    bool rpc_get_msg_types(uint8_t *out, size_t *len);
 
 private:
     Handler();
