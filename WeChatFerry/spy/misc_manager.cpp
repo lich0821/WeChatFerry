@@ -28,7 +28,6 @@ namespace misc
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-#define OS_LOGIN_STATUS               0x595C9E8
 #define OS_GET_SNS_DATA_MGR           0x21E2200
 #define OS_GET_SNS_FIRST_PAGE         0x2E212D0
 #define OS_GET_SNS_TIMELINE_MGR       0x2DB3390
@@ -53,8 +52,6 @@ using get_mgr_by_prefix_localid_t = QWORD (*)(QWORD, QWORD);
 using push_attach_task_t          = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 using get_ocr_manager_t           = QWORD (*)();
 using do_ocr_task_t               = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-
-bool is_logged_in() { return util::get_qword(g_WeChatWinDllAddr + OS_LOGIN_STATUS) != 0; }
 
 static std::string detect_image_extension(uint8_t header1, uint8_t header2, uint8_t &key)
 {
@@ -349,11 +346,6 @@ int receive_transfer(const std::string &wxid, const std::string &transferid, con
 {
     // 别想了，这个不实现了
     return -1;
-}
-
-bool rpc_is_logged_in(uint8_t *out, size_t *len)
-{
-    return fill_response<Functions_FUNC_IS_LOGIN>(out, len, [](Response &rsp) { rsp.msg.status = is_logged_in(); });
 }
 
 bool rpc_get_audio(const AudioMsg &am, uint8_t *out, size_t *len)

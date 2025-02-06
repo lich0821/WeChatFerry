@@ -8,6 +8,9 @@
 namespace account
 {
 
+// 登录状态
+bool is_logged_in();
+
 // 获取 WeChat 数据存储路径
 std::string get_home_path();
 
@@ -18,6 +21,7 @@ std::string get_self_wxid();
 UserInfo_t get_user_info();
 
 // RPC 方法
+bool rpc_is_logged_in(uint8_t *out, size_t *len);
 bool rpc_get_self_wxid(uint8_t *out, size_t *len);
 bool rpc_get_user_info(uint8_t *out, size_t *len);
 

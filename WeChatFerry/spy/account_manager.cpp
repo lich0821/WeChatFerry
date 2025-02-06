@@ -11,10 +11,13 @@ extern UINT64 g_WeChatWinDllAddr;
 
 namespace account
 {
-#define OS_USER_HOME   0x5932770
-#define OS_USER_WXID   0x595C270
-#define OS_USER_NAME   0x595C3D8
-#define OS_USER_MOBILE 0x595C318
+#define OS_LOGIN_STATUS 0x595C9E8
+#define OS_USER_HOME    0x5932770
+#define OS_USER_WXID    0x595C270
+#define OS_USER_NAME    0x595C3D8
+#define OS_USER_MOBILE  0x595C318
+
+bool is_logged_in() { return util::get_qword(g_WeChatWinDllAddr + OS_LOGIN_STATUS) != 0; }
 
 std::string get_home_path()
 {
@@ -66,6 +69,11 @@ UserInfo_t get_user_info()
     ui.home   = get_home_path();
 
     return ui;
+}
+
+bool rpc_is_logged_in(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_IS_LOGIN>(out, len, [](Response &rsp) { rsp.msg.status = is_logged_in(); });
 }
 
 bool rpc_get_self_wxid(uint8_t *out, size_t *len)

@@ -13,8 +13,6 @@
 namespace misc
 {
 
-bool is_logged_in();
-
 std::string get_audio(uint64_t id, const std::filesystem::path &dir);
 std::string get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr);
 std::string decrypt_image(const std::filesystem::path &src, const std::filesystem::path &dst);
@@ -29,7 +27,6 @@ int receive_transfer(const std::string &wxid, const std::string &transferid, con
 
 // RPC
 // clang-format off
-bool rpc_is_logged_in(uint8_t *out, size_t *len);
 bool rpc_get_audio(const AudioMsg &am, uint8_t *out, size_t *len);
 bool rpc_get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr, uint8_t *out, size_t *len);
 bool rpc_decrypt_image(const DecPath &dec, uint8_t *out, size_t *len);

@@ -151,7 +151,7 @@ static bool rpc_disable_recv_msg(uint8_t *out, size_t *len)
 
 const std::unordered_map<Functions, FunctionHandler> rpc_function_map = {
     // clang-format off
-    { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_is_logged_in(out, len); } },
+    { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_is_logged_in(out, len); } },
     { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_self_wxid(out, len); } },
     { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_user_info(out, len); } },
     { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
