@@ -1,45 +1,39 @@
-﻿#include <filesystem>
+﻿#include "spy.h"
+
+#include <filesystem>
+#include <string_view>
 
 #include "log.hpp"
 #include "rpc_server.h"
-#include "spy.h"
 #include "util.h"
+
+constexpr std::string_view SUPPORT_VERSION = "3.9.11.25";
 
 UINT64 g_WeChatWinDllAddr = 0;
 
-static bool IsWxVersionMatched(const wchar_t *version)
+int InitSpy(LPVOID args)
 {
-    if (wcscmp(version, SUPPORT_VERSION) != 0) {
-        return false;
-    }
-    return true;
-}
-
-void InitSpy(LPVOID args)
-{
-
-    wchar_t version[16] = { 0 };
-    PortPath_t *pp      = (PortPath_t *)args;
+    auto *pp = static_cast<util::PortPath *>(args);
 
     Log::InitLogger(pp->path);
-    g_WeChatWinDllAddr = (UINT64)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
-    if (g_WeChatWinDllAddr == 0) {
-        LOG_ERROR("获取 wechatWin.dll 模块地址失败");
-        return; // TODO: 退出进程，避免后面操作失败
+    if (auto dll_addr = GetModuleHandle(L"WeChatWin.dll")) {
+        g_WeChatWinDllAddr = reinterpret_cast<UINT64>(dll_addr);
+    } else {
+        LOG_ERROR("获取 WeChatWin.dll 模块地址失败");
+        return -1;
     }
 
-    if (!GetWeChatVersion(version)) { // 获取微信版本
-        LOG_ERROR("获取微信版本失败");
-        return;
-    }
-    LOG_INFO("WeChat version: {}", Wstring2String(version).c_str());
-    if (!IsWxVersionMatched(version)) {
-        LOG_ERROR("不支持当前版本");
-        MessageBox(NULL, L"不支持当前版本", L"错误", 0);
-        return;
+    std::string version = util::get_wechat_version();
+    std::string msg     = fmt::format("WCF 支持版本: {}，当前版本: {}", SUPPORT_VERSION, version);
+    if (version != SUPPORT_VERSION) {
+        LOG_ERROR(msg);
+        MessageBoxA(NULL, msg.c_str(), "微信版本错误", MB_ICONERROR);
+        return -2;
     }
 
+    LOG_INFO(msg);
     RpcStartServer(pp->port);
+    return 0;
 }
 
 void CleanupSpy()

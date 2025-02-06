@@ -168,7 +168,7 @@ sdk.WxDestroySDK()
 
 ### 调试日志
 ```c
-    DbgMsg("ListenMessage"); // 封装的 OutputDebugString
+    util::dbg_msg("ListenMessage"); // 封装的 OutputDebugString
     OutputDebugString(L"ListenMessage\n");
     MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
 ```
