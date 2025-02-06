@@ -45,213 +45,51 @@ static HANDLE msgThread   = NULL;
 static nng_socket cmdSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 static nng_socket msgSock = NNG_SOCKET_INITIALIZER; // TODO: 断开检测
 
-auto &msgHandler = message::Handler::getInstance();
-auto &sendMgr    = message::Sender::get_instance();
+using FunctionHandler = std::function<bool(const Request &, uint8_t *, size_t *)>;
 
-static std::string BuildUrl(int port) { return "tcp://0.0.0.0:" + std::to_string(port); }
+inline std::string build_url(int port) { return "tcp://0.0.0.0:" + std::to_string(port); }
+void receive_message_callback();
 
-template <Functions funcType, typename AssignFunc>
-static bool FillResponse(int which_msg, uint8_t *out, size_t *len, AssignFunc assign)
-{
-    Response rsp  = Response_init_default;
-    rsp.func      = funcType;
-    rsp.which_msg = which_msg;
+auto &handler = message::Handler::getInstance();
+auto &sender  = message::Sender::get_instance();
 
-    assign(rsp);
+const std::unordered_map<Functions, FunctionHandler> rpc_function_map = {
+    // clang-format off
+    { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_is_logged_in(out, len); } },
+    { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_self_wxid(out, len)} },
+    { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return userinfo::rpc_get_user_info(out, len); } },
+    { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
+    { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
+    { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
+    { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
+    { Functions_FUNC_GET_AUDIO_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_audio(r.msg.am.id, r.msg.am.dir, out, len); } },
+    { Functions_FUNC_SEND_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_text(r.msg.txt, out, len); } },
+    { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_image(r.msg.file.path, r.msg.file.receiver, out, len); } },
+    { Functions_FUNC_SEND_FILE, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_file(r.msg.file.path, r.msg.file.receiver, out, len); } },
+    { Functions_FUNC_SEND_XML, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_xml(r.msg.xml, out, len); } },
+    { Functions_FUNC_SEND_RICH_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_rich_text(r.msg.rt, out, len); } },
+    { Functions_FUNC_SEND_PAT_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_pat(r.msg.pm.roomid, r.msg.pm.wxid, out, len); } },
+    { Functions_FUNC_FORWARD_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_forward(r.msg.fm.id, r.msg.fm.receiver, out, len); } },
+    { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_emotion(r.msg.file.path, r.msg.file.receiver, out, len); } },
+    { Functions_FUNC_ENABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_enable_recv_msg(receive_message_callback, r.msg.flag, out, len); } },
+    { Functions_FUNC_DISABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_disable_recv_msg(out, len); } },
+    { Functions_FUNC_EXEC_DB_QUERY, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_exec_db_query(r.msg.query.db, r.msg.query.sql, out, len); } },
+    { Functions_FUNC_REFRESH_PYQ, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_refresh_pyq(r.msg.ui64, out, len); } },
+    { Functions_FUNC_DOWNLOAD_ATTACH, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_download_attachment(r.msg.att, out, len); } },
+    { Functions_FUNC_GET_CONTACT_INFO, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contact_info(r.msg.str, out, len); } },
+    { Functions_FUNC_ACCEPT_FRIEND, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_accept_friend(r.msg.v, out, len); } },
+    { Functions_FUNC_RECV_TRANSFER, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_receive_transfer(r.msg.tf, out, len); } },
+    { Functions_FUNC_REVOKE_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::revoke_message(r.msg.ui64, out, len); } },
+    { Functions_FUNC_REFRESH_QRCODE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_login_url(out, len); } },
+    { Functions_FUNC_DECRYPT_IMAGE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_decrypt_image(r.msg.dec, out, len); } },
+    { Functions_FUNC_EXEC_OCR, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_ocr_result(r.msg.str, out, len); } },
+    { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_DEL_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_del_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_INV_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_invite_chatroom_memberr.msg.m, out, len); } },
+    // clang-format on
+};
 
-    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
-    if (!pb_encode(&stream, Response_fields, &rsp)) {
-        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
-        return false;
-    }
-    *len = stream.bytes_written;
-    return true;
-}
-
-static bool func_is_login(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_IS_LOGIN>(Response_status_tag, out, len,
-                                                 [](Response &rsp) { rsp.msg.status = misc::is_logged_in(); });
-}
-
-static bool func_get_self_wxid(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_SELF_WXID>(Response_str_tag, out, len, [](Response &rsp) {
-        std::string wxid = userinfo::get_self_wxid();
-        rsp.msg.str      = wxid.empty() ? nullptr : (char *)wxid.c_str();
-    });
-}
-
-static bool func_get_user_info(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_USER_INFO>(Response_ui_tag, out, len, [](Response &rsp) {
-        UserInfo_t ui     = userinfo::get_user_info();
-        rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
-        rsp.msg.ui.name   = (char *)ui.name.c_str();
-        rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
-        rsp.msg.ui.home   = (char *)ui.home.c_str();
-    });
-}
-
-static bool func_get_msg_types(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_MSG_TYPES>(Response_types_tag, out, len, [](Response &rsp) {
-        static MsgTypes_t types          = msgHandler.GetMsgTypes();
-        rsp.msg.types.types.funcs.encode = encode_types;
-        rsp.msg.types.types.arg          = &types;
-    });
-}
-
-static bool func_get_contacts(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_CONTACTS>(Response_contacts_tag, out, len, [](Response &rsp) {
-        std::vector<RpcContact_t> contacts     = contact::get_contacts();
-        rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
-        rsp.msg.contacts.contacts.arg          = &contacts;
-    });
-}
-
-static bool func_get_db_names(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_DB_NAMES>(Response_dbs_tag, out, len, [](Response &rsp) {
-        static DbNames_t dbnames       = db::get_db_names();
-        rsp.msg.dbs.names.funcs.encode = encode_dbnames;
-        rsp.msg.dbs.names.arg          = &dbnames;
-    });
-}
-
-static bool func_get_db_tables(char *db, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_DB_TABLES>(Response_tables_tag, out, len, [db](Response &rsp) {
-        static DbTables_t tables           = db::get_db_tables(db);
-        rsp.msg.tables.tables.funcs.encode = encode_tables;
-        rsp.msg.tables.tables.arg          = &tables;
-    });
-}
-
-static bool func_get_audio_msg(uint64_t id, char *dir, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_AUDIO_MSG>(Response_str_tag, out, len, [id, dir](Response &rsp) {
-        std::string path = (dir == nullptr) ? "" : misc::get_audio(id, dir);
-        rsp.msg.str      = path.empty() ? nullptr : (char *)path.c_str();
-    });
-}
-
-static bool func_send_txt(TextMsg txt, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_TXT>(Response_status_tag, out, len, [txt](Response &rsp) {
-        if ((txt.msg == NULL) || (txt.receiver == NULL)) {
-            LOG_ERROR("Empty message or receiver.");
-            rsp.msg.status = -1;
-        } else {
-            std::string msg(txt.msg);
-            std::string receiver(txt.receiver);
-            std::string aters(txt.aters ? txt.aters : "");
-            sendMgr.send_text(receiver, msg, aters);
-            rsp.msg.status = 0;
-        }
-    });
-}
-
-static bool func_send_img(char *path, char *receiver, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_IMG>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
-        if ((path == NULL) || (receiver == NULL)) {
-            LOG_ERROR("Empty path or receiver.");
-            rsp.msg.status = -1;
-        } else if (!fs::exists(util::s2w(path))) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-        } else {
-            sendMgr.send_image(receiver, path);
-            rsp.msg.status = 0;
-        }
-    });
-}
-
-static bool func_send_file(char *path, char *receiver, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_FILE>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
-        if ((path == nullptr) || (receiver == nullptr)) {
-            LOG_ERROR("Empty path or receiver.");
-            rsp.msg.status = -1;
-        } else if (!fs::exists(util::s2w(path))) {
-            LOG_ERROR("Path does not exist: {}", path);
-            rsp.msg.status = -2;
-        } else {
-            sendMgr.send_file(receiver, path);
-            rsp.msg.status = 0;
-        }
-    });
-}
-
-static bool func_send_emotion(char *path, char *receiver, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_EMOTION>(Response_status_tag, out, len, [path, receiver](Response &rsp) {
-        if ((path == nullptr) || (receiver == nullptr)) {
-            LOG_ERROR("Empty path or receiver.");
-            rsp.msg.status = -1;
-        } else {
-            sendMgr.send_emotion(receiver, path);
-            rsp.msg.status = 0;
-        }
-    });
-}
-
-static bool func_send_xml(XmlMsg xml, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_XML>(Response_status_tag, out, len, [xml](Response &rsp) {
-        if ((xml.content == nullptr) || (xml.receiver == nullptr)) {
-            LOG_ERROR("Empty content or receiver.");
-            rsp.msg.status = -1;
-        } else {
-            std::string receiver(xml.receiver);
-            std::string content(xml.content);
-            std::string path(xml.path ? xml.path : "");
-            uint64_t type = static_cast<uint64_t>(xml.type);
-            sendMgr.send_xml(receiver, content, path, type);
-            rsp.msg.status = 0;
-        }
-    });
-}
-
-static bool func_send_rich_txt(RichText rt, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_RICH_TXT>(Response_status_tag, out, len, [rt](Response &rsp) {
-        if (rt.receiver == nullptr) {
-            LOG_ERROR("Empty receiver.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = sendMgr.send_rich_text(rt);
-        }
-    });
-}
-
-static bool func_send_pat_msg(char *roomid, char *wxid, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_SEND_PAT_MSG>(Response_status_tag, out, len, [roomid, wxid](Response &rsp) {
-        if ((roomid == nullptr) || (wxid == nullptr)) {
-            LOG_ERROR("Empty roomid or wxid.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = sendMgr.send_pat(roomid, wxid);
-        }
-    });
-}
-
-static bool func_forward_msg(uint64_t id, char *receiver, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_FORWARD_MSG>(Response_status_tag, out, len, [id, receiver](Response &rsp) {
-        if (receiver == nullptr) {
-            LOG_ERROR("Empty receiver.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = sendMgr.forward(id, receiver);
-        }
-    });
-}
-
-static void PushMessage()
+void receive_message_callback()
 {
     int rv;
     Response rsp  = Response_init_default;
@@ -261,7 +99,7 @@ static void PushMessage()
 
     pb_ostream_t stream = pb_ostream_from_buffer(msgBuffer.data(), msgBuffer.size());
 
-    std::string url = BuildUrl(cmdPort + 1);
+    std::string url = build_url(cmdPort + 1);
     if ((rv = nng_pair1_open(&msgSock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return;
@@ -278,15 +116,15 @@ static void PushMessage()
         return;
     }
 
-    while (msgHandler.isMessageListening()) {
-        std::unique_lock<std::mutex> lock(msgHandler.getMutex());
+    while (handler.isMessageListening()) {
+        std::unique_lock<std::mutex> lock(handler.getMutex());
         std::optional<WxMsg_t> msgOpt;
         auto hasMessage = [&]() {
-            msgOpt = msgHandler.popMessage();
+            msgOpt = handler.popMessage();
             return msgOpt.has_value();
         };
 
-        if (msgHandler.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), hasMessage)) {
+        if (handler.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), hasMessage)) {
             WxMsg_t wxmsg          = std::move(msgOpt.value());
             rsp.msg.wxmsg.id       = wxmsg.id;
             rsp.msg.wxmsg.is_self  = wxmsg.is_self;
@@ -317,176 +155,6 @@ static void PushMessage()
     }
 }
 
-static bool func_enable_recv_txt(bool pyq, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_ENABLE_RECV_TXT>(Response_status_tag, out, len, [pyq](Response &rsp) {
-        rsp.msg.status = msgHandler.ListenMsg();
-        if (rsp.msg.status == 0) {
-            if (pyq) {
-                msgHandler.ListenPyq();
-            }
-            msgThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)PushMessage, nullptr, 0, nullptr);
-            if (msgThread == nullptr) {
-                rsp.msg.status = GetLastError();
-                LOG_ERROR("func_enable_recv_txt failed: {}", rsp.msg.status);
-            }
-        }
-    });
-}
-
-static bool func_disable_recv_txt(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_DISABLE_RECV_TXT>(Response_status_tag, out, len, [](Response &rsp) {
-        rsp.msg.status = msgHandler.UnListenMsg();
-        if (rsp.msg.status == 0) {
-            msgHandler.UnListenPyq();
-            if (msgThread != nullptr) {
-                TerminateThread(msgThread, 0);
-                msgThread = nullptr;
-            }
-        }
-    });
-}
-
-static bool func_exec_db_query(char *db, char *sql, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_EXEC_DB_QUERY>(Response_rows_tag, out, len, [db, sql](Response &rsp) {
-        static DbRows_t rows;
-        if ((db == nullptr) || (sql == nullptr)) {
-            LOG_ERROR("Empty db or sql.");
-        } else {
-            rows = db::exec_db_query(db, sql);
-        }
-        rsp.msg.rows.rows.arg          = &rows;
-        rsp.msg.rows.rows.funcs.encode = encode_rows;
-    });
-}
-
-static bool func_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_REFRESH_PYQ>(Response_status_tag, out, len,
-                                                    [id](Response &rsp) { rsp.msg.status = misc::refresh_pyq(id); });
-}
-
-static bool func_download_attach(AttachMsg att, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_DOWNLOAD_ATTACH>(Response_status_tag, out, len, [att](Response &rsp) {
-        std::string thumb = att.thumb ? att.thumb : "";
-        std::string extra = att.extra ? att.extra : "";
-        rsp.msg.status    = misc::download_attachment(att.id, thumb, extra);
-    });
-}
-
-static bool func_revoke_msg(uint64_t id, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_REVOKE_MSG>(Response_status_tag, out, len,
-                                                   [id](Response &rsp) { rsp.msg.status = misc::revoke_message(id); });
-}
-
-static bool func_refresh_qrcode(uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_REFRESH_QRCODE>(Response_str_tag, out, len, [](Response &rsp) {
-        std::string url = misc::get_login_url();
-        rsp.msg.str     = url.empty() ? nullptr : (char *)url.c_str();
-    });
-}
-
-static bool func_receive_transfer(char *wxid, char *tfid, char *taid, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_RECV_TRANSFER>(Response_status_tag, out, len, [wxid, tfid, taid](Response &rsp) {
-        if ((wxid == nullptr) || (tfid == nullptr) || (taid == nullptr)) {
-            LOG_ERROR("Empty wxid, tfid, or taid.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = misc::receive_transfer(wxid, tfid, taid);
-        }
-    });
-}
-
-static bool func_accept_friend(char *v3, char *v4, int32_t scene, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_ACCEPT_FRIEND>(Response_status_tag, out, len, [v3, v4, scene](Response &rsp) {
-        if ((v3 == nullptr) || (v4 == nullptr)) {
-            LOG_ERROR("Empty V3 or V4.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = contact::accept_new_friend(v3, v4, scene);
-        }
-    });
-}
-
-static bool func_get_contact_info(std::string wxid, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_GET_CONTACT_INFO>(Response_contacts_tag, out, len, [wxid](Response &rsp) {
-        std::vector<RpcContact_t> contacts     = { contact::get_contact_by_wxid(wxid) };
-        rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
-        rsp.msg.contacts.contacts.arg          = &contacts;
-    });
-}
-
-static bool func_decrypt_image(DecPath dec, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_DECRYPT_IMAGE>(Response_str_tag, out, len, [dec](Response &rsp) {
-        std::string path;
-        if ((dec.src == nullptr) || (dec.dst == nullptr)) {
-            LOG_ERROR("Empty src or dst.");
-        } else {
-            path = misc::decrypt_image(dec.src, dec.dst);
-        }
-        rsp.msg.str = path.empty() ? nullptr : (char *)path.c_str();
-    });
-}
-
-static bool func_exec_ocr(char *path, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_EXEC_OCR>(Response_ocr_tag, out, len, [path](Response &rsp) {
-        OcrResult_t ret = { -1, "" };
-        if (path == nullptr) {
-            LOG_ERROR("Empty path.");
-        } else {
-            ret = misc::get_ocr_result(path);
-        }
-        rsp.msg.ocr.status = ret.status;
-        rsp.msg.ocr.result = ret.result.empty() ? nullptr : (char *)ret.result.c_str();
-    });
-}
-
-static bool func_add_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_ADD_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
-        if ((roomid == nullptr) || (wxids == nullptr)) {
-            LOG_ERROR("Empty roomid or wxids.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = chatroom::add_chatroom_member(roomid, wxids);
-        }
-    });
-}
-
-static bool func_del_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_DEL_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
-        if ((roomid == nullptr) || (wxids == nullptr)) {
-            LOG_ERROR("Empty roomid or wxids.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = chatroom::del_chatroom_member(roomid, wxids);
-        }
-    });
-}
-
-static bool func_invite_room_members(char *roomid, char *wxids, uint8_t *out, size_t *len)
-{
-    return FillResponse<Functions_FUNC_INV_ROOM_MEMBERS>(Response_status_tag, out, len, [roomid, wxids](Response &rsp) {
-        if ((roomid == nullptr) || (wxids == nullptr)) {
-            LOG_ERROR("Empty roomid or wxids.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = chatroom::invite_chatroom_member(roomid, wxids);
-        }
-    });
-}
-
 static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len)
 {
     bool ret            = false;
@@ -500,139 +168,11 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
 
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
 
-    switch (req.func) {
-        case Functions_FUNC_IS_LOGIN: {
-            ret = func_is_login(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_SELF_WXID: {
-            ret = func_get_self_wxid(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_USER_INFO: {
-            ret = func_get_user_info(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_MSG_TYPES: {
-            ret = func_get_msg_types(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_CONTACTS: {
-            ret = func_get_contacts(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_DB_NAMES: {
-            ret = func_get_db_names(out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_DB_TABLES: {
-            ret = func_get_db_tables(req.msg.str, out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_AUDIO_MSG: {
-            ret = func_get_audio_msg(req.msg.am.id, req.msg.am.dir, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_TXT: {
-            ret = func_send_txt(req.msg.txt, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_IMG: {
-            ret = func_send_img(req.msg.file.path, req.msg.file.receiver, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_FILE: {
-            ret = func_send_file(req.msg.file.path, req.msg.file.receiver, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_RICH_TXT: {
-            ret = func_send_rich_txt(req.msg.rt, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_PAT_MSG: {
-            ret = func_send_pat_msg(req.msg.pm.roomid, req.msg.pm.wxid, out, out_len);
-            break;
-        }
-        case Functions_FUNC_FORWARD_MSG: {
-            ret = func_forward_msg(req.msg.fm.id, req.msg.fm.receiver, out, out_len);
-            break;
-        }
-        case Functions_FUNC_SEND_EMOTION: {
-            ret = func_send_emotion(req.msg.file.path, req.msg.file.receiver, out, out_len);
-            break;
-        }
-#if 0
-        case Functions_FUNC_SEND_XML: {
-            ret = func_send_xml(req.msg.xml, out, out_len);
-            break;
-        }
-#endif
-        case Functions_FUNC_ENABLE_RECV_TXT: {
-            ret = func_enable_recv_txt(req.msg.flag, out, out_len);
-            break;
-        }
-        case Functions_FUNC_DISABLE_RECV_TXT: {
-            ret = func_disable_recv_txt(out, out_len);
-            break;
-        }
-        case Functions_FUNC_EXEC_DB_QUERY: {
-            ret = func_exec_db_query(req.msg.query.db, req.msg.query.sql, out, out_len);
-            break;
-        }
-        case Functions_FUNC_REFRESH_PYQ: {
-            ret = func_refresh_pyq(req.msg.ui64, out, out_len);
-            break;
-        }
-        case Functions_FUNC_DOWNLOAD_ATTACH: {
-            ret = func_download_attach(req.msg.att, out, out_len);
-            break;
-        }
-        case Functions_FUNC_RECV_TRANSFER: {
-            ret = func_receive_transfer(req.msg.tf.wxid, req.msg.tf.tfid, req.msg.tf.taid, out, out_len);
-            break;
-        }
-        case Functions_FUNC_REVOKE_MSG: {
-            ret = func_revoke_msg(req.msg.ui64, out, out_len);
-            break;
-        }
-        case Functions_FUNC_REFRESH_QRCODE: {
-            ret = func_refresh_qrcode(out, out_len);
-            break;
-        }
-#if 0
-        case Functions_FUNC_ACCEPT_FRIEND: {
-            ret = func_accept_friend(req.msg.v.v3, req.msg.v.v4, req.msg.v.scene, out, out_len);
-            break;
-        }
-        case Functions_FUNC_GET_CONTACT_INFO: {
-            ret = func_get_contact_info(req.msg.str, out, out_len);
-            break;
-        }
-#endif
-        case Functions_FUNC_DECRYPT_IMAGE: {
-            ret = func_decrypt_image(req.msg.dec, out, out_len);
-            break;
-        }
-        case Functions_FUNC_EXEC_OCR: {
-            ret = func_exec_ocr(req.msg.str, out, out_len);
-            break;
-        }
-        case Functions_FUNC_ADD_ROOM_MEMBERS: {
-            ret = func_add_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
-            break;
-        }
-        case Functions_FUNC_DEL_ROOM_MEMBERS: {
-            ret = func_del_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
-            break;
-        }
-        case Functions_FUNC_INV_ROOM_MEMBERS: {
-            ret = func_invite_room_members(req.msg.m.roomid, req.msg.m.wxids, out, out_len);
-            break;
-        }
-        default: {
-            LOG_ERROR("[UNKNOW FUNCTION]");
-            break;
-        }
+    auto it = rpc_function_map.find(req.func);
+    if (it != rpc_function_map.end()) {
+        ret = it->second(req, out, out_len);
+    } else {
+        LOG_ERROR("[未知方法]");
     }
 
     pb_release(Request_fields, &req);
@@ -642,7 +182,7 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
 static int RunRpcServer()
 {
     int rv          = 0;
-    std::string url = BuildUrl(cmdPort);
+    std::string url = build_url(cmdPort);
     if ((rv = nng_pair1_open(&cmdSock)) != 0) {
         LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
         return rv;
@@ -725,8 +265,8 @@ int RpcStopServer()
 
     nng_close(cmdSock);
     nng_close(msgSock);
-    msgHandler.UnListenPyq();
-    msgHandler.UnListenMsg();
+    handler.UnListenPyq();
+    handler.UnListenMsg();
 #if ENABLE_WX_LOG
     DisableLog();
 #endif

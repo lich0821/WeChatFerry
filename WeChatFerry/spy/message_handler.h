@@ -11,7 +11,8 @@
 #include "pb_types.h"
 #include "spy_types.h"
 
-namespace message {
+namespace message
+{
 
 class Handler
 {
@@ -35,6 +36,10 @@ public:
     std::optional<WxMsg_t> popMessage();
     std::condition_variable &getConditionVariable() { return cv_; };
     std::mutex &getMutex() { return mutex_; };
+
+    bool rpc_get_msg_types();
+    bool rpc_enable_recv_msg(void *cb, bool pyq, uint8_t *out, size_t *len);
+    bool rpc_disable_recv_msg(uint8_t *out, size_t *len);
 
 private:
     Handler();
