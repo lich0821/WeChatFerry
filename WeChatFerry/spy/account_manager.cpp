@@ -1,4 +1,4 @@
-﻿#include "userinfo_manager.h"
+﻿#include "account_manager.h"
 
 #include <filesystem>
 #include <mutex>
@@ -9,7 +9,7 @@
 
 extern UINT64 g_WeChatWinDllAddr;
 
-namespace userinfo
+namespace account
 {
 #define OS_USER_HOME   0x5932770
 #define OS_USER_WXID   0x595C270
@@ -85,4 +85,4 @@ bool rpc_get_user_info(uint8_t *out, size_t *len)
     });
 }
 
-} // namespace userinfo
+} // namespace account

@@ -7,7 +7,7 @@
 #include "log.hpp"
 #include "rpc_helper.h"
 #include "spy_types.h"
-#include "userinfo_manager.h"
+#include "account_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;
@@ -153,7 +153,7 @@ void Sender::send_xml(const std::string &receiver, const std::string &xml, const
     auto wxReceiver = new_wx_string(receiver);
     auto wxXml      = new_wx_string(xml);
     auto wxPath     = new_wx_string(path);
-    auto wxSender   = new_wx_string(userinfo::get_self_wxid());
+    auto wxSender   = new_wx_string(account::get_self_wxid());
 
     func_send_xml(reinterpret_cast<QWORD>(buff.get()), reinterpret_cast<QWORD>(wxSender.get()),
                   reinterpret_cast<QWORD>(wxReceiver.get()), reinterpret_cast<QWORD>(wxXml.get()),

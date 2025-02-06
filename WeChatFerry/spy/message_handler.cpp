@@ -9,7 +9,7 @@
 #include "log.hpp"
 #include "pb_util.h"
 #include "rpc_helper.h"
-#include "userinfo_manager.h"
+#include "account_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;
@@ -54,10 +54,10 @@ QWORD Handler::DispatchMsg(QWORD arg1, QWORD arg2)
         if (wxMsg.roomid.find("@chatroom") != std::string::npos) {
             wxMsg.is_group = true;
             wxMsg.sender
-                = wxMsg.is_self ? userinfo::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
+                = wxMsg.is_self ? account::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
         } else {
             wxMsg.is_group = false;
-            wxMsg.sender   = wxMsg.is_self ? userinfo::get_self_wxid() : wxMsg.roomid;
+            wxMsg.sender   = wxMsg.is_self ? account::get_self_wxid() : wxMsg.roomid;
         }
     } catch (const std::exception &e) {
         LOG_ERROR(util::gb2312_to_utf8(e.what()));

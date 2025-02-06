@@ -260,7 +260,7 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
     <ClInclude Include="sqlite3.h" />
-    <ClInclude Include="userinfo_manager.h" />
+    <ClInclude Include="account_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\com\util.cpp" />
@@ -278,7 +278,7 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
     <ClCompile Include="rpc_server.cpp" />
     <ClCompile Include="message_sender.cpp" />
     <ClCompile Include="spy.cpp" />
-    <ClCompile Include="userinfo_manager.cpp" />
+    <ClCompile Include="account_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\rpc\proto\wcf.proto" />

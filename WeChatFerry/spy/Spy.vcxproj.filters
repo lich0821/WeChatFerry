@@ -66,7 +66,7 @@
     <ClInclude Include="chatroom_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="userinfo_manager.h">
+    <ClInclude Include="account_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -131,7 +131,7 @@
     <ClCompile Include="chatroom_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="userinfo_manager.cpp">
+    <ClCompile Include="account_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="misc_manager.cpp">

@@ -5,7 +5,7 @@
 
 #include "pb_types.h"
 
-namespace userinfo
+namespace account
 {
 
 // 获取 WeChat 数据存储路径
@@ -21,4 +21,4 @@ UserInfo_t get_user_info();
 bool rpc_get_self_wxid(uint8_t *out, size_t *len);
 bool rpc_get_user_info(uint8_t *out, size_t *len);
 
-} // namespace userinfo
+} // namespace account
