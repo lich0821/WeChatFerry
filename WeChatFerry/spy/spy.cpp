@@ -7,7 +7,7 @@
 #include "rpc_server.h"
 #include "util.h"
 
-constexpr std::string_view SUPPORT_VERSION = "3.9.11.25";
+constexpr std::string_view SUPPORT_VERSION = "3.9.12.17";
 
 UINT64 g_WeChatWinDllAddr = 0;
 
@@ -32,12 +32,13 @@ int InitSpy(LPVOID args)
     }
 
     LOG_INFO(msg);
-    RpcStartServer(pp->port);
+    RpcServer::getInstance().start(pp->port);
+
     return 0;
 }
 
 void CleanupSpy()
 {
     LOG_DEBUG("CleanupSpy");
-    RpcStopServer();
+    RpcServer::destroyInstance();
 }
