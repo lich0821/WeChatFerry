@@ -251,7 +251,7 @@ void dbg_msg(const char *format, ...)
     vsnprintf(buffer.data(), buffer.size(), format, args);
     va_end(args);
 
-    OutputDebugStringA(buffer.data());
+    OutputDebugStringW(s2w(buffer.data()).c_str());
 }
 
 std::unique_ptr<WxString> new_wx_string(const char *str)
