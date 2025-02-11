@@ -156,7 +156,9 @@ class Wcf():
         data = req.SerializeToString()
         self.cmd_socket.send(data)
         rsp = wcf_pb2.Response()
-        rsp.ParseFromString(self.cmd_socket.recv_msg().bytes)
+        bs = self.cmd_socket.recv_msg().bytes
+        self.LOG.debug(bs.hex())
+        rsp.ParseFromString(bs)
         return rsp
 
     def is_receiving_msg(self) -> bool:
