@@ -221,8 +221,8 @@ bool RpcServer::disableRecvMsg(uint8_t *out, size_t *len)
 const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFunctionMap = {
     // clang-format off
     { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_is_logged_in(out, len); } },
-    // { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_self_wxid(out, len); } },
-    // { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_user_info(out, len); } },
+    { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_self_wxid(out, len); } },
+    { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_user_info(out, len); } },
     // { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
     // { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
     // { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
