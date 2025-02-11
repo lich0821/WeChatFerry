@@ -77,12 +77,12 @@ bool rpc_get_self_wxid(uint8_t *out, size_t *len)
 
 bool rpc_get_user_info(uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_GET_USER_INFO>(out, len, [](Response &rsp) {
-        static UserInfo_t ui = get_user_info();
-        rsp.msg.ui.wxid      = (char *)ui.wxid.c_str();
-        rsp.msg.ui.name      = (char *)ui.name.c_str();
-        rsp.msg.ui.mobile    = (char *)ui.mobile.c_str();
-        rsp.msg.ui.home      = (char *)ui.home.c_str();
+    UserInfo_t ui = get_user_info();
+    return fill_response<Functions_FUNC_GET_USER_INFO>(out, len, ui, [](Response &rsp, UserInfo_t &ui) {
+        rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
+        rsp.msg.ui.name   = (char *)ui.name.c_str();
+        rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
+        rsp.msg.ui.home   = (char *)ui.home.c_str();
     });
 }
 
