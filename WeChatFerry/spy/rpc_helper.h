@@ -65,3 +65,28 @@ template <Functions FuncType, typename AssignFunc> bool fill_response(uint8_t *o
     *len = stream.bytes_written;
     return true;
 }
+
+template <Functions FuncType, typename DataType, typename AssignFunc>
+bool fill_response(uint8_t *out, size_t *len, DataType &&data, AssignFunc &&assign)
+{
+    Response rsp = Response_init_default;
+    rsp.func     = FuncType;
+
+    auto it = rpc_tag_map.find(FuncType);
+    if (it == rpc_tag_map.end()) {
+        LOG_ERROR("Unknown function type: {}", magic_enum::enum_name(rsp.func));
+        return false;
+    }
+    rsp.which_msg = it->second;
+
+    assign(rsp, data);
+
+    pb_ostream_t stream = pb_ostream_from_buffer(out, *len);
+    if (!pb_encode(&stream, Response_fields, &rsp)) {
+        LOG_ERROR("Encoding failed: {}", PB_GET_ERROR(&stream));
+        return false;
+    }
+    *len = stream.bytes_written;
+
+    return true;
+}
