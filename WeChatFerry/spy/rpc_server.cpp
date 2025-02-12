@@ -54,8 +54,10 @@ void RpcServer::destroyInstance()
     }
 }
 
-RpcServer::RpcServer(int port) : port_(port), handler_(message::Handler::getInstance() {
-    LOG_DEBUG("RpcServer 构造: 端口 {}", port_); }
+RpcServer::RpcServer(int port) : port_(port), handler_(message::Handler::getInstance())
+{
+    LOG_DEBUG("RpcServer 构造: 端口 {}", port_);
+}
 
 RpcServer::~RpcServer()
 {
