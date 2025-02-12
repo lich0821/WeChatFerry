@@ -54,7 +54,8 @@ void RpcServer::destroyInstance()
     }
 }
 
-RpcServer::RpcServer(int port) : port_(port) { LOG_DEBUG("RpcServer 构造: 端口 {}", port_); }
+RpcServer::RpcServer(int port) : port_(port), handler_(message::Handler::getInstance() {
+    LOG_DEBUG("RpcServer 构造: 端口 {}", port_); }
 
 RpcServer::~RpcServer()
 {
@@ -99,9 +100,8 @@ int RpcServer::stop()
     }
     isRunning_ = false;
 
-    auto &handler = message::Handler::getInstance();
-    handler.UnListenPyq();
-    handler.UnListenMsg();
+    handler_.UnListenPyq();
+    handler_.UnListenMsg();
 #if ENABLE_WX_LOG
     DisableLog();
 #endif
@@ -149,16 +149,15 @@ void RpcServer::receiveMessageCallback()
         return;
     }
 
-    auto &handler = message::Handler::getInstance();
-    while (handler.isMessageListening()) {
-        std::unique_lock<std::mutex> lock(handler.getMutex());
+    while (handler_.isMessageListening()) {
+        std::unique_lock<std::mutex> lock(handler_.getMutex());
         std::optional<WxMsg_t> msgOpt;
         auto hasMessage = [&]() {
-            msgOpt = handler.popMessage();
+            msgOpt = handler_.popMessage();
             return msgOpt.has_value();
         };
 
-        if (handler.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), hasMessage)) {
+        if (handler_.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), hasMessage)) {
             WxMsg_t wxmsg          = std::move(msgOpt.value());
             rsp.msg.wxmsg.id       = wxmsg.id;
             rsp.msg.wxmsg.is_self  = wxmsg.is_self;
@@ -193,11 +192,10 @@ void RpcServer::receiveMessageCallback()
 bool RpcServer::enableRecvMsg(bool pyq, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_ENABLE_RECV_TXT>(out, len, [&](Response &rsp) {
-        auto &handler  = message::Handler::getInstance();
-        rsp.msg.status = handler.ListenMsg();
+        rsp.msg.status = handler_.ListenMsg();
         if (rsp.msg.status == 0) {
             if (pyq) {
-                handler.ListenPyq();
+                handler_.ListenPyq();
             }
             msgThread_ = std::thread(&RpcServer::receiveMessageCallback, this);
         }
@@ -207,10 +205,9 @@ bool RpcServer::enableRecvMsg(bool pyq, uint8_t *out, size_t *len)
 bool RpcServer::disableRecvMsg(uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_DISABLE_RECV_TXT>(out, len, [&](Response &rsp) {
-        auto &handler  = message::Handler::getInstance();
-        rsp.msg.status = handler.UnListenMsg();
+        rsp.msg.status = handler_.UnListenMsg();
         if (rsp.msg.status == 0) {
-            handler.UnListenPyq();
+            handler_.UnListenPyq();
             if (msgThread_.joinable()) {
                 msgThread_.join();
             }
@@ -223,7 +220,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_IS_LOGIN, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_is_logged_in(out, len); } },
     { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_self_wxid(out, len); } },
     { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_user_info(out, len); } },
-    // { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler.rpc_get_msg_types(out, len); } },
+    // { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return handler_.rpc_get_msg_types(out, len); } },
     // { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
     // { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
     // { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
