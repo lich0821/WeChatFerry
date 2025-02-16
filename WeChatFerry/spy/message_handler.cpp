@@ -6,10 +6,11 @@
 
 #include "framework.h"
 
+#include "account_manager.h"
 #include "log.hpp"
+#include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
-#include "account_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;
@@ -37,6 +38,8 @@ extern QWORD g_WeChatWinDllAddr;
 
 namespace message
 {
+namespace OsMsg = Offsets::Message;
+
 QWORD Handler::DispatchMsg(QWORD arg1, QWORD arg2)
 {
     auto &handler = getInstance();
@@ -190,13 +193,15 @@ int Handler::EnableLog()
 {
     if (isLogging) return 1;
 
-    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OS_WXLOG);
+    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsMsg::LOG);
+    pLogLevel = reinterpret_cast<uint32_t *>(g_WeChatWinDllAddr + OsMsg::LOG_LEVEL);
 
     if (InitializeHook() != MH_OK) return -1;
-    if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -1;
-    if (MH_EnableHook(funcWxLog) != MH_OK) return -1;
+    if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
+    if (MH_EnableHook(funcWxLog) != MH_OK) return -3;
 
-    isLogging = true;
+    *pLogLevel = 0;
+    isLogging  = true;
     return 0;
 }
 
@@ -204,8 +209,9 @@ int Handler::DisableLog()
 {
     if (!isLogging) return 1;
     if (MH_DisableHook(funcWxLog) != MH_OK) return -1;
-    if (UninitializeHook() != MH_OK) return -1;
-    isLogging = false;
+    if (UninitializeHook() != MH_OK) return -2;
+    *pLogLevel = 6;
+    isLogging  = false;
     return 0;
 }
 

@@ -55,6 +55,7 @@ private:
     using funcWxLog_t   = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
     using funcRecvPyq_t = QWORD (*)(QWORD, QWORD, QWORD);
 
+    uint32_t *pLogLevel;
     funcWxLog_t funcWxLog, realWxLog;
     funcRecvMsg_t funcRecvMsg, realRecvMsg;
     funcRecvPyq_t funcRecvPyq, realRecvPyq;

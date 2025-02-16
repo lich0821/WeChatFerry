@@ -16,6 +16,11 @@ namespace Account
     constexpr uint64_t LOGIN   = 0x7F8;     // 登录状态
 }
 
+namespace Message
+{
+    constexpr uint64_t LOG       = 0x261B890; // 日志函数
+    constexpr uint64_t LOG_LEVEL = 0x56E4244; // 日志级别
+}
 }
 
 #endif // OFFSETS_H
