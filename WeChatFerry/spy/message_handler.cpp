@@ -38,7 +38,7 @@ extern QWORD g_WeChatWinDllAddr;
 
 namespace message
 {
-namespace OsMsg = Offsets::Message;
+namespace OsLog = Offsets::Message::Log;
 
 QWORD Handler::DispatchMsg(QWORD arg1, QWORD arg2)
 {
@@ -193,8 +193,8 @@ int Handler::EnableLog()
 {
     if (isLogging) return 1;
 
-    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsMsg::LOG);
-    pLogLevel = reinterpret_cast<uint32_t *>(g_WeChatWinDllAddr + OsMsg::LOG_LEVEL);
+    pLogLevel = reinterpret_cast<uint32_t *>(g_WeChatWinDllAddr + OsLog::LEVEL);
+    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsLog::FUNCTION);
 
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
