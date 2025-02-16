@@ -88,7 +88,7 @@ int RpcServer::start(int port)
         return -2;
     }
 #if ENABLE_WX_LOG
-    EnableLog();
+    handler_.EnableLog();
 #endif
     LOG_INFO("RPC 服务器成功启动，监听端口: {}", port_);
     return 0;
@@ -105,7 +105,7 @@ int RpcServer::stop()
     handler_.UnListenPyq();
     handler_.UnListenMsg();
 #if ENABLE_WX_LOG
-    DisableLog();
+    handler_.DisableLog();
 #endif
     nng_fini();
     if (cmdThread_.joinable()) {
