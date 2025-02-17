@@ -16,14 +16,6 @@
 
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_PYQ_MSG_START   0x30
-#define OS_PYQ_MSG_END     0x38
-#define OS_PYQ_MSG_TS      0x38
-#define OS_PYQ_MSG_XML     0x9B8
-#define OS_PYQ_MSG_SENDER  0x18
-#define OS_PYQ_MSG_CONTENT 0x48
-#define OS_PYQ_MSG_CALL    0x2E42C90
-
 namespace message
 {
 
@@ -91,14 +83,14 @@ QWORD Handler::PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWOR
     return p;
 }
 
-void Handler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
+QWORD Handler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
 {
     auto &handler   = getInstance();
-    QWORD startAddr = *(QWORD *)(arg2 + OS_PYQ_MSG_START);
-    QWORD endAddr   = *(QWORD *)(arg2 + OS_PYQ_MSG_END);
+    QWORD startAddr = *(QWORD *)(arg2 + OsRecv::PYQ_START);
+    QWORD endAddr   = *(QWORD *)(arg2 + OsRecv::PYQ_END);
 
     if (startAddr == 0) {
-        return;
+        return 0;
     }
 
     while (startAddr < endAddr) {
@@ -108,10 +100,10 @@ void Handler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
         wxMsg.is_self  = false;
         wxMsg.is_group = false;
         wxMsg.id       = util::get_qword(startAddr);
-        wxMsg.ts       = util::get_dword(startAddr + OS_PYQ_MSG_TS);
-        wxMsg.xml      = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_XML);
-        wxMsg.sender   = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_SENDER);
-        wxMsg.content  = util::get_str_by_wstr_addr(startAddr + OS_PYQ_MSG_CONTENT);
+        wxMsg.ts       = util::get_dword(startAddr + OsRecv::PYQ_TS);
+        wxMsg.xml      = util::get_str_by_wstr_addr(startAddr + OsRecv::PYQ_XML);
+        wxMsg.sender   = util::get_str_by_wstr_addr(startAddr + OsRecv::PYQ_SENDER);
+        wxMsg.content  = util::get_str_by_wstr_addr(startAddr + OsRecv::PYQ_CONTENT);
 
         {
             std::unique_lock<std::mutex> lock(handler.mutex_);
@@ -121,6 +113,8 @@ void Handler::DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3)
         handler.cv_.notify_all();
         startAddr += 0x1618;
     }
+
+    return handler.realRecvPyq(arg1, arg2, arg3);
 }
 
 Handler &Handler::getInstance()
@@ -243,7 +237,7 @@ int Handler::ListenPyq()
 {
     if (isListeningPyq) return 1;
 
-    funcRecvPyq = reinterpret_cast<funcRecvPyq_t>(g_WeChatWinDllAddr + OS_PYQ_MSG_CALL);
+    funcRecvPyq = reinterpret_cast<funcRecvPyq_t>(g_WeChatWinDllAddr + OsRecv::PYQ_CALL);
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcRecvPyq, &DispatchPyq, reinterpret_cast<LPVOID *>(&realRecvPyq)) != MH_OK) return -1;
     if (MH_EnableHook(funcRecvPyq) != MH_OK) return -1;

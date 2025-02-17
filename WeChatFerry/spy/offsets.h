@@ -38,6 +38,14 @@ namespace Message
         constexpr uint64_t THUMB     = 0x280;     // 缩略图路径
         constexpr uint64_t EXTRA     = 0x2A0;     // 原图路径
         constexpr uint64_t XML       = 0x308;     // 消息 XML
+
+        constexpr uint64_t PYQ_CALL    = 0x2E56080; // 接收朋友圈 Call
+        constexpr uint64_t PYQ_START   = 0x30;      // 开始地址
+        constexpr uint64_t PYQ_END     = 0x38;      // 结束地址
+        constexpr uint64_t PYQ_SENDER  = 0x18;      // 发布者
+        constexpr uint64_t PYQ_TS      = 0x38;      // 时间戳
+        constexpr uint64_t PYQ_CONTENT = 0x48;      // 文本内容
+        constexpr uint64_t PYQ_XML     = 0x9B8;     // 其他内容
     }
 }
 }

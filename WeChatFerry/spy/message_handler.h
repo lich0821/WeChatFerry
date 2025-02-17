@@ -68,7 +68,7 @@ private:
     static QWORD DispatchMsg(QWORD arg1, QWORD arg2);
     static QWORD PrintWxLog(QWORD a1, QWORD a2, QWORD a3, QWORD a4, QWORD a5, QWORD a6, QWORD a7, QWORD a8, QWORD a9,
                             QWORD a10, QWORD a11, QWORD a12);
-    static void DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3);
+    static QWORD DispatchPyq(QWORD arg1, QWORD arg2, QWORD arg3);
 };
 
 } // namespace message
