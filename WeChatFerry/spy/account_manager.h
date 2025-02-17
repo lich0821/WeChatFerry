@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 
@@ -12,7 +13,7 @@ namespace account
 bool is_logged_in();
 
 // 获取 WeChat 数据存储路径
-std::string get_home_path();
+std::filesystem::path get_home_path();
 
 // 获取自身 wxid
 std::string get_self_wxid();

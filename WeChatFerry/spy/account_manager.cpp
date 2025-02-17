@@ -20,7 +20,7 @@ using get_data_path_t       = QWORD (*)(QWORD);
 
 // 缓存避免重复查询
 static std::optional<std::string> cachedWxid;
-static std::optional<std::string> cachedHomePath;
+static std::optional<fs::path> cachedHomePath;
 
 // 清除缓存
 static void clear_cached_wxid() { cachedWxid.reset(); }
@@ -46,7 +46,7 @@ bool is_logged_in()
     return service_addr && util::get_qword(service_addr + OsAcc::LOGIN) != 0;
 }
 
-std::string get_home_path()
+fs::path get_home_path()
 {
     if (cachedHomePath) {
         return *cachedHomePath;
@@ -56,8 +56,7 @@ std::string get_home_path()
     int64_t service_addr = get_account_service();
     GetDataPath((QWORD)&home);
     if (home.wptr) {
-        fs::path path  = util::w2s(std::wstring(home.wptr, home.size));
-        cachedHomePath = path.generic_string();
+        cachedHomePath = util::w2s(std::wstring(home.wptr, home.size));
     }
     return *cachedHomePath;
 }
@@ -81,7 +80,7 @@ UserInfo_t get_user_info()
     if (!service_addr) return ui;
 
     ui.wxid   = get_self_wxid();
-    ui.home   = get_home_path();
+    ui.home   = get_home_path().generic_string();
     ui.name   = get_string_value(service_addr, OsAcc::NAME);
     ui.mobile = get_string_value(service_addr, OsAcc::MOBILE);
     return ui;
