@@ -20,8 +20,8 @@ namespace Message
 {
     namespace Log
     {
-        constexpr uint64_t FUNCTION = 0x261B890; // 日志函数
-        constexpr uint64_t LEVEL    = 0x56E4244; // 日志级别
+        constexpr uint64_t LEVEL = 0x56E4244; // 日志级别
+        constexpr uint64_t CALL  = 0x261B890; // 日志函数
     }
 }
 }

@@ -194,7 +194,7 @@ int Handler::EnableLog()
     if (isLogging) return 1;
 
     pLogLevel = reinterpret_cast<uint32_t *>(g_WeChatWinDllAddr + OsLog::LEVEL);
-    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsLog::FUNCTION);
+    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsLog::CALL);
 
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
