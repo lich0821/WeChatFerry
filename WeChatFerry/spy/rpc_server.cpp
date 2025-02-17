@@ -310,11 +310,15 @@ void RpcServer::run_rpc_server()
 
     if ((rv = nng_listen(cmdSock, url.c_str(), nullptr, 0)) != 0) {
         LOG_ERROR("nng_listen error: {}", nng_strerror(rv));
+        nng_close(cmdSock);
+        nng_fini();
         return;
     }
 
     if ((rv = nng_setopt_ms(cmdSock, NNG_OPT_SENDTIMEO, 1000)) != 0) {
         LOG_ERROR("nng_setopt_ms error: {}", nng_strerror(rv));
+        nng_close(cmdSock);
+        nng_fini();
         return;
     }
 
