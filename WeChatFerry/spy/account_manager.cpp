@@ -12,16 +12,19 @@ extern UINT64 g_WeChatWinDllAddr;
 namespace account
 {
 
+namespace fs    = std::filesystem;
 namespace OsAcc = Offsets::Account;
 
 using get_account_service_t   = QWORD (*)();
-using get_current_data_path_t = QWORD (*)(QWORD);
+using get_data_path_t = QWORD (*)(QWORD);
 
-// 缓存 wxid 避免重复查询
+// 缓存避免重复查询
 static std::optional<std::string> cachedWxid;
+static std::optional<std::string> cachedHomePath;
 
-// 清除缓存的 wxid
+// 清除缓存
 static void clear_cached_wxid() { cachedWxid.reset(); }
+static void clear_cached_home_path() { cachedHomePath.reset(); }
 
 static uint64_t get_account_service()
 {
@@ -38,8 +41,25 @@ static std::string get_string_value(uint64_t base_addr, uint64_t offset)
 bool is_logged_in()
 {
     clear_cached_wxid();
+    clear_cached_home_path();
     uint64_t service_addr = get_account_service();
     return service_addr && util::get_qword(service_addr + OsAcc::LOGIN) != 0;
+}
+
+std::string get_home_path()
+{
+    if (cachedHomePath) {
+        return *cachedHomePath;
+    }
+    WxString home;
+    auto GetDataPath     = reinterpret_cast<get_data_path_t>(g_WeChatWinDllAddr + OsAcc::PATH);
+    int64_t service_addr = get_account_service();
+    GetDataPath((QWORD)&home);
+    if (home.wptr) {
+        fs::path path  = util::w2s(std::wstring(home.wptr, home.size));
+        cachedHomePath = path.generic_string();
+    }
+    return *cachedHomePath;
 }
 
 std::string get_self_wxid()
@@ -57,19 +77,11 @@ std::string get_self_wxid()
 UserInfo_t get_user_info()
 {
     UserInfo_t ui;
-    WxString home;
-
-    auto GetDataPath = reinterpret_cast<get_current_data_path_t>(g_WeChatWinDllAddr + OsAcc::PATH);
-
     uint64_t service_addr = get_account_service();
     if (!service_addr) return ui;
 
-    ui.wxid = get_self_wxid();
-    GetDataPath((QWORD)&home);
-    if (home.wptr) {
-        std::filesystem::path path = util::w2s(std::wstring(home.wptr, home.size));
-        ui.home                    = path.generic_string();
-    }
+    ui.wxid   = get_self_wxid();
+    ui.home   = get_home_path();
     ui.name   = get_string_value(service_addr, OsAcc::NAME);
     ui.mobile = get_string_value(service_addr, OsAcc::MOBILE);
     return ui;
