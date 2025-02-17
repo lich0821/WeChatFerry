@@ -15,8 +15,8 @@ namespace account
 namespace fs    = std::filesystem;
 namespace OsAcc = Offsets::Account;
 
-using get_account_service_t   = QWORD (*)();
-using get_data_path_t = QWORD (*)(QWORD);
+using get_account_service_t = QWORD (*)();
+using get_data_path_t       = QWORD (*)(QWORD);
 
 // 缓存避免重复查询
 static std::optional<std::string> cachedWxid;
