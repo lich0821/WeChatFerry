@@ -277,8 +277,8 @@ MH_STATUS Handler::UninitializeHook()
 
 bool Handler::rpc_get_msg_types(uint8_t *out, size_t *len)
 {
+    MsgTypes_t types                 = GetMsgTypes();
     return fill_response<Functions_FUNC_GET_MSG_TYPES>(out, len, [&](Response &rsp) {
-        MsgTypes_t types                 = GetMsgTypes();
         rsp.msg.types.types.funcs.encode = encode_types;
         rsp.msg.types.types.arg          = &types;
     });
