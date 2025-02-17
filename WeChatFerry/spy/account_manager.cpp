@@ -17,6 +17,12 @@ namespace OsAcc = Offsets::Account;
 using get_account_service_t   = QWORD (*)();
 using get_current_data_path_t = QWORD (*)(QWORD);
 
+// 缓存 wxid 避免重复查询
+static std::optional<std::string> cachedWxid;
+
+// 清除缓存的 wxid
+static void clear_cached_wxid() { cachedWxid.reset(); }
+
 static uint64_t get_account_service()
 {
     static auto GetService = reinterpret_cast<get_account_service_t>(g_WeChatWinDllAddr + OsAcc::SERVICE);
@@ -31,16 +37,21 @@ static std::string get_string_value(uint64_t base_addr, uint64_t offset)
 
 bool is_logged_in()
 {
+    clear_cached_wxid();
     uint64_t service_addr = get_account_service();
     return service_addr && util::get_qword(service_addr + OsAcc::LOGIN) != 0;
 }
 
 std::string get_self_wxid()
 {
+    if (cachedWxid) {
+        return *cachedWxid;
+    }
     uint64_t service_addr = get_account_service();
     if (!service_addr) return "";
 
-    return get_string_value(service_addr, OsAcc::WXID);
+    cachedWxid = get_string_value(service_addr, OsAcc::WXID);
+    return *cachedWxid;
 }
 
 UserInfo_t get_user_info()
