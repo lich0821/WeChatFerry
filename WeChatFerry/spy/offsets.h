@@ -23,6 +23,22 @@ namespace Message
         constexpr uint64_t LEVEL = 0x56E4244; // 日志级别
         constexpr uint64_t CALL  = 0x261B890; // 日志函数
     }
+
+    namespace Receive
+    {
+        constexpr uint64_t CALL      = 0x2141E80; // 接收消息 Call
+        constexpr uint64_t ID        = 0x30;      // 消息 ID
+        constexpr uint64_t TYPE      = 0x38;      // 消息类型
+        constexpr uint64_t SELF      = 0x3C;      // 消息是否来自自己
+        constexpr uint64_t TIMESTAMP = 0x44;      // 消息时间戳
+        constexpr uint64_t ROOMID    = 0x48;      // 群聊 ID（或者发送者 wxid）
+        constexpr uint64_t CONTENT   = 0x88;      // 消息内容
+        constexpr uint64_t WXID      = 0x240;     // 发送者 wxid
+        constexpr uint64_t SIGN      = 0x260;     // 消息签名
+        constexpr uint64_t THUMB     = 0x280;     // 缩略图路径
+        constexpr uint64_t EXTRA     = 0x2A0;     // 原图路径
+        constexpr uint64_t XML       = 0x308;     // 消息 XML
+    }
 }
 }
 

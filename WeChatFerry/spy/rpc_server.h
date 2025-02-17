@@ -26,10 +26,10 @@ private:
     RpcServer(const RpcServer &)            = delete;
     RpcServer &operator=(const RpcServer &) = delete;
 
-    void runRpcServer();
-    void receiveMessageCallback();
-    bool enableRecvMsg(bool pyq, uint8_t *out, size_t *len);
-    bool disableRecvMsg(uint8_t *out, size_t *len);
+    void run_rpc_server();
+    void on_message_callback();
+    bool start_message_listener(bool pyq, uint8_t *out, size_t *len);
+    bool stop_message_listener(uint8_t *out, size_t *len);
     bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len);
 
     static std::string build_url(int port);

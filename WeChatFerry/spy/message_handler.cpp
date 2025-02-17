@@ -1,6 +1,7 @@
 ﻿#include "message_handler.h"
 
 #include <condition_variable>
+#include <filesystem>
 #include <mutex>
 #include <queue>
 
@@ -15,60 +16,61 @@
 
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_RECV_MSG_ID      0x30
-#define OS_RECV_MSG_TYPE    0x38
-#define OS_RECV_MSG_SELF    0x3C
-#define OS_RECV_MSG_TS      0x44
-#define OS_RECV_MSG_ROOMID  0x48
-#define OS_RECV_MSG_CONTENT 0x88
-#define OS_RECV_MSG_WXID    0x240
-#define OS_RECV_MSG_SIGN    0x260
-#define OS_RECV_MSG_THUMB   0x280
-#define OS_RECV_MSG_EXTRA   0x2A0
-#define OS_RECV_MSG_XML     0x308
-#define OS_RECV_MSG_CALL    0x213ED90
-#define OS_PYQ_MSG_START    0x30
-#define OS_PYQ_MSG_END      0x38
-#define OS_PYQ_MSG_TS       0x38
-#define OS_PYQ_MSG_XML      0x9B8
-#define OS_PYQ_MSG_SENDER   0x18
-#define OS_PYQ_MSG_CONTENT  0x48
-#define OS_PYQ_MSG_CALL     0x2E42C90
-#define OS_WXLOG            0x2613D20
+#define OS_PYQ_MSG_START   0x30
+#define OS_PYQ_MSG_END     0x38
+#define OS_PYQ_MSG_TS      0x38
+#define OS_PYQ_MSG_XML     0x9B8
+#define OS_PYQ_MSG_SENDER  0x18
+#define OS_PYQ_MSG_CONTENT 0x48
+#define OS_PYQ_MSG_CALL    0x2E42C90
 
 namespace message
 {
-namespace OsLog = Offsets::Message::Log;
+
+namespace fs = std::filesystem;
+
+namespace OsLog  = Offsets::Message::Log;
+namespace OsRecv = Offsets::Message::Receive;
 
 QWORD Handler::DispatchMsg(QWORD arg1, QWORD arg2)
 {
     auto &handler = getInstance();
     WxMsg_t wxMsg = {};
     try {
-        wxMsg.id      = util::get_qword(arg2 + OS_RECV_MSG_ID);
-        wxMsg.type    = util::get_dword(arg2 + OS_RECV_MSG_TYPE);
-        wxMsg.is_self = util::get_dword(arg2 + OS_RECV_MSG_SELF);
-        wxMsg.ts      = util::get_dword(arg2 + OS_RECV_MSG_TS);
-        wxMsg.content = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_CONTENT);
-        wxMsg.sign    = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_SIGN);
-        wxMsg.xml     = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_XML);
-        wxMsg.roomid  = util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_ROOMID);
+        wxMsg.id      = util::get_qword(arg2 + OsRecv::ID);
+        wxMsg.type    = util::get_dword(arg2 + OsRecv::TYPE);
+        wxMsg.is_self = util::get_dword(arg2 + OsRecv::SELF);
+        wxMsg.ts      = util::get_dword(arg2 + OsRecv::TIMESTAMP);
+        wxMsg.content = util::get_str_by_wstr_addr(arg2 + OsRecv::CONTENT);
+        wxMsg.sign    = util::get_str_by_wstr_addr(arg2 + OsRecv::SIGN);
+        wxMsg.xml     = util::get_str_by_wstr_addr(arg2 + OsRecv::XML);
+        wxMsg.roomid  = util::get_str_by_wstr_addr(arg2 + OsRecv::ROOMID);
 
-        if (wxMsg.roomid.find("@chatroom") != std::string::npos) {
+        if (wxMsg.roomid.find("@chatroom") != std::string::npos) { // 群 ID 的格式为 xxxxxxxxxxx@chatroom
             wxMsg.is_group = true;
-            wxMsg.sender
-                = wxMsg.is_self ? account::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OS_RECV_MSG_WXID);
+            wxMsg.sender   = wxMsg.is_self ? account::get_self_wxid() : util::get_str_by_wstr_addr(arg2 + OsRecv::WXID);
         } else {
             wxMsg.is_group = false;
             wxMsg.sender   = wxMsg.is_self ? account::get_self_wxid() : wxMsg.roomid;
         }
+
+        fs::path thumb = util::get_str_by_wstr_addr(arg2 + OsRecv::THUMB);
+        if (!thumb.empty()) {
+            wxMsg.thumb = (account::get_home_path() / thumb).generic_string();
+        }
+
+        fs::path extra = util::get_str_by_wstr_addr(arg2 + OsRecv::EXTRA);
+        if (!extra.empty()) {
+            wxMsg.extra = (account::get_home_path() / extra).generic_string();
+        }
+        LOG_DEBUG("{}", wxMsg.content);
     } catch (const std::exception &e) {
         LOG_ERROR(util::gb2312_to_utf8(e.what()));
     }
 
     {
         std::unique_lock<std::mutex> lock(handler.mutex_);
-        handler.msgQueue_.push(wxMsg);
+        handler.msgQueue_.push(wxMsg); // 推送到队列
     }
 
     handler.cv_.notify_all();
@@ -219,7 +221,7 @@ int Handler::ListenMsg()
 {
     if (isListeningMsg) return 1;
 
-    funcRecvMsg = reinterpret_cast<funcRecvMsg_t>(g_WeChatWinDllAddr + OS_RECV_MSG_CALL);
+    funcRecvMsg = reinterpret_cast<funcRecvMsg_t>(g_WeChatWinDllAddr + OsRecv::CALL);
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg)) != MH_OK) return -1;
     if (MH_EnableHook(funcRecvMsg) != MH_OK) return -1;
@@ -277,7 +279,7 @@ MH_STATUS Handler::UninitializeHook()
 
 bool Handler::rpc_get_msg_types(uint8_t *out, size_t *len)
 {
-    MsgTypes_t types                 = GetMsgTypes();
+    MsgTypes_t types = GetMsgTypes();
     return fill_response<Functions_FUNC_GET_MSG_TYPES>(out, len, [&](Response &rsp) {
         rsp.msg.types.types.funcs.encode = encode_types;
         rsp.msg.types.types.arg          = &types;

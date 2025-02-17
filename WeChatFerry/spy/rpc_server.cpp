@@ -81,7 +81,7 @@ int RpcServer::start(int port)
     isRunning_ = true;
 
     try {
-        cmdThread_ = std::thread(&RpcServer::runRpcServer, this);
+        cmdThread_ = std::thread(&RpcServer::run_rpc_server, this);
     } catch (const std::exception &e) {
         LOG_ERROR("启动 RPC 服务器失败: {}", e.what());
         isRunning_ = false;
@@ -123,43 +123,56 @@ int RpcServer::stop()
     return 0;
 }
 
-void RpcServer::receiveMessageCallback()
+void RpcServer::on_message_callback()
 {
-    int rv;
-    nng_socket msgSock = NNG_SOCKET_INITIALIZER;
-    Response rsp       = Response_init_default;
-    rsp.func           = Functions_FUNC_ENABLE_RECV_TXT;
-    rsp.which_msg      = Response_wxmsg_tag;
-    std::vector<uint8_t> msgBuffer(DEFAULT_BUF_SIZE);
+    try {
+        int rv;
+        nng_socket msgSock = NNG_SOCKET_INITIALIZER;
+        Response rsp       = Response_init_default;
+        rsp.func           = Functions_FUNC_ENABLE_RECV_TXT;
+        rsp.which_msg      = Response_wxmsg_tag;
+        std::vector<uint8_t> msgBuffer(DEFAULT_BUF_SIZE);
 
-    pb_ostream_t stream = pb_ostream_from_buffer(msgBuffer.data(), msgBuffer.size());
+        pb_ostream_t stream = pb_ostream_from_buffer(msgBuffer.data(), msgBuffer.size());
 
-    std::string url = build_url(port_ + 1);
-    if ((rv = nng_pair1_open(&msgSock)) != 0) {
-        LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
-        return;
-    }
+        std::string url = build_url(port_ + 1);
+        if ((rv = nng_pair1_open(&msgSock)) != 0) {
+            LOG_ERROR("nng_pair0_open error {}", nng_strerror(rv));
+            return;
+        }
 
-    if ((rv = nng_listen(msgSock, url.c_str(), NULL, 0)) != 0) {
-        LOG_ERROR("nng_listen error {}", nng_strerror(rv));
-        return;
-    }
+        if ((rv = nng_listen(msgSock, url.c_str(), NULL, 0)) != 0) {
+            LOG_ERROR("nng_listen error {}", nng_strerror(rv));
+            return;
+        }
 
-    LOG_INFO("MSG Server listening on {}", url.c_str());
-    if ((rv = nng_setopt_ms(msgSock, NNG_OPT_SENDTIMEO, 5000)) != 0) {
-        LOG_ERROR("nng_setopt_ms: {}", nng_strerror(rv));
-        return;
-    }
+        if ((rv = nng_setopt_ms(msgSock, NNG_OPT_SENDTIMEO, 5000)) != 0) {
+            LOG_ERROR("nng_setopt_ms: {}", nng_strerror(rv));
+            return;
+        }
 
-    while (handler_.isMessageListening()) {
-        std::unique_lock<std::mutex> lock(handler_.getMutex());
-        std::optional<WxMsg_t> msgOpt;
-        auto hasMessage = [&]() {
-            msgOpt = handler_.popMessage();
-            return msgOpt.has_value();
-        };
+        while (handler_.isMessageListening()) {
+            std::optional<WxMsg_t> msgOpt;
+            {
+                std::unique_lock<std::mutex> lock(handler_.getMutex());
+                bool hasMessage
+                    = handler_.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), [&]() {
+                          lock.unlock();
+                          msgOpt = handler_.popMessage();
+                          lock.lock();
+                          return msgOpt.has_value();
+                      });
 
-        if (handler_.getConditionVariable().wait_for(lock, std::chrono::milliseconds(1000), hasMessage)) {
+                if (!hasMessage) {
+                    continue;
+                }
+            }
+
+            if (!msgOpt.has_value()) {
+                LOG_WARN("popMessage returned empty after wait_for success.");
+                continue;
+            }
+
             WxMsg_t wxmsg          = std::move(msgOpt.value());
             rsp.msg.wxmsg.id       = wxmsg.id;
             rsp.msg.wxmsg.is_self  = wxmsg.is_self;
@@ -187,11 +200,16 @@ void RpcServer::receiveMessageCallback()
             }
             LOG_DEBUG("Send data length {}", stream.bytes_written);
         }
+        nng_close(msgSock);
+        LOG_DEBUG("Leave MSG Server.");
+    } catch (const std::exception &e) {
+        LOG_ERROR("Fatal exception in on_message_callback: {}", e.what());
+    } catch (...) {
+        LOG_ERROR("Unknown fatal exception in on_message_callback.");
     }
-    nng_close(msgSock);
 }
 
-bool RpcServer::enableRecvMsg(bool pyq, uint8_t *out, size_t *len)
+bool RpcServer::start_message_listener(bool pyq, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_ENABLE_RECV_TXT>(out, len, [&](Response &rsp) {
         rsp.msg.status = handler_.ListenMsg();
@@ -199,12 +217,12 @@ bool RpcServer::enableRecvMsg(bool pyq, uint8_t *out, size_t *len)
             if (pyq) {
                 handler_.ListenPyq();
             }
-            msgThread_ = std::thread(&RpcServer::receiveMessageCallback, this);
+            msgThread_ = std::thread(&RpcServer::on_message_callback, this);
         }
     });
 }
 
-bool RpcServer::disableRecvMsg(uint8_t *out, size_t *len)
+bool RpcServer::stop_message_listener(uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_DISABLE_RECV_TXT>(out, len, [&](Response &rsp) {
         rsp.msg.status = handler_.UnListenMsg();
@@ -223,6 +241,8 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_GET_SELF_WXID, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_self_wxid(out, len); } },
     { Functions_FUNC_GET_USER_INFO, [](const Request &r, uint8_t *out, size_t *len) { return account::rpc_get_user_info(out, len); } },
     { Functions_FUNC_GET_MSG_TYPES, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().handler_.rpc_get_msg_types(out, len); } },
+    { Functions_FUNC_ENABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().start_message_listener(r.msg.flag, out, len); } },
+    { Functions_FUNC_DISABLE_RECV_TXT, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().stop_message_listener(out, len); } },
     // { Functions_FUNC_GET_CONTACTS, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contacts(out, len); } },
     // { Functions_FUNC_GET_DB_NAMES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_names(out, len); } },
     // { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
@@ -277,7 +297,7 @@ bool RpcServer::dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out
     return ret;
 }
 
-void RpcServer::runRpcServer()
+void RpcServer::run_rpc_server()
 {
     int rv             = 0;
     nng_socket cmdSock = NNG_SOCKET_INITIALIZER;
