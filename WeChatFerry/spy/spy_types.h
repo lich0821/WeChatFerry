@@ -53,12 +53,3 @@ public:
         return *this;
     }
 };
-
-typedef struct RawVector {
-#ifdef _DEBUG
-    QWORD head;
-#endif
-    QWORD start;
-    QWORD finish;
-    QWORD end;
-} RawVector_t;
