@@ -112,7 +112,9 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>cd $(SolutionDir)rpc\proto
+      <Command>call "$(SolutionDir)license_check.bat"
+if errorlevel 1 exit 1
+cd $(SolutionDir)rpc\proto
 $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -124,7 +126,9 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
@@ -161,7 +165,9 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>cd $(SolutionDir)rpc\proto
+      <Command>call "$(SolutionDir)license_check.bat"
+if errorlevel 1 exit 1
+cd $(SolutionDir)rpc\proto
 $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -173,7 +179,9 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy spy.dll</Message>
@@ -211,7 +219,9 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     </Link>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
-      <Command>cd $(SolutionDir)rpc\proto
+      <Command>call "$(SolutionDir)license_check.bat"
+if errorlevel 1 exit 1
+cd $(SolutionDir)rpc\proto
 $(SolutionDir)rpc\tool\protoc --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PostBuildEvent>
@@ -221,11 +231,13 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).exp $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).lib $(SolutionDir)Out
 xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)Out
-xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Command>
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)Out
+xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry
+xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\com\log.h" />
+    <ClInclude Include="..\com\log.hpp" />
     <ClInclude Include="..\com\util.h" />
     <ClInclude Include="..\rpc\nanopb\pb.h" />
     <ClInclude Include="..\rpc\nanopb\pb_common.h" />
@@ -250,7 +262,6 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
     <ClInclude Include="user_info.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\com\log.cpp" />
     <ClCompile Include="..\com\util.cpp" />
     <ClCompile Include="..\rpc\nanopb\pb_common.c" />
     <ClCompile Include="..\rpc\nanopb\pb_decode.c" />

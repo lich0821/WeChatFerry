@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "exec_sql.h"
-#include "log.h"
+#include "log.hpp"
 #include "send_msg.h"
 #include "spy_types.h"
 #include "util.h"

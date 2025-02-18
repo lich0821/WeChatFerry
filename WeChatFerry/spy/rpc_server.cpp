@@ -22,7 +22,7 @@
 #include "contact_mgmt.h"
 #include "exec_sql.h"
 #include "funcs.h"
-#include "log.h"
+#include "log.hpp"
 #include "pb_types.h"
 #include "pb_util.h"
 #include "receive_msg.h"
