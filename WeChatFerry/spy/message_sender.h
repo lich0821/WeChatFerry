@@ -75,6 +75,5 @@ private:
 
     std::unique_ptr<WxString> new_wx_string(const char *str);
     std::unique_ptr<WxString> new_wx_string(const std::string &str);
-    std::vector<WxString> parse_wxids(const std::string &wxids);
 };
 }

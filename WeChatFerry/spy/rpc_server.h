@@ -10,6 +10,7 @@
 #include "wcf.pb.h"
 
 #include "message_handler.h"
+#include "message_sender.h"
 
 class RpcServer
 {
@@ -46,6 +47,7 @@ private:
     std::thread msgThread_;
 
     message::Handler &handler_;
+    message::Sender &sender_;
 
     struct Deleter {
         void operator()(RpcServer *server) const { delete server; }

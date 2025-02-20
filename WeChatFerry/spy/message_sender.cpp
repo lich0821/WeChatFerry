@@ -3,19 +3,17 @@
 #include <sstream>
 #include <vector>
 
+#include "account_manager.h"
 #include "database_executor.h"
 #include "log.hpp"
+#include "offsets.h"
 #include "rpc_helper.h"
 #include "spy_types.h"
-#include "account_manager.h"
 #include "util.h"
 
 extern QWORD g_WeChatWinDllAddr;
 
 #define OS_NEW             0x1B5E140
-#define OS_FREE            0x1B55850
-#define OS_SEND_MSG_MGR    0x1B53FD0
-#define OS_SEND_TEXT       0x22C6B60
 #define OS_SEND_IMAGE      0x22BC2F0
 #define OS_GET_APP_MSG_MGR 0x1B58F70
 #define OS_SEND_FILE       0x20D0230
@@ -32,6 +30,8 @@ extern QWORD g_WeChatWinDllAddr;
 namespace message
 {
 
+namespace OsSend = Offsets::Message::Send;
+
 Sender &Sender::get_instance()
 {
     static Sender instance;
@@ -41,9 +41,9 @@ Sender &Sender::get_instance()
 Sender::Sender()
 {
     func_new            = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OS_NEW);
-    func_free           = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OS_FREE);
-    func_send_msg_mgr   = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OS_SEND_MSG_MGR);
-    func_send_text      = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OS_SEND_TEXT);
+    func_free           = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE);
+    func_send_msg_mgr   = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
+    func_send_text      = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
     func_send_image     = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OS_SEND_IMAGE);
     func_send_file      = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OS_SEND_FILE);
     func_send_rich_text = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
@@ -62,35 +62,42 @@ std::unique_ptr<WxString> Sender::new_wx_string(const std::string &str)
     return std::make_unique<WxString>(util::s2w(str));
 }
 
-std::vector<WxString> Sender::parse_wxids(const string &wxids)
+template <typename T> struct WxStringHolder {
+    std::wstring ws;
+    WxString wx;
+    explicit WxStringHolder(const T &str) : ws(util::s2w(str)), wx(ws) { }
+};
+
+template <typename StringT = std::wstring> struct AtWxidSplitResult {
+    std::vector<StringT> wxids;
+    std::vector<WxString> wxWxids;
+};
+
+AtWxidSplitResult<> parse_wxids(const std::string &atWxids)
 {
-    vector<WxString> wx_members;
-    wstringstream wss(util::s2w(wxids));
-    wstring wstr;
-    while (getline(wss, wstr, L',')) {
-        wx_members.emplace_back(wstr);
+    AtWxidSplitResult<> result;
+    if (!atWxids.empty()) {
+        std::wstringstream wss(util::s2w(atWxids));
+        for (std::wstring wxid; std::getline(wss, wxid, L',');) {
+            result.wxids.push_back(wxid);
+            result.wxWxids.emplace_back(result.wxids.back());
+        }
     }
-    return wx_members;
+    return result;
 }
 
 void Sender::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
 {
-    auto wxWxid = new_wx_string(wxid);
-    auto wxMsg  = new_wx_string(msg);
+    WxStringHolder<std::string> holderMsg(msg);
+    WxStringHolder<std::string> holderWxid(wxid);
 
-    std::vector<WxString> wx_at_wxids;
-    if (!at_wxids.empty()) {
-        wx_at_wxids = parse_wxids(at_wxids);
-    } else {
-        wx_at_wxids.emplace_back();
-    }
+    auto wxAtWxids   = parse_wxids(at_wxids).wxWxids;
+    QWORD pWxAtWxids = wxAtWxids.empty() ? 0 : reinterpret_cast<QWORD>(&wxAtWxids);
 
-    QWORD wx_ater_list = reinterpret_cast<QWORD>(&(wx_at_wxids.front()));
-
-    char buffer[0x460] = { 0 };
+    char buffer[1104] = { 0 };
     func_send_msg_mgr();
-    func_send_text(reinterpret_cast<QWORD>(&buffer), reinterpret_cast<QWORD>(wxWxid.get()),
-                   reinterpret_cast<QWORD>(wxMsg.get()), wx_ater_list, 1, 1, 0, 0);
+    func_send_text(reinterpret_cast<QWORD>(&buffer), reinterpret_cast<QWORD>(&holderWxid.wx),
+                   reinterpret_cast<QWORD>(&holderMsg.wx), pWxAtWxids, 1, 1, 0, 0);
     func_free(reinterpret_cast<QWORD>(&buffer));
 }
 
