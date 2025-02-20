@@ -47,6 +47,13 @@ namespace Message
         constexpr uint64_t PYQ_CONTENT = 0x48;      // 文本内容
         constexpr uint64_t PYQ_XML     = 0x9B8;     // 其他内容
     }
+
+    namespace Send
+    {
+        constexpr uint64_t MGR  = 0x1B57350;
+        constexpr uint64_t FREE = 0x1B58BD0;
+        constexpr uint64_t TEXT = 0x22C9CA0;
+    }
 }
 }
 
