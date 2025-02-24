@@ -50,9 +50,11 @@ namespace Message
 
     namespace Send
     {
-        constexpr uint64_t MGR  = 0x1B57350;
-        constexpr uint64_t FREE = 0x1B58BD0;
-        constexpr uint64_t TEXT = 0x22C9CA0;
+        constexpr uint64_t MGR      = 0x1B57350;
+        constexpr uint64_t INSTANCE = 0x1B614C0;
+        constexpr uint64_t FREE     = 0x1B58BD0;
+        constexpr uint64_t TEXT     = 0x22C9CA0;
+        constexpr uint64_t IMAGE    = 0x22BF430;
     }
 }
 }
