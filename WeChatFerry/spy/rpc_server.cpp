@@ -249,7 +249,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     // { Functions_FUNC_GET_DB_TABLES, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_get_db_tables(r.msg.str, out, len); } },
     // { Functions_FUNC_GET_AUDIO_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_audio(r.msg.am, out, len); } },
     { Functions_FUNC_SEND_TXT, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_text(r.msg.txt, out, len); } },
-    // { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_image(r.msg.file, out, len); } },
+    { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_image(r.msg.file, out, len); } },
     // { Functions_FUNC_SEND_FILE, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_file(r.msg.file, out, len); } },
     // { Functions_FUNC_SEND_XML, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_xml(r.msg.xml, out, len); } },
     // { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_emotion(r.msg.file, out, len); } },

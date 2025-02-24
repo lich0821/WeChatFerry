@@ -58,8 +58,8 @@ private:
     using XmlBufSign_t    = QWORD (*)(QWORD, QWORD, QWORD);
     using SendXml_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-    New_t func_new;
-    Free_t func_free;
+    New_t func_get_instance;
+    Free_t func_free_chat_msg;
     SendMsgMgr_t func_send_msg_mgr;
     GetAppMgr_t func_get_app_mgr;
     SendText_t func_send_text;
