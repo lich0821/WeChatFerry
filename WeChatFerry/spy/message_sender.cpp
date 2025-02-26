@@ -50,7 +50,7 @@ Sender::Sender()
     func_new_mmreader    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::NEW_MM_READER);
     func_free_mmreader   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE_MM_READER);
     func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OsSend::RICH_TEXT);
-    func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
+    func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OsSend::PAT);
     func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
     func_get_emotion_mgr = reinterpret_cast<GetEmotionMgr_t>(g_WeChatWinDllAddr + OsSend::EMOTION_MGR);
     func_send_emotion    = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OsSend::EMOTION);
@@ -274,10 +274,10 @@ int Sender::send_pat(const std::string &roomid, const std::string &wxid)
 {
     QWORD status = -1;
 
-    auto wxRoomid = new_wx_string(roomid);
-    auto wxWxid   = new_wx_string(wxid);
+    WxStringHolder<std::string> holderRoom(roomid);
+    WxStringHolder<std::string> holderWxid(wxid);
 
-    status = func_send_pat(reinterpret_cast<QWORD>(wxRoomid.get()), reinterpret_cast<QWORD>(wxWxid.get()));
+    status = func_send_pat(&holderRoom.wx, &holderWxid.wx);
 
     return static_cast<int>(status);
 }
