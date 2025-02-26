@@ -279,4 +279,31 @@ std::vector<WxString> parse_wxids(const std::string &wxids)
     return wx_members;
 }
 
+WxString *CreateWxString(const std::string &s)
+{
+    std::wstring ws = util::s2w(s);
+    WxString *wxStr = reinterpret_cast<WxString *>(HeapAlloc(GetProcessHeap(), 8, sizeof(WxString)));
+    if (!wxStr) return nullptr;
+    size_t len   = ws.length();
+    wchar_t *ptr = reinterpret_cast<wchar_t *>(HeapAlloc(GetProcessHeap(), 8, (len + 1) * sizeof(wchar_t)));
+    if (!ptr) {
+        HeapFree(GetProcessHeap(), 8, wxStr);
+        return nullptr;
+    }
+    wmemcpy(ptr, ws.c_str(), len + 1);
+    wxStr->wptr   = ptr;
+    wxStr->size   = static_cast<DWORD>(ws.size());
+    wxStr->length = static_cast<DWORD>(ws.length());
+    wxStr->clen   = 0;
+    wxStr->ptr    = nullptr;
+    return wxStr;
+}
+
+void FreeWxString(WxString *wxStr)
+{
+    if (wxStr) {
+        if (wxStr->wptr) HeapFree(GetProcessHeap(), 8, const_cast<wchar_t *>(wxStr->wptr));
+        HeapFree(GetProcessHeap(), 8, wxStr);
+    }
+}
 } // namespace util

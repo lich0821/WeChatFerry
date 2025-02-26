@@ -65,6 +65,19 @@ inline std::wstring get_pp_len_wstring(uint64_t addr)
     return (addr && len) ? std::wstring(*reinterpret_cast<const wchar_t **>(addr), len) : L"";
 }
 inline std::string get_str_by_wstr_addr(uint64_t addr) { return w2s(get_pp_len_wstring(addr)); }
+inline void *AllocFromHeap(size_t size) { return HeapAlloc(GetProcessHeap(), 8, size); }
+inline void FreeBuffer(void *buffer)
+{
+    if (buffer) HeapFree(GetProcessHeap(), 8, buffer);
+}
+
+template <typename T> static T *AllocBuffer(size_t count)
+{
+    return reinterpret_cast<T *>(HeapAlloc(GetProcessHeap(), 8, sizeof(T) * count));
+}
+
+WxString *CreateWxString(const std::string &s);
+void FreeWxString(WxString *wxStr);
 
 std::unique_ptr<WxString> new_wx_string(const char *str);
 std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr);
