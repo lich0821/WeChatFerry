@@ -61,6 +61,10 @@ namespace Message
         constexpr uint64_t XML_BUF_SIGN = 0x0;
         constexpr uint64_t EMOTION_MGR  = 0x1BD2310;
         constexpr uint64_t EMOTION      = 0x21B8100;
+
+        constexpr uint64_t NEW_MM_READER  = 0x1B60A10;
+        constexpr uint64_t FREE_MM_READER = 0x1B5FDE0;
+        constexpr uint64_t RICH_TEXT      = 0x20DD0C0;
     }
 }
 }
