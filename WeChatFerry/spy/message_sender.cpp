@@ -51,7 +51,8 @@ Sender::Sender()
     func_send_pat       = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
     func_forward        = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
     func_send_emotion   = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OS_SEND_EMOTION);
-    func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OS_SEND_XML);
+    func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OsSend::XML);
+    func_xml_buf_sign   = reinterpret_cast<XmlBufSign_t>(g_WeChatWinDllAddr + OsSend::XML_BUF_SIGN);
 }
 
 std::unique_ptr<WxString> Sender::new_wx_string(const char *str)
@@ -172,6 +173,7 @@ void Sender::send_file(const std::string &wxid, const std::string &path)
 
 void Sender::send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type)
 {
+#if 0
     std::unique_ptr<char[]> buff(new char[0x500]());
     std::unique_ptr<char[]> buff2(new char[0x500]());
     char nullBuf[0x1C] = { 0 };
@@ -194,6 +196,7 @@ void Sender::send_xml(const std::string &receiver, const std::string &xml, const
 
     func_free_chat_msg(reinterpret_cast<QWORD>(buff.get()));
     func_free_chat_msg(reinterpret_cast<QWORD>(buff2.get()));
+#endif
 }
 
 void Sender::send_emotion(const std::string &wxid, const std::string &path)
@@ -346,8 +349,8 @@ bool Sender::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
             LOG_ERROR("Empty content or receiver.");
             rsp.msg.status = -1;
         } else {
-            send_xml(xml.receiver, xml.content, xml.path, xml.type);
-            rsp.msg.status = 0;
+            // send_xml(xml.receiver, xml.content, xml.path, xml.type);
+            rsp.msg.status = -1;
         }
     });
 }
