@@ -65,6 +65,8 @@ namespace Message
         constexpr uint64_t NEW_MM_READER  = 0x1B60A10;
         constexpr uint64_t FREE_MM_READER = 0x1B5FDE0;
         constexpr uint64_t RICH_TEXT      = 0x20DD0C0;
+
+        constexpr uint64_t PAT = 0x2CC1E90;
     }
 }
 }
