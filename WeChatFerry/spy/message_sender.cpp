@@ -40,19 +40,20 @@ Sender &Sender::get_instance()
 
 Sender::Sender()
 {
-    func_get_instance   = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::INSTANCE);
-    func_free_chat_msg  = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE);
-    func_send_msg_mgr   = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
-    func_send_text      = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
-    func_send_image     = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OsSend::IMAGE);
-    func_get_app_mgr    = reinterpret_cast<GetAppMgr_t>(g_WeChatWinDllAddr + OsSend::APP_MGR);
-    func_send_file      = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OsSend::FILE);
-    func_send_rich_text = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
-    func_send_pat       = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
-    func_forward        = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
-    func_send_emotion   = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OS_SEND_EMOTION);
-    func_send_xml       = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OsSend::XML);
-    func_xml_buf_sign   = reinterpret_cast<XmlBufSign_t>(g_WeChatWinDllAddr + OsSend::XML_BUF_SIGN);
+    func_get_instance    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::INSTANCE);
+    func_free_chat_msg   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE);
+    func_send_msg_mgr    = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
+    func_send_text       = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
+    func_send_image      = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OsSend::IMAGE);
+    func_get_app_mgr     = reinterpret_cast<GetAppMgr_t>(g_WeChatWinDllAddr + OsSend::APP_MGR);
+    func_send_file       = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OsSend::FILE);
+    func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
+    func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
+    func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
+    func_get_emotion_mgr = reinterpret_cast<GetEmotionMgr_t>(g_WeChatWinDllAddr + OsSend::EMOTION_MGR);
+    func_send_emotion    = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OsSend::EMOTION);
+    func_send_xml        = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OsSend::XML);
+    func_xml_buf_sign    = reinterpret_cast<XmlBufSign_t>(g_WeChatWinDllAddr + OsSend::XML_BUF_SIGN);
 }
 
 std::unique_ptr<WxString> Sender::new_wx_string(const char *str)
@@ -201,20 +202,21 @@ void Sender::send_xml(const std::string &receiver, const std::string &xml, const
 
 void Sender::send_emotion(const std::string &wxid, const std::string &path)
 {
-    auto wxWxid = new_wx_string(wxid);
-    auto wxPath = new_wx_string(path);
-
-    std::unique_ptr<QWORD[]> buff(new QWORD[8]()); // 0x20 bytes = 8 * QWORD
-
-    if (!buff) {
-        LOG_ERROR("Out of Memory...");
+    WxString *wxWxid = util::CreateWxString(wxid);
+    WxString *wxPath = util::CreateWxString(path);
+    QWORD *buff      = util::AllocBuffer<QWORD>(8);
+    if (!wxWxid || !wxPath || !buff) {
+        util::FreeWxString(wxWxid);
+        util::FreeWxString(wxPath);
+        util::FreeBuffer(buff);
         return;
     }
 
     QWORD mgr = func_get_emotion_mgr();
-    func_send_emotion(mgr, reinterpret_cast<QWORD>(wxPath.get()), reinterpret_cast<QWORD>(buff.get()),
-                      reinterpret_cast<QWORD>(wxWxid.get()), 2, reinterpret_cast<QWORD>(buff.get()), 0,
-                      reinterpret_cast<QWORD>(buff.get()));
+    func_send_emotion(mgr, wxPath, buff, wxWxid, 2, buff, 0, buff);
+    util::FreeBuffer(buff);
+    util::FreeWxString(wxWxid);
+    util::FreeWxString(wxPath);
 }
 
 int Sender::send_rich_text(const RichText &rt)

@@ -252,7 +252,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_SEND_IMG, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_image(r.msg.file, out, len); } },
     { Functions_FUNC_SEND_FILE, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_file(r.msg.file, out, len); } },
     { Functions_FUNC_SEND_XML, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_xml(r.msg.xml, out, len); } },
-    // { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_emotion(r.msg.file, out, len); } },
+    { Functions_FUNC_SEND_EMOTION, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_send_emotion(r.msg.file, out, len); } },
     // { Functions_FUNC_SEND_RICH_TXT, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_rich_text(r.msg.rt, out, len); } },
     // { Functions_FUNC_SEND_PAT_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_send_pat(r.msg.pm, out, len); } },
     // { Functions_FUNC_FORWARD_MSG, [](const Request &r, uint8_t *out, size_t *len) { return sender.rpc_forward(r.msg.fm, out, len); } },
