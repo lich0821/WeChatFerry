@@ -52,7 +52,7 @@ private:
                                  QWORD, QWORD);
     using SendRichText_t  = QWORD (*)(QWORD, WxString *, char *);
     using SendPat_t       = QWORD (*)(WxString *, WxString *);
-    using Forward_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
+    using Forward_t       = QWORD (*)(WxString *, QWORD, QWORD, QWORD);
     using GetEmotionMgr_t = QWORD (*)();
     using SendEmotion_t   = QWORD (*)(QWORD, WxString *, QWORD *, WxString *, QWORD, QWORD *, QWORD, QWORD *);
     using XmlBufSign_t    = QWORD (*)(QWORD, QWORD, QWORD);

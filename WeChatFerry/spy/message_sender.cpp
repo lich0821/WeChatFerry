@@ -51,7 +51,7 @@ Sender::Sender()
     func_free_mmreader   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE_MM_READER);
     func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OsSend::RICH_TEXT);
     func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OsSend::PAT);
-    func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
+    func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OsSend::FORWARD);
     func_get_emotion_mgr = reinterpret_cast<GetEmotionMgr_t>(g_WeChatWinDllAddr + OsSend::EMOTION_MGR);
     func_send_emotion    = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OsSend::EMOTION);
     func_send_xml        = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OsSend::XML);
@@ -295,9 +295,10 @@ int Sender::forward(QWORD msgid, const std::string &receiver)
     LARGE_INTEGER l;
     l.HighPart      = dbIdx;
     l.LowPart       = static_cast<DWORD>(localId);
-    auto wxReceiver = new_wx_string(receiver);
 
-    return static_cast<int>(func_forward(reinterpret_cast<QWORD>(wxReceiver.get()), l.QuadPart, 0x4, 0x0));
+    WxStringHolder<std::string> holderReceiver(receiver);
+
+    return static_cast<int>(func_forward(&holderReceiver.wx, l.QuadPart, 0x4, 0x0));
 }
 
 // RPC 方法
