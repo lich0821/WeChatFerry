@@ -67,6 +67,8 @@ namespace Message
         constexpr uint64_t RICH_TEXT      = 0x20DD0C0;
 
         constexpr uint64_t PAT = 0x2CC1E90;
+
+        constexpr uint64_t FORWARD = 0x22C9220;
     }
 }
 }
