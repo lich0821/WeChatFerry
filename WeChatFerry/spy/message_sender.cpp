@@ -13,20 +13,6 @@
 
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_NEW             0x1B5E140
-#define OS_SEND_IMAGE      0x22BC2F0
-#define OS_GET_APP_MSG_MGR 0x1B58F70
-#define OS_SEND_FILE       0x20D0230
-#define OS_RTM_NEW         0x1B5D690
-#define OS_RTM_FREE        0x1B5CA60
-#define OS_SEND_RICH_TEXT  0x20DA210
-#define OS_SEND_PAT_MSG    0x2CAEC00
-#define OS_FORWARD_MSG     0x22C60E0
-#define OS_GET_EMOTION_MGR 0x1BCEF10
-#define OS_SEND_EMOTION    0x21B52D5
-#define OS_XML_BUFSIGN     0x24F0D70
-#define OS_SEND_XML        0x20CF360
-
 namespace message
 {
 
@@ -40,7 +26,7 @@ Sender &Sender::get_instance()
 
 Sender::Sender()
 {
-    func_get_instance    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::INSTANCE);
+    func_new_chat_msg    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::INSTANCE);
     func_free_chat_msg   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE);
     func_send_msg_mgr    = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
     func_send_text       = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
@@ -101,8 +87,7 @@ void Sender::send_text(const std::string &wxid, const std::string &msg, const st
 
     char buffer[1104] = { 0 };
     func_send_msg_mgr();
-    func_send_text(reinterpret_cast<QWORD>(&buffer), reinterpret_cast<QWORD>(&holderWxid.wx),
-                   reinterpret_cast<QWORD>(&holderMsg.wx), pWxAtWxids, 1, 1, 0, 0);
+    func_send_text(reinterpret_cast<QWORD>(&buffer), &holderWxid.wx, &holderMsg.wx, pWxAtWxids, 1, 1, 0, 0);
     func_free_chat_msg(reinterpret_cast<QWORD>(&buffer));
 }
 
@@ -116,16 +101,15 @@ void Sender::send_image(const std::string &wxid, const std::string &path)
     QWORD *flag[10]   = { 0 };
 
     QWORD tmp1 = 1, tmp2 = 0, tmp3 = 0;
-    QWORD pMsgTmp = func_get_instance((QWORD)(&msgTmp));
+    QWORD pMsgTmp = func_new_chat_msg((QWORD)(&msgTmp));
     flag[0]       = reinterpret_cast<QWORD *>(tmp1);
     flag[1]       = reinterpret_cast<QWORD *>(pMsgTmp);
     flag[8]       = &tmp2;
     flag[9]       = &tmp3;
 
-    QWORD pMsg    = func_get_instance((QWORD)(&msg));
+    QWORD pMsg    = func_new_chat_msg((QWORD)(&msg));
     QWORD sendMgr = func_send_msg_mgr();
-    func_send_image(sendMgr, pMsg, reinterpret_cast<QWORD>(&holderWxid.wx), reinterpret_cast<QWORD>(&holderPath.wx),
-                    reinterpret_cast<QWORD>(&flag));
+    func_send_image(sendMgr, pMsg, &holderWxid.wx, &holderPath.wx, reinterpret_cast<QWORD>(&flag));
 
     func_free_chat_msg(pMsg);
     func_free_chat_msg(pMsgTmp);
@@ -181,8 +165,8 @@ void Sender::send_xml(const std::string &receiver, const std::string &xml, const
     std::unique_ptr<char[]> buff2(new char[0x500]());
     char nullBuf[0x1C] = { 0 };
 
-    func_get_instance(reinterpret_cast<QWORD>(buff.get()));
-    func_get_instance(reinterpret_cast<QWORD>(buff2.get()));
+    func_new_chat_msg(reinterpret_cast<QWORD>(buff.get()));
+    func_new_chat_msg(reinterpret_cast<QWORD>(buff2.get()));
 
     QWORD sbuf[4] = { 0, 0, 0, 0 };
     QWORD sign    = func_xml_buf_sign(reinterpret_cast<QWORD>(buff2.get()), reinterpret_cast<QWORD>(sbuf), 0x1);
@@ -293,8 +277,8 @@ int Sender::forward(QWORD msgid, const std::string &receiver)
     }
 
     LARGE_INTEGER l;
-    l.HighPart      = dbIdx;
-    l.LowPart       = static_cast<DWORD>(localId);
+    l.HighPart = dbIdx;
+    l.LowPart  = static_cast<DWORD>(localId);
 
     WxStringHolder<std::string> holderReceiver(receiver);
 

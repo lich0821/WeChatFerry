@@ -46,8 +46,8 @@ private:
     using Free_t       = QWORD (*)(QWORD);
     using SendMsgMgr_t = QWORD (*)();
     using GetAppMgr_t  = QWORD (*)();
-    using SendText_t   = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-    using SendImage_t  = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD);
+    using SendText_t   = QWORD (*)(QWORD, WxString *, WxString *, QWORD, QWORD, QWORD, QWORD, QWORD);
+    using SendImage_t  = QWORD (*)(QWORD, QWORD, WxString *, WxString *, QWORD);
     using SendFile_t = QWORD (*)(QWORD, char *, WxString *, WxString *, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *,
                                  QWORD, QWORD);
     using SendRichText_t  = QWORD (*)(QWORD, WxString *, char *);
@@ -58,7 +58,7 @@ private:
     using XmlBufSign_t    = QWORD (*)(QWORD, QWORD, QWORD);
     using SendXml_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-    New_t func_get_instance;
+    New_t func_new_chat_msg;
     Free_t func_free_chat_msg;
     SendMsgMgr_t func_send_msg_mgr;
     GetAppMgr_t func_get_app_mgr;
