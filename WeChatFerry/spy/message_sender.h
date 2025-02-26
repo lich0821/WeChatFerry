@@ -48,8 +48,8 @@ private:
     using GetAppMgr_t  = QWORD (*)();
     using SendText_t   = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
     using SendImage_t  = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD);
-    using SendFile_t
-        = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD);
+    using SendFile_t = QWORD (*)(QWORD, char *, WxString *, WxString *, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *,
+                                 QWORD, QWORD);
     using SendRichText_t  = QWORD (*)(QWORD, QWORD, QWORD);
     using SendPat_t       = QWORD (*)(QWORD, QWORD);
     using Forward_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD);

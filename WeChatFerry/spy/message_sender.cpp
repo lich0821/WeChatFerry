@@ -45,7 +45,8 @@ Sender::Sender()
     func_send_msg_mgr   = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
     func_send_text      = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
     func_send_image     = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OsSend::IMAGE);
-    func_send_file      = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OS_SEND_FILE);
+    func_get_app_mgr    = reinterpret_cast<GetAppMgr_t>(g_WeChatWinDllAddr + OsSend::APP_MGR);
+    func_send_file      = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OsSend::FILE);
     func_send_rich_text = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
     func_send_pat       = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
     func_forward        = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
@@ -128,21 +129,45 @@ void Sender::send_image(const std::string &wxid, const std::string &path)
 
 void Sender::send_file(const std::string &wxid, const std::string &path)
 {
-    auto wxWxid = new_wx_string(wxid);
-    auto wxPath = new_wx_string(path);
+    WxString *wxWxid = util::CreateWxString(wxid);
+    WxString *wxPath = util::CreateWxString(path);
+    if (!wxWxid || !wxPath) {
+        util::FreeWxString(wxWxid);
+        util::FreeWxString(wxPath);
+        return;
+    }
 
-    char msg[0x460] = { 0 };
-    QWORD tmp1[4]   = { 0 };
-    QWORD tmp2[4]   = { 0 };
-    QWORD tmp3[4]   = { 0 };
+    char *chat_msg = reinterpret_cast<char *>(util::AllocFromHeap(0x460));
+    if (!chat_msg) {
+        util::FreeWxString(wxWxid);
+        util::FreeWxString(wxPath);
+        return;
+    }
 
-    QWORD pMsg   = func_get_instance(reinterpret_cast<QWORD>(&msg));
-    QWORD appMgr = func_get_app_mgr();
+    QWORD *tmp1 = util::AllocBuffer<QWORD>(4);
+    QWORD *tmp2 = util::AllocBuffer<QWORD>(4);
+    QWORD *tmp3 = util::AllocBuffer<QWORD>(4);
+    if (!tmp1 || !tmp2 || !tmp3) {
+        func_free_chat_msg(reinterpret_cast<QWORD>(chat_msg));
+        util::FreeBuffer(chat_msg);
+        util::FreeBuffer(tmp1);
+        util::FreeBuffer(tmp2);
+        util::FreeBuffer(tmp3);
+        util::FreeWxString(wxWxid);
+        util::FreeWxString(wxPath);
+        return;
+    }
 
-    func_send_file(appMgr, pMsg, reinterpret_cast<QWORD>(wxWxid.get()), reinterpret_cast<QWORD>(wxPath.get()), 1, tmp1,
-                   0, tmp2, 0, tmp3, 0, 0);
+    QWORD app_mgr = func_get_app_mgr();
+    func_send_file(app_mgr, chat_msg, wxWxid, wxPath, 1, tmp1, 0, tmp2, 0, tmp3, 0, 0xC);
+    func_free_chat_msg(reinterpret_cast<QWORD>(chat_msg));
 
-    func_free_chat_msg(pMsg);
+    util::FreeBuffer(chat_msg);
+    util::FreeBuffer(tmp1);
+    util::FreeBuffer(tmp2);
+    util::FreeBuffer(tmp3);
+    util::FreeWxString(wxWxid);
+    util::FreeWxString(wxPath);
 }
 
 void Sender::send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type)
