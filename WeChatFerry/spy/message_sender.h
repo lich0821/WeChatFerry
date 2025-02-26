@@ -50,7 +50,7 @@ private:
     using SendImage_t  = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD);
     using SendFile_t = QWORD (*)(QWORD, char *, WxString *, WxString *, QWORD, QWORD *, QWORD, QWORD *, QWORD, QWORD *,
                                  QWORD, QWORD);
-    using SendRichText_t  = QWORD (*)(QWORD, QWORD, QWORD);
+    using SendRichText_t  = QWORD (*)(QWORD, WxString *, char *);
     using SendPat_t       = QWORD (*)(QWORD, QWORD);
     using Forward_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
     using GetEmotionMgr_t = QWORD (*)();
@@ -65,6 +65,8 @@ private:
     SendText_t func_send_text;
     SendImage_t func_send_image;
     SendFile_t func_send_file;
+    New_t func_new_mmreader;
+    Free_t func_free_mmreader;
     SendRichText_t func_send_rich_text;
     SendPat_t func_send_pat;
     Forward_t func_forward;

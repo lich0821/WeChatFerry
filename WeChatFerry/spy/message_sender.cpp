@@ -47,7 +47,9 @@ Sender::Sender()
     func_send_image      = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OsSend::IMAGE);
     func_get_app_mgr     = reinterpret_cast<GetAppMgr_t>(g_WeChatWinDllAddr + OsSend::APP_MGR);
     func_send_file       = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OsSend::FILE);
-    func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OS_SEND_RICH_TEXT);
+    func_new_mmreader    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::NEW_MM_READER);
+    func_free_mmreader   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE_MM_READER);
+    func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OsSend::RICH_TEXT);
     func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OS_SEND_PAT_MSG);
     func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OS_FORWARD_MSG);
     func_get_emotion_mgr = reinterpret_cast<GetEmotionMgr_t>(g_WeChatWinDllAddr + OsSend::EMOTION_MGR);
@@ -221,36 +223,49 @@ void Sender::send_emotion(const std::string &wxid, const std::string &path)
 
 int Sender::send_rich_text(const RichText &rt)
 {
-#define SRTM_SIZE 0x3F0
     QWORD status = -1;
 
-    char *buff = static_cast<char *>(HeapAlloc(GetProcessHeap(), 0, SRTM_SIZE));
-    if (!buff) {
+    char *buff          = util::AllocBuffer<char>(0x3F0);
+    WxString *pReceiver = util::CreateWxString(rt.receiver);
+    WxString *pTitle    = util::CreateWxString(rt.title);
+    WxString *pUrl      = util::CreateWxString(rt.url);
+    WxString *pThumburl = util::CreateWxString(rt.thumburl);
+    WxString *pDigest   = util::CreateWxString(rt.digest);
+    WxString *pAccount  = util::CreateWxString(rt.account);
+    WxString *pName     = util::CreateWxString(rt.name);
+    if (!buff || !pReceiver || !pTitle || !pUrl || !pThumburl || !pDigest || !pAccount || !pName) {
+        util::FreeWxString(pReceiver);
+        util::FreeWxString(pTitle);
+        util::FreeWxString(pUrl);
+        util::FreeWxString(pThumburl);
+        util::FreeWxString(pDigest);
+        util::FreeWxString(pAccount);
+        util::FreeWxString(pName);
+        util::FreeBuffer(buff);
         LOG_ERROR("Out of Memory...");
-        return -1;
+        return static_cast<int>(status);
     }
 
-    memset(buff, 0, SRTM_SIZE);
-    func_get_instance(reinterpret_cast<QWORD>(buff));
+    func_new_mmreader(reinterpret_cast<QWORD>(buff));
+    memcpy(buff + 0x8, pTitle, sizeof(WxString));
+    memcpy(buff + 0x48, pUrl, sizeof(WxString));
+    memcpy(buff + 0xB0, pThumburl, sizeof(WxString));
+    memcpy(buff + 0xF0, pDigest, sizeof(WxString));
+    memcpy(buff + 0x2C0, pAccount, sizeof(WxString));
+    memcpy(buff + 0x2E0, pName, sizeof(WxString));
 
-    auto pReceiver = new_wx_string(rt.receiver);
-    auto pTitle    = new_wx_string(rt.title);
-    auto pUrl      = new_wx_string(rt.url);
-    auto pThumburl = new_wx_string(rt.thumburl);
-    auto pDigest   = new_wx_string(rt.digest);
-    auto pAccount  = new_wx_string(rt.account);
-    auto pName     = new_wx_string(rt.name);
+    status = func_send_rich_text(func_get_app_mgr(), pReceiver, buff);
+    func_free_mmreader(reinterpret_cast<QWORD>(buff));
 
-    memcpy(buff + 0x8, pTitle.get(), sizeof(WxString));
-    memcpy(buff + 0x48, pUrl.get(), sizeof(WxString));
-    memcpy(buff + 0xB0, pThumburl.get(), sizeof(WxString));
-    memcpy(buff + 0xF0, pDigest.get(), sizeof(WxString));
-    memcpy(buff + 0x2C0, pAccount.get(), sizeof(WxString));
-    memcpy(buff + 0x2E0, pName.get(), sizeof(WxString));
-
-    QWORD mgr = func_get_app_mgr();
-    status    = func_send_rich_text(mgr, reinterpret_cast<QWORD>(pReceiver.get()), reinterpret_cast<QWORD>(buff));
-    func_free_chat_msg(reinterpret_cast<QWORD>(buff));
+    // TODO: 验证是否有内存泄露
+    // util::FreeWxString(pReceiver);
+    // util::FreeWxString(pTitle);
+    // util::FreeWxString(pUrl);
+    // util::FreeWxString(pThumburl);
+    // util::FreeWxString(pDigest);
+    // util::FreeWxString(pAccount);
+    // util::FreeWxString(pName);
+    util::FreeBuffer(buff);
 
     return static_cast<int>(status);
 }
