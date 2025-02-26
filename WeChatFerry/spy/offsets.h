@@ -55,6 +55,8 @@ namespace Message
         constexpr uint64_t FREE     = 0x1B58BD0;
         constexpr uint64_t TEXT     = 0x22C9CA0;
         constexpr uint64_t IMAGE    = 0x22BF430;
+        constexpr uint64_t APP_MGR  = 0x1B5C2F0;
+        constexpr uint64_t FILE     = 0x20D30E0;
     }
 }
 }
