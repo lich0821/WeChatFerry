@@ -28,6 +28,26 @@ namespace Db
     constexpr uint64_t BIZCHAT_MSG  = 0x1AC0;
     constexpr uint64_t FUNCTION_MSG = 0x1B98;
     constexpr uint64_t NAME         = 0x28;
+
+    // SQLITE3
+    constexpr uint64_t EXEC             = 0x3A76430;
+    constexpr uint64_t BACKUP_INIT      = EXEC - 0x1D113E0;
+    constexpr uint64_t PREPARE          = EXEC + 0x7CB0;
+    constexpr uint64_t OPEN             = EXEC - 0x1CA2430;
+    constexpr uint64_t BACKUP_STEP      = EXEC - 0x1D110A0;
+    constexpr uint64_t BACKUP_REMAINING = EXEC - 0x1D10880;
+    constexpr uint64_t BACKUP_PAGECOUNT = EXEC - 0x1D10890;
+    constexpr uint64_t BACKUP_FINISH    = EXEC - 0x1D10940;
+    constexpr uint64_t SLEEP            = EXEC - 0x1CA1BB0;
+    constexpr uint64_t ERRCODE          = EXEC - 0x1CA3770;
+    constexpr uint64_t CLOSE            = EXEC - 0x1CA4FD0;
+    constexpr uint64_t STEP             = EXEC - 0x40000;
+    constexpr uint64_t COLUMN_COUNT     = EXEC - 0x3B7E0;
+    constexpr uint64_t COLUMN_NAME      = EXEC - 0x3ACE0;
+    constexpr uint64_t COLUMN_TYPE      = EXEC - 0x30AF9;
+    constexpr uint64_t COLUMN_BLOB      = EXEC - 0x3B790;
+    constexpr uint64_t COLUMN_BYTES     = EXEC - 0x3B6A0;
+    constexpr uint64_t FINALIZE         = EXEC - 0x3CF30;
 }
 
 namespace Message
