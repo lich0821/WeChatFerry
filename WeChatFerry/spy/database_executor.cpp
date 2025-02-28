@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "log.hpp"
+#include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
 #include "sqlite3.h"
@@ -13,23 +14,14 @@ extern UINT64 g_WeChatWinDllAddr;
 
 namespace db
 {
-#define OFFSET_DB_INSTANCE     0x5902000
-#define OFFSET_DB_MICROMSG     0xB8
-#define OFFSET_DB_CHAT_MSG     0x2C8
-#define OFFSET_DB_MISC         0x5F0
-#define OFFSET_DB_EMOTION      0x15F0
-#define OFFSET_DB_MEDIA        0xF48
-#define OFFSET_DB_BIZCHAT_MSG  0x1A70
-#define OFFSET_DB_FUNCTION_MSG 0x1B98
-#define OFFSET_DB_NAME         0x28
-#define OFFSET_DB_MSG_MGR      0x595F900
+namespace OsDb = Offsets::Db;
 
 using db_map_t = std::map<std::string, QWORD>;
 static db_map_t db_map;
 
 static void get_db_handle(QWORD base, QWORD offset)
 {
-    auto *wsp          = reinterpret_cast<wchar_t *>(*(QWORD *)(base + offset + OFFSET_DB_NAME));
+    auto *wsp          = reinterpret_cast<wchar_t *>(*(QWORD *)(base + offset + OsDb::NAME));
     std::string dbname = util::w2s(std::wstring(wsp));
     db_map[dbname]     = util::get_qword(base + offset);
 }
@@ -56,17 +48,16 @@ static void get_msg_db_handle(QWORD msg_mgr_addr)
 db_map_t get_db_handles()
 {
     db_map.clear();
-    QWORD db_instance_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_INSTANCE);
+    QWORD db_instance_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::INSTANCE);
 
-    get_db_handle(db_instance_addr, OFFSET_DB_MICROMSG);     // MicroMsg.db
-    get_db_handle(db_instance_addr, OFFSET_DB_CHAT_MSG);     // ChatMsg.db
-    get_db_handle(db_instance_addr, OFFSET_DB_MISC);         // Misc.db
-    get_db_handle(db_instance_addr, OFFSET_DB_EMOTION);      // Emotion.db
-    get_db_handle(db_instance_addr, OFFSET_DB_MEDIA);        // Media.db
-    get_db_handle(db_instance_addr, OFFSET_DB_FUNCTION_MSG); // Function.db
+    get_db_handle(db_instance_addr, OsDb::MICROMSG);     // MicroMsg.db
+    get_db_handle(db_instance_addr, OsDb::CHAT_MSG);     // ChatMsg.db
+    get_db_handle(db_instance_addr, OsDb::MISC);         // Misc.db
+    get_db_handle(db_instance_addr, OsDb::EMOTION);      // Emotion.db
+    get_db_handle(db_instance_addr, OsDb::MEDIA);        // Media.db
+    get_db_handle(db_instance_addr, OsDb::FUNCTION_MSG); // Function.db
 
-    get_msg_db_handle(util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR)); // MSGi.db & MediaMsgi.db
-
+    get_msg_db_handle(util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I)); // MSGi.db & MediaMsgi.db
     return db_map;
 }
 
@@ -113,7 +104,7 @@ DbTables_t get_db_tables(const std::string &db)
     }
 
     constexpr const char *sql   = "SELECT name FROM sqlite_master WHERE type='table';";
-    Sqlite3_exec p_sqlite3_exec = reinterpret_cast<Sqlite3_exec>(g_WeChatWinDllAddr + SQLITE3_EXEC_OFFSET);
+    Sqlite3_exec p_sqlite3_exec = reinterpret_cast<Sqlite3_exec>(g_WeChatWinDllAddr + OsDb::EXEC);
     p_sqlite3_exec(it->second, sql, (Sqlite3_callback)cb_get_tables, (void *)&tables, nullptr);
 
     return tables;
@@ -123,19 +114,19 @@ DbRows_t exec_db_query(const std::string &db, const std::string &sql)
 {
     DbRows_t rows;
 
-    Sqlite3_prepare func_prepare = reinterpret_cast<Sqlite3_prepare>(g_WeChatWinDllAddr + SQLITE3_PREPARE_OFFSET);
-    Sqlite3_step func_step       = reinterpret_cast<Sqlite3_step>(g_WeChatWinDllAddr + SQLITE3_STEP_OFFSET);
+    Sqlite3_prepare func_prepare = reinterpret_cast<Sqlite3_prepare>(g_WeChatWinDllAddr + OsDb::PREPARE);
+    Sqlite3_step func_step       = reinterpret_cast<Sqlite3_step>(g_WeChatWinDllAddr + OsDb::STEP);
     Sqlite3_column_count func_column_count
-        = reinterpret_cast<Sqlite3_column_count>(g_WeChatWinDllAddr + SQLITE3_COLUMN_COUNT_OFFSET);
+        = reinterpret_cast<Sqlite3_column_count>(g_WeChatWinDllAddr + OsDb::COLUMN_COUNT);
     Sqlite3_column_name func_column_name
-        = reinterpret_cast<Sqlite3_column_name>(g_WeChatWinDllAddr + SQLITE3_COLUMN_NAME_OFFSET);
+        = reinterpret_cast<Sqlite3_column_name>(g_WeChatWinDllAddr + OsDb::COLUMN_NAME);
     Sqlite3_column_type func_column_type
-        = reinterpret_cast<Sqlite3_column_type>(g_WeChatWinDllAddr + SQLITE3_COLUMN_TYPE_OFFSET);
+        = reinterpret_cast<Sqlite3_column_type>(g_WeChatWinDllAddr + OsDb::COLUMN_TYPE);
     Sqlite3_column_blob func_column_blob
-        = reinterpret_cast<Sqlite3_column_blob>(g_WeChatWinDllAddr + SQLITE3_COLUMN_BLOB_OFFSET);
+        = reinterpret_cast<Sqlite3_column_blob>(g_WeChatWinDllAddr + OsDb::COLUMN_BLOB);
     Sqlite3_column_bytes func_column_bytes
-        = reinterpret_cast<Sqlite3_column_bytes>(g_WeChatWinDllAddr + SQLITE3_COLUMN_BYTES_OFFSET);
-    Sqlite3_finalize func_finalize = reinterpret_cast<Sqlite3_finalize>(g_WeChatWinDllAddr + SQLITE3_FINALIZE_OFFSET);
+        = reinterpret_cast<Sqlite3_column_bytes>(g_WeChatWinDllAddr + OsDb::COLUMN_BYTES);
+    Sqlite3_finalize func_finalize = reinterpret_cast<Sqlite3_finalize>(g_WeChatWinDllAddr + OsDb::FINALIZE);
 
     if (db_map.empty()) {
         db_map = get_db_handles();
@@ -189,7 +180,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
         return -1;
     }
 
-    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I);
     int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68)); // 总不能 int 还不够吧？
     QWORD p_start      = util::get_qword(msg_mgr_addr + 0x50);
 
@@ -232,7 +223,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
 
 std::vector<uint8_t> get_audio_data(uint64_t id)
 {
-    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OFFSET_DB_MSG_MGR);
+    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I);
     int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68));
 
     std::string sql = "SELECT Buf FROM Media WHERE Reserved0=" + std::to_string(id) + ";";
@@ -262,8 +253,8 @@ std::vector<uint8_t> get_audio_data(uint64_t id)
 
 bool rpc_get_db_names(uint8_t *out, size_t *len)
 {
+    DbNames_t names = get_db_names();
     return fill_response<Functions_FUNC_GET_DB_NAMES>(out, len, [&](Response &rsp) {
-        DbNames_t names                = get_db_names();
         rsp.msg.dbs.names.funcs.encode = encode_dbnames;
         rsp.msg.dbs.names.arg          = &names;
     });
