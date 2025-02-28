@@ -16,6 +16,20 @@ namespace Account
     constexpr uint64_t LOGIN   = 0x7F8;     // 登录状态
 }
 
+namespace Db
+{
+    constexpr uint64_t INSTANCE     = 0x59226C8; // 数据库实例地址
+    constexpr uint64_t MSG_I        = 0x5980420; // MSGi.db & MediaMsgi.db
+    constexpr uint64_t MICROMSG     = 0xB8;
+    constexpr uint64_t CHAT_MSG     = 0x2C8;
+    constexpr uint64_t MISC         = 0x5F0;
+    constexpr uint64_t EMOTION      = 0x15F0;
+    constexpr uint64_t MEDIA        = 0xF48;
+    constexpr uint64_t BIZCHAT_MSG  = 0x1AC0;
+    constexpr uint64_t FUNCTION_MSG = 0x1B98;
+    constexpr uint64_t NAME         = 0x28;
+}
+
 namespace Message
 {
     namespace Log
