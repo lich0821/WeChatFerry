@@ -280,9 +280,9 @@ int Sender::forward(QWORD msgid, const std::string &receiver)
     l.HighPart = dbIdx;
     l.LowPart  = static_cast<DWORD>(localId);
 
-    WxStringHolder<std::string> holderReceiver(receiver);
+    WxString *pReceiver = util::CreateWxString(receiver);
 
-    return static_cast<int>(func_forward(&holderReceiver.wx, l.QuadPart, 0x4, 0x0));
+    return static_cast<int>(func_forward(pReceiver, l.QuadPart, 0x4, 0x0));
 }
 
 // RPC 方法
