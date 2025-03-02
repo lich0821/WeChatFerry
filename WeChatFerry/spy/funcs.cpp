@@ -3,11 +3,13 @@
 #include "framework.h"
 #include <filesystem>
 #include <fstream>
+#include <io.h>
+#include <direct.h>
 
 #include "codec.h"
 #include "exec_sql.h"
 #include "funcs.h"
-#include "log.hpp"
+#include "log.h"
 #include "spy_types.h"
 #include "util.h"
 
@@ -24,18 +26,18 @@ extern QWORD g_WeChatWinDllAddr;
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-#define OS_LOGIN_STATUS               0x595C9E8
-#define OS_GET_SNS_DATA_MGR           0x21E2200
-#define OS_GET_SNS_FIRST_PAGE         0x2E212D0
-#define OS_GET_SNS_TIMELINE_MGR       0x2DB3390
-#define OS_GET_SNS_NEXT_PAGE          0x2EC8970
-#define OS_NEW_CHAT_MSG               0x1B5E140
-#define OS_FREE_CHAT_MSG              0x1B55850
-#define OS_GET_CHAT_MGR               0x1B876C0
-#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x213FB00
-#define OS_GET_PRE_DOWNLOAD_MGR       0x1C0EE70
-#define OS_PUSH_ATTACH_TASK           0x1CDF4E0
-#define OS_LOGIN_QR_CODE              0x59620D8
+#define OS_LOGIN_STATUS               0x5A20978
+#define OS_GET_SNS_DATA_MGR           0x21E7EC0
+#define OS_GET_SNS_FIRST_PAGE         0x2E37960
+#define OS_GET_SNS_TIMELINE_MGR       0x2DC9470
+#define OS_GET_SNS_NEXT_PAGE          0x2EDF4D0
+#define OS_NEW_CHAT_MSG               0x1B63A50
+#define OS_FREE_CHAT_MSG              0x1B5B160
+#define OS_GET_CHAT_MGR               0x1B8CFD0
+#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x2145220
+#define OS_GET_PRE_DOWNLOAD_MGR       0x1C14930
+#define OS_PUSH_ATTACH_TASK           0x1CE57B0
+#define OS_LOGIN_QR_CODE              0x5A26440
 
 typedef QWORD (*GetSNSDataMgr_t)();
 typedef QWORD (*GetSnsTimeLineMgr_t)();
@@ -73,6 +75,37 @@ static string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
     }
 
     return ""; // 错误
+}
+
+// 创建多级目录
+bool CreateDir(const char* dir)
+{
+    int m = 0, n;
+    string str1, str2;
+    str1 = dir;
+    str2 = str1.substr(0, 2);
+    str1 = str1.substr(3, str1.size());
+    while (m >= 0)
+    {
+        m = str1.find('/');
+
+        str2 += '/' + str1.substr(0, m);
+        //判断该目录是否存在
+        n = _access(str2.c_str(), 0);
+        if (n == -1)
+        {
+            //创建目录文件
+            int flag = _mkdir(str2.c_str());
+            if (flag != 0) { //创建失败
+                LOG_ERROR("Failed to CreateDir:{}", dir);
+                return false;
+            }
+        }
+
+        str1 = str1.substr(m + 1, str1.size());
+    }
+    LOG_DEBUG("CreateDir {} success.", dir);
+    return true;
 }
 
 string DecryptImage(string src, string dir)
@@ -116,10 +149,11 @@ string DecryptImage(string src, string dir)
             dst = fs::path(src).replace_extension(ext).string();
         } else {
             dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
-            
+            replace(dst.begin(), dst.end(), '\\', '/');
+
             // 判断dir文件夹是否存在，若不存在则创建（否则将无法创建出文件）
-            if (!fs::exists(dst)) {//判断该文件夹是否存在
-                bool success = fs::create_directories(dst); //Windows创建文件夹
+            if (_access(dst.c_str(), 0) == -1) {//判断该文件夹是否存在
+                bool success = CreateDir(dst.c_str()); //Windows创建文件夹
                 if (!success) { //创建失败
                     LOG_ERROR("Failed to mkdir:{}", dst);
                     return "";

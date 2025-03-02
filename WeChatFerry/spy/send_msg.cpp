@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "exec_sql.h"
-#include "log.hpp"
+#include "log.h"
 #include "send_msg.h"
 #include "spy_types.h"
 #include "util.h"
@@ -15,22 +15,22 @@ extern string GetSelfWxid(); // Defined in spy.cpp
 
 #define SRTM_SIZE 0x3F0
 
-#define OS_NEW             0x1B5E140
-#define OS_FREE            0x1B55850
-#define OS_SEND_MSG_MGR    0x1B53FD0
-#define OS_SEND_TEXT       0x22C6B60
-#define OS_SEND_IMAGE      0x22BC2F0
-#define OS_GET_APP_MSG_MGR 0x1B58F70
-#define OS_SEND_FILE       0x20D0230
-#define OS_RTM_NEW         0x1B5D690
-#define OS_RTM_FREE        0x1B5CA60
-#define OS_SEND_RICH_TEXT  0x20DA210
-#define OS_SEND_PAT_MSG    0x2CAEC00
-#define OS_FORWARD_MSG     0x22C60E0
-#define OS_GET_EMOTION_MGR 0x1BCEF10
-#define OS_SEND_EMOTION    0x21B52D5
-#define OS_XML_BUFSIGN     0x24F0D70
-#define OS_SEND_XML        0x20CF360
+#define OS_NEW             0x1B63A50
+#define OS_FREE            0x1B5B160
+#define OS_SEND_MSG_MGR    0x1B598E0
+#define OS_SEND_TEXT       0x22CC660
+#define OS_SEND_IMAGE      0x22C1E70
+#define OS_GET_APP_MSG_MGR 0x1B5E880
+#define OS_SEND_FILE       0x20D5FF0
+#define OS_RTM_NEW         0x1B62FA0
+#define OS_RTM_FREE        0x1B62370
+#define OS_SEND_RICH_TEXT  0x20DFFD0
+#define OS_SEND_PAT_MSG    0x2CC4F10
+#define OS_FORWARD_MSG     0x22CBBE0
+#define OS_GET_EMOTION_MGR 0x1BD49A0
+#define OS_SEND_EMOTION    0x21BACD0
+#define OS_XML_BUFSIGN     0x24FB330
+#define OS_SEND_XML        0x20D5120
 
 typedef QWORD (*New_t)(QWORD);
 typedef QWORD (*Free_t)(QWORD);

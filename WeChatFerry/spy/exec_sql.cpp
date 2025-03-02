@@ -1,11 +1,11 @@
 ﻿#include <iterator>
 
 #include "exec_sql.h"
-#include "log.hpp"
+#include "log.h"
 #include "sqlite3.h"
 #include "util.h"
 
-#define OFFSET_DB_INSTANCE     0x5902000
+#define OFFSET_DB_INSTANCE     0x59C5B48
 #define OFFSET_DB_MICROMSG     0xB8
 #define OFFSET_DB_CHAT_MSG     0x2C8
 #define OFFSET_DB_MISC         0x5F0
@@ -14,7 +14,7 @@
 #define OFFSET_DB_BIZCHAT_MSG  0x1A70
 #define OFFSET_DB_FUNCTION_MSG 0x1B98
 #define OFFSET_DB_NAME         0x28
-#define OFFSET_DB_MSG_MGR      0x595F900
+#define OFFSET_DB_MSG_MGR      0x5A23888
 
 extern UINT64 g_WeChatWinDllAddr;
 

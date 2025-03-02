@@ -1,12 +1,12 @@
 ﻿#include "user_info.h"
-#include "log.hpp"
+#include "log.h"
 #include "util.h"
 
 extern UINT64 g_WeChatWinDllAddr;
 
-#define OS_USER_HOME   0x5932770
-#define OS_USER_WXID   0x595C270
-#define OS_USER_NAME   0x595C3D8
+#define OS_USER_HOME   0x59F6330
+#define OS_USER_WXID   0x5A20200
+#define OS_USER_NAME   0x5A20368
 #define OS_USER_MOBILE 0x595C318
 
 static char home[MAX_PATH] = { 0 };

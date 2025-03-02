@@ -1,6 +1,6 @@
 ﻿#include <filesystem>
 
-#include "log.hpp"
+#include "log.h"
 #include "rpc_server.h"
 #include "spy.h"
 #include "util.h"
@@ -21,7 +21,7 @@ void InitSpy(LPVOID args)
     wchar_t version[16] = { 0 };
     PortPath_t *pp      = (PortPath_t *)args;
 
-    Log::InitLogger(pp->path);
+    InitLogger(pp->path);
     g_WeChatWinDllAddr = (UINT64)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
     if (g_WeChatWinDllAddr == 0) {
         LOG_ERROR("获取 wechatWin.dll 模块地址失败");
