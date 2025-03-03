@@ -108,6 +108,8 @@ namespace Message
 
 namespace Misc
 {
+    constexpr uint64_t QR_CODE = 0x2025A80;
+
     namespace Sns
     {
         constexpr uint64_t DATA_MGR = 0x21E52F0;
