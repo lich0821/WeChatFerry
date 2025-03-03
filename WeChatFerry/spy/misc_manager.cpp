@@ -23,13 +23,6 @@ using namespace std;
 namespace fs    = std::filesystem;
 namespace OsSns = Offsets::Misc::Sns;
 
-constexpr uint8_t HEADER_PNG1 = 0x89;
-constexpr uint8_t HEADER_PNG2 = 0x50;
-constexpr uint8_t HEADER_JPG1 = 0xFF;
-constexpr uint8_t HEADER_JPG2 = 0xD8;
-constexpr uint8_t HEADER_GIF1 = 0x47;
-constexpr uint8_t HEADER_GIF2 = 0x49;
-
 #define OS_NEW_CHAT_MSG               0x1B5E140
 #define OS_FREE_CHAT_MSG              0x1B55850
 #define OS_GET_CHAT_MGR               0x1B876C0
@@ -252,7 +245,7 @@ std::string get_audio(uint64_t id, const fs::path &dir)
     if (!fs::exists(dir)) fs::create_directories(dir);
 
     fs::path mp3path = dir / (std::to_string(id) + ".mp3");
-    if (fs::exists(mp3path)) return mp3path.string();
+    if (fs::exists(mp3path)) return mp3path.generic_string();
 
     auto silk = db::get_audio_data(id);
     if (silk.empty()) {
@@ -260,8 +253,8 @@ std::string get_audio(uint64_t id, const fs::path &dir)
         return "";
     }
 
-    Silk2Mp3(silk, mp3path.string(), 24000);
-    return mp3path.string();
+    Silk2Mp3(silk, mp3path.generic_string(), 24000);
+    return mp3path.generic_string();
 }
 
 std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
@@ -269,7 +262,7 @@ std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
     if (!fs::exists(dir)) fs::create_directories(dir);
 
     fs::path pcmpath = dir / (std::to_string(id) + ".pcm");
-    if (fs::exists(pcmpath)) return pcmpath.string();
+    if (fs::exists(pcmpath)) return pcmpath.generic_string();
 
     auto silk = db::get_audio_data(id);
     if (silk.empty()) {
@@ -282,15 +275,15 @@ std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
 
     std::ofstream out(pcmpath, std::ios::binary);
     if (!out) {
-        LOG_ERROR("创建文件失败: {}", pcmpath.string());
+        LOG_ERROR("创建文件失败: {}", pcmpath.generic_string());
         return "";
     }
 
     out.write(reinterpret_cast<char *>(pcm.data()), pcm.size());
-    return pcmpath.string();
+    return pcmpath.generic_string();
 }
 
-OcrResult_t get_ocr_result(const std::filesystem::path &path)
+OcrResult_t get_ocr_result(const fs::path &path)
 {
     OcrResult_t ret = { -1, "" };
 #if 0 // 参数没调好，会抛异常，看看有没有好心人来修复
@@ -368,10 +361,7 @@ bool rpc_get_audio(const AudioMsg &am, uint8_t *out, size_t *len)
         out, len, [&](Response &rsp) { rsp.msg.str = (char *)get_audio(am.id, am.dir).c_str(); });
 }
 
-bool rpc_get_pcm_audio(uint64_t id, const std::filesystem::path &dir, int32_t sr, uint8_t *out, size_t *len)
-{
-    return false;
-}
+bool rpc_get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr, uint8_t *out, size_t *len) { return false; }
 
 bool rpc_decrypt_image(const DecPath &dec, uint8_t *out, size_t *len)
 {
@@ -403,7 +393,7 @@ bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len)
                                                     [&](Response &rsp) { rsp.msg.status = revoke_message(id); });
 }
 
-bool rpc_get_ocr_result(const std::filesystem::path &path, uint8_t *out, size_t *len)
+bool rpc_get_ocr_result(const fs::path &path, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_EXEC_OCR>(out, len, [&](Response &rsp) {
         OcrResult_t ret    = { -1, "" };
