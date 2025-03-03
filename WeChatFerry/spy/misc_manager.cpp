@@ -23,12 +23,12 @@ using namespace std;
 namespace fs    = std::filesystem;
 namespace OsSns = Offsets::Misc::Sns;
 
-#define HEADER_PNG1 0x89
-#define HEADER_PNG2 0x50
-#define HEADER_JPG1 0xFF
-#define HEADER_JPG2 0xD8
-#define HEADER_GIF1 0x47
-#define HEADER_GIF2 0x49
+constexpr uint8_t HEADER_PNG1 = 0x89;
+constexpr uint8_t HEADER_PNG2 = 0x50;
+constexpr uint8_t HEADER_JPG1 = 0xFF;
+constexpr uint8_t HEADER_JPG2 = 0xD8;
+constexpr uint8_t HEADER_GIF1 = 0x47;
+constexpr uint8_t HEADER_GIF2 = 0x49;
 
 #define OS_NEW_CHAT_MSG               0x1B5E140
 #define OS_FREE_CHAT_MSG              0x1B55850
