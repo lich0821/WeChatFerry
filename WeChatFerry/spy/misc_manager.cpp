@@ -10,17 +10,19 @@
 #include "database_executor.h"
 #include "log.hpp"
 #include "message_handler.h"
+#include "offsets.h"
 #include "rpc_helper.h"
 #include "spy_types.h"
 #include "util.h"
-
-using namespace std;
-namespace fs = std::filesystem;
 
 extern QWORD g_WeChatWinDllAddr;
 
 namespace misc
 {
+using namespace std;
+namespace fs    = std::filesystem;
+namespace OsSns = Offsets::Misc::Sns;
+
 #define HEADER_PNG1 0x89
 #define HEADER_PNG2 0x50
 #define HEADER_JPG1 0xFF
@@ -28,10 +30,6 @@ namespace misc
 #define HEADER_GIF1 0x47
 #define HEADER_GIF2 0x49
 
-#define OS_GET_SNS_DATA_MGR           0x21E2200
-#define OS_GET_SNS_FIRST_PAGE         0x2E212D0
-#define OS_GET_SNS_TIMELINE_MGR       0x2DB3390
-#define OS_GET_SNS_NEXT_PAGE          0x2EC8970
 #define OS_NEW_CHAT_MSG               0x1B5E140
 #define OS_FREE_CHAT_MSG              0x1B55850
 #define OS_GET_CHAT_MGR               0x1B876C0
@@ -103,12 +101,12 @@ static int get_first_page()
 {
     int status = -1;
 
-    get_sns_data_mgr_t GetSNSDataMgr     = (get_sns_data_mgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_DATA_MGR);
-    get_sns_first_page_t GetSNSFirstPage = (get_sns_first_page_t)(g_WeChatWinDllAddr + OS_GET_SNS_FIRST_PAGE);
+    get_sns_data_mgr_t GetSNSDataMgr     = (get_sns_data_mgr_t)(g_WeChatWinDllAddr + OsSns::DATA_MGR);
+    get_sns_first_page_t GetSNSFirstPage = (get_sns_first_page_t)(g_WeChatWinDllAddr + OsSns::FIRST);
 
     QWORD buff[16] = { 0 };
     QWORD mgr      = GetSNSDataMgr();
-    status         = (int)GetSNSFirstPage(mgr, (QWORD)buff, 1);
+    status         = (int)GetSNSFirstPage(mgr, (QWORD)&buff, 1);
 
     return status;
 }
@@ -117,9 +115,8 @@ static int get_next_page(QWORD id)
 {
     int status = -1;
 
-    get_sns_timeline_mgr_t GetSnsTimeLineMgr = (get_sns_timeline_mgr_t)(g_WeChatWinDllAddr + OS_GET_SNS_TIMELINE_MGR);
-    get_sns_next_page_scene_t GetSNSNextPageScene
-        = (get_sns_next_page_scene_t)(g_WeChatWinDllAddr + OS_GET_SNS_NEXT_PAGE);
+    get_sns_timeline_mgr_t GetSnsTimeLineMgr      = (get_sns_timeline_mgr_t)(g_WeChatWinDllAddr + OsSns::TIMELINE);
+    get_sns_next_page_scene_t GetSNSNextPageScene = (get_sns_next_page_scene_t)(g_WeChatWinDllAddr + OsSns::NEXT);
 
     QWORD mgr = GetSnsTimeLineMgr();
     status    = (int)GetSNSNextPageScene(mgr, id);
