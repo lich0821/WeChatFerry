@@ -20,8 +20,9 @@ extern QWORD g_WeChatWinDllAddr;
 namespace misc
 {
 using namespace std;
-namespace fs    = std::filesystem;
-namespace OsSns = Offsets::Misc::Sns;
+namespace fs     = std::filesystem;
+namespace OsMisc = Offsets::Misc;
+namespace OsSns  = Offsets::Misc::Sns;
 
 #define OS_NEW_CHAT_MSG               0x1B5E140
 #define OS_FREE_CHAT_MSG              0x1B55850
@@ -341,7 +342,7 @@ int revoke_message(uint64_t id)
 std::string get_login_url()
 {
     std::string uri;
-    get_qr_code_mgr_t get_qr_code_mgr = (get_qr_code_mgr_t)(g_WeChatWinDllAddr + Offsets::Misc::QR_CODE);
+    get_qr_code_mgr_t get_qr_code_mgr = (get_qr_code_mgr_t)(g_WeChatWinDllAddr + OsMisc::QR_CODE);
 
     uint64_t addr = get_qr_code_mgr() + 0x68;
     uint64_t len  = *(uint64_t *)(addr + 0x10);
