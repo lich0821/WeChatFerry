@@ -262,7 +262,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_REFRESH_PYQ, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_refresh_pyq(r.msg.ui64, out, len); } },
     // { Functions_FUNC_DOWNLOAD_ATTACH, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_download_attachment(r.msg.att, out, len); } },
     // { Functions_FUNC_GET_CONTACT_INFO, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contact_info(r.msg.str, out, len); } },
-    // { Functions_FUNC_REVOKE_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_revoke_message(r.msg.ui64, out, len); } },
+    { Functions_FUNC_REVOKE_MSG, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_revoke_message(r.msg.ui64, out, len); } },
     { Functions_FUNC_REFRESH_QRCODE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_login_url(out, len); } },
     { Functions_FUNC_DECRYPT_IMAGE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_decrypt_image(r.msg.dec, out, len); } },
     { Functions_FUNC_EXEC_OCR, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_ocr_result(r.msg.str, out, len); } },
