@@ -51,11 +51,28 @@ using push_attach_task_t          = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 using get_ocr_manager_t           = QWORD (*)();
 using do_ocr_task_t               = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
 
-static std::string detect_image_extension(uint8_t header1, uint8_t header2, uint8_t &key)
+struct ImagePattern {
+    uint8_t header1_candidate;
+    uint8_t header2_expected;
+    const char *extension;
+};
+
+static constexpr ImagePattern patterns[] = {
+    { 0x89, 0x50, ".png" },
+    { 0xFF, 0xD8, ".jpg" },
+    { 0x47, 0x49, ".gif" },
+};
+
+static std::string detect_image_extension(uint8_t header1, uint8_t header2, uint8_t *key)
 {
-    if ((key = HEADER_PNG1 ^ header1) && (HEADER_PNG2 ^ key) == header2) return ".png";
-    if ((key = HEADER_JPG1 ^ header1) && (HEADER_JPG2 ^ key) == header2) return ".jpg";
-    if ((key = HEADER_GIF1 ^ header1) && (HEADER_GIF2 ^ key) == header2) return ".gif";
+
+    for (const auto &pat : patterns) {
+        *key = pat.header1_candidate ^ header1;
+        if ((pat.header2_expected ^ *key) == header2) {
+            return pat.extension;
+        }
+    }
+    LOG_ERROR("未知类型：{:02x} {:02x}", header1, header2);
     return "";
 }
 
@@ -76,8 +93,8 @@ std::string decrypt_image(const fs::path &src, const fs::path &dst_dir)
     if (buffer.size() < 2) return "";
 
     uint8_t key = 0x00;
-    auto ext    = detect_image_extension(buffer[0], buffer[1], key);
-    if (!ext.empty()) {
+    auto ext    = detect_image_extension(buffer[0], buffer[1], &key);
+    if (ext.empty()) {
         LOG_ERROR("无法检测文件类型.");
         return "";
     }
@@ -89,12 +106,12 @@ std::string decrypt_image(const fs::path &src, const fs::path &dst_dir)
 
     std::ofstream out(dst_path, std::ios::binary);
     if (!out) {
-        LOG_ERROR("写入文件失败: {}", dst_path.string());
+        LOG_ERROR("写入文件失败: {}", dst_path.generic_string());
         return "";
     }
 
     out.write(buffer.data(), buffer.size());
-    return dst_path.string();
+    return dst_path.generic_string();
 }
 
 static int get_first_page()
