@@ -1,14 +1,14 @@
 ﻿#pragma execution_character_set("utf-8")
 
 #include "contact_mgmt.h"
-#include "log.hpp"
+#include "log.h"
 #include "util.h"
 
 using namespace std;
 extern QWORD g_WeChatWinDllAddr;
 
-#define OS_GET_CONTACT_MGR  0x1B417A0
-#define OS_GET_CONTACT_LIST 0x219ED10
+#define OS_GET_CONTACT_MGR  0x1B470B0
+#define OS_GET_CONTACT_LIST 0x21A49D0
 #define OS_CONTACT_BIN      0x200
 #define OS_CONTACT_BIN_LEN  0x208
 #define OS_CONTACT_WXID     0x10
