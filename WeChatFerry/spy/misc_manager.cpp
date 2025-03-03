@@ -351,7 +351,7 @@ std::string get_login_url()
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)
 {
-    // 别想了，这个不实现了
+    LOG_ERROR("技术太菜，实现不了。");
     return -1;
 }
 

@@ -258,7 +258,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_FORWARD_MSG, [](const Request &r, uint8_t *out, size_t *len) { return RpcServer::getInstance().sender_.rpc_forward(r.msg.fm, out, len); } },
     { Functions_FUNC_EXEC_DB_QUERY, [](const Request &r, uint8_t *out, size_t *len) { return db::rpc_exec_db_query(r.msg.query, out, len); } },
     // { Functions_FUNC_ACCEPT_FRIEND, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_accept_friend(r.msg.v, out, len); } },
-    // { Functions_FUNC_RECV_TRANSFER, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_receive_transfer(r.msg.tf, out, len); } },
+    { Functions_FUNC_RECV_TRANSFER, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_receive_transfer(r.msg.tf, out, len); } },
     { Functions_FUNC_REFRESH_PYQ, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_refresh_pyq(r.msg.ui64, out, len); } },
     // { Functions_FUNC_DOWNLOAD_ATTACH, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_download_attachment(r.msg.att, out, len); } },
     // { Functions_FUNC_GET_CONTACT_INFO, [](const Request &r, uint8_t *out, size_t *len) { return contact::rpc_get_contact_info(r.msg.str, out, len); } },
