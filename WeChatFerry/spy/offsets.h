@@ -30,9 +30,9 @@ namespace Db
     constexpr uint64_t NAME         = 0x28;
 
     // SQLITE3
-    constexpr uint64_t EXEC             = 0x3A76430;
+    constexpr uint64_t EXEC = 0x3A76430;
     // constexpr uint64_t BACKUP_INIT      = EXEC - 0x1D113E0;
-    constexpr uint64_t PREPARE          = EXEC + 0x7CB0;
+    constexpr uint64_t PREPARE = EXEC + 0x7CB0;
     // constexpr uint64_t OPEN             = EXEC - 0x1CA2430;
     // constexpr uint64_t BACKUP_STEP      = EXEC - 0x1D110A0;
     // constexpr uint64_t BACKUP_REMAINING = EXEC - 0x1D10880;
@@ -41,13 +41,13 @@ namespace Db
     // constexpr uint64_t SLEEP            = EXEC - 0x1CA1BB0;
     // constexpr uint64_t ERRCODE          = EXEC - 0x1CA3770;
     // constexpr uint64_t CLOSE            = EXEC - 0x1CA4FD0;
-    constexpr uint64_t STEP             = EXEC - 0x3C000;
-    constexpr uint64_t COLUMN_COUNT     = EXEC - 0x3B7E0;
-    constexpr uint64_t COLUMN_NAME      = EXEC - 0x3ADE0;
-    constexpr uint64_t COLUMN_TYPE      = EXEC - 0x3AF90;
-    constexpr uint64_t COLUMN_BLOB      = EXEC - 0x3B7B0;
-    constexpr uint64_t COLUMN_BYTES     = EXEC - 0x3B6C0;
-    constexpr uint64_t FINALIZE         = EXEC - 0x3CF50;
+    constexpr uint64_t STEP         = EXEC - 0x3C000;
+    constexpr uint64_t COLUMN_COUNT = EXEC - 0x3B7E0;
+    constexpr uint64_t COLUMN_NAME  = EXEC - 0x3ADE0;
+    constexpr uint64_t COLUMN_TYPE  = EXEC - 0x3AF90;
+    constexpr uint64_t COLUMN_BLOB  = EXEC - 0x3B7B0;
+    constexpr uint64_t COLUMN_BYTES = EXEC - 0x3B6C0;
+    constexpr uint64_t FINALIZE     = EXEC - 0x3CF50;
 }
 
 namespace Message
@@ -103,6 +103,17 @@ namespace Message
         constexpr uint64_t PAT = 0x2CC1E90;
 
         constexpr uint64_t FORWARD = 0x22C9220;
+    }
+}
+
+namespace Misc
+{
+    namespace Sns
+    {
+        constexpr uint64_t DATA_MGR = 0x21E52F0;
+        constexpr uint64_t TIMELINE = 0x2DC6180;
+        constexpr uint64_t FIRST    = 0x2E346C0;
+        constexpr uint64_t NEXT     = 0x2E5A270;
     }
 }
 }
