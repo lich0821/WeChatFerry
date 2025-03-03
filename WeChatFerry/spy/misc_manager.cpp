@@ -395,9 +395,8 @@ bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len)
 
 bool rpc_get_ocr_result(const fs::path &path, uint8_t *out, size_t *len)
 {
+    auto ret = get_ocr_result(path);
     return fill_response<Functions_FUNC_EXEC_OCR>(out, len, [&](Response &rsp) {
-        OcrResult_t ret    = { -1, "" };
-        ret                = get_ocr_result(path);
         rsp.msg.ocr.status = ret.status;
         rsp.msg.ocr.result = (char *)ret.result.c_str();
     });
