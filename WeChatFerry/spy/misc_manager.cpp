@@ -29,7 +29,6 @@ namespace OsSns = Offsets::Misc::Sns;
 #define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x213FB00
 #define OS_GET_PRE_DOWNLOAD_MGR       0x1C0EE70
 #define OS_PUSH_ATTACH_TASK           0x1CDF4E0
-#define OS_LOGIN_QR_CODE              0x59620D8
 
 using get_sns_data_mgr_t          = QWORD (*)();
 using get_sns_timeline_mgr_t      = QWORD (*)();
@@ -43,6 +42,7 @@ using get_mgr_by_prefix_localid_t = QWORD (*)(QWORD, QWORD);
 using push_attach_task_t          = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 using get_ocr_manager_t           = QWORD (*)();
 using do_ocr_task_t               = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+using get_qr_code_mgr_t           = QWORD (*)();
 
 struct ImagePattern {
     uint8_t header1_candidate;
@@ -340,13 +340,23 @@ int revoke_message(uint64_t id)
 
 std::string get_login_url()
 {
-    LPVOID targetAddress = reinterpret_cast<LPBYTE>(g_WeChatWinDllAddr) + OS_LOGIN_QR_CODE;
-    char *dataPtr        = *reinterpret_cast<char **>(targetAddress);
-    if (!dataPtr) {
+    std::string uri;
+    get_qr_code_mgr_t get_qr_code_mgr = (get_qr_code_mgr_t)(g_WeChatWinDllAddr + Offsets::Misc::QR_CODE);
+
+    uint64_t addr = get_qr_code_mgr() + 0x68;
+    uint64_t len  = *(uint64_t *)(addr + 0x10);
+    if (len == 0) {
         LOG_ERROR("获取二维码失败.");
-        return "";
+        return uri;
     }
-    return "http://weixin.qq.com/x/" + std::string(dataPtr, 22);
+
+    if (*(uint64_t *)(addr + 0x18) == 0xF) {
+        uri = std::string((char *)addr, len);
+    } else {
+        uri = std::string(*(char **)(addr), len);
+    }
+
+    return "http://weixin.qq.com/x/" + uri;
 }
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)
