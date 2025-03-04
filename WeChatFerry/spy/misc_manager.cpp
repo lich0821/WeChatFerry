@@ -24,19 +24,12 @@ namespace fs     = std::filesystem;
 namespace OsMisc = Offsets::Misc;
 namespace OsSns  = Offsets::Misc::Sns;
 
-#define OS_NEW_CHAT_MSG               0x1B5E140
-#define OS_FREE_CHAT_MSG              0x1B55850
-#define OS_GET_CHAT_MGR               0x1B876C0
-#define OS_GET_MGR_BY_PREFIX_LOCAL_ID 0x213FB00
-#define OS_GET_PRE_DOWNLOAD_MGR       0x1C0EE70
-#define OS_PUSH_ATTACH_TASK           0x1CDF4E0
-
 using get_sns_data_mgr_t          = QWORD (*)();
 using get_sns_timeline_mgr_t      = QWORD (*)();
 using get_sns_first_page_t        = QWORD (*)(QWORD, QWORD, QWORD);
 using get_sns_next_page_scene_t   = QWORD (*)(QWORD, QWORD);
 using get_chat_mgr_t              = QWORD (*)();
-using new_chat_msg_t              = QWORD (*)(QWORD);
+using new_chat_msg_t              = QWORD (*)(char *);
 using free_chat_msg_t             = QWORD (*)(QWORD);
 using get_pre_download_mgr_t      = QWORD (*)();
 using get_mgr_by_prefix_localid_t = QWORD (*)(QWORD, QWORD);
@@ -165,6 +158,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
     uint32_t dbIdx;
 
     if (fs::exists(extra)) { // 第一道，不重复下载。TODO: 通过文件大小来判断
+        LOG_WARN("文件已存在：{}", extra.generic_string());
         return 0;
     }
 
@@ -173,28 +167,27 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
         return status;
     }
 
-    new_chat_msg_t NewChatMsg                = (new_chat_msg_t)(g_WeChatWinDllAddr + OS_NEW_CHAT_MSG);
-    free_chat_msg_t FreeChatMsg              = (free_chat_msg_t)(g_WeChatWinDllAddr + OS_FREE_CHAT_MSG);
-    get_chat_mgr_t GetChatMgr                = (get_chat_mgr_t)(g_WeChatWinDllAddr + OS_GET_CHAT_MGR);
-    get_pre_download_mgr_t GetPreDownLoadMgr = (get_pre_download_mgr_t)(g_WeChatWinDllAddr + OS_GET_PRE_DOWNLOAD_MGR);
-    push_attach_task_t PushAttachTask        = (push_attach_task_t)(g_WeChatWinDllAddr + OS_PUSH_ATTACH_TASK);
+    new_chat_msg_t NewChatMsg                = (new_chat_msg_t)(g_WeChatWinDllAddr + OsMisc::INSATNCE);
+    free_chat_msg_t FreeChatMsg              = (free_chat_msg_t)(g_WeChatWinDllAddr + OsMisc::FREE);
+    get_chat_mgr_t GetChatMgr                = (get_chat_mgr_t)(g_WeChatWinDllAddr + OsMisc::CHAT_MGR);
+    get_pre_download_mgr_t GetPreDownLoadMgr = (get_pre_download_mgr_t)(g_WeChatWinDllAddr + OsMisc::PRE_DOWNLOAD_MGR);
+    push_attach_task_t PushAttachTask        = (push_attach_task_t)(g_WeChatWinDllAddr + OsMisc::PUSH_ATTACH_TASK);
     get_mgr_by_prefix_localid_t GetMgrByPrefixLocalId
-        = (get_mgr_by_prefix_localid_t)(g_WeChatWinDllAddr + OS_GET_MGR_BY_PREFIX_LOCAL_ID);
+        = (get_mgr_by_prefix_localid_t)(g_WeChatWinDllAddr + OsMisc::PRE_LOCAL_ID_MGR);
 
     LARGE_INTEGER l;
     l.HighPart = dbIdx;
     l.LowPart  = (DWORD)localId;
 
-    char *buff = (char *)HeapAlloc(GetProcessHeap(), 0, 0x460);
+    char *buff = util::AllocBuffer<char>(0x460);
     if (buff == nullptr) {
         LOG_ERROR("申请内存失败.");
         return status;
     }
 
-    QWORD pChatMsg = NewChatMsg((QWORD)buff);
+    QWORD pChatMsg = NewChatMsg(buff);
     GetChatMgr();
     GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
-
     QWORD type = util::get_qword(reinterpret_cast<QWORD>(buff) + 0x38);
 
     fs::path save_path, thumb_path;
@@ -206,7 +199,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
         case 0x3E:
         case 0x2B: { // Video: thumb
             thumb_path = thumb;
-            save_path  = fs::path(thumb).replace_extension("mp4").string();
+            save_path  = fs::path(thumb).replace_extension("mp4");
             break;
         }
         case 0x31: { // File: extra
@@ -222,21 +215,22 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
         return 0;
     }
 
-    LOG_DEBUG("保存路径: {}", save_path.string());
+    LOG_DEBUG("保存路径: {}", save_path.generic_string());
     // 创建父目录，由于路径来源于微信，不做检查
     fs::create_directory(save_path.parent_path());
 
     int temp           = 1;
-    auto wx_save_path  = util::new_wx_string(save_path.string());
-    auto wx_thumb_path = util::new_wx_string(thumb_path.string());
+    auto wx_save_path  = util::CreateWxString(save_path.make_preferred().string());
+    auto wx_thumb_path = util::CreateWxString(thumb_path.make_preferred().string());
 
-    memcpy(&buff[0x280], wx_thumb_path.get(), sizeof(WxString));
-    memcpy(&buff[0x2A0], wx_save_path.get(), sizeof(WxString));
+    memcpy(&buff[0x280], wx_thumb_path, sizeof(WxString));
+    memcpy(&buff[0x2A0], wx_save_path, sizeof(WxString));
     memcpy(&buff[0x40C], &temp, sizeof(temp));
 
     QWORD mgr = GetPreDownLoadMgr();
     status    = (int)PushAttachTask(mgr, pChatMsg, 0, 1);
     FreeChatMsg(pChatMsg);
+    util::FreeBuffer(buff);
 
     return status;
 }
@@ -394,8 +388,16 @@ bool rpc_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
 
 bool rpc_download_attachment(const AttachMsg &att, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_DOWNLOAD_ATTACH>(
-        out, len, [&](Response &rsp) { rsp.msg.status = download_attachment(att.id, att.thumb, att.extra); });
+    int status = -1;
+    if (att.thumb || att.extra) {
+        std::string thumb = att.thumb ? att.thumb : "";
+        std::string extra = att.extra ? att.extra : "";
+        status            = download_attachment(att.id, thumb, extra);
+    } else {
+        LOG_ERROR("文件地址不能全为空");
+    }
+
+    return fill_response<Functions_FUNC_DOWNLOAD_ATTACH>(out, len, [&](Response &rsp) { rsp.msg.status = status; });
 }
 
 bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len)
