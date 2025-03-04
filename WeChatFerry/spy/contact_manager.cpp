@@ -98,44 +98,7 @@ int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 RpcContact_t get_contact_by_wxid(const string &wxid)
 {
     RpcContact_t contact;
-#if 0
-    char buff[0x440] = { 0 };
-    wstring ws_wxid  = util::s2w(wxid);
-    WxString pri(ws_wxid);
-
-    DWORD contact_mgr_addr  = g_WeChatWinDllAddr + 0x75A4A0;
-    DWORD get_contact_addr  = g_WeChatWinDllAddr + 0xC04E00;
-    DWORD free_contact_addr = g_WeChatWinDllAddr + 0xEA7880;
-
-    __asm {
-        PUSHAD
-        PUSHFD
-        CALL       contact_mgr_addr
-        LEA        ECX,buff
-        PUSH       ECX
-        LEA        ECX,pri
-        PUSH       ECX
-        MOV        ECX,EAX
-        CALL       get_contact_addr
-        POPFD
-        POPAD
-    }
-
-    contact.wxid   = wxid;
-    contact.code   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxCode);
-    contact.remark = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxRemark);
-    contact.name   = util::get_str_by_wstr_addr(reinterpret_cast<DWORD>(buff) + g_WxCalls.contact.wxName);
-    contact.gender = util::get_dword(reinterpret_cast<DWORD>(buff) + 0x148);
-
-    __asm {
-        PUSHAD
-        PUSHFD
-        LEA        ECX,buff
-        CALL       free_contact_addr
-        POPFD
-        POPAD
-    }
-#endif
+    LOG_ERROR("技术太菜，实现不了。");
     return contact;
 }
 
@@ -150,8 +113,8 @@ bool rpc_get_contacts(uint8_t *out, size_t *len)
 
 bool rpc_get_contact_info(const string &wxid, uint8_t *out, size_t *len)
 {
+    vector<RpcContact_t> contacts = { get_contact_by_wxid(wxid) };
     return fill_response<Functions_FUNC_GET_CONTACT_INFO>(out, len, [&](Response &rsp) {
-        vector<RpcContact_t> contacts          = { get_contact_by_wxid(wxid) };
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
