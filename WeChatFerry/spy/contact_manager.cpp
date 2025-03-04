@@ -91,53 +91,8 @@ vector<RpcContact_t> get_contacts()
 
 int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 {
-    int success = -1;
-#if 0
-    DWORD accept_new_friend_call1 = g_WeChatWinDllAddr + g_WxCalls.anf.call1;
-    DWORD accept_new_friend_call2 = g_WeChatWinDllAddr + g_WxCalls.anf.call2;
-    DWORD accept_new_friend_call3 = g_WeChatWinDllAddr + g_WxCalls.anf.call3;
-    DWORD accept_new_friend_call4 = g_WeChatWinDllAddr + g_WxCalls.anf.call4;
-
-    char buffer[0x40]      = { 0 };
-    char nullbuffer[0x3CC] = { 0 };
-
-    LOG_DEBUG("\nv3: {}\nv4: {}\nscene: {}", v3, v4, scene);
-
-    wstring ws_v3 = util::s2w(v3);
-    wstring ws_v4 = util::s2w(v4);
-    WxString wx_v3(ws_v3);
-    WxString wx_v4(ws_v4);
-
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx, buffer;
-        call accept_new_friend_call1;
-        mov esi, 0x0;
-        mov edi, scene;
-        push esi;
-        push edi;
-        sub esp, 0x14;
-        mov ecx, esp;
-        lea eax, wx_v4;
-        push eax;
-        call accept_new_friend_call2;
-        sub esp, 0x8;
-        push 0x0;
-        lea eax, nullbuffer;
-        push eax;
-        lea eax, wx_v3;
-        push eax;
-        lea ecx, buffer;
-        call accept_new_friend_call3;
-        mov success, eax;
-        lea ecx, buffer;
-        call accept_new_friend_call4;
-        popfd;
-        popad;
-    }
-#endif
-    return success; // 成功返回 1
+    LOG_ERROR("技术太菜，实现不了。");
+    return -1; // 成功返回 1
 }
 
 RpcContact_t get_contact_by_wxid(const string &wxid)
@@ -204,8 +159,8 @@ bool rpc_get_contact_info(const string &wxid, uint8_t *out, size_t *len)
 
 bool rpc_accept_friend(const Verification &v, uint8_t *out, size_t *len)
 {
-    const string v3 = v.v3;
-    const string v4 = v.v4;
+    const string v3 = v.v3 ? v.v3 : "";
+    const string v4 = v.v4 ? v.v4 : "";
     int scene       = v.scene;
     return fill_response<Functions_FUNC_ACCEPT_FRIEND>(
         out, len, [&](Response &rsp) { rsp.msg.status = accept_new_friend(v3, v4, scene); });
