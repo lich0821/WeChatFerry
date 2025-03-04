@@ -110,6 +110,13 @@ namespace Misc
 {
     constexpr uint64_t QR_CODE = 0x2025A80;
 
+    constexpr uint64_t INSATNCE         = Message::Send::INSTANCE;
+    constexpr uint64_t FREE             = Message::Send::FREE;
+    constexpr uint64_t CHAT_MGR         = 0x1B8AA50;
+    constexpr uint64_t PRE_LOCAL_ID_MGR = 0x2142BF0;
+    constexpr uint64_t PRE_DOWNLOAD_MGR = 0x1C12260;
+    constexpr uint64_t PUSH_ATTACH_TASK = 0x1CE3050;
+
     namespace Sns
     {
         constexpr uint64_t DATA_MGR = 0x21E52F0;
