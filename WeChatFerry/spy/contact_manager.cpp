@@ -3,6 +3,7 @@
 #include "contact_manager.h"
 
 #include "log.hpp"
+#include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
 #include "util.h"
@@ -13,16 +14,7 @@ extern QWORD g_WeChatWinDllAddr;
 
 namespace contact
 {
-#define OS_GET_CONTACT_MGR  0x1B417A0
-#define OS_GET_CONTACT_LIST 0x219ED10
-#define OS_CONTACT_BIN      0x200
-#define OS_CONTACT_BIN_LEN  0x208
-#define OS_CONTACT_WXID     0x10
-#define OS_CONTACT_CODE     0x30
-#define OS_CONTACT_REMARK   0x80
-#define OS_CONTACT_NAME     0xA0
-#define OS_CONTACT_GENDER   0x0E
-#define OS_CONTACT_STEP     0x6A8
+namespace OsCon = Offsets::Contact;
 
 using get_contact_mgr_t  = QWORD (*)();
 using get_contact_list_t = QWORD (*)(QWORD, QWORD);
@@ -62,10 +54,8 @@ static string get_cnt_string(QWORD start, QWORD end, const uint8_t *feat, size_t
 vector<RpcContact_t> get_contacts()
 {
     vector<RpcContact_t> contacts;
-    get_contact_mgr_t func_get_contact_mgr
-        = reinterpret_cast<get_contact_mgr_t>(g_WeChatWinDllAddr + OS_GET_CONTACT_MGR);
-    get_contact_list_t func_get_contact_list
-        = reinterpret_cast<get_contact_list_t>(g_WeChatWinDllAddr + OS_GET_CONTACT_LIST);
+    get_contact_mgr_t func_get_contact_mgr   = reinterpret_cast<get_contact_mgr_t>(g_WeChatWinDllAddr + OsCon::MGR);
+    get_contact_list_t func_get_contact_list = reinterpret_cast<get_contact_list_t>(g_WeChatWinDllAddr + OsCon::LIST);
 
     QWORD mgr     = func_get_contact_mgr();
     QWORD addr[3] = { 0 };
@@ -78,22 +68,22 @@ vector<RpcContact_t> get_contacts()
     QWORD pend   = addr[2];
     while (pstart < pend) {
         RpcContact_t cnt;
-        QWORD pbin   = util::get_qword(pstart + OS_CONTACT_BIN);
-        QWORD lenbin = util::get_dword(pstart + OS_CONTACT_BIN_LEN);
+        QWORD pbin   = util::get_qword(pstart + OsCon::BIN);
+        QWORD lenbin = util::get_dword(pstart + OsCon::BIN_LEN);
 
-        cnt.wxid   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_WXID);
-        cnt.code   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_CODE);
-        cnt.remark = util::get_str_by_wstr_addr(pstart + OS_CONTACT_REMARK);
-        cnt.name   = util::get_str_by_wstr_addr(pstart + OS_CONTACT_NAME);
+        cnt.wxid   = util::get_str_by_wstr_addr(pstart + OsCon::WXID);
+        cnt.code   = util::get_str_by_wstr_addr(pstart + OsCon::CODE);
+        cnt.remark = util::get_str_by_wstr_addr(pstart + OsCon::REMARK);
+        cnt.name   = util::get_str_by_wstr_addr(pstart + OsCon::NAME);
 
         cnt.country  = get_cnt_string(pbin, pbin + lenbin, FEAT_COUNTRY, FEAT_LEN);
         cnt.province = get_cnt_string(pbin, pbin + lenbin, FEAT_PROVINCE, FEAT_LEN);
         cnt.city     = get_cnt_string(pbin, pbin + lenbin, FEAT_CITY, FEAT_LEN);
 
-        cnt.gender = (pbin == 0) ? 0 : static_cast<DWORD>(*(uint8_t *)(pbin + OS_CONTACT_GENDER));
+        cnt.gender = (pbin == 0) ? 0 : static_cast<DWORD>(*(uint8_t *)(pbin + OsCon::GENDER));
 
         contacts.push_back(cnt);
-        pstart += OS_CONTACT_STEP;
+        pstart += OsCon::STEP;
     }
 
     return contacts;
@@ -196,8 +186,8 @@ RpcContact_t get_contact_by_wxid(const string &wxid)
 
 bool rpc_get_contacts(uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_GET_CONTACTS>(out, len, [](Response &rsp) {
-        vector<RpcContact_t> contacts          = get_contacts();
+    vector<RpcContact_t> contacts = get_contacts();
+    return fill_response<Functions_FUNC_GET_CONTACTS>(out, len, [&](Response &rsp) {
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
