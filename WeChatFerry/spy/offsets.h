@@ -16,6 +16,20 @@ namespace Account
     constexpr uint64_t LOGIN   = 0x7F8;     // 登录状态
 }
 
+namespace Contact
+{
+    constexpr uint64_t MGR     = 0x1B44B20;
+    constexpr uint64_t LIST    = 0x21A1E00;
+    constexpr uint64_t BIN     = 0x200;
+    constexpr uint64_t BIN_LEN = 0x208;
+    constexpr uint64_t WXID    = 0x10;
+    constexpr uint64_t CODE    = 0x30;
+    constexpr uint64_t REMARK  = 0x80;
+    constexpr uint64_t NAME    = 0xA0;
+    constexpr uint64_t GENDER  = 0x0E;
+    constexpr uint64_t STEP    = 0x6A8;
+}
+
 namespace Db
 {
     constexpr uint64_t INSTANCE     = 0x59226C8; // 数据库实例地址
