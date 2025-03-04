@@ -1,5 +1,4 @@
-#ifndef OFFSETS_H
-#define OFFSETS_H
+#pragma once
 
 #include <cstdint>
 
@@ -140,5 +139,3 @@ namespace Misc
     }
 }
 }
-
-#endif // OFFSETS_H
