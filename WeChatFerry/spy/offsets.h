@@ -15,6 +15,12 @@ namespace Account
     constexpr uint64_t LOGIN   = 0x7F8;     // 登录状态
 }
 
+namespace Chatroom
+{
+    constexpr uint64_t MGR = 0x1B86F60;
+    constexpr uint64_t DEL = 0x2158830;
+}
+
 namespace Contact
 {
     constexpr uint64_t MGR     = 0x1B44B20;
