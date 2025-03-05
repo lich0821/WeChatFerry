@@ -20,6 +20,7 @@ namespace Chatroom
     constexpr uint64_t MGR = 0x1B86F60;
     constexpr uint64_t DEL = 0x2158830;
     constexpr uint64_t ADD = 0x21581F0;
+    constexpr uint64_t INV = 0x2157BD0;
 }
 
 namespace Contact
