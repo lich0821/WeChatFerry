@@ -15,11 +15,10 @@ namespace chatroom
 namespace OsRoom = Offsets::Chatroom;
 
 #define OS_GET_CHATROOM_MGR 0x1B83BD0
-#define OS_ADD_MEMBERS      0x2155100
 #define OS_INVITE_MEMBERS   0x2154AE0
 
 using get_chatroom_mgr_t          = QWORD (*)();
-using add_member_to_chatroom_t    = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
+using add_member_to_chatroom_t    = QWORD (*)(QWORD, QWORD, WxString *, QWORD);
 using del_member_from_chatroom_t  = QWORD (*)(QWORD, QWORD, WxString *);
 using invite_member_to_chatroom_t = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
 
@@ -36,21 +35,16 @@ static vector<WxString> parse_wxids(const string &wxids)
 
 int add_chatroom_member(const string &roomid, const string &wxids)
 {
-    if (roomid.empty() || wxids.empty()) {
-        LOG_ERROR("Empty roomid or wxids.");
-        return -1;
-    }
+    get_chatroom_mgr_t get_chatroom_mgr  = reinterpret_cast<get_chatroom_mgr_t>(g_WeChatWinDllAddr + OsRoom::MGR);
+    add_member_to_chatroom_t add_members = reinterpret_cast<add_member_to_chatroom_t>(g_WeChatWinDllAddr + OsRoom::ADD);
 
-    get_chatroom_mgr_t get_chatroom_mgr
-        = reinterpret_cast<get_chatroom_mgr_t>(g_WeChatWinDllAddr + OS_GET_CHATROOM_MGR);
-    add_member_to_chatroom_t add_members
-        = reinterpret_cast<add_member_to_chatroom_t>(g_WeChatWinDllAddr + OS_ADD_MEMBERS);
+    WxString *wx_roomid = util::CreateWxString(roomid);
 
-    vector<WxString> wx_members = parse_wxids(wxids);
-    auto wx_roomid              = util::new_wx_string(roomid);
-    QWORD p_members             = reinterpret_cast<QWORD>(&wx_members.front());
+    QWORD tmp[2]    = { 0 };
+    auto wx_members = util::parse_wxids(wxids).wxWxids;
+    QWORD p_members = reinterpret_cast<QWORD>(&wx_members);
 
-    return static_cast<int>(add_members(get_chatroom_mgr(), p_members, reinterpret_cast<QWORD>(wx_roomid.get()), 0));
+    return static_cast<int>(add_members(get_chatroom_mgr(), p_members, wx_roomid, reinterpret_cast<QWORD>(tmp)));
 }
 
 int del_chatroom_member(const string &roomid, const string &wxids)
@@ -86,10 +80,17 @@ int invite_chatroom_member(const string &roomid, const string &wxids)
 
 bool rpc_add_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
 {
-    const std::string wxids  = m.wxids;
-    const std::string roomid = m.roomid;
-    return fill_response<Functions_FUNC_ADD_ROOM_MEMBERS>(
-        out, len, [&](Response &rsp) { rsp.msg.status = add_chatroom_member(roomid, wxids); });
+    int status = -1;
+    if (m.wxids && m.roomid) {
+        const std::string wxids  = m.wxids;
+        const std::string roomid = m.roomid;
+
+        status = add_chatroom_member(roomid, wxids);
+    } else {
+        LOG_ERROR("wxid 和 roomid 不能为空");
+    }
+
+    return fill_response<Functions_FUNC_ADD_ROOM_MEMBERS>(out, len, [&](Response &rsp) { rsp.msg.status = status; });
 }
 
 bool rpc_delete_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)

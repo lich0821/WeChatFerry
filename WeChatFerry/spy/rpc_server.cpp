@@ -266,7 +266,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_REFRESH_QRCODE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_login_url(out, len); } },
     { Functions_FUNC_DECRYPT_IMAGE, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_decrypt_image(r.msg.dec, out, len); } },
     { Functions_FUNC_EXEC_OCR, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_get_ocr_result(r.msg.str, out, len); } },
-    // { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
     { Functions_FUNC_DEL_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_delete_chatroom_member(r.msg.m, out, len); } },
     // { Functions_FUNC_INV_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_invite_chatroom_member(r.msg.m, out, len); } },
     // clang-format on
