@@ -268,15 +268,17 @@ std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr)
 
 std::unique_ptr<WxString> new_wx_string(const std::wstring &wstr) { return std::make_unique<WxString>(wstr); }
 
-std::vector<WxString> parse_wxids(const std::string &wxids)
+AtWxidSplitResult<> parse_wxids(const std::string &atWxids)
 {
-    std::vector<WxString> wx_members;
-    std::wstringstream wss(s2w(wxids));
-    std::wstring wstr;
-    while (getline(wss, wstr, L',')) {
-        wx_members.emplace_back(wstr);
+    AtWxidSplitResult<> result;
+    if (!atWxids.empty()) {
+        std::wstringstream wss(util::s2w(atWxids));
+        for (std::wstring wxid; std::getline(wss, wxid, L',');) {
+            result.wxids.push_back(wxid);
+            result.wxWxids.emplace_back(result.wxids.back());
+        }
     }
-    return wx_members;
+    return result;
 }
 
 WxString *CreateWxString(const std::string &s)

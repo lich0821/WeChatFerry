@@ -76,14 +76,24 @@ template <typename T> static T *AllocBuffer(size_t count)
     return reinterpret_cast<T *>(HeapAlloc(GetProcessHeap(), 8, sizeof(T) * count));
 }
 
+template <typename T> struct WxStringHolder {
+    std::wstring ws;
+    WxString wx;
+    explicit WxStringHolder(const T &str) : ws(util::s2w(str)), wx(ws) { }
+};
+
+template <typename StringT = std::wstring> struct AtWxidSplitResult {
+    std::vector<StringT> wxids;
+    std::vector<WxString> wxWxids;
+};
+
 WxString *CreateWxString(const std::string &s);
 void FreeWxString(WxString *wxStr);
+AtWxidSplitResult<> parse_wxids(const std::string &atWxids);
 
 std::unique_ptr<WxString> new_wx_string(const char *str);
 std::unique_ptr<WxString> new_wx_string(const wchar_t *wstr);
 std::unique_ptr<WxString> new_wx_string(const std::string &str);
 std::unique_ptr<WxString> new_wx_string(const std::wstring &wstr);
-
-std::vector<WxString> parse_wxids(const std::string &wxids);
 
 } // namespace util

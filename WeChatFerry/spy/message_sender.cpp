@@ -44,45 +44,12 @@ Sender::Sender()
     func_xml_buf_sign    = reinterpret_cast<XmlBufSign_t>(g_WeChatWinDllAddr + OsSend::XML_BUF_SIGN);
 }
 
-std::unique_ptr<WxString> Sender::new_wx_string(const char *str)
-{
-    return new_wx_string(str ? std::string(str) : std::string());
-}
-std::unique_ptr<WxString> Sender::new_wx_string(const std::string &str)
-{
-    return std::make_unique<WxString>(util::s2w(str));
-}
-
-template <typename T> struct WxStringHolder {
-    std::wstring ws;
-    WxString wx;
-    explicit WxStringHolder(const T &str) : ws(util::s2w(str)), wx(ws) { }
-};
-
-template <typename StringT = std::wstring> struct AtWxidSplitResult {
-    std::vector<StringT> wxids;
-    std::vector<WxString> wxWxids;
-};
-
-AtWxidSplitResult<> parse_wxids(const std::string &atWxids)
-{
-    AtWxidSplitResult<> result;
-    if (!atWxids.empty()) {
-        std::wstringstream wss(util::s2w(atWxids));
-        for (std::wstring wxid; std::getline(wss, wxid, L',');) {
-            result.wxids.push_back(wxid);
-            result.wxWxids.emplace_back(result.wxids.back());
-        }
-    }
-    return result;
-}
-
 void Sender::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
 {
-    WxStringHolder<std::string> holderMsg(msg);
-    WxStringHolder<std::string> holderWxid(wxid);
+    util::WxStringHolder<std::string> holderMsg(msg);
+    util::WxStringHolder<std::string> holderWxid(wxid);
 
-    auto wxAtWxids   = parse_wxids(at_wxids).wxWxids;
+    auto wxAtWxids   = util::parse_wxids(at_wxids).wxWxids;
     QWORD pWxAtWxids = wxAtWxids.empty() ? 0 : reinterpret_cast<QWORD>(&wxAtWxids);
 
     char buffer[1104] = { 0 };
@@ -93,8 +60,8 @@ void Sender::send_text(const std::string &wxid, const std::string &msg, const st
 
 void Sender::send_image(const std::string &wxid, const std::string &path)
 {
-    WxStringHolder<std::string> holderWxid(wxid);
-    WxStringHolder<std::string> holderPath(path);
+    util::WxStringHolder<std::string> holderWxid(wxid);
+    util::WxStringHolder<std::string> holderPath(path);
 
     char msg[1192]    = { 0 };
     char msgTmp[1192] = { 0 };
@@ -258,8 +225,8 @@ int Sender::send_pat(const std::string &roomid, const std::string &wxid)
 {
     QWORD status = -1;
 
-    WxStringHolder<std::string> holderRoom(roomid);
-    WxStringHolder<std::string> holderWxid(wxid);
+    util::WxStringHolder<std::string> holderRoom(roomid);
+    util::WxStringHolder<std::string> holderWxid(wxid);
 
     status = func_send_pat(&holderRoom.wx, &holderWxid.wx);
 
