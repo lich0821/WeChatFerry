@@ -5,9 +5,8 @@
 #include "log.hpp"
 #include "offsets.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "util.h"
-
-extern UINT64 g_WeChatWinDllAddr;
 
 namespace account
 {
@@ -28,7 +27,7 @@ static void clear_cached_home_path() { cachedHomePath.reset(); }
 
 static uint64_t get_account_service()
 {
-    static auto GetService = reinterpret_cast<get_account_service_t>(g_WeChatWinDllAddr + OsAcc::SERVICE);
+    static auto GetService = Spy::getFunction<get_account_service_t>(OsAcc::SERVICE);
     return GetService ? GetService() : 0;
 }
 
@@ -52,7 +51,7 @@ fs::path get_home_path()
         return *cachedHomePath;
     }
     WxString home;
-    auto GetDataPath     = reinterpret_cast<get_data_path_t>(g_WeChatWinDllAddr + OsAcc::PATH);
+    auto GetDataPath     = Spy::getFunction<get_data_path_t>(OsAcc::PATH);
     int64_t service_addr = get_account_service();
     GetDataPath((QWORD)&home);
     if (home.wptr) {

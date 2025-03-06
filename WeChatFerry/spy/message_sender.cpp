@@ -8,10 +8,9 @@
 #include "log.hpp"
 #include "offsets.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "spy_types.h"
 #include "util.h"
-
-extern QWORD g_WeChatWinDllAddr;
 
 namespace message
 {
@@ -26,22 +25,22 @@ Sender &Sender::get_instance()
 
 Sender::Sender()
 {
-    func_new_chat_msg    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::INSTANCE);
-    func_free_chat_msg   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE);
-    func_send_msg_mgr    = reinterpret_cast<SendMsgMgr_t>(g_WeChatWinDllAddr + OsSend::MGR);
-    func_send_text       = reinterpret_cast<SendText_t>(g_WeChatWinDllAddr + OsSend::TEXT);
-    func_send_image      = reinterpret_cast<SendImage_t>(g_WeChatWinDllAddr + OsSend::IMAGE);
-    func_get_app_mgr     = reinterpret_cast<GetAppMgr_t>(g_WeChatWinDllAddr + OsSend::APP_MGR);
-    func_send_file       = reinterpret_cast<SendFile_t>(g_WeChatWinDllAddr + OsSend::FILE);
-    func_new_mmreader    = reinterpret_cast<New_t>(g_WeChatWinDllAddr + OsSend::NEW_MM_READER);
-    func_free_mmreader   = reinterpret_cast<Free_t>(g_WeChatWinDllAddr + OsSend::FREE_MM_READER);
-    func_send_rich_text  = reinterpret_cast<SendRichText_t>(g_WeChatWinDllAddr + OsSend::RICH_TEXT);
-    func_send_pat        = reinterpret_cast<SendPat_t>(g_WeChatWinDllAddr + OsSend::PAT);
-    func_forward         = reinterpret_cast<Forward_t>(g_WeChatWinDllAddr + OsSend::FORWARD);
-    func_get_emotion_mgr = reinterpret_cast<GetEmotionMgr_t>(g_WeChatWinDllAddr + OsSend::EMOTION_MGR);
-    func_send_emotion    = reinterpret_cast<SendEmotion_t>(g_WeChatWinDllAddr + OsSend::EMOTION);
-    func_send_xml        = reinterpret_cast<SendXml_t>(g_WeChatWinDllAddr + OsSend::XML);
-    func_xml_buf_sign    = reinterpret_cast<XmlBufSign_t>(g_WeChatWinDllAddr + OsSend::XML_BUF_SIGN);
+    func_new_chat_msg    = Spy::getFunction<New_t>(OsSend::INSTANCE);
+    func_free_chat_msg   = Spy::getFunction<Free_t>(OsSend::FREE);
+    func_send_msg_mgr    = Spy::getFunction<SendMsgMgr_t>(OsSend::MGR);
+    func_send_text       = Spy::getFunction<SendText_t>(OsSend::TEXT);
+    func_send_image      = Spy::getFunction<SendImage_t>(OsSend::IMAGE);
+    func_get_app_mgr     = Spy::getFunction<GetAppMgr_t>(OsSend::APP_MGR);
+    func_send_file       = Spy::getFunction<SendFile_t>(OsSend::FILE);
+    func_new_mmreader    = Spy::getFunction<New_t>(OsSend::NEW_MM_READER);
+    func_free_mmreader   = Spy::getFunction<Free_t>(OsSend::FREE_MM_READER);
+    func_send_rich_text  = Spy::getFunction<SendRichText_t>(OsSend::RICH_TEXT);
+    func_send_pat        = Spy::getFunction<SendPat_t>(OsSend::PAT);
+    func_forward         = Spy::getFunction<Forward_t>(OsSend::FORWARD);
+    func_get_emotion_mgr = Spy::getFunction<GetEmotionMgr_t>(OsSend::EMOTION_MGR);
+    func_send_emotion    = Spy::getFunction<SendEmotion_t>(OsSend::EMOTION);
+    func_send_xml        = Spy::getFunction<SendXml_t>(OsSend::XML);
+    func_xml_buf_sign    = Spy::getFunction<XmlBufSign_t>(OsSend::XML_BUF_SIGN);
 }
 
 void Sender::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)

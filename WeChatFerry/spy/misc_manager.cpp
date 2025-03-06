@@ -12,10 +12,9 @@
 #include "message_handler.h"
 #include "offsets.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "spy_types.h"
 #include "util.h"
-
-extern QWORD g_WeChatWinDllAddr;
 
 namespace misc
 {
@@ -105,8 +104,8 @@ static int get_first_page()
 {
     int status = -1;
 
-    get_sns_data_mgr_t GetSNSDataMgr     = (get_sns_data_mgr_t)(g_WeChatWinDllAddr + OsSns::DATA_MGR);
-    get_sns_first_page_t GetSNSFirstPage = (get_sns_first_page_t)(g_WeChatWinDllAddr + OsSns::FIRST);
+    auto GetSNSDataMgr   = Spy::getFunction<get_sns_data_mgr_t>(OsSns::DATA_MGR);
+    auto GetSNSFirstPage = Spy::getFunction<get_sns_first_page_t>(OsSns::FIRST);
 
     QWORD buff[16] = { 0 };
     QWORD mgr      = GetSNSDataMgr();
@@ -119,8 +118,8 @@ static int get_next_page(QWORD id)
 {
     int status = -1;
 
-    get_sns_timeline_mgr_t GetSnsTimeLineMgr      = (get_sns_timeline_mgr_t)(g_WeChatWinDllAddr + OsSns::TIMELINE);
-    get_sns_next_page_scene_t GetSNSNextPageScene = (get_sns_next_page_scene_t)(g_WeChatWinDllAddr + OsSns::NEXT);
+    auto GetSnsTimeLineMgr   = Spy::getFunction<get_sns_timeline_mgr_t>(OsSns::TIMELINE);
+    auto GetSNSNextPageScene = Spy::getFunction<get_sns_next_page_scene_t>(OsSns::NEXT);
 
     QWORD mgr = GetSnsTimeLineMgr();
     status    = (int)GetSNSNextPageScene(mgr, id);
@@ -167,13 +166,12 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
         return status;
     }
 
-    new_chat_msg_t NewChatMsg                = (new_chat_msg_t)(g_WeChatWinDllAddr + OsMisc::INSATNCE);
-    free_chat_msg_t FreeChatMsg              = (free_chat_msg_t)(g_WeChatWinDllAddr + OsMisc::FREE);
-    get_chat_mgr_t GetChatMgr                = (get_chat_mgr_t)(g_WeChatWinDllAddr + OsMisc::CHAT_MGR);
-    get_pre_download_mgr_t GetPreDownLoadMgr = (get_pre_download_mgr_t)(g_WeChatWinDllAddr + OsMisc::PRE_DOWNLOAD_MGR);
-    push_attach_task_t PushAttachTask        = (push_attach_task_t)(g_WeChatWinDllAddr + OsMisc::PUSH_ATTACH_TASK);
-    get_mgr_by_prefix_localid_t GetMgrByPrefixLocalId
-        = (get_mgr_by_prefix_localid_t)(g_WeChatWinDllAddr + OsMisc::PRE_LOCAL_ID_MGR);
+    auto NewChatMsg            = Spy::getFunction<new_chat_msg_t>(OsMisc::INSATNCE);
+    auto FreeChatMsg           = Spy::getFunction<free_chat_msg_t>(OsMisc::FREE);
+    auto GetChatMgr            = Spy::getFunction<get_chat_mgr_t>(OsMisc::CHAT_MGR);
+    auto GetPreDownLoadMgr     = Spy::getFunction<get_pre_download_mgr_t>(OsMisc::PRE_DOWNLOAD_MGR);
+    auto PushAttachTask        = Spy::getFunction<push_attach_task_t>(OsMisc::PUSH_ATTACH_TASK);
+    auto GetMgrByPrefixLocalId = Spy::getFunction<get_mgr_by_prefix_localid_t>(OsMisc::PRE_LOCAL_ID_MGR);
 
     LARGE_INTEGER l;
     l.HighPart = dbIdx;
@@ -336,7 +334,7 @@ int revoke_message(uint64_t id)
 std::string get_login_url()
 {
     std::string uri;
-    get_qr_code_mgr_t get_qr_code_mgr = (get_qr_code_mgr_t)(g_WeChatWinDllAddr + OsMisc::QR_CODE);
+    auto get_qr_code_mgr = Spy::getFunction<get_qr_code_mgr_t>(OsMisc::QR_CODE);
 
     uint64_t addr = get_qr_code_mgr() + 0x68;
     uint64_t len  = *(uint64_t *)(addr + 0x10);

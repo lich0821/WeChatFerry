@@ -5,9 +5,8 @@
 #include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "util.h"
-
-extern QWORD g_WeChatWinDllAddr;
 
 namespace chatroom
 {
@@ -32,8 +31,8 @@ bool rpc_chatroom_common(const MemberMgmt &m, uint8_t *out, size_t *len, Func fu
 
 int add_chatroom_member(const string &roomid, const string &wxids)
 {
-    auto get_chatroom_mgr = reinterpret_cast<get_mgr_t>(g_WeChatWinDllAddr + OsRoom::MGR);
-    auto add_members      = reinterpret_cast<add_member_t>(g_WeChatWinDllAddr + OsRoom::ADD);
+    auto get_chatroom_mgr = Spy::getFunction<get_mgr_t>(OsRoom::MGR);
+    auto add_members      = Spy::getFunction<add_member_t>(OsRoom::ADD);
 
     WxString *wx_roomid = util::CreateWxString(roomid);
 
@@ -46,8 +45,8 @@ int add_chatroom_member(const string &roomid, const string &wxids)
 
 int del_chatroom_member(const string &roomid, const string &wxids)
 {
-    auto get_chatroom_mgr = reinterpret_cast<get_mgr_t>(g_WeChatWinDllAddr + OsRoom::MGR);
-    auto del_members      = reinterpret_cast<delete_member_t>(g_WeChatWinDllAddr + OsRoom::DEL);
+    auto get_chatroom_mgr = Spy::getFunction<get_mgr_t>(OsRoom::MGR);
+    auto del_members      = Spy::getFunction<delete_member_t>(OsRoom::DEL);
 
     WxString *wx_roomid = util::CreateWxString(roomid);
     auto wx_members     = util::parse_wxids(wxids).wxWxids;
@@ -58,7 +57,7 @@ int del_chatroom_member(const string &roomid, const string &wxids)
 
 int invite_chatroom_member(const string &roomid, const string &wxids)
 {
-    auto invite_members = reinterpret_cast<invite_members_t>(g_WeChatWinDllAddr + OsRoom::INV);
+    auto invite_members = Spy::getFunction<invite_members_t>(OsRoom::INV);
 
     wstring ws_roomid   = util::s2w(roomid);
     WxString *wx_roomid = util::CreateWxString(roomid);

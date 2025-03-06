@@ -6,11 +6,10 @@
 #include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "util.h"
 
 using namespace std;
-
-extern QWORD g_WeChatWinDllAddr;
 
 namespace contact
 {
@@ -54,8 +53,8 @@ static string get_cnt_string(QWORD start, QWORD end, const uint8_t *feat, size_t
 vector<RpcContact_t> get_contacts()
 {
     vector<RpcContact_t> contacts;
-    get_contact_mgr_t func_get_contact_mgr   = reinterpret_cast<get_contact_mgr_t>(g_WeChatWinDllAddr + OsCon::MGR);
-    get_contact_list_t func_get_contact_list = reinterpret_cast<get_contact_list_t>(g_WeChatWinDllAddr + OsCon::LIST);
+    auto func_get_contact_mgr  = Spy::getFunction<get_contact_mgr_t>(OsCon::MGR);
+    auto func_get_contact_list = Spy::getFunction<get_contact_list_t>(OsCon::LIST);
 
     QWORD mgr     = func_get_contact_mgr();
     QWORD addr[3] = { 0 };

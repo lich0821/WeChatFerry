@@ -12,9 +12,8 @@
 #include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "util.h"
-
-extern QWORD g_WeChatWinDllAddr;
 
 namespace message
 {
@@ -189,8 +188,8 @@ int Handler::EnableLog()
 {
     if (isLogging) return 1;
 
-    pLogLevel = reinterpret_cast<uint32_t *>(g_WeChatWinDllAddr + OsLog::LEVEL);
-    funcWxLog = reinterpret_cast<funcWxLog_t>(g_WeChatWinDllAddr + OsLog::CALL);
+    pLogLevel = reinterpret_cast<uint32_t *>(Spy::WeChatDll.load() + OsLog::LEVEL);
+    funcWxLog = Spy::getFunction<funcWxLog_t>(OsLog::CALL);
 
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
@@ -215,7 +214,7 @@ int Handler::ListenMsg()
 {
     if (isListeningMsg) return 1;
 
-    funcRecvMsg = reinterpret_cast<funcRecvMsg_t>(g_WeChatWinDllAddr + OsRecv::CALL);
+    funcRecvMsg = Spy::getFunction<funcRecvMsg_t>(OsRecv::CALL);
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg)) != MH_OK) return -1;
     if (MH_EnableHook(funcRecvMsg) != MH_OK) return -1;
@@ -237,7 +236,7 @@ int Handler::ListenPyq()
 {
     if (isListeningPyq) return 1;
 
-    funcRecvPyq = reinterpret_cast<funcRecvPyq_t>(g_WeChatWinDllAddr + OsRecv::PYQ_CALL);
+    funcRecvPyq = Spy::getFunction<funcRecvPyq_t>(OsRecv::PYQ_CALL);
     if (InitializeHook() != MH_OK) return -1;
     if (MH_CreateHook(funcRecvPyq, &DispatchPyq, reinterpret_cast<LPVOID *>(&realRecvPyq)) != MH_OK) return -1;
     if (MH_EnableHook(funcRecvPyq) != MH_OK) return -1;

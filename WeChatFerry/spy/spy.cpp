@@ -1,23 +1,21 @@
 ﻿#include "spy.h"
 
 #include <filesystem>
-#include <string_view>
 
 #include "log.hpp"
 #include "rpc_server.h"
+#include "spy.h"
 #include "util.h"
 
-constexpr std::string_view SUPPORT_VERSION = "3.9.12.17";
-
-UINT64 g_WeChatWinDllAddr = 0;
-
-int InitSpy(LPVOID args)
+namespace Spy
+{
+int Init(void *args)
 {
     auto *pp = static_cast<util::PortPath *>(args);
 
     Log::InitLogger(pp->path);
     if (auto dll_addr = GetModuleHandle(L"WeChatWin.dll")) {
-        g_WeChatWinDllAddr = reinterpret_cast<UINT64>(dll_addr);
+        WeChatDll.store(reinterpret_cast<uint64_t>(dll_addr));
     } else {
         LOG_ERROR("获取 WeChatWin.dll 模块地址失败");
         return -1;
@@ -37,8 +35,14 @@ int InitSpy(LPVOID args)
     return 0;
 }
 
-void CleanupSpy()
+void Cleanup()
 {
     LOG_DEBUG("CleanupSpy");
     RpcServer::destroyInstance();
+}
+}
+
+extern "C" {
+__declspec(dllexport) int InitSpy(void *args) { return Spy::Init(args); }
+__declspec(dllexport) void CleanupSpy() { Spy::Cleanup(); }
 }

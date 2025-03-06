@@ -7,10 +7,9 @@
 #include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
+#include "spy.h"
 #include "sqlite3.h"
 #include "util.h"
-
-extern UINT64 g_WeChatWinDllAddr;
 
 namespace db
 {
@@ -48,7 +47,7 @@ static void get_msg_db_handle(QWORD msg_mgr_addr)
 db_map_t get_db_handles()
 {
     db_map.clear();
-    QWORD db_instance_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::INSTANCE);
+    QWORD db_instance_addr = util::get_qword(Spy::WeChatDll.load() + OsDb::INSTANCE);
 
     get_db_handle(db_instance_addr, OsDb::MICROMSG);     // MicroMsg.db
     get_db_handle(db_instance_addr, OsDb::CHAT_MSG);     // ChatMsg.db
@@ -57,7 +56,7 @@ db_map_t get_db_handles()
     get_db_handle(db_instance_addr, OsDb::MEDIA);        // Media.db
     get_db_handle(db_instance_addr, OsDb::FUNCTION_MSG); // Function.db
 
-    get_msg_db_handle(util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I)); // MSGi.db & MediaMsgi.db
+    get_msg_db_handle(util::get_qword(Spy::WeChatDll.load() + OsDb::MSG_I)); // MSGi.db & MediaMsgi.db
     return db_map;
 }
 
@@ -103,8 +102,8 @@ DbTables_t get_db_tables(const std::string &db)
         return tables;
     }
 
-    constexpr const char *sql   = "SELECT name FROM sqlite_master WHERE type='table';";
-    Sqlite3_exec p_sqlite3_exec = reinterpret_cast<Sqlite3_exec>(g_WeChatWinDllAddr + OsDb::EXEC);
+    constexpr const char *sql = "SELECT name FROM sqlite_master WHERE type='table';";
+    auto p_sqlite3_exec       = Spy::getFunction<Sqlite3_exec>(OsDb::EXEC);
     p_sqlite3_exec(it->second, sql, (Sqlite3_callback)cb_get_tables, (void *)&tables, nullptr);
 
     return tables;
@@ -114,19 +113,14 @@ DbRows_t exec_db_query(const std::string &db, const std::string &sql)
 {
     DbRows_t rows;
 
-    Sqlite3_prepare func_prepare = reinterpret_cast<Sqlite3_prepare>(g_WeChatWinDllAddr + OsDb::PREPARE);
-    Sqlite3_step func_step       = reinterpret_cast<Sqlite3_step>(g_WeChatWinDllAddr + OsDb::STEP);
-    Sqlite3_column_count func_column_count
-        = reinterpret_cast<Sqlite3_column_count>(g_WeChatWinDllAddr + OsDb::COLUMN_COUNT);
-    Sqlite3_column_name func_column_name
-        = reinterpret_cast<Sqlite3_column_name>(g_WeChatWinDllAddr + OsDb::COLUMN_NAME);
-    Sqlite3_column_type func_column_type
-        = reinterpret_cast<Sqlite3_column_type>(g_WeChatWinDllAddr + OsDb::COLUMN_TYPE);
-    Sqlite3_column_blob func_column_blob
-        = reinterpret_cast<Sqlite3_column_blob>(g_WeChatWinDllAddr + OsDb::COLUMN_BLOB);
-    Sqlite3_column_bytes func_column_bytes
-        = reinterpret_cast<Sqlite3_column_bytes>(g_WeChatWinDllAddr + OsDb::COLUMN_BYTES);
-    Sqlite3_finalize func_finalize = reinterpret_cast<Sqlite3_finalize>(g_WeChatWinDllAddr + OsDb::FINALIZE);
+    auto func_prepare      = Spy::getFunction<Sqlite3_prepare>(OsDb::PREPARE);
+    auto func_step         = Spy::getFunction<Sqlite3_step>(OsDb::STEP);
+    auto func_column_count = Spy::getFunction<Sqlite3_column_count>(OsDb::COLUMN_COUNT);
+    auto func_column_name  = Spy::getFunction<Sqlite3_column_name>(OsDb::COLUMN_NAME);
+    auto func_column_type  = Spy::getFunction<Sqlite3_column_type>(OsDb::COLUMN_TYPE);
+    auto func_column_blob  = Spy::getFunction<Sqlite3_column_blob>(OsDb::COLUMN_BLOB);
+    auto func_column_bytes = Spy::getFunction<Sqlite3_column_bytes>(OsDb::COLUMN_BYTES);
+    auto func_finalize     = Spy::getFunction<Sqlite3_finalize>(OsDb::FINALIZE);
 
     if (db_map.empty()) {
         db_map = get_db_handles();
@@ -180,7 +174,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
         return -1;
     }
 
-    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I);
+    QWORD msg_mgr_addr = util::get_qword(Spy::WeChatDll.load() + OsDb::MSG_I);
     int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68)); // 总不能 int 还不够吧？
     QWORD p_start      = util::get_qword(msg_mgr_addr + 0x50);
 
@@ -223,7 +217,7 @@ int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
 
 std::vector<uint8_t> get_audio_data(uint64_t id)
 {
-    QWORD msg_mgr_addr = util::get_qword(g_WeChatWinDllAddr + OsDb::MSG_I);
+    QWORD msg_mgr_addr = util::get_qword(Spy::WeChatDll.load() + OsDb::MSG_I);
     int db_index       = static_cast<int>(util::get_qword(msg_mgr_addr + 0x68));
 
     std::string sql = "SELECT Buf FROM Media WHERE Reserved0=" + std::to_string(id) + ";";
