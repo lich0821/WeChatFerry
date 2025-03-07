@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "log.hpp"
+#include "log.h"
 #include "rpc_server.h"
 #include "spy.h"
 #include "util.h"
