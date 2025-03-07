@@ -190,3 +190,4 @@ RpcContact_t GetContactByWxid(string wxid)
     return contact;
 }
 #endif
+

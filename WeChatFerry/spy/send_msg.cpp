@@ -271,3 +271,4 @@ void SendXmlMessage(string receiver, string xml, string path, QWORD type)
     funcFree((QWORD)&buff);
     funcFree((QWORD)&buff2);
 }
+

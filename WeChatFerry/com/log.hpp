@@ -1,15 +1,18 @@
 #pragma once
 
+#ifdef ENABLE_DEBUG_LOG
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#endif
+
 #include <filesystem>
 #include <iomanip>
 #include <memory>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
 
-#include "util.h"
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 #define LOG_DEBUG(...) SPDLOG_DEBUG(__VA_ARGS__)
 #define LOG_INFO(...)  SPDLOG_INFO(__VA_ARGS__)
@@ -48,7 +51,7 @@ inline void InitLogger(const std::string &path)
         logger = spdlog::rotating_logger_mt(DEFAULT_LOGGER_NAME, filename.string(), DEFAULT_LOGGER_MAX_SIZE,
                                             DEFAULT_LOGGER_MAX_FILES);
     } catch (const spdlog::spdlog_ex &ex) {
-        MessageBox(NULL, String2Wstring(ex.what()).c_str(), L"Init LOGGER ERROR", MB_ICONERROR);
+        MessageBoxA(NULL, ex.what(), "Init LOGGER ERROR", MB_ICONERROR);
         return;
     }
 
@@ -59,11 +62,10 @@ inline void InitLogger(const std::string &path)
     spdlog::set_level(spdlog::level::debug);
     logger->flush_on(spdlog::level::debug);
 #else
-    spdlog::set_level(spdlog::level::info);
     logger->flush_on(spdlog::level::info);
 #endif
 
-    SPDLOG_DEBUG("Logger initialized with default settings.");
+    LOG_DEBUG("InitLogger with debug level");
 }
 
 #ifdef ENABLE_DEBUG_LOG
@@ -80,7 +82,7 @@ inline void log_buffer(uint8_t *buffer, size_t len)
         }
     }
 
-    SPDLOG_DEBUG(oss.str());
+    LOG_DEBUG(oss.str());
 }
 #endif
 

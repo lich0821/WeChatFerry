@@ -5,7 +5,7 @@
 <details>
 <summary><b>⚠️ 免责声明【必读】⚠️</b></summary>
 
-请阅读完整的免责声明：[点击查看](DISCLAIMER.md)
+请阅读完整的免责声明：[点击查看](WeChatFerry/DISCLAIMER.md)
 
 </details>
 
@@ -168,7 +168,7 @@ sdk.WxDestroySDK()
 
 ### 调试日志
 ```c
-    DbgMsg("ListenMessage"); // 封装的 OutputDebugString
+    util::dbg_msg("ListenMessage"); // 封装的 OutputDebugString
     OutputDebugString(L"ListenMessage\n");
     MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
 ```

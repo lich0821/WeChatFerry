@@ -5,36 +5,51 @@
 
 typedef uint64_t QWORD;
 
-struct WxString {
+class WxString
+{
+public:
     const wchar_t *wptr;
     DWORD size;
-    DWORD capacity;
+    DWORD length;
     const char *ptr;
     DWORD clen;
-    WxString()
+
+    WxString() : wptr(nullptr), size(0), length(0), ptr(nullptr), clen(0) { }
+
+    explicit WxString(const std::wstring &ws)
+        : wptr(ws.c_str()), size(static_cast<DWORD>(ws.size())), length(static_cast<DWORD>(ws.length())), ptr(nullptr),
+          clen(0)
     {
-        wptr     = NULL;
-        size     = 0;
-        capacity = 0;
-        ptr      = NULL;
-        clen     = 0;
     }
 
-    WxString(std::wstring &ws)
+    WxString(const WxString &)            = delete;
+    WxString &operator=(const WxString &) = delete;
+
+    WxString(WxString &&other) noexcept
+        : wptr(other.wptr), size(other.size), length(other.length), ptr(other.ptr), clen(other.clen)
     {
-        wptr     = ws.c_str();
-        size     = (DWORD)ws.size();
-        capacity = (DWORD)ws.capacity();
-        ptr      = NULL;
-        clen     = 0;
+        other.wptr   = nullptr;
+        other.size   = 0;
+        other.length = 0;
+        other.ptr    = nullptr;
+        other.clen   = 0;
+    }
+
+    WxString &operator=(WxString &&other) noexcept
+    {
+        if (this != &other) {
+            wptr   = other.wptr;
+            size   = other.size;
+            length = other.length;
+            ptr    = other.ptr;
+            clen   = other.clen;
+
+            other.wptr   = nullptr;
+            other.size   = 0;
+            other.length = 0;
+            other.ptr    = nullptr;
+            other.clen   = 0;
+        }
+        return *this;
     }
 };
-
-typedef struct RawVector {
-#ifdef _DEBUG
-    QWORD head;
-#endif
-    QWORD start;
-    QWORD finish;
-    QWORD end;
-} RawVector_t;

@@ -1,49 +1,48 @@
-﻿#include <filesystem>
+﻿#include "spy.h"
 
-#include "log.h"
+#include <filesystem>
+
+#include "log.hpp"
 #include "rpc_server.h"
 #include "spy.h"
 #include "util.h"
 
-UINT64 g_WeChatWinDllAddr = 0;
-
-static bool IsWxVersionMatched(const wchar_t *version)
+namespace Spy
 {
-    if (wcscmp(version, SUPPORT_VERSION) != 0) {
-        return false;
+int Init(void *args)
+{
+    auto *pp = static_cast<util::PortPath *>(args);
+
+    Log::InitLogger(pp->path);
+    if (auto dll_addr = GetModuleHandle(L"WeChatWin.dll")) {
+        WeChatDll.store(reinterpret_cast<uint64_t>(dll_addr));
+    } else {
+        LOG_ERROR("获取 WeChatWin.dll 模块地址失败");
+        return -1;
     }
-    return true;
+
+    std::string version = util::get_wechat_version();
+    std::string msg     = fmt::format("WCF 支持版本: {}，当前版本: {}", SUPPORT_VERSION, version);
+    if (version != SUPPORT_VERSION) {
+        LOG_ERROR(msg);
+        MessageBoxA(NULL, msg.c_str(), "微信版本错误", MB_ICONERROR);
+        return -2;
+    }
+
+    LOG_INFO(msg);
+    RpcServer::getInstance().start(pp->port);
+
+    return 0;
 }
 
-void InitSpy(LPVOID args)
-{
-
-    wchar_t version[16] = { 0 };
-    PortPath_t *pp      = (PortPath_t *)args;
-
-    InitLogger(pp->path);
-    g_WeChatWinDllAddr = (UINT64)GetModuleHandle(L"WeChatWin.dll"); // 获取wechatWin模块地址
-    if (g_WeChatWinDllAddr == 0) {
-        LOG_ERROR("获取 wechatWin.dll 模块地址失败");
-        return; // TODO: 退出进程，避免后面操作失败
-    }
-
-    if (!GetWeChatVersion(version)) { // 获取微信版本
-        LOG_ERROR("获取微信版本失败");
-        return;
-    }
-    LOG_INFO("WeChat version: {}", Wstring2String(version).c_str());
-    if (!IsWxVersionMatched(version)) {
-        LOG_ERROR("不支持当前版本");
-        MessageBox(NULL, L"不支持当前版本", L"错误", 0);
-        return;
-    }
-
-    RpcStartServer(pp->port);
-}
-
-void CleanupSpy()
+void Cleanup()
 {
     LOG_DEBUG("CleanupSpy");
-    RpcStopServer();
+    RpcServer::destroyInstance();
+}
+}
+
+extern "C" {
+__declspec(dllexport) int InitSpy(void *args) { return Spy::Init(args); }
+__declspec(dllexport) void CleanupSpy() { Spy::Cleanup(); }
 }

@@ -56,3 +56,4 @@ UserInfo_t GetUserInfo()
 
     return ui;
 }
+

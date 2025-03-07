@@ -442,3 +442,4 @@ int ReceiveTransfer(string wxid, string transferid, string transactionid)
     // 别想了，这个不实现了
     return -1;
 }
+

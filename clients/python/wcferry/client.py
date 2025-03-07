@@ -13,8 +13,11 @@ import re
 import sys
 from queue import Queue
 from threading import Thread
+import shutil
 from time import sleep
 from typing import Callable, Dict, List, Optional
+from pathlib import Path
+import importlib.resources as pkg_resources  # Python 3.9+
 
 import pynng
 import requests
@@ -77,6 +80,7 @@ class Wcf():
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
+            self._copy_disclaimer_to_cwd()
             self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
             if self.sdk.WxInitSDK(debug, port) != 0:
                 self.LOG.error("初始化失败！")
@@ -115,6 +119,17 @@ class Wcf():
     def __del__(self) -> None:
         self.cleanup()
 
+    def _copy_disclaimer_to_cwd(self):
+        """复制免责声明到工作目录"""
+        try:
+            target_path = Path.cwd() / "DISCLAIMER.md"
+            with pkg_resources.path("wcferry", "DISCLAIMER.md") as disclaimer_path:
+                if not target_path.exists():
+                    shutil.copy(disclaimer_path, target_path)
+        except Exception as e:
+            self.LOG.error(f"复制免责声明失败：{e}")
+            os._exit(-3)
+
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
         if not self._is_running:
@@ -141,7 +156,9 @@ class Wcf():
         data = req.SerializeToString()
         self.cmd_socket.send(data)
         rsp = wcf_pb2.Response()
-        rsp.ParseFromString(self.cmd_socket.recv_msg().bytes)
+        bs = self.cmd_socket.recv_msg().bytes
+        self.LOG.debug(bs.hex())
+        rsp.ParseFromString(bs)
         return rsp
 
     def is_receiving_msg(self) -> bool:
