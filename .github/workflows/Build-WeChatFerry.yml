@@ -92,7 +92,7 @@ jobs:
       - name: 打包输出文件及下载 WeChat 安装包
         run: |
           New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
-          Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
+          Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll", "WeChatFerry/Out/DISCLAIMER.md" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
           Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "WeChatFerry/tmp/WeChatSetup-${{ env.wechat_version }}.exe"
         shell: pwsh
 

@@ -24,16 +24,16 @@
     <ClInclude Include="rpc_server.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="exec_sql.h">
+    <ClInclude Include="database_executor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="contact_mgmt.h">
+    <ClInclude Include="contact_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="receive_msg.h">
+    <ClInclude Include="message_handler.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="send_msg.h">
+    <ClInclude Include="message_sender.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="spy.h">
@@ -63,16 +63,16 @@
     <ClInclude Include="..\rpc\pb_types.h">
       <Filter>nnrpc</Filter>
     </ClInclude>
-    <ClInclude Include="chatroom_mgmt.h">
+    <ClInclude Include="chatroom_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="user_info.h">
+    <ClInclude Include="account_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="funcs.h">
+    <ClInclude Include="misc_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sqlite3.h">
@@ -87,6 +87,9 @@
     <ClInclude Include="..\com\log.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="rpc_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -95,16 +98,16 @@
     <ClCompile Include="rpc_server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="exec_sql.cpp">
+    <ClCompile Include="database_executor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="contact_mgmt.cpp">
+    <ClCompile Include="contact_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="receive_msg.cpp">
+    <ClCompile Include="message_handler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="send_msg.cpp">
+    <ClCompile Include="message_sender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="spy.cpp">
@@ -125,13 +128,13 @@
     <ClCompile Include="..\rpc\pb_util.cpp">
       <Filter>nnrpc</Filter>
     </ClCompile>
-    <ClCompile Include="chatroom_mgmt.cpp">
+    <ClCompile Include="chatroom_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="user_info.cpp">
+    <ClCompile Include="account_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="funcs.cpp">
+    <ClCompile Include="misc_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\com\util.cpp">

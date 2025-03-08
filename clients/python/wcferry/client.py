@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.3.3.3"
+__version__ = "39.4.1.0"
 
 import atexit
 import base64
@@ -10,6 +10,7 @@ import logging
 import mimetypes
 import os
 import re
+import subprocess
 import sys
 from queue import Queue
 from threading import Thread
@@ -70,6 +71,7 @@ class Wcf():
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
+        self._set_console_utf8()
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
         self.host = host
@@ -115,6 +117,13 @@ class Wcf():
     def __del__(self) -> None:
         self.cleanup()
 
+    def _set_console_utf8(self):
+        try:
+            subprocess.run("chcp 65001", shell=True, check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError as e:
+            self.LOG.error(f"修改控制台代码页失败: {e}")
+
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
         if not self._is_running:
@@ -141,7 +150,9 @@ class Wcf():
         data = req.SerializeToString()
         self.cmd_socket.send(data)
         rsp = wcf_pb2.Response()
-        rsp.ParseFromString(self.cmd_socket.recv_msg().bytes)
+        bs = self.cmd_socket.recv_msg().bytes
+        self.LOG.debug(bs.hex())
+        rsp.ParseFromString(bs)
         return rsp
 
     def is_receiving_msg(self) -> bool:
@@ -150,7 +161,6 @@ class Wcf():
 
     def get_qrcode(self) -> str:
         """获取登录二维码，已经登录则返回空字符串"""
-        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REFRESH_QRCODE  # FUNC_REFRESH_QRCODE
         rsp = self._send_request(req)
@@ -398,6 +408,7 @@ class Wcf():
         Returns:
             int: 0 为成功，其他失败
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_XML  # FUNC_SEND_XML
         req.xml.receiver = receiver
@@ -763,6 +774,7 @@ class Wcf():
         Returns:
             int: 1 为成功，其他失败
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REVOKE_MSG  # FUNC_REVOKE_MSG
         req.ui64 = id
