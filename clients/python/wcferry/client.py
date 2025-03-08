@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.4.0.0"
+__version__ = "39.4.1.0"
 
 import atexit
 import base64
@@ -10,14 +10,12 @@ import logging
 import mimetypes
 import os
 import re
+import subprocess
 import sys
 from queue import Queue
 from threading import Thread
-import shutil
 from time import sleep
 from typing import Callable, Dict, List, Optional
-from pathlib import Path
-import importlib.resources as pkg_resources  # Python 3.9+
 
 import pynng
 import requests
@@ -73,6 +71,7 @@ class Wcf():
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
+        self._set_console_utf8()
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
         self.host = host
@@ -80,7 +79,6 @@ class Wcf():
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
-            self._copy_disclaimer_to_cwd()
             self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
             if self.sdk.WxInitSDK(debug, port) != 0:
                 self.LOG.error("初始化失败！")
@@ -119,16 +117,12 @@ class Wcf():
     def __del__(self) -> None:
         self.cleanup()
 
-    def _copy_disclaimer_to_cwd(self):
-        """复制免责声明到工作目录"""
+    def _set_console_utf8(self):
         try:
-            target_path = Path.cwd() / "DISCLAIMER.md"
-            with pkg_resources.path("wcferry", "DISCLAIMER.md") as disclaimer_path:
-                if not target_path.exists():
-                    shutil.copy(disclaimer_path, target_path)
-        except Exception as e:
-            self.LOG.error(f"复制免责声明失败：{e}")
-            os._exit(-3)
+            subprocess.run("chcp 65001", shell=True, check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError as e:
+            self.LOG.error(f"修改控制台代码页失败: {e}")
 
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
@@ -167,7 +161,6 @@ class Wcf():
 
     def get_qrcode(self) -> str:
         """获取登录二维码，已经登录则返回空字符串"""
-        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REFRESH_QRCODE  # FUNC_REFRESH_QRCODE
         rsp = self._send_request(req)
@@ -415,6 +408,7 @@ class Wcf():
         Returns:
             int: 0 为成功，其他失败
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_SEND_XML  # FUNC_SEND_XML
         req.xml.receiver = receiver
@@ -780,6 +774,7 @@ class Wcf():
         Returns:
             int: 1 为成功，其他失败
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REVOKE_MSG  # FUNC_REVOKE_MSG
         req.ui64 = id

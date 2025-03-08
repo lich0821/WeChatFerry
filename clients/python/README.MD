@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.3.3.1
-* 修复 `send_xml`
+### v39.4.1.0
+* 修复乱码问题
 
 <details><summary>点击查看更多</summary>
 
@@ -70,7 +70,6 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
-* 发送 XML 消息
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
