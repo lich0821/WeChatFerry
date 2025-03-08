@@ -70,6 +70,12 @@ inline void FreeBuffer(void *buffer)
 {
     if (buffer) HeapFree(GetProcessHeap(), 8, buffer);
 }
+inline int MsgBox(HWND hWnd, const std::string &text, const std::string &caption = "WCF", UINT uType = MB_OK)
+{
+    std::wstring wText    = s2w(text);
+    std::wstring wCaption = s2w(caption);
+    return MessageBoxW(nullptr, wText.c_str(), wCaption.c_str(), uType);
+}
 
 template <typename T> static T *AllocBuffer(size_t count)
 {

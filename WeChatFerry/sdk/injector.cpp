@@ -4,11 +4,13 @@
 
 #include "psapi.h"
 
+#include "util.h"
+
 using namespace std;
 
 static void handle_injection_error(HANDLE process, LPVOID remote_address, const std::string &error_msg)
 {
-    MessageBoxA(NULL, error_msg.c_str(), "Error", MB_ICONERROR);
+    util::MsgBox(NULL, error_msg.c_str(), "Error", MB_ICONERROR);
     if (remote_address) {
         VirtualFreeEx(process, remote_address, 0, MEM_RELEASE);
     }
@@ -22,7 +24,7 @@ HMODULE get_target_module_base(HANDLE process, const string &dll)
     DWORD needed;
     HMODULE modules[512];
     if (!EnumProcessModulesEx(process, modules, sizeof(modules), &needed, LIST_MODULES_64BIT)) {
-        MessageBoxA(NULL, "获取模块失败", "get_target_module_base", 0);
+        util::MsgBox(NULL, "获取模块失败", "get_target_module_base", 0);
         return NULL;
     }
 
@@ -44,7 +46,7 @@ HANDLE inject_dll(DWORD pid, const string &dll_path, HMODULE *injected_base)
     // 1. 打开目标进程
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
     if (!hProcess) {
-        MessageBoxA(NULL, "打开进程失败", "inject_dll", 0);
+        util::MsgBox(NULL, "打开进程失败", "inject_dll", 0);
         return NULL;
     }
 
@@ -90,19 +92,19 @@ bool eject_dll(HANDLE process, HMODULE dll_base)
 {
     HMODULE k32 = GetModuleHandleA("kernel32.dll");
     if (!k32) {
-        MessageBoxA(NULL, "获取 kernel32 失败", "eject_dll", 0);
+        util::MsgBox(NULL, "获取 kernel32 失败", "eject_dll", 0);
         return false;
     }
 
     FARPROC libAddr = GetProcAddress(k32, "FreeLibraryAndExitThread");
     if (!libAddr) {
-        MessageBoxA(NULL, "获取 FreeLibrary 失败", "eject_dll", 0);
+        util::MsgBox(NULL, "获取 FreeLibrary 失败", "eject_dll", 0);
         return false;
     }
 
     HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)libAddr, (LPVOID)dll_base, 0, NULL);
     if (!hThread) {
-        MessageBoxA(NULL, "FreeLibrary 调用失败!", "eject_dll", 0);
+        util::MsgBox(NULL, "FreeLibrary 调用失败!", "eject_dll", 0);
         return false;
     }
 
@@ -116,7 +118,7 @@ static uint64_t get_func_offset(const string &dll_path, const string &func_name)
 {
     HMODULE dll = LoadLibraryA(dll_path.c_str());
     if (!dll) {
-        MessageBoxA(NULL, "获取 DLL 失败", "get_func_offset", 0);
+        util::MsgBox(NULL, "获取 DLL 失败", "get_func_offset", 0);
         return 0;
     }
 
@@ -157,7 +159,7 @@ bool call_dll_func_ex(HANDLE process, const string &dll_path, HMODULE dll_base, 
     uint64_t pFunc        = reinterpret_cast<uint64_t>(dll_base) + offset;
     LPVOID pRemoteAddress = VirtualAllocEx(process, NULL, size, MEM_COMMIT, PAGE_READWRITE);
     if (!pRemoteAddress) {
-        MessageBoxA(NULL, "申请内存失败", "call_dll_func_ex", 0);
+        util::MsgBox(NULL, "申请内存失败", "call_dll_func_ex", 0);
         return false;
     }
 
@@ -166,7 +168,7 @@ bool call_dll_func_ex(HANDLE process, const string &dll_path, HMODULE dll_base, 
     HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, pRemoteAddress, 0, NULL);
     if (!hThread) {
         VirtualFreeEx(process, pRemoteAddress, 0, MEM_RELEASE);
-        MessageBoxA(NULL, "远程调用失败", "call_dll_func_ex", 0);
+        util::MsgBox(NULL, "远程调用失败", "call_dll_func_ex", 0);
         return false;
     }
 
