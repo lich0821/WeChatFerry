@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.4.1.0"
+__version__ = "39.4.2.1"
 
 import atexit
 import base64
@@ -10,6 +10,7 @@ import logging
 import mimetypes
 import os
 import re
+import shutil
 import subprocess
 import sys
 from queue import Queue
@@ -667,9 +668,9 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
-                    cnt["wxid"].startswith("gh_") or    # 公众号
-                    cnt["wxid"] in not_friends.keys()   # 其他杂号
-                ):
+                        cnt["wxid"].startswith("gh_") or    # 公众号
+                        cnt["wxid"] in not_friends.keys()   # 其他杂号
+                    ):
                 continue
             friends.append(cnt)
 
@@ -852,6 +853,39 @@ class Wcf():
             path = self.decrypt_image(extra, dir)
             if path:
                 return path
+            sleep(1)
+            cnt += 1
+
+        self.LOG.error(f"下载超时")
+        return ""
+
+    def download_video(self, id: int, thumb: str, dir: str, timeout: int = 30) -> str:
+        """下载视频
+
+        Args:
+            id (int): 消息中 id
+            thumb (str): 消息中的 thumb（即视频的封面图）
+            dir (str): 存放视频的目录（目录不存在会出错）
+            timeout (int): 超时时间（秒）
+
+        Returns:
+            str: 成功返回存储路径；空字符串为失败，原因见日志。
+        """
+        base, _ = os.path.splitext(thumb)
+        file_path = base + ".mp4"
+        file_name = os.path.basename(file_path)
+        target_path = os.path.join(dir, file_name)
+        if (not os.path.exists(target_path)) and (not os.path.exists(file_path)) and (self.download_attach(id, thumb, "") != 0):
+            self.LOG.error(f"下载失败")
+            return ""
+
+        cnt = 0
+        while cnt < timeout:
+            if os.path.exists(file_path):
+                os.makedirs(dir, exist_ok=True)
+                shutil.move(file_path, target_path)
+                return target_path
+
             sleep(1)
             cnt += 1
 
