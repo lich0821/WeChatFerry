@@ -186,7 +186,7 @@ int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extr
     QWORD pChatMsg = NewChatMsg(buff);
     GetChatMgr();
     GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
-    QWORD type = util::get_qword(reinterpret_cast<QWORD>(buff) + 0x38);
+    QWORD type = util::get_dword(reinterpret_cast<QWORD>(buff) + 0x38);
 
     fs::path save_path, thumb_path;
     switch (type) {
