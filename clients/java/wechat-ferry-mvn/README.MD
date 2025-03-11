@@ -14,7 +14,7 @@
 | JDK             | 1.8+      | √  |
 | Maven           | 3.8+      | √  |
 | 微信客户端           | 3.9.12.17 | √  |
-| WeChatFerry-SDK | 39.4.1    | √  |
+| WeChatFerry-SDK | 39.4.2    | √  |
 | MySQL           | 8.0+      | 备用 |
 
 ### 下载文件
