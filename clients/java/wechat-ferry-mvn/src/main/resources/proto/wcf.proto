@@ -94,9 +94,9 @@ message WxMsg
     string content = 7;                        // 消息内容
     string sender  = 8;                        // 消息发送者
     string sign    = 9;                        // Sign
-    string thumb   = 10;                       // 缩略图
-    string extra   = 11;                       // 附加内容
-    string xml     = 12;                       // 消息 xml
+    string thumb   = 10;                       // 视频或图片消息的缩略图路径
+    string extra   = 11;                       // 附加内容，视频或图片消息的路径
+    string xml     = 12;                       // 消息 xml 部分
 }
 
 message TextMsg

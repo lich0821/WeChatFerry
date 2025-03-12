@@ -75,6 +75,7 @@ public class WeChatSocketClient {
     private BlockingQueue<WxMsg> msgQ;
 
     private final String host;
+
     private final Integer port;
 
     public WeChatSocketClient(Integer port, String dllPath) {
@@ -120,7 +121,7 @@ public class WeChatSocketClient {
 
     public Response sendCmd(Request req) {
         try {
-            // 设置超时时间 20s
+            // 设置发送 20 秒超时
             cmdSocket.setSendTimeout(20000);
             ByteBuffer bb = ByteBuffer.wrap(req.toByteArray());
             cmdSocket.send(bb);
@@ -135,6 +136,33 @@ public class WeChatSocketClient {
                 log.error("命令调用失败: ", e);
                 throw new BizException("命令调用失败:" + e.getMessage());
             }
+        }
+    }
+
+    private void listenMsg(String url) {
+        try {
+            msgSocket = new Pair1Socket();
+            msgSocket.dial(url);
+            // 设置接收 5 秒超时
+            msgSocket.setReceiveTimeout(5000);
+        } catch (Exception e) {
+            log.error("创建消息 RPC 失败", e);
+            return;
+        }
+        ByteBuffer bb = ByteBuffer.allocate(BUFFER_SIZE);
+        while (isReceivingMsg) {
+            try {
+                long size = msgSocket.receive(bb, true);
+                WxMsg wxMsg = Response.parseFrom(Arrays.copyOfRange(bb.array(), 0, (int)size)).getWxmsg();
+                msgQ.put(wxMsg);
+            } catch (Exception e) {
+                // 多半是超时，忽略吧
+            }
+        }
+        try {
+            msgSocket.close();
+        } catch (Exception e) {
+            log.error("关闭连接失败", e);
         }
     }
 
@@ -215,33 +243,6 @@ public class WeChatSocketClient {
             return true;
         }
         return false;
-    }
-
-    private void listenMsg(String url) {
-        try {
-            msgSocket = new Pair1Socket();
-            msgSocket.dial(url);
-            // 设置 2 秒超时
-            msgSocket.setReceiveTimeout(2000);
-        } catch (Exception e) {
-            log.error("创建消息 RPC 失败", e);
-            return;
-        }
-        ByteBuffer bb = ByteBuffer.allocate(BUFFER_SIZE);
-        while (isReceivingMsg) {
-            try {
-                long size = msgSocket.receive(bb, true);
-                WxMsg wxMsg = Response.parseFrom(Arrays.copyOfRange(bb.array(), 0, (int)size)).getWxmsg();
-                msgQ.put(wxMsg);
-            } catch (Exception e) {
-                // 多半是超时，忽略吧
-            }
-        }
-        try {
-            msgSocket.close();
-        } catch (Exception e) {
-            log.error("关闭连接失败", e);
-        }
     }
 
     public void enableRecvMsg(int qSize) {

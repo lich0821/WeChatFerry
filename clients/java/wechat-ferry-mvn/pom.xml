@@ -88,6 +88,7 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.22.2</version>
         </dependency>
+        <!-- JNA主要用于在 Java 程序中方便地调用本地（Native）代码，如 C/C++ 的动态链接库（DLL）或共享库（SO） -->
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
