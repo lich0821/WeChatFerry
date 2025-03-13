@@ -35,6 +35,13 @@ namespace Contact
     constexpr uint64_t NAME    = 0xA0;
     constexpr uint64_t GENDER  = 0x0E;
     constexpr uint64_t STEP    = 0x6A8;
+
+    constexpr uint64_t VERIFY_NEW        = 0x2621B00;
+    constexpr uint64_t VERIFY_OK         = 0x1F421E0;
+    constexpr uint64_t VERIFY_MGR        = 0x4F022A8;
+    constexpr uint64_t VERIFY_A8         = 0x2621B91;
+    constexpr uint64_t ADD_FRIEND_HELPER = 0x4EE4A20;
+    constexpr uint64_t FVDF              = 0x4F02768; // FriendVeriyDialogFragment
 }
 
 namespace Db
