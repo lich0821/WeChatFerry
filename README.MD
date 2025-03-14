@@ -85,6 +85,7 @@ pip install --upgrade wcferry
 * [wechatferry](https://github.com/wechatferry/wechatferry)
 
 ### C#
+* [WeChatFerry.Net](https://github.com/SilkageNet/WeChatFerry.Net) Install using Nuget
 * [WeChatFerry-CSharp](https://github.com/send010/WeChatFerry-CSharp)
 
 ### Rust
