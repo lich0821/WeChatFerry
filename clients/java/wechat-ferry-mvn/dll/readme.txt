@@ -4,3 +4,4 @@
   sdk.dll
   spy.dll
   spy_debug.dll
+  DISCLAIMER.md

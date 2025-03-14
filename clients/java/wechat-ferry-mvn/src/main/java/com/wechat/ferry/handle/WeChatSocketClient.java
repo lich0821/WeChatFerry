@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 处理层-微信客户端
- * version：39.3.3
  *
  * @author Changhua
  * @date 2023-12-06 22:11
