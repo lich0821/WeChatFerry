@@ -647,7 +647,6 @@ class Wcf():
         Returns:
             int: 1 为成功，其他失败
         """
-        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ACCEPT_FRIEND  # FUNC_ACCEPT_FRIEND
         req.v.v3 = v3
