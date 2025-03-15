@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.4.2.1
-* 实现视频下载方法
+### v39.4.3.0
+* 实现通过好友申请功能
 
 <details><summary>点击查看更多</summary>
 
@@ -79,6 +79,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 获取朋友圈消息
 * 下载图片
 * 解密图片
+* 通过好友申请
 * 添加群成员
 * 删除群成员
 * 邀请群成员
