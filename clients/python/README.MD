@@ -44,8 +44,8 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 ## 版本更新
 
-### v39.4.3.0
-* 实现通过好友申请功能
+### v39.4.4.0
+* 实现发送 XML 功能
 
 <details><summary>点击查看更多</summary>
 
@@ -59,6 +59,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 
 功能：
 
+* 获取登录二维码
 * 查询登录状态
 * 获取登录账号信息
 * 获取消息类型
@@ -70,6 +71,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
+* 发送 XML
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
@@ -77,7 +79,7 @@ python -m grpc_tools.protoc --python_out=. --proto_path=../../../WeChatFerry/rpc
 * 关闭接收消息
 * 查询数据库
 * 获取朋友圈消息
-* 下载图片
+* 下载图片、视频、文件
 * 解密图片
 * 通过好友申请
 * 添加群成员
