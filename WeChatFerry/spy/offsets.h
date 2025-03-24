@@ -119,8 +119,8 @@ namespace Message
         constexpr uint64_t IMAGE        = 0x22BF430;
         constexpr uint64_t APP_MGR      = 0x1B5C2F0;
         constexpr uint64_t FILE         = 0x20D30E0;
-        constexpr uint64_t XML          = 0x0;
-        constexpr uint64_t XML_BUF_SIGN = 0x0;
+        constexpr uint64_t XML          = 0x20D2210;
+        constexpr uint64_t XML_BUF_SIGN = 0x24F95C0;
         constexpr uint64_t EMOTION_MGR  = 0x1BD2310;
         constexpr uint64_t EMOTION      = 0x21B8100;
 
