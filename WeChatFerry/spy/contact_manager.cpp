@@ -17,6 +17,8 @@ namespace OsCon = Offsets::Contact;
 
 using get_contact_mgr_t  = QWORD (*)();
 using get_contact_list_t = QWORD (*)(QWORD, QWORD);
+using func_verify_new_t  = QWORD (*)(QWORD, WxString *);
+using func_verify_ok_t = QWORD (*)(QWORD, WxString *, QWORD *, QWORD, QWORD, QWORD *, WxString *, QWORD *, WxString *);
 
 #define FEAT_LEN 5
 static const uint8_t FEAT_COUNTRY[FEAT_LEN]  = { 0xA4, 0xD9, 0x02, 0x4A, 0x18 };
@@ -90,8 +92,30 @@ vector<RpcContact_t> get_contacts()
 
 int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 {
-    LOG_ERROR("技术太菜，实现不了。");
-    return -1; // 成功返回 1
+    // TODO: 处理来源、备注、标签等
+    auto func_new    = Spy::getFunction<func_verify_new_t>(OsCon::VERIFY_NEW);
+    auto func_verify = Spy::getFunction<func_verify_ok_t>(OsCon::VERIFY_OK);
+
+    QWORD helper = util::get_qword(Spy::WeChatDll.load() + OsCon::ADD_FRIEND_HELPER);
+    QWORD fvdf   = util::get_qword(Spy::WeChatDll.load() + OsCon::FVDF);
+    QWORD mgr    = util::get_qword(Spy::WeChatDll.load() + OsCon::VERIFY_MGR);
+    QWORD a8     = util::get_qword(Spy::WeChatDll.load() + OsCon::VERIFY_A8);
+
+    auto pV3 = util::CreateWxString(v3);
+    auto pV4 = util::CreateWxString(v4);
+
+    QWORD v4Array[4] = { 0 };
+    QWORD p_v4Buff   = func_new(reinterpret_cast<QWORD>(&v4Array), pV4);
+
+    char buff[0x100] = { 0 };
+    memcpy(buff, &helper, sizeof(&helper));
+    QWORD a1 = reinterpret_cast<QWORD>(&buff);
+
+    QWORD ret = func_verify(a1, pV3, &fvdf, 0x3A08A4, p_v4Buff, &mgr, pV4, &a8, pV4);
+    util::FreeWxString(pV3);
+    util::FreeWxString(pV4);
+
+    return static_cast<int>(ret); // 成功返回 1
 }
 
 RpcContact_t get_contact_by_wxid(const string &wxid)

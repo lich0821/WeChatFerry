@@ -25,7 +25,7 @@ type "DISCLAIMER.md" > temp_disclaimer.txt
 
 :: 使用 PowerShell 显示弹窗
 powershell -NoProfile -Command ^
-    "$text = Get-Content -Raw -Path 'temp_disclaimer.txt';" ^
+    "$text = [System.IO.File]::ReadAllText('temp_disclaimer.txt', [System.Text.Encoding]::UTF8);" ^
     "Add-Type -AssemblyName PresentationFramework;" ^
     "$result = [System.Windows.MessageBox]::Show($text, '免责声明', 'OKCancel', 'Warning');" ^
     "if ($result -ne 'OK') { exit 1 }"

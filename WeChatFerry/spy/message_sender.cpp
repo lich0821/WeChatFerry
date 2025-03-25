@@ -126,30 +126,26 @@ void Sender::send_file(const std::string &wxid, const std::string &path)
 
 void Sender::send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type)
 {
-#if 0
-    std::unique_ptr<char[]> buff(new char[0x500]());
-    std::unique_ptr<char[]> buff2(new char[0x500]());
-    char nullBuf[0x1C] = { 0 };
+    char buff1[0x500] = { 0 };
+    char buff2[0x500] = { 0 };
+    char buff3[0x1C]  = { 0 };
 
-    func_new_chat_msg(reinterpret_cast<QWORD>(buff.get()));
-    func_new_chat_msg(reinterpret_cast<QWORD>(buff2.get()));
+    auto pBuff1 = func_new_chat_msg(reinterpret_cast<QWORD>(buff1));
+    auto pBuff2 = func_new_chat_msg(reinterpret_cast<QWORD>(buff2));
+    auto pBuff3 = reinterpret_cast<QWORD>(&buff3);
 
-    QWORD sbuf[4] = { 0, 0, 0, 0 };
-    QWORD sign    = func_xml_buf_sign(reinterpret_cast<QWORD>(buff2.get()), reinterpret_cast<QWORD>(sbuf), 0x1);
+    QWORD array[4] = { 0 };
 
-    auto wxReceiver = new_wx_string(receiver);
-    auto wxXml      = new_wx_string(xml);
-    auto wxPath     = new_wx_string(path);
-    auto wxSender   = new_wx_string(account::get_self_wxid());
+    auto sign = func_xml_buf_sign(pBuff2, reinterpret_cast<QWORD>(&array), 0x1);
 
-    func_send_xml(reinterpret_cast<QWORD>(buff.get()), reinterpret_cast<QWORD>(wxSender.get()),
-                  reinterpret_cast<QWORD>(wxReceiver.get()), reinterpret_cast<QWORD>(wxXml.get()),
-                  reinterpret_cast<QWORD>(wxPath.get()), reinterpret_cast<QWORD>(nullBuf), type, 0x4, sign,
-                  reinterpret_cast<QWORD>(buff2.get()));
+    util::WxStringHolder<std::string> to(receiver);
+    util::WxStringHolder<std::string> body(xml);
+    util::WxStringHolder<std::string> thumb(path);
+    util::WxStringHolder<std::string> from(account::get_self_wxid());
 
-    func_free_chat_msg(reinterpret_cast<QWORD>(buff.get()));
-    func_free_chat_msg(reinterpret_cast<QWORD>(buff2.get()));
-#endif
+    func_send_xml(pBuff1, &from.wx, &to.wx, &body.wx, &thumb.wx, pBuff3, type, 0x4, sign, pBuff2);
+    func_free_chat_msg(pBuff1);
+    func_free_chat_msg(pBuff2);
 }
 
 void Sender::send_emotion(const std::string &wxid, const std::string &path)

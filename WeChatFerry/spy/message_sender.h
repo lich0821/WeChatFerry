@@ -56,7 +56,8 @@ private:
     using GetEmotionMgr_t = QWORD (*)();
     using SendEmotion_t   = QWORD (*)(QWORD, WxString *, QWORD *, WxString *, QWORD, QWORD *, QWORD, QWORD *);
     using XmlBufSign_t    = QWORD (*)(QWORD, QWORD, QWORD);
-    using SendXml_t       = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
+    using SendXml_t
+        = QWORD (*)(QWORD, WxString *, WxString *, WxString *, WxString *, QWORD, QWORD, QWORD, QWORD, QWORD);
 
     New_t func_new_chat_msg;
     Free_t func_free_chat_msg;
