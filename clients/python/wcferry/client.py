@@ -64,11 +64,11 @@ class Wcf():
         contacts (list): 联系人缓存，调用 `get_contacts` 后更新
     """
 
-    def __init__(self, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
+    def __init__(self, wcPid: int, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
         self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
-        self._wcf_root = os.path.abspath(os.path.dirname(__file__))
+        self._wcf_root = os.path.abspath(os.path.dirname(__file__)) + "/dll"
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
@@ -81,7 +81,7 @@ class Wcf():
             self._local_mode = True
             self.host = "127.0.0.1"
             self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-            if self.sdk.WxInitSDK(debug, port) != 0:
+            if wcPid is not None and self.sdk.WxInitSDK(debug, port, wcPid)!= 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
 

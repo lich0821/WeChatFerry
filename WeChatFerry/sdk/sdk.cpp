@@ -92,27 +92,19 @@ static std::string get_dll_path(bool debug)
     return path.string();
 }
 
-int WxInitSDK(bool debug, int port)
+int WxInitSDK(bool debug, int port,DWORD wcPid)
 {
     if (!show_disclaimer()) {
         exit(-1); // 用户拒绝协议，退出程序
     }
 
     int status  = 0;
-    DWORD wcPid = 0;
 
     spyDllPath = get_dll_path(debug);
     if (spyDllPath.empty()) {
         return ERROR_FILE_NOT_FOUND; // DLL 文件路径不存在
     }
 
-    status = util::open_wechat(wcPid);
-    if (status != 0) {
-        util::MsgBox(NULL, "打开微信失败", "WxInitSDK", 0);
-        return status;
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(2)); // 等待微信打开
     wcProcess = inject_dll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
         util::MsgBox(NULL, "注入失败", "WxInitSDK", 0);
