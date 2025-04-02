@@ -528,7 +528,6 @@ class Wcf():
         """允许接收消息，成功后通过 `get_msg` 读取消息"""
         def listening_msg():
             rsp = wcf_pb2.Response()
-            self.msg_socket.dial(self.msg_url, block=True)
             while self._is_receiving_msg:
                 try:
                     rsp.ParseFromString(self.msg_socket.recv_msg().bytes)
@@ -549,6 +548,19 @@ class Wcf():
         rsp = self._send_request(req)
         if rsp.status != 0:
             return False
+
+        fail_cnt = 0
+        while True:
+            try:
+                self.msg_socket.dial(self.msg_url, block=True)
+                break
+            except pynng.exceptions.NNGException as e:
+                if fail_cnt > 50:
+                    raise e
+                fail_cnt += 1
+                sleep(0.1) # 等待消息端口启动监听
+            except Exception as e:
+                raise e
 
         self._is_receiving_msg = True
         # 阻塞，把控制权交给用户
