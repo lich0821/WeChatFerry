@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 package wcf;
 option java_package = "com.iamteer";
@@ -178,6 +178,7 @@ message UserInfo
     string name   = 2; // 昵称
     string mobile = 3; // 手机号
     string home   = 4; // 文件/图片等父路径
+    string alias  = 5; // 修改后的wxid
 }
 
 message DecPath
