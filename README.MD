@@ -9,7 +9,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/UbzPuw3-2xZLEzUABXMEdw)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/woR71GfODIOBkkj6SQUKQg)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人示例。
@@ -207,9 +207,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.4.4
+### v39.4.5
 
-* 实现通发送 XML 功能。
+* 修复发送 XML 功能。
 
 <details><summary>点击查看更多</summary>
 
@@ -220,6 +220,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.4.4
+
+* 实现发送 XML 功能。
 
 ### v39.4.3
 
