@@ -1,2 +1,2 @@
 include wcferry/*.dll
-include wcferry/*.md
+include wcferry/*.exe

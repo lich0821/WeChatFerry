@@ -1,5 +1,4 @@
-﻿#include "sdk.h"
-
+﻿#include "framework.h"
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -7,67 +6,55 @@
 #include <process.h>
 #include <sstream>
 #include <thread>
-
-#include "framework.h"
 #include <tlhelp32.h>
 
 #include "injector.h"
+#include "sdk.h"
 #include "util.h"
 
-extern "C" IMAGE_DOS_HEADER __ImageBase;
-
-static bool injected    = false;
+static BOOL injected    = false;
 static HANDLE wcProcess = NULL;
 static HMODULE spyBase  = NULL;
-static std::string spyDllPath;
+static std::wstring spyDllPath;
 
-constexpr char WCFSDKDLL[]       = "sdk.dll";
-constexpr char WCFSPYDLL[]       = "spy.dll";
-constexpr char WCFSPYDLL_DEBUG[] = "spy_debug.dll";
+constexpr char DISCLAIMER_FILE[]      = ".license_accepted.flag";
+constexpr char DISCLAIMER_TEXT_FILE[] = "DISCLAIMER.md";
 
-constexpr std::string_view DISCLAIMER_FLAG      = ".license_accepted.flag";
-constexpr std::string_view DISCLAIMER_TEXT_FILE = "DISCLAIMER.md";
-
-namespace fs = std::filesystem;
-
-static fs::path get_module_directory()
+static std::optional<std::wstring> ReadDisclaimerText(const char *filePath)
 {
-    char buffer[MAX_PATH] = { 0 };
-    HMODULE hModule       = reinterpret_cast<HMODULE>(&__ImageBase);
-    GetModuleFileNameA(hModule, buffer, MAX_PATH);
-    fs::path modulePath(buffer);
-    return modulePath.parent_path();
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        return std::nullopt; // 文件打开失败
+    }
+
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return String2Wstring(content);
 }
 
-static bool show_disclaimer()
+static bool ShowDisclaimer()
 {
-    fs::path sdk_path = get_module_directory();
-    if (fs::exists(sdk_path / DISCLAIMER_FLAG)) {
+    if (std::filesystem::exists(DISCLAIMER_FILE)) {
         return true;
     }
 
-    fs::path path = sdk_path / DISCLAIMER_TEXT_FILE;
-    std::ifstream file(path, std::ios::binary);
-    if (!file.is_open()) {
-        util::MsgBox(NULL, "免责声明文件读取失败。", "错误", MB_ICONERROR);
+    std::optional<std::wstring> disclaimerTextOpt = ReadDisclaimerText(DISCLAIMER_TEXT_FILE);
+    if (!disclaimerTextOpt.has_value() || disclaimerTextOpt->empty()) {
+        MessageBox(NULL, L"免责声明文件为空或读取失败。", L"错误", MB_ICONERROR);
         return false;
     }
 
-    auto disclaimerText = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    if (disclaimerText.empty()) {
-        util::MsgBox(NULL, "免责声明文件为空", "错误", MB_ICONERROR);
-        return false;
-    }
+    std::wstring disclaimerText = *disclaimerTextOpt;
 
-    int result = util::MsgBox(NULL, disclaimerText.c_str(), "免责声明", MB_ICONWARNING | MB_OKCANCEL | MB_DEFBUTTON2);
+    int result = MessageBox(NULL, disclaimerText.c_str(), L"免责声明", MB_ICONWARNING | MB_OKCANCEL | MB_DEFBUTTON2);
+
     if (result == IDCANCEL) {
-        util::MsgBox(NULL, "您拒绝了免责声明，程序将退出。", "提示", MB_ICONINFORMATION);
+        MessageBox(NULL, L"您拒绝了免责声明，程序将退出。", L"提示", MB_ICONINFORMATION);
         return false;
     }
 
-    std::ofstream flagFile(sdk_path / DISCLAIMER_FLAG, std::ios::out | std::ios::trunc);
+    std::ofstream flagFile(DISCLAIMER_FILE, std::ios::out | std::ios::trunc);
     if (!flagFile) {
-        util::MsgBox(NULL, "无法创建协议标志文件。", "错误", MB_ICONERROR);
+        MessageBox(NULL, L"无法创建协议标志文件。", L"错误", MB_ICONERROR);
         return false;
     }
     flagFile << "User accepted the license agreement.";
@@ -75,71 +62,82 @@ static bool show_disclaimer()
     return true;
 }
 
-static std::string get_dll_path(bool debug)
+static std::wstring GetDllPath(bool debug)
 {
-    char buffer[MAX_PATH] = { 0 };
-    GetModuleFileNameA(GetModuleHandleA(WCFSDKDLL), buffer, MAX_PATH);
+    WCHAR buffer[MAX_PATH] = { 0 };
+    GetModuleFileName(GetModuleHandle(WCFSDKDLL), buffer, MAX_PATH);
 
-    fs::path path(buffer);
-    path.remove_filename(); // 只保留目录路径
+    std::filesystem::path path(buffer);
+    path.remove_filename(); // 移除文件名，保留目录路径
+
     path /= debug ? WCFSPYDLL_DEBUG : WCFSPYDLL;
 
-    if (!fs::exists(path)) {
-        util::MsgBox(NULL, path.string().c_str(), "文件不存在", MB_ICONERROR);
-        return "";
+    if (!std::filesystem::exists(path)) {
+        MessageBox(NULL, path.c_str(), L"文件不存在", MB_ICONERROR);
+        return L"";
     }
 
-    return path.string();
+    return path.wstring();
 }
 
-int WxInitSDK(bool debug, int port,DWORD wcPid)
+int WxInitSDK(bool debug, int port)
 {
-    if (!show_disclaimer()) {
+    if (!ShowDisclaimer()) {
         exit(-1); // 用户拒绝协议，退出程序
     }
 
     int status  = 0;
+    DWORD wcPid = 0;
 
-    spyDllPath = get_dll_path(debug);
+    spyDllPath = GetDllPath(debug);
     if (spyDllPath.empty()) {
         return ERROR_FILE_NOT_FOUND; // DLL 文件路径不存在
     }
 
-    wcProcess = inject_dll(wcPid, spyDllPath, &spyBase);
-    if (wcProcess == NULL) {
-        util::MsgBox(NULL, "注入失败", "WxInitSDK", 0);
+    status = OpenWeChat(&wcPid);
+    if (status != 0) {
+        MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
+        return status;
+    }
+
+    if (!IsProcessX64(wcPid)) {
+        MessageBox(NULL, L"只支持 64 位微信", L"WxInitSDK", 0);
         return -1;
     }
-    injected = true;
 
-    util::PortPath pp = { 0 };
-    pp.port           = port;
-    snprintf(pp.path, MAX_PATH, "%s", fs::current_path().string().c_str());
-
-    status       = -3; // TODO: 统一错误码
-    bool success = call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath),
-                                    (DWORD *)&status);
-    if (!success || status != 0) {
-        WxDestroySDK();
+    std::this_thread::sleep_for(std::chrono::seconds(2)); // 等待微信打开
+    wcProcess = InjectDll(wcPid, spyDllPath.c_str(), &spyBase);
+    if (wcProcess == NULL) {
+        MessageBox(NULL, L"注入失败", L"WxInitSDK", 0);
+        return -1;
     }
 
-    return status;
+    PortPath_t pp = { 0 };
+    pp.port       = port;
+    sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
+
+    if (!CallDllFuncEx(wcProcess, spyDllPath.c_str(), spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+        MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
+        return -1;
+    }
+
+    injected = true;
+    return 0;
 }
 
 int WxDestroySDK()
 {
     if (!injected) {
-        return 1; // 未注入
-    }
-
-    if (!call_dll_func(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL)) {
         return -1;
     }
 
-    if (!eject_dll(wcProcess, spyBase)) {
+    if (!CallDllFunc(wcProcess, spyDllPath.c_str(), spyBase, "CleanupSpy", NULL)) {
         return -2;
     }
-    injected = false;
+
+    if (!EjectDll(wcProcess, spyBase)) {
+        return -3; // TODO: Unify error codes
+    }
 
     return 0;
 }

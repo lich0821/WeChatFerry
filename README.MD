@@ -5,7 +5,7 @@
 <details>
 <summary><b>⚠️ 免责声明【必读】⚠️</b></summary>
 
-请阅读完整的免责声明：[点击查看](WeChatFerry/DISCLAIMER.md)
+请阅读完整的免责声明：[点击查看](DISCLAIMER.md)
 
 </details>
 
@@ -32,7 +32,7 @@
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
-* 发送 XML
+* 发送 XML 消息
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
@@ -42,7 +42,6 @@
 * 获取朋友圈消息
 * 下载图片、视频、文件
 * 解密图片
-* 通过好友申请
 * 添加群成员
 * 删除群成员
 * 邀请群成员
@@ -87,7 +86,6 @@ pip install --upgrade wcferry
 * [wechatferry](https://github.com/wechatferry/wechatferry)
 
 ### C#
-* [WeChatFerry.Net](https://github.com/SilkageNet/WeChatFerry.Net) Install using Nuget
 * [WeChatFerry-CSharp](https://github.com/send010/WeChatFerry-CSharp)
 
 ### Rust
@@ -170,7 +168,7 @@ sdk.WxDestroySDK()
 
 ### 调试日志
 ```c
-    util::dbg_msg("ListenMessage"); // 封装的 OutputDebugString
+    DbgMsg("ListenMessage"); // 封装的 OutputDebugString
     OutputDebugString(L"ListenMessage\n");
     MessageBox(NULL, L"ListenMessage", L"ListenMessage", 0);
 ```
@@ -207,9 +205,9 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.4.4
+### v39.3.5
 
-* 实现通发送 XML 功能。
+* 代码优化
 
 <details><summary>点击查看更多</summary>
 
@@ -220,26 +218,6 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
-
-### v39.4.3
-
-* 实现通过好友申请功能。
-
-### v39.4.2
-
-* 修复附件下载类型错误。
-
-### v39.4.1
-
-* 修复乱码问题。
-
-### v39.4.0
-
-* 重构代码，适配 `3.9.12.17`。
-
-### v39.3.5
-
-* 代码优化
 
 ### v39.3.4
 

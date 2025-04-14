@@ -111,4 +111,3 @@ int InviteChatroomMember(string roomid, string wxids)
     status = (int)InviteMembers((QWORD)wsRoomid.c_str(), pMembers, (QWORD)pWxRoomid, (QWORD)temp);
     return status;
 }
-

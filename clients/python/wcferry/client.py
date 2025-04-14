@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.4.4.0"
+__version__ = "39.3.3.3"
 
 import atexit
 import base64
@@ -10,8 +10,6 @@ import logging
 import mimetypes
 import os
 import re
-import shutil
-import subprocess
 import sys
 from queue import Queue
 from threading import Thread
@@ -64,15 +62,14 @@ class Wcf():
         contacts (list): 联系人缓存，调用 `get_contacts` 后更新
     """
 
-    def __init__(self, wcPid: int, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
+    def __init__(self, host: str = None, port: int = 10086, debug: bool = True, block: bool = True) -> None:
         self._local_mode = False
         self._is_running = False
         self._is_receiving_msg = False
-        self._wcf_root = os.path.abspath(os.path.dirname(__file__)) + "/dll"
+        self._wcf_root = os.path.abspath(os.path.dirname(__file__))
         self._dl_path = f"{self._wcf_root}/.dl"
         os.makedirs(self._dl_path, exist_ok=True)
         self.LOG = logging.getLogger("WCF")
-        self._set_console_utf8()
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
         self.host = host
@@ -81,7 +78,7 @@ class Wcf():
             self._local_mode = True
             self.host = "127.0.0.1"
             self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-            if wcPid is not None and self.sdk.WxInitSDK(debug, port, wcPid)!= 0:
+            if self.sdk.WxInitSDK(debug, port) != 0:
                 self.LOG.error("初始化失败！")
                 os._exit(-1)
 
@@ -118,13 +115,6 @@ class Wcf():
     def __del__(self) -> None:
         self.cleanup()
 
-    def _set_console_utf8(self):
-        try:
-            subprocess.run("chcp 65001", shell=True, check=True,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError as e:
-            self.LOG.error(f"修改控制台代码页失败: {e}")
-
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
         if not self._is_running:
@@ -151,9 +141,7 @@ class Wcf():
         data = req.SerializeToString()
         self.cmd_socket.send(data)
         rsp = wcf_pb2.Response()
-        bs = self.cmd_socket.recv_msg().bytes
-        self.LOG.debug(bs.hex())
-        rsp.ParseFromString(bs)
+        rsp.ParseFromString(self.cmd_socket.recv_msg().bytes)
         return rsp
 
     def is_receiving_msg(self) -> bool:
@@ -162,6 +150,7 @@ class Wcf():
 
     def get_qrcode(self) -> str:
         """获取登录二维码，已经登录则返回空字符串"""
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REFRESH_QRCODE  # FUNC_REFRESH_QRCODE
         rsp = self._send_request(req)
@@ -646,6 +635,7 @@ class Wcf():
         Returns:
             int: 1 为成功，其他失败
         """
+        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_ACCEPT_FRIEND  # FUNC_ACCEPT_FRIEND
         req.v.v3 = v3
@@ -666,9 +656,9 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
-                        cnt["wxid"].startswith("gh_") or    # 公众号
-                        cnt["wxid"] in not_friends.keys()   # 其他杂号
-                    ):
+                    cnt["wxid"].startswith("gh_") or    # 公众号
+                    cnt["wxid"] in not_friends.keys()   # 其他杂号
+                ):
                 continue
             friends.append(cnt)
 
@@ -773,7 +763,6 @@ class Wcf():
         Returns:
             int: 1 为成功，其他失败
         """
-        raise Exception("Not implemented, yet")
         req = wcf_pb2.Request()
         req.func = wcf_pb2.FUNC_REVOKE_MSG  # FUNC_REVOKE_MSG
         req.ui64 = id
@@ -843,8 +832,7 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
-        if (not os.path.exists(extra)) and (self.download_attach(id, "", extra) != 0):
+        if self.download_attach(id, "", extra) != 0:
             self.LOG.error(f"下载失败")
             return ""
         cnt = 0
@@ -852,40 +840,6 @@ class Wcf():
             path = self.decrypt_image(extra, dir)
             if path:
                 return path
-            sleep(1)
-            cnt += 1
-
-        self.LOG.error(f"下载超时")
-        return ""
-
-    def download_video(self, id: int, thumb: str, dir: str, timeout: int = 30) -> str:
-        """下载视频
-
-        Args:
-            id (int): 消息中 id
-            thumb (str): 消息中的 thumb（即视频的封面图）
-            dir (str): 存放视频的目录（目录不存在会出错）
-            timeout (int): 超时时间（秒）
-
-        Returns:
-            str: 成功返回存储路径；空字符串为失败，原因见日志。
-        """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
-        base, _ = os.path.splitext(thumb)
-        file_path = base + ".mp4"
-        file_name = os.path.basename(file_path)
-        target_path = os.path.join(dir, file_name)
-        if (not os.path.exists(target_path)) and (not os.path.exists(file_path)) and (self.download_attach(id, thumb, "") != 0):
-            self.LOG.error(f"下载失败")
-            return ""
-
-        cnt = 0
-        while cnt < timeout:
-            if os.path.exists(file_path):
-                os.makedirs(dir, exist_ok=True)
-                shutil.move(file_path, target_path)
-                return target_path
-
             sleep(1)
             cnt += 1
 

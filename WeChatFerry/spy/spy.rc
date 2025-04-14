@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(简体，中国) resources
+// ����(���壬�й�) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 39,4,4,0
- PRODUCTVERSION 3,9,12,17
+ FILEVERSION 39,3,5,0
+ PRODUCTVERSION 3,9,11,25
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "WeChatFerry"
             VALUE "FileDescription", "WeChatFerry"
-            VALUE "FileVersion", "39.4.4.0"
+            VALUE "FileVersion", "39.3.5.0"
             VALUE "InternalName", "spy.dll"
             VALUE "LegalCopyright", "Copyright (C) 2023"
             VALUE "OriginalFilename", "spy.dll"
             VALUE "ProductName", "WeChatFerry"
-            VALUE "ProductVersion", "3.9.12.17"
+            VALUE "ProductVersion", "3.9.11.25"
         END
     END
     BLOCK "VarFileInfo"
@@ -83,7 +83,7 @@ BEGIN
     END
 END
 
-#endif    // 中文(简体，中国) resources
+#endif    // ����(���壬�й�) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

@@ -1,20 +1,8 @@
 ﻿#pragma once
 
-#include <atomic>
-#include <cstdint>
-#include <string_view>
+#include "framework.h"
 
-namespace Spy
-{
-constexpr std::string_view SUPPORT_VERSION = "3.9.12.17";
-inline std::atomic<std::uintptr_t> WeChatDll { 0 };
+#define SUPPORT_VERSION L"3.9.12.45"
 
-template <typename T> inline T getFunction(std::uintptr_t offset) { return reinterpret_cast<T>(WeChatDll + offset); }
-template <typename T> inline T getFunction(std::uintptr_t base, std::uintptr_t offset)
-{
-    return reinterpret_cast<T>(base + offset);
-}
-
-int Init(void *args);
-void Cleanup();
-}
+void InitSpy(int port);
+void CleanupSpy();
