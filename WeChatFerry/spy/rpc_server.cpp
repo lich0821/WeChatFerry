@@ -214,7 +214,7 @@ bool RpcServer::start_message_listener(bool pyq, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_ENABLE_RECV_TXT>(out, len, [&](Response &rsp) {
         rsp.msg.status = handler_.ListenMsg();
-        if (rsp.msg.status == 0) {
+        if (rsp.msg.status >= 0) {
             if (pyq) {
                 handler_.ListenPyq();
             }
@@ -227,7 +227,7 @@ bool RpcServer::stop_message_listener(uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_DISABLE_RECV_TXT>(out, len, [&](Response &rsp) {
         rsp.msg.status = handler_.UnListenMsg();
-        if (rsp.msg.status == 0) {
+        if (rsp.msg.status >= 0) {
             handler_.UnListenPyq();
             if (msgThread_.joinable()) {
                 msgThread_.join();
