@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.4.5.0"
+__version__ = "39.5.0.0"
 
 import atexit
 import base64
@@ -132,6 +132,7 @@ class Wcf():
 
         self.disable_recv_msg()
         self.cmd_socket.close()
+        self.msg_socket.close()
 
         if self._local_mode and self.sdk and self.sdk.WxDestroySDK() != 0:
             self.LOG.error("退出失败！")
@@ -537,9 +538,6 @@ class Wcf():
                 else:
                     self.msgQ.put(WxMsg(rsp.wxmsg))
 
-            # 退出前关闭通信通道
-            self.msg_socket.close()
-
         if self._is_receiving_msg:
             return True
 
@@ -574,8 +572,6 @@ class Wcf():
                     pass
                 else:
                     callback(WxMsg(rsp.wxmsg))
-            # 退出前关闭通信通道
-            self.msg_socket.close()
 
         if self._is_receiving_msg:
             return True
@@ -666,8 +662,8 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
-                        cnt["wxid"].startswith("gh_") or    # 公众号
-                        cnt["wxid"] in not_friends.keys()   # 其他杂号
+                    cnt["wxid"].startswith("gh_") or    # 公众号
+                    cnt["wxid"] in not_friends.keys()   # 其他杂号
                     ):
                 continue
             friends.append(cnt)
@@ -843,7 +839,7 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+        sleep(1)  # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
         if (not os.path.exists(extra)) and (self.download_attach(id, "", extra) != 0):
             self.LOG.error(f"下载失败")
             return ""
@@ -870,7 +866,7 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+        sleep(1)  # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
         base, _ = os.path.splitext(thumb)
         file_path = base + ".mp4"
         file_name = os.path.basename(file_path)
