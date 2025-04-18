@@ -78,11 +78,12 @@ UserInfo_t get_user_info()
     uint64_t service_addr = get_account_service();
     if (!service_addr) return ui;
 
-    ui.wxid   = get_self_wxid();
-    ui.home   = get_home_path().generic_string();
-    ui.name   = get_string_value(service_addr, OsAcc::NAME);
-    ui.mobile = get_string_value(service_addr, OsAcc::MOBILE);
-    ui.alias  = get_string_value(service_addr, OsAcc::ALIAS);
+    ui.wxid       = get_self_wxid();
+    ui.home       = get_home_path().generic_string();
+    ui.name       = get_string_value(service_addr, OsAcc::NAME);
+    ui.mobile     = get_string_value(service_addr, OsAcc::MOBILE);
+    ui.alias      = get_string_value(service_addr, OsAcc::ALIAS);
+    ui.head_image = get_string_value(service_addr, OsAcc::HEAD_IMAGE);
     return ui;
 }
 
@@ -101,11 +102,12 @@ bool rpc_get_user_info(uint8_t *out, size_t *len)
 {
     UserInfo_t ui = get_user_info();
     return fill_response<Functions_FUNC_GET_USER_INFO>(out, len, ui, [](Response &rsp, UserInfo_t &ui) {
-        rsp.msg.ui.wxid   = (char *)ui.wxid.c_str();
-        rsp.msg.ui.name   = (char *)ui.name.c_str();
-        rsp.msg.ui.mobile = (char *)ui.mobile.c_str();
-        rsp.msg.ui.home   = (char *)ui.home.c_str();
-        rsp.msg.ui.alias  = (char *)ui.alias.c_str();
+        rsp.msg.ui.wxid       = (char *)ui.wxid.c_str();
+        rsp.msg.ui.name       = (char *)ui.name.c_str();
+        rsp.msg.ui.mobile     = (char *)ui.mobile.c_str();
+        rsp.msg.ui.home       = (char *)ui.home.c_str();
+        rsp.msg.ui.alias      = (char *)ui.alias.c_str();
+        rsp.msg.ui.head_image = (char *)ui.head_image.c_str();
     });
 }
 
