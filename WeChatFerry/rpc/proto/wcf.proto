@@ -174,11 +174,12 @@ message MemberMgmt
 
 message UserInfo
 {
-    string wxid   = 1; // 微信ID
-    string name   = 2; // 昵称
-    string mobile = 3; // 手机号
-    string home   = 4; // 文件/图片等父路径
-    string alias  = 5; // 修改后的wxid
+    string wxid       = 1; // 微信ID
+    string name       = 2; // 昵称
+    string mobile     = 3; // 手机号
+    string home       = 4; // 文件/图片等父路径
+    string alias      = 5; // 修改后的wxid
+    string head_image = 6; // 用户头像地址
 }
 
 message DecPath
