@@ -19,6 +19,7 @@ namespace Account
 namespace Chatroom
 {
     constexpr uint64_t MGR = 0x1B8AE40;
+    constexpr uint64_t NEW = 0x262D800;
     constexpr uint64_t DEL = 0x2163070;
     constexpr uint64_t ADD = 0x2162A30;
     constexpr uint64_t INV = 0x2162410;
@@ -37,7 +38,7 @@ namespace Contact
     constexpr uint64_t GENDER  = 0x0E;
     constexpr uint64_t STEP    = 0x6A8;
 
-    constexpr uint64_t VERIFY_NEW        = 0x262D800;
+    constexpr uint64_t VERIFY_NEW        = Chatroom::NEW;
     constexpr uint64_t VERIFY_OK         = 0x1F48850;
     constexpr uint64_t ADD_FRIEND_HELPER = 0x4F7FB18;  // a1
     constexpr uint64_t FVDF              = 0x4F9DE28;  // FriendVeriyDialogFragment
