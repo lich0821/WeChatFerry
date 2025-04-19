@@ -17,14 +17,6 @@ namespace OsAcc = Offsets::Account;
 using get_account_service_t = QWORD (*)();
 using get_data_path_t       = QWORD (*)(QWORD);
 
-// 缓存避免重复查询
-static std::optional<std::string> cachedWxid;
-static std::optional<fs::path> cachedHomePath;
-
-// 清除缓存
-static void clear_cached_wxid() { cachedWxid.reset(); }
-static void clear_cached_home_path() { cachedHomePath.reset(); }
-
 static uint64_t get_account_service()
 {
     static auto GetService = Spy::getFunction<get_account_service_t>(OsAcc::SERVICE);
@@ -39,37 +31,44 @@ static std::string get_string_value(uint64_t base_addr, uint64_t offset)
 
 bool is_logged_in()
 {
-    clear_cached_wxid();
-    clear_cached_home_path();
     uint64_t service_addr = get_account_service();
     return service_addr && util::get_qword(service_addr + OsAcc::LOGIN) != 0;
 }
 
 fs::path get_home_path()
 {
-    if (cachedHomePath) {
-        return *cachedHomePath;
-    }
-    WxString home;
-    auto GetDataPath     = Spy::getFunction<get_data_path_t>(OsAcc::PATH);
-    int64_t service_addr = get_account_service();
-    GetDataPath((QWORD)&home);
-    if (home.wptr) {
-        cachedHomePath = util::w2s(std::wstring(home.wptr, home.size));
-    }
-    return *cachedHomePath;
+    static fs::path home_path;
+    static std::once_flag home_once;
+
+    std::call_once(home_once, []() {
+        WxString home {};
+        if (auto getDataPath = Spy::getFunction<get_data_path_t>(OsAcc::PATH)) {
+            getDataPath(reinterpret_cast<QWORD>(&home));
+            if (home.wptr) {
+                std::wstring wstr(home.wptr, home.size);
+                home_path = util::w2s(std::move(wstr));
+            }
+        }
+    });
+
+    return home_path;
 }
 
 std::string get_self_wxid()
 {
-    if (cachedWxid) {
-        return *cachedWxid;
-    }
-    uint64_t service_addr = get_account_service();
-    if (!service_addr) return "";
+    static std::string cached_wxid;
+    static std::once_flag wxid_once;
 
-    cachedWxid = get_string_value(service_addr, OsAcc::WXID);
-    return *cachedWxid;
+    std::call_once(wxid_once, []() {
+        if (uint64_t svc = get_account_service(); svc) {
+            cached_wxid = get_string_value(svc, OsAcc::WXID);
+            if (cached_wxid.empty()) {
+                cached_wxid = get_string_value(svc, OsAcc::ALIAS);
+            }
+        }
+    });
+
+    return cached_wxid;
 }
 
 UserInfo_t get_user_info()
