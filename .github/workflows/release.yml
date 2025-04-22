@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-ci.yml
+
+  release:
+    name: 打包 & 发布
+    needs: build
+    runs-on: windows-latest
+    # 仅当触发源是 push 且是 Tag 时才执行
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 打包输出文件及下载 WeChat 安装包
+        run: |
+          New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
+          Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll", "WeChatFerry/Out/DISCLAIMER.md" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
+          Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "WeChatFerry/tmp/WeChatSetup-${{ env.wechat_version }}.exe"
+        shell: pwsh
+
+      - name: 列出待发布文件
+        run: |
+          Get-ChildItem -Path "WeChatFerry/tmp" -Recurse
+        shell: pwsh
+
+      - name: 发布到 GitHub Releases
+        uses: ncipollo/release-action@main
+        with:
+          name: v${{ env.version }}
+          tag: v${{ env.version }}
+          token: ${{ secrets.REPO_TOKEN }}
+          allowUpdates: true
+          artifacts: "WeChatFerry/tmp/*"
+          body: |
+            程序版本：`v${{ env.version }}`
+            配套微信版本：`${{ env.wechat_version }}`
+            [📖 Python 文档](https://wechatferry.readthedocs.io/)
