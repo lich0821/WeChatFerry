@@ -142,7 +142,7 @@ xcopy /y $(OutDir)$(TargetFileName) $(SolutionDir)..\clients\python\wcferry</Com
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\com\util.h" />
-    <ClInclude Include="framework.h" />
+    <ClInclude Include="..\com\framework.h" />
     <ClInclude Include="injector.h" />
     <ClInclude Include="sdk.h" />
   </ItemGroup>

@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <fstream>
 
-#include "framework.h"
-
 #include "codec.h"
 #include "database_executor.h"
 #include "log.hpp"

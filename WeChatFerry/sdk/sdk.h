@@ -1,4 +1,6 @@
 ﻿#pragma once
 
-int WxInitSDK(bool debug, int port);
-int WxDestroySDK();
+extern "C" {
+__declspec(dllexport) int WxInitSDK(bool debug, int port);
+__declspec(dllexport) int WxDestroySDK();
+}

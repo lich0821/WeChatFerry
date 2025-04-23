@@ -14,7 +14,7 @@ int Init(void *args)
     auto *pp = static_cast<util::PortPath *>(args);
 
     Log::InitLogger(pp->path);
-    if (auto dll_addr = GetModuleHandle(L"WeChatWin.dll")) {
+    if (auto dll_addr = GetModuleHandleW(L"WeChatWin.dll")) {
         WeChatDll.store(reinterpret_cast<uint64_t>(dll_addr));
     } else {
         LOG_ERROR("获取 WeChatWin.dll 模块地址失败");

@@ -2,14 +2,10 @@
     "name": "wcf",
     "version-string": "1.0.0",
     "dependencies": [
-        {
-            "name": "protobuf",
-            "features": [ "zlib" ]
-        },
         "spdlog",
         "nng",
         "magic-enum",
         "minhook"
     ],
-    "builtin-baseline": "80d54ff62d528339c626a6fbc3489a7f25956ade"
+    "builtin-baseline": "d6995a0cf3cafda5e9e52749fad075dd62bfd90c"
 }
