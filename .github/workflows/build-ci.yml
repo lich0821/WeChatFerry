@@ -1,0 +1,75 @@
+name: Build CI
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: 编译校验
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 获取版本号和微信版本号
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          $version_full = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $wechat_version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "ProductVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $version = $version_full -replace '(\d+\.\d+\.\d+)\.\d+', '$1'
+          echo "version=$version" >> $env:GITHUB_ENV
+          echo "wechat_version=$wechat_version" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: 设置 Visual Studio 2019
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: "16.0"
+
+      - name: 设置 Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: 安装 Python 依赖项
+        run: |
+          python -m pip install --upgrade pip
+          pip install grpcio-tools==1.48.2
+        shell: pwsh
+
+      - name: 设置 vcpkg 缓存
+        id: cache-vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:/Tools/vcpkg
+            ${{ github.workspace }}/WeChatFerry/vcpkg_installed
+          key: vcpkg-${{ hashFiles('WeChatFerry/vcpkg.json') }}
+          restore-keys: |
+            vcpkg-
+
+      - name: 安装 vcpkg 并初始化
+        run: |
+          if (!(Test-Path 'C:/Tools')) { New-Item -ItemType Directory -Force -Path 'C:/Tools' }
+          cd C:/Tools
+          if (!(Test-Path 'C:/Tools/vcpkg')) { git clone https://github.com/microsoft/vcpkg }
+          .\vcpkg\bootstrap-vcpkg.bat
+          echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
+          cd ${{ github.workspace }}/WeChatFerry
+          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
+          C:/Tools/vcpkg/vcpkg integrate install
+        shell: pwsh
+
+      - name: 解析并构建 Release/Debug
+        run: |
+          $configs = "Release","Debug"
+          foreach ($cfg in $configs) {
+            Write-Host "Building $cfg"
+            msbuild WeChatFerry/WeChatFerry.sln `
+              /p:Configuration=$cfg `
+              /p:Platform="x64" `
+              /p:VcpkgTriplet="x64-windows-static" `
+              /p:VcpkgEnableManifest=true `
+              /verbosity:minimal
+          }
+        shell: pwsh
