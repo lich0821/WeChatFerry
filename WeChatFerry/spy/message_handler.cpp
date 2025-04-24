@@ -5,8 +5,6 @@
 #include <mutex>
 #include <queue>
 
-#include "framework.h"
-
 #include "account_manager.h"
 #include "log.hpp"
 #include "offsets.h"
@@ -192,8 +190,8 @@ int Handler::EnableLog()
     funcWxLog = Spy::getFunction<funcWxLog_t>(OsLog::CALL);
 
     if (InitializeHook() != MH_OK) return -1;
-    if (MH_CreateHook(funcWxLog, &PrintWxLog, reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
-    if (MH_EnableHook(funcWxLog) != MH_OK) return -3;
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(funcWxLog), reinterpret_cast<LPVOID>(&PrintWxLog), reinterpret_cast<LPVOID *>(&realWxLog)) != MH_OK) return -2;
+    if (MH_EnableHook(reinterpret_cast<LPVOID>(funcWxLog)) != MH_OK) return -3;
 
     *pLogLevel = 0;
     isLogging  = true;
@@ -203,8 +201,8 @@ int Handler::EnableLog()
 int Handler::DisableLog()
 {
     if (!isLogging) return 1;
-    if (MH_DisableHook(funcWxLog) != MH_OK) return -1;
-    if (MH_RemoveHook(funcWxLog) != MH_OK) return -2;
+    if (MH_DisableHook(reinterpret_cast<LPVOID>(funcWxLog)) != MH_OK) return -1;
+    if (MH_RemoveHook(reinterpret_cast<LPVOID>(funcWxLog)) != MH_OK) return -2;
     if (UninitializeHook() != MH_OK) return -3;
     *pLogLevel = 6;
     isLogging  = false;
@@ -217,8 +215,8 @@ int Handler::ListenMsg()
 
     funcRecvMsg = Spy::getFunction<funcRecvMsg_t>(OsRecv::CALL);
     if (InitializeHook() != MH_OK) return -1;
-    if (MH_CreateHook(funcRecvMsg, &DispatchMsg, reinterpret_cast<LPVOID *>(&realRecvMsg)) != MH_OK) return -2;
-    if (MH_EnableHook(funcRecvMsg) != MH_OK) return -3;
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(funcRecvMsg), reinterpret_cast<LPVOID>(&DispatchMsg), reinterpret_cast<LPVOID *>(&realRecvMsg)) != MH_OK) return -2;
+    if (MH_EnableHook(reinterpret_cast<LPVOID>(funcRecvMsg)) != MH_OK) return -3;
 
     isListeningMsg = true;
     return 0;
@@ -227,8 +225,8 @@ int Handler::ListenMsg()
 int Handler::UnListenMsg()
 {
     if (!isListeningMsg) return 1;
-    if (MH_DisableHook(funcRecvMsg) != MH_OK) return -1;
-    if (MH_RemoveHook(funcRecvMsg) != MH_OK) return -2;
+    if (MH_DisableHook(reinterpret_cast<LPVOID>(funcRecvMsg)) != MH_OK) return -1;
+    if (MH_RemoveHook(reinterpret_cast<LPVOID>(funcRecvMsg)) != MH_OK) return -2;
     if (UninitializeHook() != MH_OK) return -3;
     isListeningMsg = false;
     return 0;
@@ -240,8 +238,8 @@ int Handler::ListenPyq()
 
     funcRecvPyq = Spy::getFunction<funcRecvPyq_t>(OsRecv::PYQ_CALL);
     if (InitializeHook() != MH_OK) return -1;
-    if (MH_CreateHook(funcRecvPyq, &DispatchPyq, reinterpret_cast<LPVOID *>(&realRecvPyq)) != MH_OK) return -1;
-    if (MH_EnableHook(funcRecvPyq) != MH_OK) return -1;
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(funcRecvPyq), reinterpret_cast<LPVOID>(&DispatchPyq), reinterpret_cast<LPVOID *>(&realRecvPyq)) != MH_OK) return -1;
+    if (MH_EnableHook(reinterpret_cast<LPVOID>(funcRecvPyq)) != MH_OK) return -1;
 
     isListeningPyq = true;
     return 0;
@@ -250,8 +248,8 @@ int Handler::ListenPyq()
 int Handler::UnListenPyq()
 {
     if (!isListeningPyq) return 1;
-    if (MH_DisableHook(funcRecvPyq) != MH_OK) return -1;
-    if (MH_RemoveHook(funcRecvPyq) != MH_OK) return -2;
+    if (MH_DisableHook(reinterpret_cast<LPVOID>(funcRecvPyq)) != MH_OK) return -1;
+    if (MH_RemoveHook(reinterpret_cast<LPVOID>(funcRecvPyq)) != MH_OK) return -2;
     if (UninitializeHook() != MH_OK) return -3;
     isListeningPyq = false;
     return 0;

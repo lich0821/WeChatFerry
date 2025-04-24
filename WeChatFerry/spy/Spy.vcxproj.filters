@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="..\com\framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="rpc_server.h">

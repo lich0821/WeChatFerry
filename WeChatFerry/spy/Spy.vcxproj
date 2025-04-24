@@ -250,7 +250,7 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
     <ClInclude Include="chatroom_manager.h" />
     <ClInclude Include="misc_manager.h" />
     <ClInclude Include="database_executor.h" />
-    <ClInclude Include="framework.h" />
+    <ClInclude Include="..\com\framework.h" />
     <ClInclude Include="contact_manager.h" />
     <ClInclude Include="message_handler.h" />
     <ClInclude Include="resource.h" />

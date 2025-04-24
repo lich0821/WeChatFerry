@@ -7,7 +7,6 @@
 #include <strsafe.h>
 #include <wchar.h>
 
-#include "framework.h"
 #include <Shlwapi.h>
 #include <tlhelp32.h>
 
@@ -64,8 +63,8 @@ static DWORD get_wechat_pid()
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hSnapshot == INVALID_HANDLE_VALUE) return 0;
 
-    PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
-    while (Process32Next(hSnapshot, &pe32)) {
+    PROCESSENTRY32W pe32 = { sizeof(PROCESSENTRY32W) };
+    while (Process32NextW(hSnapshot, &pe32)) {
         if (pe32.szExeFile == s2w(WECHATEXE)) {
             pid = pe32.th32ProcessID;
             break;
