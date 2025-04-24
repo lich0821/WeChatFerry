@@ -6,7 +6,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
         with:
           name: v${{ env.version }}
           tag: v${{ env.version }}
-          token: ${{ secrets.REPO_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           artifacts: "WeChatFerry/tmp/*"
           body: |
