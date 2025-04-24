@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   build:
     uses: ./.github/workflows/build-ci.yml
