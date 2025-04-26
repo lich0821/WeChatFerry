@@ -13,7 +13,6 @@
 #include <string>
 #include <thread>
 
-#include <magic_enum/magic_enum.hpp>
 #include <nng/protocol/pair1/pair.h>
 #include <nng/supplemental/util/platform.h>
 
@@ -269,6 +268,7 @@ const std::unordered_map<Functions, RpcServer::FunctionHandler> RpcServer::rpcFu
     { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_add_chatroom_member(r.msg.m, out, len); } },
     { Functions_FUNC_DEL_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_delete_chatroom_member(r.msg.m, out, len); } },
     { Functions_FUNC_INV_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) { return chatroom::rpc_invite_chatroom_member(r.msg.m, out, len); } },
+    { Functions_FUNC_SHUTDOWN, [](const Request &r, uint8_t *out, size_t *len) { return misc::rpc_shutdown(out, len); }}
     // clang-format on
 };
 
