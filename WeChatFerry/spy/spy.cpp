@@ -44,5 +44,5 @@ void Cleanup()
 
 extern "C" {
 __declspec(dllexport) int InitSpy(void *args) { return Spy::Init(args); }
-__declspec(dllexport) void CleanupSpy() { Spy::Cleanup(); }
+__declspec(dllexport) int CleanupSpy() { Spy::Cleanup(); return 0;}
 }

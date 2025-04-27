@@ -105,7 +105,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -158,7 +159,8 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -212,7 +214,8 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>spy.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)smc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>iphlpapi.lib;wsock32.lib;ws2_32.lib;crypt32.lib;Codec.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
@@ -282,7 +285,6 @@ xcopy /y $(SolutionDir)DISCLAIMER.md $(SolutionDir)..\clients\python\wcferry</Co
   </ItemGroup>
   <ItemGroup>
     <None Include="..\rpc\proto\wcf.proto" />
-    <None Include="spy.def" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="spy.rc" />

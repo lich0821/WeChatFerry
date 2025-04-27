@@ -142,9 +142,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="spy.def">
-      <Filter>源文件</Filter>
-    </None>
     <None Include="..\rpc\proto\wcf.proto">
       <Filter>nnrpc</Filter>
     </None>
