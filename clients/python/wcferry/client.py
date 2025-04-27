@@ -131,6 +131,11 @@ class Wcf():
             return
 
         self.disable_recv_msg()
+
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SHUTDOWN
+        _ = self._send_request(req)
+
         self.cmd_socket.close()
         self.msg_socket.close()
 
