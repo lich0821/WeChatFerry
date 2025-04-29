@@ -23,6 +23,17 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 获取版本号和微信版本号
+        run: |
+          $version_full = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $wechat_version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "ProductVersion", "(.*)"').Matches.Groups[1].Value.Trim()
+          $version = $version_full -replace '(\d+\.\d+\.\d+)\.\d+', '$1'
+          echo "version=$version" >> $env:GITHUB_ENV
+          echo "wechat_version=$wechat_version" >> $env:GITHUB_ENV
+          echo "Program Version: $version"
+          echo "WeChat Version: $wechat_version"
+        shell: pwsh
+
       - name: 打包输出文件及下载 WeChat 安装包
         run: |
           New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
