@@ -44,19 +44,11 @@ jobs:
         run: |
           if (!(Test-Path 'C:/Tools')) { New-Item -ItemType Directory -Force -Path 'C:/Tools' | Out-Null }
           cd C:/Tools
-          git clone --depth 1 https://github.com/microsoft/vcpkg vcpkg
-          # 加一次简单重试，防网络抖动
+          git clone --single-branch https://github.com/microsoft/vcpkg vcpkg
           $retry = 0
           while ($retry -lt 3) {
-            try {
-              .\vcpkg\bootstrap-vcpkg.bat
-              break
-            } catch {
-              $retry++
-              if ($retry -ge 3) { throw }
-              Write-Host "bootstrap 失败，重试第 $retry 次..."
-              Start-Sleep -Seconds 15
-            }
+            try { .\vcpkg\bootstrap-vcpkg.bat -disableMetrics ; break }
+            catch { $retry++; if ($retry -ge 3) { throw }; Write-Host "bootstrap 失败，重试第 $retry 次..." ; Start-Sleep 15 }
           }
 
       - name: 设置 VCPKG_ROOT
