@@ -11,16 +11,6 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 获取版本号和微信版本号
-        if: ${{ github.event_name == 'push' }}
-        run: |
-          $version_full = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "FileVersion", "(.*)"').Matches.Groups[1].Value.Trim()
-          $wechat_version = (Select-String -Path "WeChatFerry/spy/spy.rc" -Pattern 'VALUE "ProductVersion", "(.*)"').Matches.Groups[1].Value.Trim()
-          $version = $version_full -replace '(\d+\.\d+\.\d+)\.\d+', '$1'
-          echo "version=$version" >> $env:GITHUB_ENV
-          echo "wechat_version=$wechat_version" >> $env:GITHUB_ENV
-        shell: pwsh
-
       - name: 设置 Visual Studio 2019
         uses: microsoft/setup-msbuild@v2
         with:
@@ -48,17 +38,38 @@ jobs:
           restore-keys: |
             vcpkg-
 
-      - name: 安装 vcpkg 并初始化
+      - name: Clone & bootstrap vcpkg (首次或缓存失效时)
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        shell: pwsh
         run: |
-          if (!(Test-Path 'C:/Tools')) { New-Item -ItemType Directory -Force -Path 'C:/Tools' }
+          if (!(Test-Path 'C:/Tools')) { New-Item -ItemType Directory -Force -Path 'C:/Tools' | Out-Null }
           cd C:/Tools
-          if (!(Test-Path 'C:/Tools/vcpkg')) { git clone https://github.com/microsoft/vcpkg }
-          .\vcpkg\bootstrap-vcpkg.bat
-          echo "VCPKG_ROOT=C:/Tools/vcpkg" >> $GITHUB_ENV
+          git clone --depth 1 https://github.com/microsoft/vcpkg vcpkg
+          # 加一次简单重试，防网络抖动
+          $retry = 0
+          while ($retry -lt 3) {
+            try {
+              .\vcpkg\bootstrap-vcpkg.bat
+              break
+            } catch {
+              $retry++
+              if ($retry -ge 3) { throw }
+              Write-Host "bootstrap 失败，重试第 $retry 次..."
+              Start-Sleep -Seconds 15
+            }
+          }
+
+      - name: 设置 VCPKG_ROOT
+        shell: pwsh
+        run: |
+          "VCPKG_ROOT=C:/Tools/vcpkg" | Out-File $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: 安装/更新第三方依赖
+        shell: pwsh
+        run: |
           cd ${{ github.workspace }}/WeChatFerry
           C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
           C:/Tools/vcpkg/vcpkg integrate install
-        shell: pwsh
 
       - name: 解析并构建 Release/Debug
         run: |
