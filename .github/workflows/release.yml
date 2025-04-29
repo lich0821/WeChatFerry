@@ -39,12 +39,18 @@ jobs:
           # 在根目录创建 tmp
           New-Item -ItemType Directory -Force -Path tmp
 
-          # 压缩根目录下 Out 中的产物
+          # Release 版的 spy.dll 和 sdk.dll
+          $rel = "WeChatFerry/WeChatFerry/x64/Release"
+          # Debug 版的 spy_debug.dll
+          $dbg = "WeChatFerry/WeChatFerry/x64/Debug"
+          # 项目根的 DISCLAIMER.md
+          $md  = "WeChatFerry/WeChatFerry/DISCLAIMER.md"
+
           Compress-Archive `
-            -Path "WeChatFerry/Out/sdk.dll","WeChatFerry/Out/spy.dll","WeChatFerry/Out/spy_debug.dll","WeChatFerry/Out/DISCLAIMER.md" `
+            -Path "$rel/spy.dll","$rel/sdk.dll","$dbg/spy_debug.dll",$md `
             -DestinationPath "tmp/v${{ env.version }}.zip"
 
-          # 下载对应 WeChat 安装包
+          # 下载对应版本微信安装包
           Invoke-WebRequest `
             -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" `
             -OutFile "tmp/WeChatSetup-${{ env.wechat_version }}.exe"
