@@ -9,7 +9,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/OF8Hyxrkp8JGuVdRK8nyFA)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/c2JggTBlOP8fP9j-MlMAvg)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人示例。
@@ -207,9 +207,8 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.5.1
-* 修复邀请进群偶发失败
-* 修复获取 wxid 失败
+### v39.5.2
+* 没有新功能
 
 <details><summary>点击查看更多</summary>
 
@@ -220,6 +219,10 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.5.1
+* 修复邀请进群偶发失败
+* 修复获取 wxid 失败
 
 ### v39.5.0
 
