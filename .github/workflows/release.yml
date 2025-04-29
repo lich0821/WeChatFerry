@@ -36,14 +36,14 @@ jobs:
 
       - name: 打包输出文件及下载 WeChat 安装包
         run: |
-          New-Item -ItemType Directory -Force -Path "WeChatFerry/tmp"
-          Compress-Archive -Path "WeChatFerry/Out/sdk.dll", "WeChatFerry/Out/spy.dll", "WeChatFerry/Out/spy_debug.dll", "WeChatFerry/Out/DISCLAIMER.md" -DestinationPath "WeChatFerry/tmp/v${{ env.version }}.zip"
-          Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "WeChatFerry/tmp/WeChatSetup-${{ env.wechat_version }}.exe"
+          New-Item -ItemType Directory -Force -Path "tmp"
+          Compress-Archive -Path "Out/sdk.dll", "Out/spy.dll", "Out/spy_debug.dll", "Out/DISCLAIMER.md" -DestinationPath "tmp/v${{ env.version }}.zip"
+          Invoke-WebRequest -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" -OutFile "tmp/WeChatSetup-${{ env.wechat_version }}.exe"
         shell: pwsh
 
       - name: 列出待发布文件
         run: |
-          Get-ChildItem -Path "WeChatFerry/tmp" -Recurse
+          Get-ChildItem -Path "tmp" -Recurse
         shell: pwsh
 
       - name: 发布到 GitHub Releases
@@ -53,7 +53,7 @@ jobs:
           tag: v${{ env.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
-          artifacts: "WeChatFerry/tmp/*"
+          artifacts: "tmp/*"
           body: |
             程序版本：`v${{ env.version }}`
             配套微信版本：`${{ env.wechat_version }}`
