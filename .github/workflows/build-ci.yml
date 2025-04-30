@@ -82,5 +82,5 @@ jobs:
         with:
           name: wechatferry-binaries
           path: |
-            WeChatFerry/WeChatFerry/Out/*.dll
-            WeChatFerry/WeChatFerry/Out/*.md
+            WeChatFerry/Out/*.dll
+            WeChatFerry/Out/*.md
