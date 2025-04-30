@@ -77,6 +77,10 @@ jobs:
           }
         shell: pwsh
 
+      - name: 列出待发布文件
+        shell: pwsh
+        run: Get-ChildItem -Path WeChatFerry -Recurse
+
       - name: 上传
         uses: actions/upload-artifact@v4
         with:
