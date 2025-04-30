@@ -76,3 +76,11 @@ jobs:
               /verbosity:minimal
           }
         shell: pwsh
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: wechatferry-binaries
+          path: |
+            WeChatFerry/WeChatFerry/Out/*.dll
+            WeChatFerry/WeChatFerry/Out/*.md

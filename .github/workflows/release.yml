@@ -22,6 +22,12 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 下载编译产物
+        uses: actions/download-artifact@v4
+        with:
+          name: wechatferry-binaries
+          path: tmp
+
       - name: 获取版本号和微信版本号
         shell: pwsh
         run: |
@@ -36,28 +42,14 @@ jobs:
       - name: 打包输出文件及下载 WeChat 安装包
         shell: pwsh
         run: |
-          # 在根目录创建 tmp
-          New-Item -ItemType Directory -Force -Path tmp
-
-          # Release 版的 spy.dll 和 sdk.dll
-          $rel = "WeChatFerry/WeChatFerry/x64/Release"
-          # Debug 版的 spy_debug.dll
-          $dbg = "WeChatFerry/WeChatFerry/x64/Debug"
-          # 项目根的 DISCLAIMER.md
-          $md  = "WeChatFerry/WeChatFerry/DISCLAIMER.md"
-
           Compress-Archive `
-            -Path "$rel/spy.dll","$rel/sdk.dll","$dbg/spy_debug.dll",$md `
+            -Path "tmp/*" `
             -DestinationPath "tmp/v${{ env.version }}.zip"
 
           # 下载对应版本微信安装包
           Invoke-WebRequest `
             -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" `
             -OutFile "tmp/WeChatSetup-${{ env.wechat_version }}.exe"
-
-      - name: 列出待发布文件
-        shell: pwsh
-        run: Get-ChildItem -Path tmp -Recurse
 
       - name: 发布到 GitHub Releases
         uses: ncipollo/release-action@main
