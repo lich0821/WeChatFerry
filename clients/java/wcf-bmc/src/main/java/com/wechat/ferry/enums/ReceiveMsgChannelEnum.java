@@ -9,7 +9,7 @@ import lombok.Getter;
 
 /**
  * 枚举-接收消息处理渠道
- * 
+ *
  * @author chandler
  * @date 2024/12/25 14:15
  */
@@ -27,7 +27,7 @@ public enum ReceiveMsgChannelEnum {
      */
     UN_MATCH("", null),
 
-    // 结束
+    // END
     ;
 
     private final String code;

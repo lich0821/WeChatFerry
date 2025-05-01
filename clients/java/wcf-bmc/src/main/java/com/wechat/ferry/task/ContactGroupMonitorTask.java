@@ -63,6 +63,10 @@ public class ContactGroupMonitorTask {
      */
     private Boolean initStatus = false;
 
+    /**
+     * 定时任务-联系人群组监控
+     * TODO-存在BUG 仅当做案例进行展示
+     */
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduled() {
         if (true) {
