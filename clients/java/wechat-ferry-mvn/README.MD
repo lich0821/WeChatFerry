@@ -81,7 +81,18 @@ swagger地址：http://localhost:9201/swagger-ui/index.html
 
 使用maven插件打包
 
-![img.png](images/md/img_202505011209.png)
+- 先 clean
+- 在 install
+
+或者进入到项目根目录使用命令打包
+
+``` shell
+cd wechat-ferry-mvn
+
+mvn clean
+
+mvn install
+```
 
 打包后的文件在target/wechat-ferry-mvn-0.0.1-SNAPSHOT.jar
 
