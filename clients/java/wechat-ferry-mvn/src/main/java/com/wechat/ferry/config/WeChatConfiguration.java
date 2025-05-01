@@ -33,7 +33,8 @@ public class WeChatConfiguration {
         // Client client = new Client("127.0.0.1", 10086);
 
         // 本地启动 RPC
-        WeChatSocketClient wechatSocketClient = new WeChatSocketClient(properties.getSocketPort(), properties.getDllPath());
+        WeChatSocketClient wechatSocketClient =
+            new WeChatSocketClient(properties.getSocketPort(), properties.getSdkDebugSwitch(), properties.getDllPath());
 
         // 是否已登录
         // log.info("isLogin: {}", client.isLogin());

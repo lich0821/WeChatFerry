@@ -30,6 +30,11 @@ public class WeChatFerryProperties {
     private Integer socketPort;
 
     /**
+     * SDK是否调试模式
+     */
+    private Boolean sdkDebugSwitch = false;
+
+    /**
      * 联系人类型-官方杂号，禁止与其他分类重复(格式：代码|名称)
      * 使用时记得需要提取代码或者名称匹配
      */

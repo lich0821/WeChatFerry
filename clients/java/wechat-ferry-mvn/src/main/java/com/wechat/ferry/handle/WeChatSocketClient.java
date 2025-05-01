@@ -82,6 +82,10 @@ public class WeChatSocketClient {
         this(DEFAULT_HOST, port, false, dllPath);
     }
 
+    public WeChatSocketClient(Integer port, boolean debug, String dllPath) {
+        this(DEFAULT_HOST, port, debug, dllPath);
+    }
+
     public WeChatSocketClient(String host, Integer port, boolean debug, String dllPath) {
         this.host = host;
         this.port = port;

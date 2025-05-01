@@ -11,15 +11,15 @@
         <version>2.7.18</version>
     </parent>
 
-    <artifactId>wechat-ferry-mvn</artifactId>
+    <artifactId>wcf-bmc</artifactId>
     <packaging>jar</packaging>
-    <name>wechat-ferry-mvn</name>
-    <version>39.2.4</version>
-    <description>WeChatFerry客户端Java-Maven版</description>
+    <name>wcf-bmc</name>
+    <version>39.5.1.1</version>
+    <description>WeChatFerry Springboot Maven Client (WCF-Springboot的Maven版客户端)</description>
 
     <properties>
         <application.main.class>com.wechat.ferry.WeChatFerryApplication</application.main.class>
-        <app.name>wechat-ferry-mvn</app.name>
+        <app.name>wcf-bmc</app.name>
     </properties>
 
     <dependencies>
@@ -142,6 +142,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
                 <!-- 排除特定资源 -->
                 <excludes>
                     <exclude>bin/*</exclude>
@@ -163,6 +164,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>${app.name}-${project.version}</finalName>
                     <includeSystemScope>true</includeSystemScope>
                     <!-- 主类入口 -->
                     <mainClass>${application.main.class}</mainClass>

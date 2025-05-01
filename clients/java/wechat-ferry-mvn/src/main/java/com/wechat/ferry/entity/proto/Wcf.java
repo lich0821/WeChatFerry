@@ -147,6 +147,10 @@ public final class Wcf {
      * <code>FUNC_INV_ROOM_MEMBERS = 114;</code>
      */
     FUNC_INV_ROOM_MEMBERS(114),
+    /**
+     * <code>FUNC_SHUTDOWN = 255;</code>
+     */
+    FUNC_SHUTDOWN(255),
     UNRECOGNIZED(-1),
     ;
 
@@ -278,6 +282,10 @@ public final class Wcf {
      * <code>FUNC_INV_ROOM_MEMBERS = 114;</code>
      */
     public static final int FUNC_INV_ROOM_MEMBERS_VALUE = 114;
+    /**
+     * <code>FUNC_SHUTDOWN = 255;</code>
+     */
+    public static final int FUNC_SHUTDOWN_VALUE = 255;
 
 
     public final int getNumber() {
@@ -336,6 +344,7 @@ public final class Wcf {
         case 112: return FUNC_ADD_ROOM_MEMBERS;
         case 113: return FUNC_DEL_ROOM_MEMBERS;
         case 114: return FUNC_INV_ROOM_MEMBERS;
+        case 255: return FUNC_SHUTDOWN;
         default: return null;
       }
     }
@@ -23636,6 +23645,26 @@ java.lang.String defaultValue) {
      */
     com.google.protobuf.ByteString
         getHomeBytes();
+
+    /**
+     * <pre>
+     * 修改后的wxid
+     * </pre>
+     *
+     * <code>string alias = 5;</code>
+     * @return The alias.
+     */
+    java.lang.String getAlias();
+    /**
+     * <pre>
+     * 修改后的wxid
+     * </pre>
+     *
+     * <code>string alias = 5;</code>
+     * @return The bytes for alias.
+     */
+    com.google.protobuf.ByteString
+        getAliasBytes();
   }
   /**
    * Protobuf type {@code wcf.UserInfo}
@@ -23654,6 +23683,7 @@ java.lang.String defaultValue) {
       name_ = "";
       mobile_ = "";
       home_ = "";
+      alias_ = "";
     }
 
     @java.lang.Override
@@ -23864,6 +23894,53 @@ java.lang.String defaultValue) {
       }
     }
 
+    public static final int ALIAS_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object alias_ = "";
+    /**
+     * <pre>
+     * 修改后的wxid
+     * </pre>
+     *
+     * <code>string alias = 5;</code>
+     * @return The alias.
+     */
+    @java.lang.Override
+    public java.lang.String getAlias() {
+      java.lang.Object ref = alias_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        alias_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 修改后的wxid
+     * </pre>
+     *
+     * <code>string alias = 5;</code>
+     * @return The bytes for alias.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAliasBytes() {
+      java.lang.Object ref = alias_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        alias_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -23890,6 +23967,9 @@ java.lang.String defaultValue) {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, home_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(alias_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, alias_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -23910,6 +23990,9 @@ java.lang.String defaultValue) {
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(home_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, home_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(alias_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, alias_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -23934,6 +24017,8 @@ java.lang.String defaultValue) {
           .equals(other.getMobile())) return false;
       if (!getHome()
           .equals(other.getHome())) return false;
+      if (!getAlias()
+          .equals(other.getAlias())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -23953,6 +24038,8 @@ java.lang.String defaultValue) {
       hash = (53 * hash) + getMobile().hashCode();
       hash = (37 * hash) + HOME_FIELD_NUMBER;
       hash = (53 * hash) + getHome().hashCode();
+      hash = (37 * hash) + ALIAS_FIELD_NUMBER;
+      hash = (53 * hash) + getAlias().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -24086,6 +24173,7 @@ java.lang.String defaultValue) {
         name_ = "";
         mobile_ = "";
         home_ = "";
+        alias_ = "";
         return this;
       }
 
@@ -24131,6 +24219,9 @@ java.lang.String defaultValue) {
         if (((from_bitField0_ & 0x00000008) != 0)) {
           result.home_ = home_;
         }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.alias_ = alias_;
+        }
       }
 
       @java.lang.Override
@@ -24163,6 +24254,11 @@ java.lang.String defaultValue) {
         if (!other.getHome().isEmpty()) {
           home_ = other.home_;
           bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        if (!other.getAlias().isEmpty()) {
+          alias_ = other.alias_;
+          bitField0_ |= 0x00000010;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -24211,6 +24307,11 @@ java.lang.String defaultValue) {
                 bitField0_ |= 0x00000008;
                 break;
               } // case 34
+              case 42: {
+                alias_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -24592,6 +24693,98 @@ java.lang.String defaultValue) {
         checkByteStringIsUtf8(value);
         home_ = value;
         bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object alias_ = "";
+      /**
+       * <pre>
+       * 修改后的wxid
+       * </pre>
+       *
+       * <code>string alias = 5;</code>
+       * @return The alias.
+       */
+      public java.lang.String getAlias() {
+        java.lang.Object ref = alias_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          alias_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 修改后的wxid
+       * </pre>
+       *
+       * <code>string alias = 5;</code>
+       * @return The bytes for alias.
+       */
+      public com.google.protobuf.ByteString
+          getAliasBytes() {
+        java.lang.Object ref = alias_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          alias_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 修改后的wxid
+       * </pre>
+       *
+       * <code>string alias = 5;</code>
+       * @param value The alias to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAlias(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        alias_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 修改后的wxid
+       * </pre>
+       *
+       * <code>string alias = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAlias() {
+        alias_ = getDefaultInstance().getAlias();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 修改后的wxid
+       * </pre>
+       *
+       * <code>string alias = 5;</code>
+       * @param value The bytes for alias to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAliasBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        alias_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -34213,48 +34406,48 @@ java.lang.String defaultValue) {
       "d\"\"\n\006DbRows\022\030\n\004rows\030\001 \003(\0132\n.wcf.DbRow\"5\n" +
       "\014Verification\022\n\n\002v3\030\001 \001(\t\022\n\n\002v4\030\002 \001(\t\022\r\n" +
       "\005scene\030\003 \001(\005\"+\n\nMemberMgmt\022\016\n\006roomid\030\001 \001" +
-      "(\t\022\r\n\005wxids\030\002 \001(\t\"D\n\010UserInfo\022\014\n\004wxid\030\001 " +
+      "(\t\022\r\n\005wxids\030\002 \001(\t\"S\n\010UserInfo\022\014\n\004wxid\030\001 " +
       "\001(\t\022\014\n\004name\030\002 \001(\t\022\016\n\006mobile\030\003 \001(\t\022\014\n\004hom" +
-      "e\030\004 \001(\t\"#\n\007DecPath\022\013\n\003src\030\001 \001(\t\022\013\n\003dst\030\002" +
-      " \001(\t\"4\n\010Transfer\022\014\n\004wxid\030\001 \001(\t\022\014\n\004tfid\030\002" +
-      " \001(\t\022\014\n\004taid\030\003 \001(\t\"9\n\tAttachMsg\022\016\n\002id\030\001 " +
-      "\001(\004B\0020\001\022\r\n\005thumb\030\002 \001(\t\022\r\n\005extra\030\003 \001(\t\"\'\n" +
-      "\010AudioMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\013\n\003dir\030\002 \001(\t\"y" +
-      "\n\010RichText\022\014\n\004name\030\001 \001(\t\022\017\n\007account\030\002 \001(" +
-      "\t\022\r\n\005title\030\003 \001(\t\022\016\n\006digest\030\004 \001(\t\022\013\n\003url\030" +
-      "\005 \001(\t\022\020\n\010thumburl\030\006 \001(\t\022\020\n\010receiver\030\007 \001(" +
-      "\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001(\t\022\014\n\004wxid\030\002 \001(" +
-      "\t\"(\n\006OcrMsg\022\016\n\006status\030\001 \001(\005\022\016\n\006result\030\002 " +
-      "\001(\t\".\n\nForwardMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\020\n\010rec" +
-      "eiver\030\002 \001(\t\"\267\002\n\010RoomData\022)\n\007members\030\001 \003(" +
-      "\0132\030.wcf.RoomData.RoomMember\022\024\n\007field_2\030\002" +
-      " \001(\005H\000\210\001\001\022\017\n\007field_3\030\003 \001(\005\022\024\n\007field_4\030\004 " +
-      "\001(\005H\001\210\001\001\022\020\n\010capacity\030\005 \001(\005\022\024\n\007field_6\030\006 " +
-      "\001(\tH\002\210\001\001\022\017\n\007field_7\030\007 \001(\005\022\017\n\007field_8\030\010 \001" +
-      "(\005\022\016\n\006admins\030\t \003(\t\032E\n\nRoomMember\022\014\n\004wxid" +
-      "\030\001 \001(\t\022\021\n\004name\030\002 \001(\tH\000\210\001\001\022\r\n\005state\030\003 \001(\005" +
-      "B\007\n\005_nameB\n\n\010_field_2B\n\n\010_field_4B\n\n\010_fi" +
-      "eld_6*\362\005\n\tFunctions\022\021\n\rFUNC_RESERVED\020\000\022\021" +
-      "\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC_GET_SELF_WXID\020" +
-      "\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021\022\025\n\021FUNC_GET_CO" +
-      "NTACTS\020\022\022\025\n\021FUNC_GET_DB_NAMES\020\023\022\026\n\022FUNC_" +
-      "GET_DB_TABLES\020\024\022\026\n\022FUNC_GET_USER_INFO\020\025\022" +
-      "\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021\n\rFUNC_SEND_TXT" +
-      "\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016FUNC_SEND_FILE\020" +
-      "\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021FUNC_SEND_EMOTIO" +
-      "N\020$\022\026\n\022FUNC_SEND_RICH_TXT\020%\022\025\n\021FUNC_SEND" +
-      "_PAT_MSG\020&\022\024\n\020FUNC_FORWARD_MSG\020\'\022\030\n\024FUNC" +
-      "_ENABLE_RECV_TXT\0200\022\031\n\025FUNC_DISABLE_RECV_" +
-      "TXT\020@\022\026\n\022FUNC_EXEC_DB_QUERY\020P\022\026\n\022FUNC_AC" +
-      "CEPT_FRIEND\020Q\022\026\n\022FUNC_RECV_TRANSFER\020R\022\024\n" +
-      "\020FUNC_REFRESH_PYQ\020S\022\030\n\024FUNC_DOWNLOAD_ATT" +
-      "ACH\020T\022\031\n\025FUNC_GET_CONTACT_INFO\020U\022\023\n\017FUNC" +
-      "_REVOKE_MSG\020V\022\027\n\023FUNC_REFRESH_QRCODE\020W\022\026" +
-      "\n\022FUNC_DECRYPT_IMAGE\020`\022\021\n\rFUNC_EXEC_OCR\020" +
-      "a\022\031\n\025FUNC_ADD_ROOM_MEMBERS\020p\022\031\n\025FUNC_DEL" +
-      "_ROOM_MEMBERS\020q\022\031\n\025FUNC_INV_ROOM_MEMBERS" +
-      "\020rB\037\n\035com.wechat.ferry.entity.protob\006pro" +
-      "to3"
+      "e\030\004 \001(\t\022\r\n\005alias\030\005 \001(\t\"#\n\007DecPath\022\013\n\003src" +
+      "\030\001 \001(\t\022\013\n\003dst\030\002 \001(\t\"4\n\010Transfer\022\014\n\004wxid\030" +
+      "\001 \001(\t\022\014\n\004tfid\030\002 \001(\t\022\014\n\004taid\030\003 \001(\t\"9\n\tAtt" +
+      "achMsg\022\016\n\002id\030\001 \001(\004B\0020\001\022\r\n\005thumb\030\002 \001(\t\022\r\n" +
+      "\005extra\030\003 \001(\t\"\'\n\010AudioMsg\022\016\n\002id\030\001 \001(\004B\0020\001" +
+      "\022\013\n\003dir\030\002 \001(\t\"y\n\010RichText\022\014\n\004name\030\001 \001(\t\022" +
+      "\017\n\007account\030\002 \001(\t\022\r\n\005title\030\003 \001(\t\022\016\n\006diges" +
+      "t\030\004 \001(\t\022\013\n\003url\030\005 \001(\t\022\020\n\010thumburl\030\006 \001(\t\022\020" +
+      "\n\010receiver\030\007 \001(\t\"&\n\006PatMsg\022\016\n\006roomid\030\001 \001" +
+      "(\t\022\014\n\004wxid\030\002 \001(\t\"(\n\006OcrMsg\022\016\n\006status\030\001 \001" +
+      "(\005\022\016\n\006result\030\002 \001(\t\".\n\nForwardMsg\022\016\n\002id\030\001" +
+      " \001(\004B\0020\001\022\020\n\010receiver\030\002 \001(\t\"\267\002\n\010RoomData\022" +
+      ")\n\007members\030\001 \003(\0132\030.wcf.RoomData.RoomMemb" +
+      "er\022\024\n\007field_2\030\002 \001(\005H\000\210\001\001\022\017\n\007field_3\030\003 \001(" +
+      "\005\022\024\n\007field_4\030\004 \001(\005H\001\210\001\001\022\020\n\010capacity\030\005 \001(" +
+      "\005\022\024\n\007field_6\030\006 \001(\tH\002\210\001\001\022\017\n\007field_7\030\007 \001(\005" +
+      "\022\017\n\007field_8\030\010 \001(\005\022\016\n\006admins\030\t \003(\t\032E\n\nRoo" +
+      "mMember\022\014\n\004wxid\030\001 \001(\t\022\021\n\004name\030\002 \001(\tH\000\210\001\001" +
+      "\022\r\n\005state\030\003 \001(\005B\007\n\005_nameB\n\n\010_field_2B\n\n\010" +
+      "_field_4B\n\n\010_field_6*\206\006\n\tFunctions\022\021\n\rFU" +
+      "NC_RESERVED\020\000\022\021\n\rFUNC_IS_LOGIN\020\001\022\026\n\022FUNC" +
+      "_GET_SELF_WXID\020\020\022\026\n\022FUNC_GET_MSG_TYPES\020\021" +
+      "\022\025\n\021FUNC_GET_CONTACTS\020\022\022\025\n\021FUNC_GET_DB_N" +
+      "AMES\020\023\022\026\n\022FUNC_GET_DB_TABLES\020\024\022\026\n\022FUNC_G" +
+      "ET_USER_INFO\020\025\022\026\n\022FUNC_GET_AUDIO_MSG\020\026\022\021" +
+      "\n\rFUNC_SEND_TXT\020 \022\021\n\rFUNC_SEND_IMG\020!\022\022\n\016" +
+      "FUNC_SEND_FILE\020\"\022\021\n\rFUNC_SEND_XML\020#\022\025\n\021F" +
+      "UNC_SEND_EMOTION\020$\022\026\n\022FUNC_SEND_RICH_TXT" +
+      "\020%\022\025\n\021FUNC_SEND_PAT_MSG\020&\022\024\n\020FUNC_FORWAR" +
+      "D_MSG\020\'\022\030\n\024FUNC_ENABLE_RECV_TXT\0200\022\031\n\025FUN" +
+      "C_DISABLE_RECV_TXT\020@\022\026\n\022FUNC_EXEC_DB_QUE" +
+      "RY\020P\022\026\n\022FUNC_ACCEPT_FRIEND\020Q\022\026\n\022FUNC_REC" +
+      "V_TRANSFER\020R\022\024\n\020FUNC_REFRESH_PYQ\020S\022\030\n\024FU" +
+      "NC_DOWNLOAD_ATTACH\020T\022\031\n\025FUNC_GET_CONTACT" +
+      "_INFO\020U\022\023\n\017FUNC_REVOKE_MSG\020V\022\027\n\023FUNC_REF" +
+      "RESH_QRCODE\020W\022\026\n\022FUNC_DECRYPT_IMAGE\020`\022\021\n" +
+      "\rFUNC_EXEC_OCR\020a\022\031\n\025FUNC_ADD_ROOM_MEMBER" +
+      "S\020p\022\031\n\025FUNC_DEL_ROOM_MEMBERS\020q\022\031\n\025FUNC_I" +
+      "NV_ROOM_MEMBERS\020r\022\022\n\rFUNC_SHUTDOWN\020\377\001B\037\n" +
+      "\035com.wechat.ferry.entity.protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -34385,7 +34578,7 @@ java.lang.String defaultValue) {
     internal_static_wcf_UserInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_wcf_UserInfo_descriptor,
-        new java.lang.String[] { "Wxid", "Name", "Mobile", "Home", });
+        new java.lang.String[] { "Wxid", "Name", "Mobile", "Home", "Alias", });
     internal_static_wcf_DecPath_descriptor =
       getDescriptor().getMessageTypes().get(20);
     internal_static_wcf_DecPath_fieldAccessorTable = new

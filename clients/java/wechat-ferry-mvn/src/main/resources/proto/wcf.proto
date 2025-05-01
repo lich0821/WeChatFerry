@@ -36,6 +36,7 @@ enum Functions {
     FUNC_ADD_ROOM_MEMBERS = 0x70;
     FUNC_DEL_ROOM_MEMBERS = 0x71;
     FUNC_INV_ROOM_MEMBERS = 0x72;
+    FUNC_SHUTDOWN         = 0xFF;
 }
 
 message Request
@@ -178,6 +179,7 @@ message UserInfo
     string name   = 2; // 昵称
     string mobile = 3; // 手机号
     string home   = 4; // 文件/图片等父路径
+    string alias  = 5; // 修改后的wxid
 }
 
 message DecPath

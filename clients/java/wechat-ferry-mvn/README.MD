@@ -1,4 +1,4 @@
-# WeChatFerry Java 客户端 maven版
+# WCF-BMC 【WeChatFerry中的Springboot+Maven版的客户端】
 
 ⚠️ **只支持 Windows** ⚠️
 
@@ -14,7 +14,7 @@
 | JDK             | 1.8+      | √  |
 | Maven           | 3.8+      | √  |
 | 微信客户端           | 3.9.12.51 | √  |
-| WeChatFerry-SDK | 39.5.2    | √  |
+| WeChatFerry-SDK | 39.5.1    | √  |
 | MySQL           | 8.0+      | 备用 |
 
 ### 下载文件
@@ -25,17 +25,17 @@
 
 可以直接以WeChatFerry为根目录打开
 
-或者以WeChatFerry/clients/java/wechat-ferry-mvn为根目录打开
+或者以WeChatFerry/clients/java/wcf-bmc为根目录打开
 
 ### 添加Maven
 
-找到 WeChatFerry/clients/java/wechat-ferry-mvn/pom.xml 文件，右键添加到Maven中，会自动下载依赖
+找到 WeChatFerry/clients/java/wcf-bmc/pom.xml 文件，右键添加到Maven中，会自动下载依赖
 
 ### 替换对应版本的dll
 
 把刚下载的最新发布文件解压到本项目中的 dll 文件目录下，直接替换原因文件即可
 
-替换 `clients/java/wechat-ferry-mvn/dll` 目录下(也可以在配置文件中改为自定义的目录)
+替换 `clients/java/wcf-bmc/dll` 目录下(也可以在配置文件中改为自定义的目录)
 
 - sdk.dll
 - spy.dll
@@ -56,7 +56,7 @@
 wechat:
     ferry:
         # DLL文件位置
-        dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
+        dll-path: E:\WeChatFerry\clients\java\wcf-bmc\dll\sdk.dll
         # socket端口
         socket-port: 10086
 ```
@@ -87,14 +87,14 @@ swagger地址：http://localhost:9201/swagger-ui/index.html
 或者进入到项目根目录使用命令打包
 
 ``` shell
-cd wechat-ferry-mvn
+cd wcf-bmc
 
 mvn clean
 
 mvn install
 ```
 
-打包后的文件在target/wechat-ferry-mvn-0.0.1-SNAPSHOT.jar
+打包后的文件在target/wcf-bmc-x.x.x.x-SNAPSHOT.jar
 
 ## 安装部署
 
@@ -110,7 +110,7 @@ mvn install
 自己在项目中找到对应的文件，手动复制过去
 
 ```
-wcf
+wcf-bmc
 ├─dll                                       核心dll目录
 │  ├─sdk.dll                                sdk文件
 │  ├─spy.dll                                spy文件
@@ -124,7 +124,7 @@ wcf
 │  ├─application.yml                        配置文件
 │  └─logback-spring.xml                     日志配置文件
 │
-├─wechat-ferry-mvn-xx.x.x.jar               打包后的源码包
+├─wcf-bmc-xx.x.x.x.jar                      打包后的源码包
 │
 
 ```
@@ -142,7 +142,7 @@ cd wcf
 3.执行启动命令，jar名称换成自己的
 
 ``` shell
-java -Dconfig.dir=./config -jar wechat-ferry-mvn-xx.x.x.jar
+java -Dconfig.dir=./config -jar wcf-bmc-xx.x.x.x.jar
 ```
 
 ## 参与开发
@@ -164,7 +164,7 @@ java -Dconfig.dir=./config -jar wechat-ferry-mvn-xx.x.x.jar
 ### 模块结构
 
 ```
-wechat-ferry-mvn
+wcf-bmc
 ├─dll                                       核心dll
 │  ├─sdk.dll                                sdk文件
 │  └─readme.txt                             本目录说明文件
@@ -270,7 +270,7 @@ message RoomData
 如：
 
 ```cmd
-feat(0): [java]-[wechat-ferry-mvn]-基础类目录划分迁移及代码格式
+feat(0): [wcf-bmc]-基础类目录划分迁移及代码格式
 ```
 
 | 名称   | 版本           |
