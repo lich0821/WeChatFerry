@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 
+#define MAGIC_ENUM_RANGE_MIN 0
+#define MAGIC_ENUM_RANGE_MAX 256
 #include <magic_enum/magic_enum.hpp>
 
 #include "wcf.pb.h"
@@ -41,7 +43,8 @@ static const std::unordered_map<Functions, int> rpc_tag_map
         { Functions_FUNC_EXEC_OCR, Response_ocr_tag },
         { Functions_FUNC_ADD_ROOM_MEMBERS, Response_status_tag },
         { Functions_FUNC_DEL_ROOM_MEMBERS, Response_status_tag },
-        { Functions_FUNC_INV_ROOM_MEMBERS, Response_status_tag } };
+        { Functions_FUNC_INV_ROOM_MEMBERS, Response_status_tag },
+        { Functions_FUNC_SHUTDOWN, Response_status_tag } };
 
 template <Functions FuncType, typename AssignFunc> bool fill_response(uint8_t *out, size_t *len, AssignFunc assign)
 {

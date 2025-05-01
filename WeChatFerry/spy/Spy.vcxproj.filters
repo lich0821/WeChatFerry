@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="..\com\framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="rpc_server.h">
@@ -142,9 +142,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="spy.def">
-      <Filter>源文件</Filter>
-    </None>
     <None Include="..\rpc\proto\wcf.proto">
       <Filter>nnrpc</Filter>
     </None>

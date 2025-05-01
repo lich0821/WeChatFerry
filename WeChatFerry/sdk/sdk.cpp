@@ -21,9 +21,16 @@ static HANDLE wcProcess = NULL;
 static HMODULE spyBase  = NULL;
 static std::string spyDllPath;
 
+//区分MSVC和MinGW
+#ifdef _MSC_VER
 constexpr char WCFSDKDLL[]       = "sdk.dll";
 constexpr char WCFSPYDLL[]       = "spy.dll";
 constexpr char WCFSPYDLL_DEBUG[] = "spy_debug.dll";
+#else
+constexpr char WCFSDKDLL[]       = "libsdk.dll";
+constexpr char WCFSPYDLL[]       = "libspy.dll";
+constexpr char WCFSPYDLL_DEBUG[] = "libspyd.dll";
+#endif
 
 constexpr std::string_view DISCLAIMER_FLAG      = ".license_accepted.flag";
 constexpr std::string_view DISCLAIMER_TEXT_FILE = "DISCLAIMER.md";
@@ -91,8 +98,8 @@ static std::string get_dll_path(bool debug)
 
     return path.string();
 }
-
-int WxInitSDK(bool debug, int port)
+extern "C" {
+__declspec(dllexport) int WxInitSDK(bool debug, int port)
 {
     if (!show_disclaimer()) {
         exit(-1); // 用户拒绝协议，退出程序
@@ -134,7 +141,7 @@ int WxInitSDK(bool debug, int port)
     return status;
 }
 
-int WxDestroySDK()
+__declspec(dllexport) int WxDestroySDK()
 {
     if (!injected) {
         return 1; // 未注入
@@ -150,4 +157,5 @@ int WxDestroySDK()
     injected = false;
 
     return 0;
+}
 }

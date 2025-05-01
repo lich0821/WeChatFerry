@@ -1,11 +1,13 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.4.4.0"
+__version__ = "39.5.2.0"
 
 import atexit
 import base64
 import ctypes
+import ctypes.wintypes
+import gc
 import logging
 import mimetypes
 import os
@@ -80,10 +82,7 @@ class Wcf():
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
-            self.sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-            if self.sdk.WxInitSDK(debug, port) != 0:
-                self.LOG.error("初始化失败！")
-                os._exit(-1)
+            self._sdk_init(debug, port)
 
         self.cmd_url = f"tcp://{self.host}:{self.port}"
 
@@ -125,15 +124,42 @@ class Wcf():
         except subprocess.CalledProcessError as e:
             self.LOG.error(f"修改控制台代码页失败: {e}")
 
+    def _sdk_init(self, debug, port):
+        sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
+        if sdk.WxInitSDK(debug, port) != 0:
+            self.LOG.error("初始化失败！")
+            os._exit(-1)
+
+        # 主动卸载
+        ctypes.windll.kernel32.FreeLibrary.argtypes = [ctypes.wintypes.HMODULE]
+        ctypes.windll.kernel32.FreeLibrary(sdk._handle)
+        del sdk  # 删除 Python 对象、触发垃圾回收
+        gc.collect()
+
+    def _sdk_destroy(self):
+        sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
+        sdk.WxDestroySDK()
+        # 主动卸载
+        ctypes.windll.kernel32.FreeLibrary.argtypes = [ctypes.wintypes.HMODULE]
+        ctypes.windll.kernel32.FreeLibrary(sdk._handle)
+        del sdk  # 删除 Python 对象、触发垃圾回收
+        gc.collect()
+
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
         if not self._is_running:
             return
 
         self.disable_recv_msg()
-        self.cmd_socket.close()
 
-        if self._local_mode and self.sdk and self.sdk.WxDestroySDK() != 0:
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_SHUTDOWN
+        _ = self._send_request(req)
+
+        self.cmd_socket.close()
+        self.msg_socket.close()
+
+        if self._local_mode and self.sdk and self._sdk_destroy() != 0:
             self.LOG.error("退出失败！")
 
         self._is_running = False
@@ -537,9 +563,6 @@ class Wcf():
                 else:
                     self.msgQ.put(WxMsg(rsp.wxmsg))
 
-            # 退出前关闭通信通道
-            self.msg_socket.close()
-
         if self._is_receiving_msg:
             return True
 
@@ -574,8 +597,6 @@ class Wcf():
                     pass
                 else:
                     callback(WxMsg(rsp.wxmsg))
-            # 退出前关闭通信通道
-            self.msg_socket.close()
 
         if self._is_receiving_msg:
             return True
@@ -666,9 +687,9 @@ class Wcf():
         friends = []
         for cnt in self.get_contacts():
             if (cnt["wxid"].endswith("@chatroom") or    # 群聊
-                        cnt["wxid"].startswith("gh_") or    # 公众号
-                        cnt["wxid"] in not_friends.keys()   # 其他杂号
-                    ):
+                    cnt["wxid"].startswith("gh_") or    # 公众号
+                    cnt["wxid"] in not_friends.keys()   # 其他杂号
+                ):
                 continue
             friends.append(cnt)
 
@@ -843,7 +864,7 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+        sleep(1)  # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
         if (not os.path.exists(extra)) and (self.download_attach(id, "", extra) != 0):
             self.LOG.error(f"下载失败")
             return ""
@@ -870,7 +891,7 @@ class Wcf():
         Returns:
             str: 成功返回存储路径；空字符串为失败，原因见日志。
         """
-        sleep(1) # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+        sleep(1)  # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
         base, _ = os.path.splitext(thumb)
         file_path = base + ".mp4"
         file_name = os.path.basename(file_path)

@@ -4,14 +4,13 @@
 #include <filesystem>
 #include <fstream>
 
-#include "framework.h"
-
 #include "codec.h"
 #include "database_executor.h"
 #include "log.hpp"
 #include "message_handler.h"
 #include "offsets.h"
 #include "rpc_helper.h"
+#include "rpc_server.h"
 #include "spy.h"
 #include "spy_types.h"
 #include "util.h"
@@ -417,5 +416,18 @@ bool rpc_receive_transfer(const Transfer &tf, uint8_t *out, size_t *len)
 {
     return fill_response<Functions_FUNC_RECV_TRANSFER>(
         out, len, [&](Response &rsp) { rsp.msg.status = receive_transfer(tf.wxid, tf.tfid, tf.taid); });
+}
+
+bool rpc_shutdown(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_SHUTDOWN>(out, len, [&](Response &rsp) {
+        rsp.msg.status = 0;
+        std::thread([]() {
+            Sleep(100);
+            RpcServer::destroyInstance();
+            Spy::Cleanup();
+        }).detach();
+        return true;
+    });
 }
 } // namespace misc

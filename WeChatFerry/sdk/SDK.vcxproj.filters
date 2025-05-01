@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="..\com\framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sdk.h">
@@ -41,10 +41,5 @@
     <ClCompile Include="..\com\util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sdk.def">
-      <Filter>源文件</Filter>
-    </None>
   </ItemGroup>
 </Project>

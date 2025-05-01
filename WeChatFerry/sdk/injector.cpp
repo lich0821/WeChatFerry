@@ -122,7 +122,7 @@ static uint64_t get_func_offset(const string &dll_path, const string &func_name)
         return 0;
     }
 
-    LPVOID absAddr  = GetProcAddress(dll, func_name.c_str());
+    LPVOID absAddr  = reinterpret_cast<LPVOID>(GetProcAddress(dll, func_name.c_str()));
     uint64_t offset = reinterpret_cast<uint64_t>(absAddr) - reinterpret_cast<uint64_t>(dll);
     FreeLibrary(dll);
 

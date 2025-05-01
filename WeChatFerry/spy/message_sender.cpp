@@ -313,8 +313,8 @@ bool Sender::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
             LOG_ERROR("Empty content or receiver.");
             rsp.msg.status = -1;
         } else {
-            // send_xml(xml.receiver, xml.content, xml.path, xml.type);
-            rsp.msg.status = -1;
+            send_xml(xml.receiver, xml.content, xml.path, xml.type);
+            rsp.msg.status = 0;
         }
     });
 }

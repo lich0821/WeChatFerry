@@ -9,7 +9,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/UbzPuw3-2xZLEzUABXMEdw)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/c2JggTBlOP8fP9j-MlMAvg)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人示例。
@@ -32,7 +32,7 @@
 * 发送图片消息
 * 发送文件消息
 * 发送卡片消息
-* 发送 XML
+* 发送 XML 消息
 * 发送 GIF 消息
 * 拍一拍群友
 * 转发消息
@@ -59,7 +59,7 @@
 
 ## 感谢大佬们贡献代码
 
-<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry&columns=8)</a>
+<a href="https://github.com/lich0821/WeChatFerry/graphs/contributors">![](https://contrib.rocks/image?repo=lich0821/WeChatFerry&columns=8&anon=1)</a>
 
 ## 快速开始
 ### Python
@@ -207,9 +207,8 @@ WeChatFerry
 
 ## 版本更新
 
-### v39.4.4
-
-* 实现通发送 XML 功能。
+### v39.5.2
+* 没有新功能
 
 <details><summary>点击查看更多</summary>
 
@@ -220,6 +219,22 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.5.1
+* 修复邀请进群偶发失败
+* 修复获取 wxid 失败
+
+### v39.5.0
+
+* 适配 `3.9.12.51`。
+
+### v39.4.5
+
+* 修复发送 XML 功能。
+
+### v39.4.4
+
+* 实现发送 XML 功能。
 
 ### v39.4.3
 

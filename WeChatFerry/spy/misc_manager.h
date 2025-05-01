@@ -36,5 +36,6 @@ bool rpc_download_attachment(const AttachMsg &att, uint8_t *out, size_t *len);
 bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len);
 bool rpc_get_ocr_result(const std::filesystem::path &path, uint8_t *out, size_t *len);
 bool rpc_receive_transfer(const Transfer &tf, uint8_t *out, size_t *len);
+bool rpc_shutdown(uint8_t *out, size_t *len);
 // clang-format on
 } // namespace misc
