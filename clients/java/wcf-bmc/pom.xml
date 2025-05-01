@@ -142,7 +142,6 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>true</filtering>
                 <!-- 排除特定资源 -->
                 <excludes>
                     <exclude>bin/*</exclude>

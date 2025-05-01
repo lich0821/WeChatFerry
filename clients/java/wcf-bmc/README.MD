@@ -94,7 +94,7 @@ mvn clean
 mvn install
 ```
 
-打包后的文件在target/wcf-bmc-x.x.x.x-SNAPSHOT.jar
+打包后的文件在target/wcf-bmc-xx.x.x.x-SNAPSHOT.jar
 
 ## 安装部署
 
