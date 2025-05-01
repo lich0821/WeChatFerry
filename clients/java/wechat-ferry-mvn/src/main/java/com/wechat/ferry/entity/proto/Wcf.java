@@ -9101,7 +9101,7 @@ public final class Wcf {
 
     /**
      * <pre>
-     * 缩略图
+     * 视频或图片消息的缩略图路径
      * </pre>
      *
      * <code>string thumb = 10;</code>
@@ -9110,7 +9110,7 @@ public final class Wcf {
     java.lang.String getThumb();
     /**
      * <pre>
-     * 缩略图
+     * 视频或图片消息的缩略图路径
      * </pre>
      *
      * <code>string thumb = 10;</code>
@@ -9121,7 +9121,7 @@ public final class Wcf {
 
     /**
      * <pre>
-     * 附加内容
+     * 附加内容，视频或图片消息的路径
      * </pre>
      *
      * <code>string extra = 11;</code>
@@ -9130,7 +9130,7 @@ public final class Wcf {
     java.lang.String getExtra();
     /**
      * <pre>
-     * 附加内容
+     * 附加内容，视频或图片消息的路径
      * </pre>
      *
      * <code>string extra = 11;</code>
@@ -9141,7 +9141,7 @@ public final class Wcf {
 
     /**
      * <pre>
-     * 消息 xml
+     * 消息 xml 部分
      * </pre>
      *
      * <code>string xml = 12;</code>
@@ -9150,7 +9150,7 @@ public final class Wcf {
     java.lang.String getXml();
     /**
      * <pre>
-     * 消息 xml
+     * 消息 xml 部分
      * </pre>
      *
      * <code>string xml = 12;</code>
@@ -9469,7 +9469,7 @@ public final class Wcf {
     private volatile java.lang.Object thumb_ = "";
     /**
      * <pre>
-     * 缩略图
+     * 视频或图片消息的缩略图路径
      * </pre>
      *
      * <code>string thumb = 10;</code>
@@ -9490,7 +9490,7 @@ public final class Wcf {
     }
     /**
      * <pre>
-     * 缩略图
+     * 视频或图片消息的缩略图路径
      * </pre>
      *
      * <code>string thumb = 10;</code>
@@ -9516,7 +9516,7 @@ public final class Wcf {
     private volatile java.lang.Object extra_ = "";
     /**
      * <pre>
-     * 附加内容
+     * 附加内容，视频或图片消息的路径
      * </pre>
      *
      * <code>string extra = 11;</code>
@@ -9537,7 +9537,7 @@ public final class Wcf {
     }
     /**
      * <pre>
-     * 附加内容
+     * 附加内容，视频或图片消息的路径
      * </pre>
      *
      * <code>string extra = 11;</code>
@@ -9563,7 +9563,7 @@ public final class Wcf {
     private volatile java.lang.Object xml_ = "";
     /**
      * <pre>
-     * 消息 xml
+     * 消息 xml 部分
      * </pre>
      *
      * <code>string xml = 12;</code>
@@ -9584,7 +9584,7 @@ public final class Wcf {
     }
     /**
      * <pre>
-     * 消息 xml
+     * 消息 xml 部分
      * </pre>
      *
      * <code>string xml = 12;</code>
@@ -10750,7 +10750,7 @@ public final class Wcf {
       private java.lang.Object thumb_ = "";
       /**
        * <pre>
-       * 缩略图
+       * 视频或图片消息的缩略图路径
        * </pre>
        *
        * <code>string thumb = 10;</code>
@@ -10770,7 +10770,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 缩略图
+       * 视频或图片消息的缩略图路径
        * </pre>
        *
        * <code>string thumb = 10;</code>
@@ -10791,7 +10791,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 缩略图
+       * 视频或图片消息的缩略图路径
        * </pre>
        *
        * <code>string thumb = 10;</code>
@@ -10808,7 +10808,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 缩略图
+       * 视频或图片消息的缩略图路径
        * </pre>
        *
        * <code>string thumb = 10;</code>
@@ -10822,7 +10822,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 缩略图
+       * 视频或图片消息的缩略图路径
        * </pre>
        *
        * <code>string thumb = 10;</code>
@@ -10842,7 +10842,7 @@ public final class Wcf {
       private java.lang.Object extra_ = "";
       /**
        * <pre>
-       * 附加内容
+       * 附加内容，视频或图片消息的路径
        * </pre>
        *
        * <code>string extra = 11;</code>
@@ -10862,7 +10862,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 附加内容
+       * 附加内容，视频或图片消息的路径
        * </pre>
        *
        * <code>string extra = 11;</code>
@@ -10883,7 +10883,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 附加内容
+       * 附加内容，视频或图片消息的路径
        * </pre>
        *
        * <code>string extra = 11;</code>
@@ -10900,7 +10900,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 附加内容
+       * 附加内容，视频或图片消息的路径
        * </pre>
        *
        * <code>string extra = 11;</code>
@@ -10914,7 +10914,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 附加内容
+       * 附加内容，视频或图片消息的路径
        * </pre>
        *
        * <code>string extra = 11;</code>
@@ -10934,7 +10934,7 @@ public final class Wcf {
       private java.lang.Object xml_ = "";
       /**
        * <pre>
-       * 消息 xml
+       * 消息 xml 部分
        * </pre>
        *
        * <code>string xml = 12;</code>
@@ -10954,7 +10954,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 消息 xml
+       * 消息 xml 部分
        * </pre>
        *
        * <code>string xml = 12;</code>
@@ -10975,7 +10975,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 消息 xml
+       * 消息 xml 部分
        * </pre>
        *
        * <code>string xml = 12;</code>
@@ -10992,7 +10992,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 消息 xml
+       * 消息 xml 部分
        * </pre>
        *
        * <code>string xml = 12;</code>
@@ -11006,7 +11006,7 @@ public final class Wcf {
       }
       /**
        * <pre>
-       * 消息 xml
+       * 消息 xml 部分
        * </pre>
        *
        * <code>string xml = 12;</code>

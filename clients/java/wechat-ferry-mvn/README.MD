@@ -13,8 +13,8 @@
 |-----------------|-----------|----|
 | JDK             | 1.8+      | √  |
 | Maven           | 3.8+      | √  |
-| 微信客户端           | 3.9.12.17 | √  |
-| WeChatFerry-SDK | 39.4.2    | √  |
+| 微信客户端           | 3.9.12.51 | √  |
+| WeChatFerry-SDK | 39.5.2    | √  |
 | MySQL           | 8.0+      | 备用 |
 
 ### 下载文件
@@ -54,11 +54,11 @@
 ```yaml
 # 本服务参数
 wechat:
-  ferry:
-    # DLL文件位置
-    dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
-    # socket端口
-    socket-port: 10086
+    ferry:
+        # DLL文件位置
+        dll-path: E:\WeChatFerry\clients\java\wechat-ferry-mvn\dll\sdk.dll
+        # socket端口
+        socket-port: 10086
 ```
 
 ### 数据库修改-目前未使用
@@ -76,6 +76,63 @@ wechat:
 启动后springboot自身的端口为 9201 socket的端口为 10086
 
 swagger地址：http://localhost:9201/swagger-ui/index.html
+
+### 项目打包
+
+使用maven插件打包
+
+![img.png](images/md/img_202505011209.png)
+
+打包后的文件在target/wechat-ferry-mvn-0.0.1-SNAPSHOT.jar
+
+## 安装部署
+
+### 服务器环境
+
+| 名称    | 版本     | 备注 |
+|-------|--------|----|
+| JDK   | 1.8+   | √  |
+| 微信客户端 | 安装对应版本 | √  |
+
+### 整合安装包
+
+自己在项目中找到对应的文件，手动复制过去
+
+```
+wcf
+├─dll                                       核心dll目录
+│  ├─sdk.dll                                sdk文件
+│  ├─spy.dll                                spy文件
+│  ├─spy_debug.dll                          spy文件
+│  └─DISCLAIMER.md                          DISCLAIMER文件
+│
+├─bin                                       命令目录
+│  └─run.bat                                启动命令
+│
+├─config                                    配置文件目录
+│  ├─application.yml                        配置文件
+│  └─logback-spring.xml                     日志配置文件
+│
+├─wechat-ferry-mvn-xx.x.x.jar               打包后的源码包
+│
+
+```
+
+### 启动
+
+1.退出微信客户端后台
+
+2.进入命令黑窗口(CMD)，并进入到项目目录下
+
+``` shell
+cd wcf
+```
+
+3.执行启动命令，jar名称换成自己的
+
+``` shell
+java -Dconfig.dir=./config -jar wechat-ferry-mvn-xx.x.x.jar
+```
 
 ## 参与开发
 
@@ -100,7 +157,10 @@ wechat-ferry-mvn
 ├─dll                                       核心dll
 │  ├─sdk.dll                                sdk文件
 │  └─readme.txt                             本目录说明文件
-│ 
+│
+├─images                                    图片
+│  └─md                                     MD文档图片
+│
 ├─src                                       源
 │  ├─main                                   重启命令
 │  │  ├─java(com.wechat.ferry)              java代码目录
@@ -129,10 +189,11 @@ wechat-ferry-mvn
 │  │  │  ├─win32-x86-64                     依赖程序
 │  │  │  ├─application.yml                  本程序主配置文件
 │  │  │  └─logback-spring.xml               日志配置文件
-│ 
+│
+├─CHANGELOG.md                              更新日志文件
 ├─pom.xml                                   POM文件
 ├─README.MD                                 说明文件
-│   
+│
 
 ```
 
