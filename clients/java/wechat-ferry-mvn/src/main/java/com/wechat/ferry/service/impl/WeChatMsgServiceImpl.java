@@ -1,6 +1,11 @@
 package com.wechat.ferry.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -39,21 +44,57 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         // 转为JSON对象
         WxPpMsgDTO dto = JSON.parseObject(jsonString, WxPpMsgDTO.class);
         // 有开启的群聊配置
-        if (!CollectionUtils.isEmpty(weChatFerryProperties.getOpenMsgGroups())) {
-            // 指定处理的群聊
-            if (weChatFerryProperties.getOpenMsgGroups().contains(dto.getRoomId()) || weChatFerryProperties.getOpenMsgGroups().contains("ALL")) {
-                // TODO 模式有多种 1-根据消息类型单独调用某一个 2-全部调用，各业务类中自己决定是否继续
-                if (true) {
-                    // 因为一种消息允许进行多种处理，这里采用执行所有策略，请自行在各策略中判断是否需要执行
-                    for (ReceiveMsgStrategy value : ReceiveMsgFactory.getAllStrategyContainers().values()) {
-                        value.doHandle(dto);
+        if (weChatFerryProperties.getOpenMsgGroupSwitch() && !weChatFerryProperties.getOpenMsgGroups().isEmpty()) {
+            Map<String, List<String>> openMsgGroupMap = new HashMap<>();
+            String allFnNoStr = "";
+            List<String> allFnNoList = new ArrayList<>();
+            if (weChatFerryProperties.getOpenMsgGroups().containsKey("ALL")) {
+                allFnNoStr = weChatFerryProperties.getOpenMsgGroups().get("ALL");
+                // 分割字符串并去除空格及空元素
+                allFnNoList = Arrays.stream(allFnNoStr.split(","))
+                    // 去掉前后空格
+                    .map(String::trim)
+                    // 过滤掉空字符串
+                    .filter(s -> !s.isEmpty())
+                    // 去重
+                    .distinct().collect(Collectors.toList());
+                openMsgGroupMap.put("ALL", allFnNoList);
+            }
+
+            // 遍历
+            for (String key : weChatFerryProperties.getOpenMsgGroups().keySet()) {
+                List<String> valList = new ArrayList<>();
+                if (!"ALL".equals(key)) {
+                    String str = weChatFerryProperties.getOpenMsgGroups().get(key);
+                    String[] arr = str.split(",");
+                    for (String s : arr) {
+                        // 去重，且ALL中不包含
+                        if (!valList.contains(s) && !allFnNoList.contains(s)) {
+                            valList.add(s);
+                        }
                     }
-                } else {
-                    // 单独调用某一种
-                    // 这里自己把消息类型转为自己的枚举类型
-                    String handleType = "1";
-                    ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(handleType);
-                    receiveMsgStrategy.doHandle(dto);
+                    openMsgGroupMap.put(key, valList);
+                }
+            }
+
+            // 指定处理的群聊
+            if (!openMsgGroupMap.isEmpty()) {
+                List<String> fnNoList = new ArrayList<>();
+                // 先执行所有群都需要执行的
+                if (openMsgGroupMap.containsKey("ALL")) {
+                    fnNoList = openMsgGroupMap.get("ALL");
+                }
+                // 加入个性化的
+                if (openMsgGroupMap.containsKey(dto.getRoomId())) {
+                    fnNoList.addAll(openMsgGroupMap.get(dto.getRoomId()));
+                }
+                // 需要执行的策略
+                if (!CollectionUtils.isEmpty(fnNoList)) {
+                    for (String no : fnNoList) {
+                        // 根据功能号获取对应的策略
+                        ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(no);
+                        receiveMsgStrategy.doHandle(dto);
+                    }
                 }
             }
         }

@@ -42,9 +42,16 @@ public class WeChatFerryProperties {
     private List<String> contactsTypeOfficial;
 
     /**
-     * 需要开启消息处理的群
+     * 消息处理的群开关
      */
-    private List<String> openMsgGroups;
+    private Boolean openMsgGroupSwitch = false;
+
+    /**
+     * 需要开启消息处理的群
+     * 格式：key:群编号 val:开启的功能号,对应ReceiveMsgChannelEnum枚举中的code
+     * 53257911728@chatroom: 1,2
+     */
+    private Map<String, String> openMsgGroups;
 
     /**
      * 接收消息回调开关
