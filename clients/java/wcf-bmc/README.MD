@@ -283,6 +283,13 @@ feat(0): [wcf-bmc]-基础类目录划分迁移及代码格式
 
 下面主要是针对一些合作开发者的咨询做统一回复，可以直接忽略。
 
+#### 项目名称的由来
+
+WCF-BCM <br/>
+WCF是WeChatFerry <br/>
+第一层：BMC是Business Management Center的缩写 <br/>
+第二层：BMC是SpringBoot Maven Client <br/>
+
 #### 目录层级拆分太细
 
 其实这个服务是底层服务，目录分细确实会增加开发量，但是针对于后面的拓展和维护上来说，个人感觉利大于弊，
