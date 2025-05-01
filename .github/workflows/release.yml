@@ -46,6 +46,8 @@ jobs:
             -Path "tmp/*" `
             -DestinationPath "tmp/v${{ env.version }}.zip"
 
+          Remove-Item -Path "tmp/*.dll", "tmp/*.md"
+
           # 下载对应版本微信安装包
           Invoke-WebRequest `
             -Uri "https://github.com/tom-snow/wechat-windows-versions/releases/download/v${{ env.wechat_version }}/WeChatSetup-${{ env.wechat_version }}.exe" `
