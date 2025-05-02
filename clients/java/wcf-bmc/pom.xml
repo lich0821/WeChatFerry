@@ -17,6 +17,10 @@
     <version>39.5.1.1</version>
     <description>WeChatFerry Springboot Maven Client (WCF-Springboot的Maven版客户端)</description>
 
+    <scm>
+        <url>https://github.com/PathfinderAx/WeChatFerry</url>
+    </scm>
+
     <properties>
         <application.main.class>com.wechat.ferry.WeChatFerryApplication</application.main.class>
         <app.name>wcf-bmc</app.name>
@@ -165,7 +169,6 @@
                 <configuration>
                     <finalName>${app.name}-${project.version}</finalName>
                     <includeSystemScope>true</includeSystemScope>
-                    <!-- 主类入口 -->
                     <mainClass>${application.main.class}</mainClass>
                 </configuration>
                 <executions>
