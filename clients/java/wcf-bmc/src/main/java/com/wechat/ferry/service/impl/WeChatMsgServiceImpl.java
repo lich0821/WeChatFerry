@@ -2,7 +2,7 @@ package com.wechat.ferry.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         WxPpMsgDTO dto = JSON.parseObject(jsonString, WxPpMsgDTO.class);
         // 有开启的群聊配置
         if (weChatFerryProperties.getOpenMsgGroupSwitch() && !weChatFerryProperties.getOpenMsgGroups().isEmpty()) {
-            Map<String, List<String>> openMsgGroupMap = new HashMap<>();
+            Map<String, List<String>> openMsgGroupMap = new LinkedHashMap<>();
             String allFnNoStr = "";
             List<String> allFnNoList = new ArrayList<>();
             if (weChatFerryProperties.getOpenMsgGroups().containsKey("ALL")) {
@@ -79,6 +79,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
 
             // 指定处理的群聊
             if (!openMsgGroupMap.isEmpty()) {
+                log.debug("[收到消息后处理]-[汇总后的所有功能]-openMsgGroupMap：{}", openMsgGroupMap);
                 List<String> fnNoList = new ArrayList<>();
                 // 先执行所有群都需要执行的
                 if (openMsgGroupMap.containsKey("ALL")) {
@@ -90,6 +91,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                 }
                 // 需要执行的策略
                 if (!CollectionUtils.isEmpty(fnNoList)) {
+                    log.debug("[收到消息后处理]-[汇总后的单群功能]-fnNoList：{}，群号：{}", fnNoList, dto.getRoomId());
                     for (String no : fnNoList) {
                         // 根据功能号获取对应的策略
                         ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(no);
