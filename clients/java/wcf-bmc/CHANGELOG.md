@@ -18,7 +18,62 @@ ___
 
 <br/><br/>
 
-## v39.5.1
+## v39.5.2
+
+### 版本列表
+
+下载地址：[v39.5.2](https://github.com/lich0821/WeChatFerry/releases/tag/v39.5.2)
+
+| 名称              | 版本        | 文件名                       |
+|-----------------|-----------|---------------------------|
+| 微信客户端           | 3.9.12.51 | WeChatSetup-3.9.12.51.exe |
+| WeChatFerry-SDK | 39.5.2    | v39.5.2.zip               |
+| wcf-bmc         | 39.5.2.1  | wcf-bmc-39.5.2.1.jar      |
+
+### 功能列表
+
+| 接口名            | 地址                     |
+|----------------|------------------------|
+| 查询登录状态         | /loginStatus           |
+| 获取登录微信内部识别号UID | /loginWeChatUid        |
+| 获取登录微信信息       | /loginWeChatInfo       |
+| 获取消息类型列表       | /list/msgType          |
+| 获取联系人列表        | /list/contacts         |
+| 获取数据库表名称列表     | /list/dbTableName      |
+| 获取指定数据库中的表列表   | /list/dbTable          |
+| 执行数据库查询SQL     | /exec/dbQuerySql       |
+| 发送消息汇总入口       | /send/msgMaster        |
+| 发送文本消息         | /send/textMsg          |
+| 发送富文本消息        | /send/richTextMsg      |
+| 发送XML消息        | /send/xmlMsg           |
+| 发送图片消息         | /send/imageMsg         |
+| 发送表情消息         | /send/emojiMsg         |
+| 发送文件消息         | /send/fileMsg          |
+| 拍一拍群友          | /patOnePat             |
+| 撤回消息           | /revokeMsg             |
+| 通过好友申请         | /passFriendApply       |
+| 添加群成员为微信好友     | /addFriend/groupMember |
+| 查询群成员          | /groupMember/list      |
+| 邀请群成员          | /groupMember/invite    |
+| 删除群成员          | /groupMember/delete    |
+| 查询朋友圈          | /friendCircle          |
+| 接收转账           | /receiveTransfer       |
+
+### 已知bug
+
+v39.5.2版本目前会出现注入失败的情况，待排查修复，可先使用v39.5.1，只须替换dll版本即可
+
+### 2025-05-03
+
+- 1.更新dll为v39.5.2
+
+<br/>
+
+___
+
+<br/><br/>
+
+## v39.5.1 - 推荐✨
 
 ### 版本列表
 
@@ -291,7 +346,7 @@ ___
 
 <br/><br/>
 
-## v39.2.4 - 推荐✨
+## v39.2.4
 
 ### 版本列表
 
