@@ -126,8 +126,12 @@ public class WeChatSocketClient {
 
     public Response sendCmd(Request req) {
         try {
-            // 设置发送 20 秒超时
-            cmdSocket.setSendTimeout(20000);
+            // 不知道之前设置20S有啥特殊情况？？？这里设置超时时间 5s --> 参考Python版本
+            // 防止无响应的时候线程一直阻塞--ReceiveTimeout
+            // modify by wmz 2025-05-03
+            cmdSocket.setSendTimeout(5000);
+            cmdSocket.setReceiveTimeout(5000);
+            
             ByteBuffer bb = ByteBuffer.wrap(req.toByteArray());
             cmdSocket.send(bb);
             ByteBuffer ret = ByteBuffer.allocate(BUFFER_SIZE);
@@ -655,7 +659,9 @@ public class WeChatSocketClient {
      * @param src 加密的图片路径
      * @param dir 保存图片的目录
      * @return 解密图片的保存路径
+     * @see  WeChatDllServiceImpl decryptImage
      */
+    @Deprecated
     public String decryptImage(String src, String dir) {
         Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(src).setDst(dir).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();

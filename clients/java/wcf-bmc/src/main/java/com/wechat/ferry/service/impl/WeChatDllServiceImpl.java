@@ -22,6 +22,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
@@ -56,6 +57,8 @@ import com.wechat.ferry.exception.BizException;
 import com.wechat.ferry.handle.WeChatSocketClient;
 import com.wechat.ferry.service.WeChatDllService;
 import com.wechat.ferry.utils.HttpClientUtil;
+import com.wechat.ferry.utils.PathUtils;
+import java.io.File;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -761,6 +764,132 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if (!wechatSocketClient.isLogin()) {
             throw new BizException("微信客户端未登录或状态异常，请人工关闭本服务之后，退出微信客户端在重启本服务！");
         }
+    }
+    
+    
+    @Override
+    public String loginQR() throws Exception {
+
+        long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
+        log.info("[登录]-[获取二维码]-入参打印：{}", "");
+//            # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+        Thread.sleep(1000);
+        //第一步
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_REFRESH_QRCODE_VALUE)
+                .build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+        rsp.getStatus();
+//        RequestResponseBodyMethodProcessor s;
+        long endTime = System.currentTimeMillis();
+        log.info("[登录]-[获取二维码]-处理结束，耗时：{}ms", (endTime - startTime));
+        System.out.println(rsp.getStr());
+        return rsp.getStr();
+    }
+
+    @Override
+    public String downloadVideo(WxPpWcfDownloadAttachReq request) throws Exception {
+        long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
+        log.info("[下载]-[下载视频]-入参打印：{}", request);
+        int status = attachDownload(request.getId(), "", request.getThumb());
+        if (status != 0) {
+            log.info("{}:下载视频出错", request.getId());
+            return null;
+        }
+        //第二步，检测文件,指定下载的目录
+        String base = PathUtils.removeExtension(request.getThumb());
+        String filePath = base + ".mp4";
+        String path = null;
+        for (int i = 0; i < 30; i++) {
+            if (new File(filePath).exists()) {
+                path = filePath;
+                log.info("视频下载完毕：{}", path);
+                break;
+            } else {
+                log.info("等待下载中：{}", i);
+                Thread.sleep(1000);
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("[下载]-[下载视频]-处理结束，耗时：{}ms", (endTime - startTime));
+        return path;
+    }
+
+    @Override
+    public String downloadPicture(WxPpWcfDownloadAttachReq request) throws Exception {
+        long startTime = System.currentTimeMillis();
+        // 公共校验
+        checkClientStatus();
+        log.info("[下载]-[下载图片]-入参打印：{}", request);
+        int status = attachDownload(request.getId(), request.getExtra(), "");
+        if (status != 0) {
+            log.info("{}:下载出错", request.getId());
+            return null;
+        }
+        //第二步解密图片--下载图片
+        String filePath = decryptImage(request.getExtra(), request.getDir());
+        String path = null;
+        for (int i = 0; i < 15; i++) {
+            if (new File(filePath).exists()) {
+                log.info("图片下载完毕：{}", filePath);
+                path = filePath;
+                break;
+            } else {
+                log.info("等待下载中：{}", i);
+                Thread.sleep(1000);
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("[下载]-[下载图片]-处理结束，耗时：{}ms", (endTime - startTime));
+        return path;
+    }
+
+    /**
+     * 下载附件（图片、视频、文件）。这方法别直接调用。
+     *
+     * @param id
+     * @param extra
+     * @param thumb
+     * @return int: 0 为成功, 其他失败。
+     * @throws Exception
+     */
+    private int attachDownload(long id, String extra, String thumb) {
+        try {
+            //# 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
+            Thread.sleep(1000);
+            //第一步，下载
+            Wcf.AttachMsg msg = Wcf.AttachMsg.newBuilder().setId(id)
+                    .setExtra(extra).setThumb(thumb)
+                    .build();
+            Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_DOWNLOAD_ATTACH_VALUE)
+                    .setAtt(msg)
+                    .build();
+            Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+            return rsp.getStatus();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * 解密图片
+     *
+     * @param srcPath 加密的图片路径
+     * @param dir 保存图片的目录
+     * @return 是否成功
+     */
+    public String decryptImage(String srcPath, String dir) {
+        Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(srcPath).setDst(dir).build();
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+        if (rsp != null && rsp.getStatus() == 0) {
+            return rsp.getStr();
+        }
+        return null;
     }
 
 }
