@@ -72,7 +72,7 @@ public class WeChatDllController {
         return TResponse.ok(ResponseCodeEnum.SUCCESS, status);
     }
 
-    @ApiOperation(value = "获取登录微信内部识别号UID", notes = "queryLoginWeChatUid")
+    @ApiOperation(value = "获取登录微信号", notes = "queryLoginWeChatUid")
     @PostMapping(value = "/loginWeChatUid")
     public TResponse<Object> queryLoginWeChatUid() {
         String weChatUid = weChatDllService.queryLoginWeChatUid();
@@ -186,6 +186,7 @@ public class WeChatDllController {
     @ApiOperation(value = "撤回消息", notes = "revokeMsg")
     @PostMapping(value = "/revokeMsg")
     public TResponse<Object> revokeMsg(@Validated @RequestBody WxPpWcfRevokeMsgReq request) {
+        weChatDllService.revokeMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 
@@ -246,7 +247,7 @@ public class WeChatDllController {
     @ApiOperation(value = "查询朋友圈", notes = "queryFriendCircle")
     @PostMapping(value = "/friendCircle")
     public TResponse<Object> queryFriendCircle() {
-        weChatDllService.queryFriendCircle();
+        weChatDllService.queryFriendCircle(0);
         return TResponse.ok(ResponseCodeEnum.SUCCESS);
     }
 

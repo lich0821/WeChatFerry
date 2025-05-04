@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -16,9 +17,9 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.ByteString;
 import com.sun.jna.Native;
 import com.wechat.ferry.entity.dto.WxPpMsgDTO;
+import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.proto.Wcf.DbQuery;
 import com.wechat.ferry.entity.proto.Wcf.DbRow;
-import com.wechat.ferry.entity.proto.Wcf.DecPath;
 import com.wechat.ferry.entity.proto.Wcf.Functions;
 import com.wechat.ferry.entity.proto.Wcf.Request;
 import com.wechat.ferry.entity.proto.Wcf.Response;
@@ -60,7 +61,7 @@ public class WeChatSocketClient {
     private Socket msgSocket = null;
 
     /**
-     * 是否收到消息
+     * 是否已启动接收消息
      */
     private boolean isReceivingMsg = false;
 
@@ -171,6 +172,21 @@ public class WeChatSocketClient {
     }
 
     /**
+     * 获取登录二维码，已经登录则返回空字符串
+     *
+     * @return 是否登录结果
+     */
+    public Response getQrcode() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_REFRESH_QRCODE_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp;
+        }
+        return null;
+    }
+
+    /**
+     * 是否已经登录
      * 当前微信客户端是否登录微信号
      *
      * @return 是否登录结果
@@ -185,9 +201,309 @@ public class WeChatSocketClient {
     }
 
     /**
-     * 获取sql执行结果
+     * 获取登录账户的wxid
+     *
+     * @return 自己的微信号
+     */
+    public String getSelfWxId() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_SELF_WXID_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getStr();
+        }
+        return "";
+    }
+
+    /**
+     * 获取所有消息类型
+     *
+     * @return 消息类型集合
+     */
+    public Map<Integer, String> getMsgTypes() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_MSG_TYPES_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getTypes().getTypesMap();
+        }
+        return Wcf.MsgTypes.newBuilder().build().getTypesMap();
+    }
+
+    /**
+     * 获取完整通讯录
+     * "fmessage": "朋友推荐消息",
+     * "medianote": "语音记事本",
+     * "floatbottle": "漂流瓶",
+     * "filehelper": "文件传输助手",
+     * "newsapp": "新闻",
+     *
+     * @return 联系人列表
+     */
+    public List<Wcf.RpcContact> getContacts() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_CONTACTS_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getContacts().getContactsList();
+        }
+        return Wcf.RpcContacts.newBuilder().build().getContactsList();
+    }
+
+    /**
+     * 获取所有数据库
+     *
+     * @return
+     */
+    public List<String> getDbNames() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_NAMES_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getDbs().getNamesList();
+        }
+        return Wcf.DbNames.newBuilder().build().getNamesList();
+    }
+
+    /**
+     * 获取 db 中所有表
      *
      * @param db 数据库名
+     * @return 该数据库下的所有表名及对应建表语句
+     */
+    public Map<String, String> getDbTables(String db) {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_DB_TABLES_VALUE).setStr(db).build();
+        Response rsp = sendCmd(req);
+        Map<String, String> tables = new LinkedHashMap<>();
+        if (rsp != null) {
+            for (Wcf.DbTable tbl : rsp.getTables().getTablesList()) {
+                tables.put(tbl.getName(), tbl.getSql());
+            }
+        }
+        return tables;
+    }
+
+    /**
+     * 获取登录账号个人信息
+     *
+     * @return 个人信息
+     */
+    public Wcf.UserInfo getUserInfo() {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_USER_INFO_VALUE).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getUi();
+        }
+        return null;
+    }
+
+    /**
+     * 获取语音消息并转成 MP3
+     *
+     * @param id 语音消息 id
+     * @param dir MP3 保存目录（目录不存在会出错）
+     * @param timeout MP3 超时时间（秒）
+     * @return 成功返回存储路径；空字符串为失败，原因见日志。
+     */
+    public String getAudioMsg(Integer id, String dir, Integer timeout) {
+        Wcf.AudioMsg audioMsg = Wcf.AudioMsg.newBuilder().setId(id).setDir(dir).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_AUDIO_MSG_VALUE).setAm(audioMsg).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getStr();
+        }
+        return null;
+    }
+
+    /**
+     * 发送文本消息
+     *
+     * @param msg: 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
+     * @param receiver: 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx），群聊为
+     *            roomid（xxxxxxxxxx@chatroom）
+     * @param aters: 群聊时要 @ 的人（私聊时为空字符串），多个用逗号分隔。@所有人 用
+     *            notify@all（必须是群主或者管理员才有权限）
+     * @return int 0 为成功，其他失败
+     * @author Changhua
+     * @example sendText(" Hello @ 某人1 @ 某人2 ", " xxxxxxxx @ chatroom ",
+     *          "wxid_xxxxxxxxxxxxx1,wxid_xxxxxxxxxxxxx2");
+     **/
+    public int sendText(String msg, String receiver, String aters) {
+        Wcf.TextMsg textMsg = Wcf.TextMsg.newBuilder().setMsg(msg).setReceiver(receiver).setAters(aters).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_TXT_VALUE).setTxt(textMsg).build();
+        log.debug("sendText: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 发送图片消息
+     *
+     * @param path 图片地址,如：`C:/Projs/WeChatRobot/TEQuant.jpeg` 或
+     *            `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/assets/TEQuant.jpg`
+     * @param receiver 消息接收人，wxid 或者 roomid
+     * @return 发送结果状态码 0 为成功，其他失败
+     */
+    public int sendImage(String path, String receiver) {
+        Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_IMG_VALUE).setFile(pathMsg).build();
+        log.debug("sendImage: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 发送文件消息
+     *
+     * @param path 本地文件路径，如：`C:/Projs/WeChatRobot/README.MD` 或
+     *            `https://raw.githubusercontent.com/lich0821/WeChatFerry/master/README.MD`
+     * @param receiver 消息接收人，wxid 或者 roomid
+     * @return 发送结果状态码 0 为成功，其他失败
+     */
+    public int sendFile(String path, String receiver) {
+        Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_FILE_VALUE).setFile(pathMsg).build();
+        log.debug("sendFile: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 发送Xml消息
+     *
+     * @param receiver 消息接收人，wxid 或者 roomid
+     * @param xml xml内容
+     * @param path 封面图片路径
+     * @param type xml 类型，如：0x21 为小程序
+     * @return 发送结果状态码 0 为成功，其他失败
+     */
+    public int sendXml(String receiver, String xml, String path, int type) {
+        Wcf.XmlMsg xmlMsg = Wcf.XmlMsg.newBuilder().setContent(xml).setReceiver(receiver).setPath(path).setType(type).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_XML_VALUE).setXml(xmlMsg).build();
+        log.debug("sendXml: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 发送表情消息
+     *
+     * @param path 本地表情路径，如：`C:/Projs/WeChatRobot/emo.gif`
+     * @param receiver 消息接收人，wxid 或者 roomid
+     * @return 发送结果状态码 0 为成功，其他失败
+     */
+    public int sendEmotion(String path, String receiver) {
+        Wcf.PathMsg pathMsg = Wcf.PathMsg.newBuilder().setPath(path).setReceiver(receiver).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_EMOTION_VALUE).setFile(pathMsg).build();
+        log.debug("sendEmotion: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 发送富文本消息
+     *
+     * @param name 左下显示的名字
+     * @param account 填公众号 id 可以显示对应的头像（gh_ 开头的）
+     * @param title 标题，最多两行
+     * @param digest 摘要，三行
+     * @param url 点击后跳转的链接
+     * @param thumbUrl 缩略图的链接
+     * @param receiver 接收人, wxid 或者 roomid
+     * @return 发送结果状态码 0 为成功，其他失败
+     *
+     * @example 卡片样式：
+     *          |-------------------------------------|
+     *          |title, 最长两行
+     *          |(长标题, 标题短的话这行没有)
+     *          |digest, 最多三行，会占位 |--------|
+     *          |digest, 最多三行，会占位 |thumbUrl|
+     *          |digest, 最多三行，会占位 |--------|
+     *          |(account logo) name
+     *          |-------------------------------------|
+     */
+    public int sendRichText(String name, String account, String title, String digest, String url, String thumbUrl, String receiver) {
+        Wcf.RichText richTextMsg = Wcf.RichText.newBuilder().setName(name).setAccount(account).setTitle(title).setDigest(digest).setUrl(url)
+            .setThumburl(thumbUrl).setReceiver(receiver).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_RICH_TXT_VALUE).setRt(richTextMsg).build();
+        log.debug("sendRichText: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            ret = rsp.getStatus();
+        }
+        return ret;
+    }
+
+    /**
+     * 拍一拍群友
+     *
+     * @param roomid 群 id
+     * @param wxid 要拍的群友的 wxid
+     * @return 发送结果状态码 0 为成功，其他失败
+     */
+    public int sendPatMsg(String roomid, String wxid) {
+        Wcf.PatMsg patMsg = Wcf.PatMsg.newBuilder().setRoomid(roomid).setWxid(wxid).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_SEND_PAT_MSG_VALUE).setPm(patMsg).build();
+        log.debug("sendPatMsg: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 转发消息。可以转发文本、图片、表情、甚至各种 XML；
+     * 语音也行，不过效果嘛，自己验证吧。
+     *
+     * @param id 待转发消息的 id
+     * @param receiver 消息接收者，wxid 或者 roomid
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int forwardMsg(Integer id, String receiver) {
+        Wcf.ForwardMsg forwardMsg = Wcf.ForwardMsg.newBuilder().setId(id).setReceiver(receiver).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_FORWARD_MSG_VALUE).setFm(forwardMsg).build();
+        log.debug("forwardMsg: {}", bytesToHex(req.toByteArray()));
+        Response rsp = sendCmd(req);
+        int ret = -1;
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 获取sql执行结果
+     *
+     * @param db 数据库名,要查询的数据库
      * @param sql 执行的sql语句
      * @return 数据记录列表
      */
@@ -202,23 +518,241 @@ public class WeChatSocketClient {
     }
 
     /**
-     * 解密图片
+     * 通过好友申请
      *
-     * @param srcPath 加密的图片路径
-     * @param dstPath 解密的图片路径
-     * @return 是否成功
+     * @param v3 加密用户名 (好友申请消息里 v3 开头的字符串) xml.attrib["encryptusername"]
+     * @param v4 Ticket (好友申请消息里 v4 开头的字符串) xml.attrib["ticket"]
+     * @param scene 申请方式 (好友申请消息里的 scene); 为了兼容旧接口，默认为扫码添加 (30)
+     * @return 结果状态码 0 为成功，其他失败
      */
-    public boolean decryptImage(String srcPath, String dstPath) {
+    public int acceptNewFriend(String v3, String v4, Integer scene) {
+        if (ObjectUtils.isEmpty(scene)) {
+            scene = 30;
+        }
         int ret = -1;
-        DecPath build = DecPath.newBuilder().setSrc(srcPath).setDst(dstPath).build();
+        Wcf.Verification verification = Wcf.Verification.newBuilder().setV3(v3).setV4(v4).setScene(scene).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ACCEPT_FRIEND_VALUE).setV(verification).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 接收转账
+     *
+     * @param wxid 转账消息里的发送人 wxid
+     * @param transferid 转账消息里的 transferid
+     * @param transactionid 转账消息里的 transactionid
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int receiveTransfer(String wxid, String transferid, String transactionid) {
+        int ret = -1;
+        Wcf.Transfer transfer = Wcf.Transfer.newBuilder().setWxid(wxid).setTfid(transferid).setTaid(transactionid).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_RECV_TRANSFER_VALUE).setTf(transfer).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 刷新朋友圈
+     *
+     * @param id 开始 id，0 为最新页
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int refreshPyq(Integer id) {
+        int ret = -1;
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_REFRESH_PYQ_VALUE).setUi64(id).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 下载附件（图片、视频、文件）。这方法别直接调用，下载图片使用 `download_image`。
+     *
+     * @param id 消息中 id
+     * @param thumb 消息中的 thumb
+     * @param extra 消息中的 extra
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int downloadAttach(Integer id, String thumb, String extra) {
+        int ret = -1;
+        Wcf.AttachMsg attachMsg = Wcf.AttachMsg.newBuilder().setId(id).setThumb(thumb).setExtra(extra).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DOWNLOAD_ATTACH_VALUE).setAtt(attachMsg).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 通过 wxid 查询微信号昵称等信息
+     *
+     * @param wxid 联系人 wxid
+     * @return 结果信息
+     */
+    public Wcf.RpcContact getInfoByWxId(String wxid) {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_GET_CONTACT_INFO_VALUE).setStr(wxid).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null && !ObjectUtils.isEmpty(rsp.getContacts())) {
+            return rsp.getContacts().getContacts(0);
+        }
+        return null;
+    }
+
+    /**
+     * 撤回消息
+     *
+     * @param id 待撤回消息的 id
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int revokeMsg(Integer id) {
+        int ret = -1;
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_REVOKE_MSG_VALUE).setUi64(id).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 解密图片。这方法别直接调用，下载图片使用 `download_image`。
+     *
+     * @param src 加密的图片路径
+     * @param dir 保存图片的目录
+     * @return 解密图片的保存路径
+     */
+    public String decryptImage(String src, String dir) {
+        Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(src).setDst(dir).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
-            ret = rsp.getStatus();
+            return rsp.getStr();
         }
-        return ret == 1;
+        return "";
     }
 
+    /**
+     * 获取 OCR 结果。鸡肋，需要图片能自动下载；通过下载接口下载的图片无法识别。
+     *
+     * @param extra 待识别的图片路径，消息里的 extra
+     * @return OCR 结果
+     */
+    public Wcf.OcrMsg getOcrResult(String extra, Integer timeout) {
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_EXEC_OCR_VALUE).setStr(extra).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            return rsp.getOcr();
+        }
+        return null;
+    }
+
+    /**
+     * 添加群成员
+     *
+     * @param roomid 待加群的 id
+     * @param wxids 要加到群里的 wxid，多个用逗号分隔
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int addChatroomMembers(String roomid, String wxids) {
+        int ret = -1;
+        Wcf.MemberMgmt memberMgmt = Wcf.MemberMgmt.newBuilder().setRoomid(roomid).setWxids(wxids).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ADD_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 删除群成员
+     *
+     * @param roomid 群的 id
+     * @param wxids 要删除成员的 wxid，多个用逗号分隔
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int delChatroomMembers(String roomid, String wxids) {
+        int ret = -1;
+        Wcf.MemberMgmt memberMgmt = Wcf.MemberMgmt.newBuilder().setRoomid(roomid).setWxids(wxids).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DEL_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 邀请群成员
+     *
+     * @param roomid 群的 id
+     * @param wxids 要邀请成员的 wxid, 多个用逗号`,`分隔
+     * @return 结果状态码 0 为成功，其他失败
+     */
+    public int inviteChatroomMembers(String roomid, String wxids) {
+        int ret = -1;
+        Wcf.MemberMgmt memberMgmt = Wcf.MemberMgmt.newBuilder().setRoomid(roomid).setWxids(wxids).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_INV_ROOM_MEMBERS_VALUE).setM(memberMgmt).build();
+        Response rsp = sendCmd(req);
+        if (rsp != null) {
+            // 接口中 1 为成功，其他失败
+            ret = rsp.getStatus();
+            if (ret == 1) {
+                // 转为通用值
+                ret = 0;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 是否已启动接收消息功能
+     */
     public boolean getIsReceivingMsg() {
         return isReceivingMsg;
     }
@@ -249,11 +783,13 @@ public class WeChatSocketClient {
         return false;
     }
 
+    /**
+     * 允许接收消息
+     */
     public void enableRecvMsg(int qSize) {
         if (isReceivingMsg) {
             return;
         }
-
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_ENABLE_RECV_TXT_VALUE).build();
         Response rsp = sendCmd(req);
         if (rsp == null) {
@@ -269,6 +805,9 @@ public class WeChatSocketClient {
         thread.start();
     }
 
+    /**
+     * 停止接收消息
+     */
     public int diableRecvMsg() {
         if (!isReceivingMsg) {
             return 1;
@@ -281,7 +820,6 @@ public class WeChatSocketClient {
             if (ret == 0) {
                 isReceivingMsg = false;
             }
-
         }
         return ret;
     }

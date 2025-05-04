@@ -17,23 +17,22 @@ import lombok.Data;
 public class WxPpWcfPassFriendApplyReq {
 
     /**
-     * 申请人
+     * 加密用户名
      * v3 xml.attrib["encryptusername"]
      * 加密用户名 (好友申请消息里 v3 开头的字符串)
      */
-    @NotBlank(message = "申请人不能为空")
-    @ApiModelProperty(value = "申请人")
-    private String applicant;
+    @NotBlank(message = "加密用户名不能为空")
+    @ApiModelProperty(value = "加密用户名")
+    private String encryptUsername;
 
     /**
-     * 审核人
+     * ticket
      * v4 xml.attrib["ticket"]
      * Ticket (好友申请消息里 v4 开头的字符串)
-     * 一般指自己，别人申请添加，自己审核是否通过
      */
-    @NotBlank(message = "审核人不能为空")
-    @ApiModelProperty(value = "审核人")
-    private String reviewer;
+    @NotBlank(message = "ticket不能为空")
+    @ApiModelProperty(value = "ticket")
+    private String ticket;
 
     /**
      * 场景

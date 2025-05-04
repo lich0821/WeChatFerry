@@ -23,7 +23,7 @@ logging:
 wechat:
   ferry:
     # DLL文件位置
-    dll-path: E:\WeChatFerry\clients\java\wcf-bmc\dll\sdk.dll
+    dll-path: E:\workspace\project\me\wcf\WeChatFerry\cdl\WeChatFerry-cdl-master\clients\java\wcf-bmc\dll\sdk.dll
     # socket端口
     socket-port: 10086
     # SDK是否调试模式

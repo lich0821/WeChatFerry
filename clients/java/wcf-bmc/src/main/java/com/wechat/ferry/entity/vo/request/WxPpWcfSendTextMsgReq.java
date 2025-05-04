@@ -19,15 +19,6 @@ import lombok.Data;
 public class WxPpWcfSendTextMsgReq {
 
     /**
-     * 消息文本
-     * 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
-     * 换行使用 `\\\\n` （单杠）
-     */
-    @NotBlank(message = "消息文本不能为空")
-    @ApiModelProperty(value = "消息文本")
-    private String msgText;
-
-    /**
      * 消息接收人
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
@@ -35,6 +26,15 @@ public class WxPpWcfSendTextMsgReq {
     @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
+
+    /**
+     * 消息文本
+     * 消息内容（如果是 @ 消息则需要有跟 @ 的人数量相同的 @）
+     * 换行使用 `\\\\n` （单杠）
+     */
+    @NotBlank(message = "消息文本不能为空")
+    @ApiModelProperty(value = "消息文本")
+    private String msgText;
 
     /**
      * 要艾特的用户

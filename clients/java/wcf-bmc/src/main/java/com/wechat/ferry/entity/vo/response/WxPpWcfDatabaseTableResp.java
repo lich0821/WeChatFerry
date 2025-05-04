@@ -21,7 +21,7 @@ public class WxPpWcfDatabaseTableResp {
     private String tableName;
 
     /**
-     * SQL
+     * 该数据库下的所有表名及对应建表语句
      */
     @ApiModelProperty(value = "SQL")
     private String sql;
