@@ -35,13 +35,13 @@ wechat:
     contacts-type-official:
       - weixinguanhaozhushou|微信公众平台
     # 接收消息回调开关
-    open-msg-group-switch: true
+    open-msg-group-switch: false
     # 需要开启消息处理的群
     open-msg-groups:
       # key:"[群编号]" val:开启的功能号,对应ReceiveMsgChannelEnum枚举中的code
-      "[ALL]": '0,1'
-      "[53257911730@chatroom]": '0,2,3'
-      "[50501762866@chatroom]": '0,3'
+      "[ALL]": ''
+      "[53257911730@chatroom]": '1,2,3'
+      "[50501762866@chatroom]": '1,3'
     # 接收消息回调开关
     receive-msg-callback-switch: false
     # 接收消息回调地址
