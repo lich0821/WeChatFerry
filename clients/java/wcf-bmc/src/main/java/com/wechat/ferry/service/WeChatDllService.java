@@ -6,6 +6,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
@@ -486,5 +487,40 @@ public interface WeChatDllService {
      * @date 2025-05-04 13:50
      */
     String receiveTransfer(String weChatUid, String transferId, String transactionId);
+
+    /**
+     * 下载视频文件
+     *
+     * @param request 请求入参
+     * @return 文件路径
+     *
+     * @author wmz
+     * @throws java.lang.Exception
+     * @date 2025-05-02
+     */
+    String downloadVideo(WxPpWcfDownloadAttachReq request) throws Exception;
+    
+    /**
+     * 下载图片
+     *
+     * @param request 请求入参
+     * @return 文件路径
+     *
+     * @author wmz
+     * @throws java.lang.Exception
+     * @date 2025-05-02
+     */
+    String downloadPicture(WxPpWcfDownloadAttachReq request) throws Exception;
+    
+    /**
+     * 获取登录二维码
+     *
+     * @return 文件路径
+     *
+     * @author wmz
+     * @throws java.lang.Exception
+     * @date 2025-05-02
+     */
+    String loginQR() throws Exception;
 
 }
