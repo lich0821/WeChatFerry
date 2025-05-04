@@ -17,13 +17,6 @@ import lombok.Data;
 public class WxPpWcfSendFileMsgReq {
 
     /**
-     * 资源路径-本地文件路径
-     */
-    @NotBlank(message = "资源路径不能为空")
-    @ApiModelProperty(value = "资源路径-本地文件路径")
-    private String resourcePath;
-
-    /**
      * 消息接收人
      * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
      * 群聊为 roomid（xxxxxxxxxx@chatroom）
@@ -31,5 +24,12 @@ public class WxPpWcfSendFileMsgReq {
     @NotBlank(message = "消息接收人不能为空")
     @ApiModelProperty(value = "消息接收人")
     private String recipient;
+
+    /**
+     * 资源路径-本地文件路径
+     */
+    @NotBlank(message = "资源路径不能为空")
+    @ApiModelProperty(value = "资源路径-本地文件路径")
+    private String resourcePath;
 
 }
