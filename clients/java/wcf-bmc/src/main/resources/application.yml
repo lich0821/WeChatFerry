@@ -23,7 +23,7 @@ logging:
 wechat:
   ferry:
     # DLL文件位置
-    dll-path: E:\workspace\project\me\wcf\WeChatFerry\cdl\WeChatFerry-cdl-master\clients\java\wcf-bmc\dll\sdk.dll
+    dll-path: E:\WeChatFerry\clients\java\wcf-bmc\dll\sdk.dll
     # socket端口
     socket-port: 10086
     # SDK是否调试模式
@@ -41,7 +41,7 @@ wechat:
       # key:"[群编号]" val:开启的功能号,对应ReceiveMsgChannelEnum枚举中的code
       "[ALL]": ''
       "[53257911730@chatroom]": '1,2,3'
-      "[50501762866@chatroom]": '1,3'
+      "[50501762866@chatroom]": '1'
     # 接收消息回调开关
     receive-msg-callback-switch: false
     # 接收消息回调地址
