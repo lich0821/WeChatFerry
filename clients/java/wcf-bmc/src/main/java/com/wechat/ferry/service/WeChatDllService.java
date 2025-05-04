@@ -495,11 +495,10 @@ public interface WeChatDllService {
      * @return 文件路径
      *
      * @author wmz
-     * @throws java.lang.Exception
      * @date 2025-05-02
      */
-    String downloadVideo(WxPpWcfDownloadAttachReq request) throws Exception;
-    
+    String downloadVideo(WxPpWcfDownloadAttachReq request);
+
     /**
      * 下载图片
      *
@@ -507,20 +506,18 @@ public interface WeChatDllService {
      * @return 文件路径
      *
      * @author wmz
-     * @throws java.lang.Exception
      * @date 2025-05-02
      */
-    String downloadPicture(WxPpWcfDownloadAttachReq request) throws Exception;
-    
+    String downloadImage(WxPpWcfDownloadAttachReq request);
+
     /**
      * 获取登录二维码
      *
      * @return 文件路径
      *
      * @author wmz
-     * @throws java.lang.Exception
      * @date 2025-05-02
      */
-    String loginQR() throws Exception;
+    String loginQR();
 
 }

@@ -131,7 +131,7 @@ public class WeChatSocketClient {
             // modify by wmz 2025-05-03
             cmdSocket.setSendTimeout(5000);
             cmdSocket.setReceiveTimeout(5000);
-            
+
             ByteBuffer bb = ByteBuffer.wrap(req.toByteArray());
             cmdSocket.send(bb);
             ByteBuffer ret = ByteBuffer.allocate(BUFFER_SIZE);
@@ -180,13 +180,14 @@ public class WeChatSocketClient {
      *
      * @return 是否登录结果
      */
-    public Response getQrcode() {
+    public int getQrcode() {
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_REFRESH_QRCODE_VALUE).build();
         Response rsp = sendCmd(req);
+        int ret = -1;
         if (rsp != null) {
-            return rsp;
+            ret = rsp.getStatus();
         }
-        return null;
+        return ret;
     }
 
     /**
@@ -601,7 +602,7 @@ public class WeChatSocketClient {
      * @param extra 消息中的 extra
      * @return 结果状态码 0 为成功，其他失败
      */
-    public int downloadAttach(Integer id, String thumb, String extra) {
+    public int downloadAttach(Long id, String thumb, String extra) {
         int ret = -1;
         Wcf.AttachMsg attachMsg = Wcf.AttachMsg.newBuilder().setId(id).setThumb(thumb).setExtra(extra).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DOWNLOAD_ATTACH_VALUE).setAtt(attachMsg).build();
@@ -659,9 +660,7 @@ public class WeChatSocketClient {
      * @param src 加密的图片路径
      * @param dir 保存图片的目录
      * @return 解密图片的保存路径
-     * @see  WeChatDllServiceImpl decryptImage
      */
-    @Deprecated
     public String decryptImage(String src, String dir) {
         Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(src).setDst(dir).build();
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();

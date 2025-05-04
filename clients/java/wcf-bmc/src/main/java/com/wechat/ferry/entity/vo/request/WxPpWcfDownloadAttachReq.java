@@ -1,10 +1,10 @@
 package com.wechat.ferry.entity.vo.request;
 
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * 请求入参-下载附件信息
@@ -17,13 +17,11 @@ import javax.validation.constraints.NotBlank;
 public class WxPpWcfDownloadAttachReq {
 
     /**
-     * 消息接收人
-     * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
-     * 群聊为 roomid（xxxxxxxxxx@chatroom）
+     * 消息编号
      */
-    @NotBlank(message = "消息id不能为空")
-    @ApiModelProperty(value = "消息id")
-    private Long id;
+    @NotBlank(message = "消息编号不能为空")
+    @ApiModelProperty(value = "消息编号")
+    private String msgId;
 
     /**
      * 文件的extra
@@ -32,16 +30,21 @@ public class WxPpWcfDownloadAttachReq {
     private String extra;
 
     /**
-     * 缩略图thumb
+     * 缩略图的链接
      */
-//    @NotBlank(message = "thumb不能为空")
-    @ApiModelProperty(value = "缩略图thumb")
-    private String thumb;
-    
+    @ApiModelProperty(value = "缩略图的链接")
+    private String thumbnailUrl;
+
     /**
-     * dir (str): 存放图片的目录。下载图片需要。暂不支持视频
+     * 资源路径: 存放图片的目录。下载图片需要。暂不支持视频
      */
-    @ApiModelProperty(value = "图片存放路径dir")
-    private String dir;
+    @ApiModelProperty(value = "图片存放路径")
+    private String resourcePath;
+
+    /**
+     * 文件类型后缀
+     */
+    @ApiModelProperty(value = "文件类型后缀")
+    private String fileType;
 
 }

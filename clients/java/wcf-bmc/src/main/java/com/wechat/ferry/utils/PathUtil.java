@@ -5,16 +5,21 @@
  */
 package com.wechat.ferry.utils;
 
+import java.io.File;
+
 /**
+ * 路径工具类
+ *
  * @date 2025-05-02
  * @author zm
  */
-import java.io.File;
-
-public class PathUtils {
+public class PathUtil {
 
     /**
      * 分离文件路径，获取不带扩展名的部分 等同于 Python 的 os.path.splitext(thumb)[0]
+     *
+     * @date 2025-05-02
+     * @author zm
      */
     public static String removeExtension(String path) {
         int dotIndex = path.lastIndexOf('.');
@@ -26,6 +31,9 @@ public class PathUtils {
 
     /**
      * 获取文件名（包含扩展名） 等同于 Python 的 os.path.basename(file_path)
+     *
+     * @date 2025-05-02
+     * @author zm
      */
     public static String getFileName(String path) {
         File file = new File(path);
@@ -34,8 +42,12 @@ public class PathUtils {
 
     /**
      * 不存在则创建
-     * @param dirPath 
-     * @return  
+     *
+     * @param dirPath
+     * @return
+     *
+     * @date 2025-05-02
+     * @author zm
      */
     public static boolean createDir(String dirPath) {
         File dir = new File(dirPath);
@@ -48,7 +60,7 @@ public class PathUtils {
                 return false;
             }
         } else {
-            //Nothing to do
+            // Nothing to do
         }
         return true;
     }
@@ -57,9 +69,9 @@ public class PathUtils {
     public static void main(String[] args) {
         String thumb = "/tmp/video_cover.jpg";
 
-        String base = removeExtension(thumb);          // /tmp/video_cover
-        String filePath = base + ".mp4";               // /tmp/video_cover.mp4
-        String fileName = getFileName(filePath);       // video_cover.mp4
+        String base = removeExtension(thumb); // /tmp/video_cover
+        String filePath = base + ".mp4"; // /tmp/video_cover.mp4
+        String fileName = getFileName(filePath); // video_cover.mp4
 
         System.out.println("base: " + base);
         System.out.println("filePath: " + filePath);
