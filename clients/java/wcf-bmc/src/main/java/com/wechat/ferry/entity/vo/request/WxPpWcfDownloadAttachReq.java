@@ -36,13 +36,14 @@ public class WxPpWcfDownloadAttachReq {
     private String thumbnailUrl;
 
     /**
-     * 资源路径,存放文件的目录（目录不存在会出错）
+     * 文件保存路径
      */
-    @ApiModelProperty(value = "资源存放路径")
-    private String resourcePath;
+    @ApiModelProperty(value = "文件保存路径")
+    private String savePath;
 
     /**
      * 文件类型后缀
+     * 如：.png
      */
     @ApiModelProperty(value = "文件类型后缀")
     private String fileType;
@@ -50,7 +51,7 @@ public class WxPpWcfDownloadAttachReq {
     /**
      * 超时时间（秒）
      */
-    @ApiModelProperty(value = "资源存放路径")
-    private Integer timeout;
+    @ApiModelProperty(value = "超时时间（秒）")
+    private Integer timeout = 30;
 
 }

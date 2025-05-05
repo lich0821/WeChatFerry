@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -19,7 +20,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wechat.ferry.aggregation.facade.ContactDo;
 import com.wechat.ferry.config.WeChatFerryProperties;
-import com.wechat.ferry.entity.TResponse;
 import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
@@ -654,37 +654,20 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 公共校验
         checkClientStatus();
         log.info("[下载]-[下载视频]-入参打印：{}", request);
-        try {
-            // # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // 处理中断异常
-            e.printStackTrace();
-        }
         // 第一步，下载
-        // FUNC_DOWNLOAD_ATTACH_VALUE
-        int state = wechatSocketClient.downloadAttach(Long.parseLong(request.getMsgId()), "", request.getThumbnailUrl());
-        if (state != 0) {
-            log.error("{}:下载视频出错", request.getMsgId());
-            throw new BizException("下载视频出错");
-        }
+        downloadDbAttach(request.getMsgId(), request.getThumbnailUrl(), request.getExtra());
         // 第二步，检测文件,指定下载的目录
-        String base = PathUtil.removeExtension(request.getThumbnailUrl());
-        String filePath = base + ".mp4";
+        String base = PathUtil.removeExtension(request.getSavePath());
+        String filePath = base + request.getFileType();
         String path = null;
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < request.getTimeout(); i++) {
             if (new File(filePath).exists()) {
                 path = filePath;
                 log.info("视频下载完毕：{}", path);
                 break;
             } else {
                 log.info("等待下载中：{}", i);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // 处理中断异常
-                    e.printStackTrace();
-                }
+                forceSleep(1000);
             }
         }
         long endTime = System.currentTimeMillis();
@@ -699,37 +682,23 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         checkClientStatus();
         log.info("[下载]-[下载图片]-入参打印：{}", request);
         // 校验文件路径
-        checkFileResourcePath(request.getResourcePath());
-        try {
-            // # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // 处理中断异常
-            e.printStackTrace();
-        }
-        // FUNC_DOWNLOAD_ATTACH_VALUE
-        int state = wechatSocketClient.downloadAttach(Long.valueOf(request.getMsgId()), "", request.getExtra());
-        if (state != 0) {
-            log.error("{}:下载视频出错", request.getMsgId());
-            throw new BizException("下载视频出错");
-        }
+        checkFileResourcePath(request.getSavePath());
+        // 第一步，下载
+        downloadDbAttach(request.getMsgId(), request.getThumbnailUrl(), request.getExtra());
         // 第二步解密图片-下载图片
         // FUNC_DECRYPT_IMAGE_VALUE
-        String filePath = wechatSocketClient.decryptImage(request.getResourcePath(), request.getExtra());
+        String filePath = wechatSocketClient.decryptImage(request.getExtra(), request.getSavePath());
+        // 强制等待2秒
+        forceSleep(2000);
         String path = null;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < request.getTimeout(); i++) {
             if (new File(filePath).exists()) {
                 log.info("图片下载完毕：{}", filePath);
                 path = filePath;
                 break;
             } else {
                 log.info("等待下载中：{}", i);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // 处理中断异常
-                    e.printStackTrace();
-                }
+                forceSleep(1000);
             }
         }
         long endTime = System.currentTimeMillis();
@@ -886,6 +855,41 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         boolean res = PathUtil.createDir(fileDirectory);
         if (!res) {
             throw new BizException("图片路径创建失败：{}", fileDirectory);
+        }
+    }
+
+    /**
+     * 等待文件入库
+     *
+     * @author chandler
+     * @date 2025-05-02
+     */
+    private void downloadDbAttach(String msgId, String thumbnailUrl, String extra) {
+        // 强制等待2秒
+        forceSleep(2000);
+        // FUNC_DOWNLOAD_ATTACH_VALUE
+        int state = wechatSocketClient.downloadAttach(Long.valueOf(msgId), thumbnailUrl, extra);
+        if (state != 0) {
+            log.error("{}:下载视频出错", msgId);
+            throw new BizException("下载视频出错");
+        }
+        // 强制等待2秒
+        forceSleep(2000);
+    }
+
+    /**
+     * 强制休眠
+     *
+     * @author chandler
+     * @date 2025-05-02
+     */
+    private void forceSleep(long milliseconds) {
+        try {
+            // # 强制等待
+            TimeUnit.MILLISECONDS.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            // 处理中断异常
+            e.printStackTrace();
         }
     }
 

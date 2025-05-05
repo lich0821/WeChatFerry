@@ -662,8 +662,8 @@ public class WeChatSocketClient {
      * @return 解密图片的保存路径
      */
     public String decryptImage(String src, String dir) {
-        Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(src).setDst(dir).build();
-        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
+        Wcf.DecPath decPath = Wcf.DecPath.newBuilder().setSrc(src).setDst(dir).build();
+        Request req = Request.newBuilder().setFuncValue(Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(decPath).build();
         Response rsp = sendCmd(req);
         if (rsp != null) {
             return rsp.getStr();
