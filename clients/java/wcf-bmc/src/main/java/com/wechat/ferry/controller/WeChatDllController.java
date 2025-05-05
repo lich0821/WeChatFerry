@@ -3,14 +3,12 @@ package com.wechat.ferry.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.wechat.ferry.entity.TResponse;
 import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
@@ -44,7 +42,6 @@ import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
 import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
 import com.wechat.ferry.enums.ResponseCodeEnum;
 import com.wechat.ferry.service.WeChatDllService;
-import com.wechat.ferry.utils.PathUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -273,62 +270,40 @@ public class WeChatDllController {
      */
     @ApiOperation(value = "下载视频", notes = "download_video")
     @PostMapping(value = "/download/video")
-    public TResponse<Object> downloadVideo(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
+    public TResponse<String> downloadVideo(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
         String path = weChatDllService.downloadVideo(request);
-        if (path != null) {
-            JSONObject pathJson = new JSONObject();
-            pathJson.put("path", path);
-            return TResponse.ok(ResponseCodeEnum.SUCCESS, pathJson);
-        }
-        return TResponse.ok(ResponseCodeEnum.FAILED);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
     }
 
     /**
      * 下载图片
      *
      * @param request 请求入参
-     * @return
+     * @return 下载文件的路径
      * @author zm
      * @date 2025-05-02
      */
     @ApiOperation(value = "下载图片", notes = "download_picture")
     @PostMapping(value = "/download/image")
-    public TResponse<Object> downloadImage(@Validated @RequestBody WxPpWcfDownloadAttachReq request) throws Exception {
-        // check parameter
-        String dir = request.getResourcePath();
-        if (!StringUtils.hasText(dir)) {
-            log.info("需要指定图片的路径dir");
-            return TResponse.fail("需要指定图片的路径dir");
-        }
-        boolean res = PathUtil.createDir(dir);
-        if (!res) {
-            return TResponse.fail("图片路径创建失败" + dir);
-        }
-
+    public TResponse<String> downloadImage(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
         String path = weChatDllService.downloadImage(request);
-        if (path != null) {
-            JSONObject pathJson = new JSONObject();
-            pathJson.put("path", path);
-            return TResponse.ok(ResponseCodeEnum.SUCCESS, pathJson);
-        }
-        return TResponse.ok(ResponseCodeEnum.FAILED);
+        return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
     }
 
     /**
      * 暂未实现 TODO
      *
-     * @param request
+     * @param request 请求入参
      * @return
-     * @throws Exception
      *
      *
      * @author zm
      * @date 2025-05-01
      */
-    @ApiOperation(value = "登陆二维码", notes = "loginQR")
-    @PostMapping(value = "/loginQR")
-    public TResponse<Object> loginQR(@Validated @RequestBody WxPpWcfDownloadAttachReq request) throws Exception {
-        String path = weChatDllService.loginQR();
+    @ApiOperation(value = "登陆二维码", notes = "loginQrCode")
+    @PostMapping(value = "/loginQrCode")
+    public TResponse<Object> loginQrCode(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
+        String path = weChatDllService.loginQrCode();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
     }
 

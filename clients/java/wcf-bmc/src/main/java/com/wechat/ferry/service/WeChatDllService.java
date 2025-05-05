@@ -518,6 +518,6 @@ public interface WeChatDllService {
      * @author wmz
      * @date 2025-05-02
      */
-    String loginQR();
+    String loginQrCode();
 
 }

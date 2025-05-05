@@ -24,7 +24,7 @@ public class WxPpWcfDownloadAttachReq {
     private String msgId;
 
     /**
-     * 文件的extra
+     * 消息中的extra
      */
     @ApiModelProperty(value = "extra")
     private String extra;
@@ -36,9 +36,9 @@ public class WxPpWcfDownloadAttachReq {
     private String thumbnailUrl;
 
     /**
-     * 资源路径: 存放图片的目录。下载图片需要。暂不支持视频
+     * 资源路径,存放文件的目录（目录不存在会出错）
      */
-    @ApiModelProperty(value = "图片存放路径")
+    @ApiModelProperty(value = "资源存放路径")
     private String resourcePath;
 
     /**
@@ -46,5 +46,11 @@ public class WxPpWcfDownloadAttachReq {
      */
     @ApiModelProperty(value = "文件类型后缀")
     private String fileType;
+
+    /**
+     * 超时时间（秒）
+     */
+    @ApiModelProperty(value = "资源存放路径")
+    private Integer timeout;
 
 }

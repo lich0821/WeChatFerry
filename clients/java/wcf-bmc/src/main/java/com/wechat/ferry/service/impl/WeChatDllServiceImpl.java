@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wechat.ferry.aggregation.facade.ContactDo;
 import com.wechat.ferry.config.WeChatFerryProperties;
+import com.wechat.ferry.entity.TResponse;
 import com.wechat.ferry.entity.proto.Wcf;
 import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
@@ -696,6 +698,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 公共校验
         checkClientStatus();
         log.info("[下载]-[下载图片]-入参打印：{}", request);
+        // 校验文件路径
+        checkFileResourcePath(request.getResourcePath());
         try {
             // # 强制等待 1 秒让数据入库，避免那帮人总是嗷嗷叫超时
             Thread.sleep(1000);
@@ -734,7 +738,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public String loginQR() {
+    public String loginQrCode() {
         // 公共校验
         checkClientStatus();
         try {
@@ -865,6 +869,23 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     private void checkClientStatus() {
         if (!wechatSocketClient.isLogin()) {
             throw new BizException("微信客户端未登录或状态异常，请人工关闭本服务之后，退出微信客户端在重启本服务！");
+        }
+    }
+
+    /**
+     * 校验文件路径
+     *
+     * @author wmz
+     * @date 2025-05-02
+     */
+    private void checkFileResourcePath(String fileDirectory) {
+        if (!StringUtils.hasText(fileDirectory)) {
+            log.error("需要指定图片的路径dir");
+            throw new BizException("需要指定图片的路径dir");
+        }
+        boolean res = PathUtil.createDir(fileDirectory);
+        if (!res) {
+            throw new BizException("图片路径创建失败：{}", fileDirectory);
         }
     }
 
