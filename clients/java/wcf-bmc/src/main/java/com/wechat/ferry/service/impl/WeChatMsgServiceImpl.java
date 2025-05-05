@@ -43,6 +43,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         receiveMsgCallback(jsonString);
         // 转为JSON对象
         WxPpMsgDTO dto = JSON.parseObject(jsonString, WxPpMsgDTO.class);
+        log.debug("[收到消息]-[消息内容]-打印：{}", dto);
         // 有开启的群聊配置
         if (weChatFerryProperties.getOpenMsgGroupSwitch() && !weChatFerryProperties.getOpenMsgGroups().isEmpty()) {
             Map<String, List<String>> openMsgGroupMap = new LinkedHashMap<>();
@@ -95,12 +96,14 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                     for (String no : fnNoList) {
                         // 根据功能号获取对应的策略
                         ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(no);
-                        receiveMsgStrategy.doHandle(dto);
+                        if (!ObjectUtils.isEmpty(receiveMsgStrategy)) {
+                            receiveMsgStrategy.doHandle(dto);
+                        }
                     }
                 }
             }
         }
-        log.debug("[收到消息]-[消息内容]-打印：{}", dto);
+        log.debug("[收到消息]-本条消息处理完毕！msgId:{}", dto.getId());
     }
 
     private void receiveMsgCallback(String jsonString) {

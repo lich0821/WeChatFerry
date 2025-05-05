@@ -43,7 +43,7 @@ public class ReceiveMsgFactory implements InitializingBean {
         Map<String, ReceiveMsgStrategy> strategyMap = applicationContext.getBeansOfType(ReceiveMsgStrategy.class);
         strategyMap.forEach((k, v) -> {
             String type = v.getStrategyType();
-            log.debug("[策略Context]-[MessageNoticeSendFactory]-策略类型加载：{}", type);
+            log.debug("[策略Context]-[MessageNoticeSendFactory]-初始化策略加载：{}", type);
             strategyContainerMap.putIfAbsent(type, v);
         });
     }
@@ -55,7 +55,7 @@ public class ReceiveMsgFactory implements InitializingBean {
      * @return 策略类
      */
     public static ReceiveMsgStrategy getStrategy(String strategyType) {
-        log.debug("[策略Context]-[ReceiveMsgStrategy]-当前策略类型：{}", strategyType);
+        log.debug("[策略Context]-[ReceiveMsgStrategy]-初始化当前策略类型：{}", strategyType);
         // 策略类对应的枚举
         if (!ReceiveMsgChannelEnum.codeMap.containsKey(strategyType)) {
             // 当前的渠道类型未匹配到

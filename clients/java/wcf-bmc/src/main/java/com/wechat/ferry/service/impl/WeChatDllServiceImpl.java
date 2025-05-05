@@ -654,6 +654,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 公共校验
         checkClientStatus();
         log.info("[下载]-[下载视频]-入参打印：{}", request);
+        if (ObjectUtils.isEmpty(request.getSavePath())) {
+            request.setSavePath(weChatFerryProperties.getFileSavePath());
+            log.info("[下载]-[下载视频]-重置文件保存路径：{}", request.getSavePath());
+        }
         // 第一步，下载
         downloadDbAttach(request.getMsgId(), request.getThumbnailUrl(), request.getExtra());
         // 第二步，检测文件,指定下载的目录
@@ -681,6 +685,10 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 公共校验
         checkClientStatus();
         log.info("[下载]-[下载图片]-入参打印：{}", request);
+        if (ObjectUtils.isEmpty(request.getSavePath())) {
+            request.setSavePath(weChatFerryProperties.getFileSavePath());
+            log.info("[下载]-[下载图片]-重置文件保存路径：{}", request.getSavePath());
+        }
         // 校验文件路径
         checkFileResourcePath(request.getSavePath());
         // 第一步，下载
