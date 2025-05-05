@@ -11,36 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wechat.ferry.entity.TResponse;
-import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendRichTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
-import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseTableResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendEmojiMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendFileMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendImageMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
+import com.wechat.ferry.entity.vo.request.*;
+import com.wechat.ferry.entity.vo.response.*;
 import com.wechat.ferry.enums.ResponseCodeEnum;
 import com.wechat.ferry.service.WeChatDllService;
 import com.wechat.ferry.utils.PathUtils;
@@ -173,6 +145,25 @@ public class WeChatDllController {
         WxPpWcfSendFileMsgResp resp = weChatDllService.sendFileMsg(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, resp);
     }
+    
+    /**
+     * 转发微信消息 add by mz 2025-05-05
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation(value = "转发微信消息", notes = "forward_msg")
+    @PostMapping(value = "/send/forwardMsg")
+    public TResponse<Object> forwardMsg(@Validated @RequestBody WxPpWcfForwardMsgReq request) throws Exception {
+        // int: 1 为成功，其他失败
+        int res = weChatDllService.forwardMsg(request);
+        if (res == 1) {
+            return TResponse.ok(ResponseCodeEnum.SUCCESS);
+        }
+        return TResponse.fail("转发失败");
+    }
+
 
     @ApiOperation(value = "拍一拍群友", notes = "patOnePat")
     @PostMapping(value = "/patOnePat")
@@ -314,16 +305,14 @@ public class WeChatDllController {
     /**
      * 暂未实现 add by mz 2025-05-01
      *
-     * @param request
      * @return
      * @throws Exception
      */
     @ApiOperation(value = "登陆二维码", notes = "loginQR")
     @PostMapping(value = "/loginQR")
-    public TResponse<Object> loginQR(@Validated @RequestBody WxPpWcfDownloadAttachReq request) throws Exception {
+    public TResponse<Object> loginQR() throws Exception {
         String path = weChatDllService.loginQR();
         return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
     }
-
-
+  
 }

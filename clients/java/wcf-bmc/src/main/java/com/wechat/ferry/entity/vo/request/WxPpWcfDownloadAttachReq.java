@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 请求入参-下载附件信息
@@ -17,11 +17,9 @@ import javax.validation.constraints.NotBlank;
 public class WxPpWcfDownloadAttachReq {
 
     /**
-     * 消息接收人
-     * 消息接收人，私聊为 wxid（wxid_xxxxxxxxxxxxxx）
-     * 群聊为 roomid（xxxxxxxxxx@chatroom）
+     * 消息id
      */
-    @NotBlank(message = "消息id不能为空")
+    @NotNull(message = "消息id不能为空")
     @ApiModelProperty(value = "消息id")
     private Long id;
 
