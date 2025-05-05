@@ -18,37 +18,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.wechat.ferry.aggregation.facade.ContactDo;
 import com.wechat.ferry.config.WeChatFerryProperties;
 import com.wechat.ferry.entity.proto.Wcf;
-import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfPatOnePatMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfReceiveTransferReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfRevokeMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendEmojiMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendFileMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendImageMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendRichTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendTextMsgReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfSendXmlMsgReq;
-import com.wechat.ferry.entity.vo.response.WxPpWcfContactsResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseFieldResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseRowResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfDatabaseTableResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfGroupMemberResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfLoginInfoResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfMsgTypeResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendEmojiMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendFileMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendImageMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendPatOnePatMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendRichTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendTextMsgResp;
-import com.wechat.ferry.entity.vo.response.WxPpWcfSendXmlMsgResp;
+import com.wechat.ferry.entity.vo.request.*;
+import com.wechat.ferry.entity.vo.response.*;
 import com.wechat.ferry.enums.DatabaseNameEnum;
 import com.wechat.ferry.enums.MsgCallbackTypeEnum;
 import com.wechat.ferry.enums.SexEnum;
@@ -61,6 +32,7 @@ import com.wechat.ferry.utils.PathUtils;
 import java.io.File;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StopWatch;
 
 /**
  * 业务实现层-对接原本DLL的接口
@@ -259,8 +231,8 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if (request.getIsAtAll()) {
             // 艾特全体，仅管理员有效
             atUser = "@all";
-        } else {
-            // 处理艾特的人员
+        } else // 处理艾特的人员
+        {
             if (!CollectionUtils.isEmpty(request.getAtUsers())) {
                 atUser = String.join(",", request.getAtUsers());
             }
@@ -293,7 +265,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         log.info("[发送消息]-[富文本消息]-入参打印：{}", request);
         // FUNC_SEND_RICH_TXT_VALUE
         int state = wechatSocketClient.sendRichText(request.getName(), request.getAccount(), request.getTitle(), request.getDigest(),
-            request.getJumpUrl(), request.getThumbnailUrl(), request.getRecipient());
+                request.getJumpUrl(), request.getThumbnailUrl(), request.getRecipient());
         // 回调处理
         String stringJson = JSON.toJSONString(request);
         sendMsgCallback(stringJson, state);
@@ -302,7 +274,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
 
     @Override
     public WxPpWcfSendRichTextMsgResp sendRichTextMsg(String recipient, String name, String account, String title, String digest, String jumpUrl,
-        String thumbnailUrl) {
+            String thumbnailUrl) {
         WxPpWcfSendRichTextMsgReq request = new WxPpWcfSendRichTextMsgReq();
         request.setRecipient(recipient);
         request.setName(name);
@@ -502,7 +474,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         List<Wcf.DbRow> wcfList = new ArrayList<>();
         if (!ObjectUtils.isEmpty(request.getGroupNo())) {
             wcfList = wechatSocketClient.querySql(DatabaseNameEnum.MICRO_MSG.getCode(),
-                "SELECT RoomData FROM ChatRoom WHERE ChatRoomName = '" + request.getGroupNo() + "';");
+                    "SELECT RoomData FROM ChatRoom WHERE ChatRoomName = '" + request.getGroupNo() + "';");
         }
         // 查询联系人
         List<Wcf.DbRow> dbList = wechatSocketClient.querySql(DatabaseNameEnum.MICRO_MSG.getCode(), "SELECT UserName, NickName, Type FROM Contact;");
@@ -515,11 +487,11 @@ public class WeChatDllServiceImpl implements WeChatDllService {
                     for (Wcf.DbField dbField : dbFieldList) {
                         if ("UserName".equals(dbField.getColumn())) {
                             vo = new WxPpWcfGroupMemberResp();
-                            String content = (String)wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String) wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setWeChatUid(content);
                         }
                         if ("NickName".equals(dbField.getColumn())) {
-                            String content = (String)wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
+                            String content = (String) wechatSocketClient.convertSqlVal(dbField.getType(), dbField.getContent());
                             vo.setGroupNickName(content);
                             dbMap.put(vo.getWeChatUid(), vo.getGroupNickName());
                         }
@@ -658,7 +630,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     private void sendMsgCallback(String jsonString, Integer state) {
         // 根据配置文件决定是否回调
         if (MsgCallbackTypeEnum.CLOSE.getCode().equals(weChatFerryProperties.getSendMsgCallbackFlag())
-            || (MsgCallbackTypeEnum.SUCCESS.getCode().equals(weChatFerryProperties.getSendMsgCallbackFlag()) && 0 != state)) {
+                || (MsgCallbackTypeEnum.SUCCESS.getCode().equals(weChatFerryProperties.getSendMsgCallbackFlag()) && 0 != state)) {
             // 如果是关闭 或者 配置为成功才回调但发送状态为失败 的情况则取消发送
             return;
         }
@@ -709,8 +681,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     /**
-     * 判断WCF的CMD调用状态
-     * 有值 为成功，其他失败
+     * 判断WCF的CMD调用状态 有值 为成功，其他失败
      *
      * @param rsp 响应参数
      * @return 状态
@@ -765,8 +736,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             throw new BizException("微信客户端未登录或状态异常，请人工关闭本服务之后，退出微信客户端在重启本服务！");
         }
     }
-    
-    
+
     @Override
     public String loginQR() throws Exception {
 
@@ -882,7 +852,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
      * @param dir 保存图片的目录
      * @return 是否成功
      */
-    public String decryptImage(String srcPath, String dir) {
+    private String decryptImage(String srcPath, String dir) {
         Wcf.DecPath build = Wcf.DecPath.newBuilder().setSrc(srcPath).setDst(dir).build();
         Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_DECRYPT_IMAGE_VALUE).setDec(build).build();
         Wcf.Response rsp = wechatSocketClient.sendCmd(req);
@@ -890,6 +860,33 @@ public class WeChatDllServiceImpl implements WeChatDllService {
             return rsp.getStr();
         }
         return null;
+    }
+
+    //int forwardMsg(long id,String receiver) throws Exception;
+    @Override
+    public int forwardMsg(WxPpWcfForwardMsgReq request) throws Exception {
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        // 公共校验
+        checkClientStatus();
+        log.info("[发送消息]-[转发消息]-入参打印：{}", request);
+        long id = request.getId();
+        String receiver = request.getReceiver();
+        //第一步，下载
+        Wcf.ForwardMsg msg = Wcf.ForwardMsg.newBuilder().setId(id)
+                .setReceiver(receiver)
+                .build();
+        Wcf.Request req = Wcf.Request.newBuilder().setFuncValue(Wcf.Functions.FUNC_FORWARD_MSG_VALUE)
+                .setFm(msg)
+                .build();
+        Wcf.Response rsp = wechatSocketClient.sendCmd(req);
+        
+        int status = rsp.getStatus();
+        
+        stopWatch.stop();
+        log.info("[发送消息]-[转发消息]-处理结束，耗时：{}ms", stopWatch.getTotalTimeMillis());
+        return status;
     }
 
 }
