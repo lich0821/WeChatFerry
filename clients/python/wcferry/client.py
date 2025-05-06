@@ -974,8 +974,9 @@ class Wcf():
             Dict: 群成员列表: {wxid1: 昵称1, wxid2: 昵称2, ...}
         """
         members = {}
-        contacts = self.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
-        contacts = {contact["UserName"]: contact["NickName"]for contact in contacts}
+        query_contacts = self.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
+        query_contacts = {contact["UserName"]: contact["NickName"] for contact in query_contacts}
+        contacts = {i['wxid']: i['name'] for i in self.get_contacts()} | query_contacts
         crs = self.query_sql("MicroMsg.db", f"SELECT RoomData FROM ChatRoom WHERE ChatRoomName = '{roomid}';")
         if not crs:
             return members
