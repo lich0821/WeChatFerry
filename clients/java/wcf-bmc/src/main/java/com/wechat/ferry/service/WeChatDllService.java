@@ -337,7 +337,7 @@ public interface WeChatDllService {
      * @author chandler
      * @date 2025-05-04 13:40
      */
-    String revokeMsg(String msgId);
+    String revokeMsg(Long msgId);
 
     /**
      * 通过好友申请
@@ -489,26 +489,31 @@ public interface WeChatDllService {
     String receiveTransfer(String weChatUid, String transferId, String transactionId);
 
     /**
-     * 下载视频文件
+     * 文件保存至本机
      *
      * @param request 请求入参
-     * @return 文件路径
+     * @return 保存到本机的路径
      *
      * @author wmz
      * @date 2025-05-02
      */
-    String downloadVideo(WxPpWcfDownloadAttachReq request);
+    String fileSaveToLocal(WxPpWcfDownloadAttachReq request);
 
     /**
-     * 下载图片
+     * 文件保存至本机
      *
-     * @param request 请求入参
-     * @return 文件路径
+     * @param msgId 消息编号
+     * @param extra 消息中的extra
+     * @param thumbnailUrl 缩略图的链接
+     * @param savePath 文件保存路径
+     * @param fileType 文件类型后缀,如：.png
+     * @param timeout 超时时间（秒）
+     * @return 保存到本机的路径
      *
      * @author wmz
      * @date 2025-05-02
      */
-    String downloadImage(WxPpWcfDownloadAttachReq request);
+    String fileSaveToLocal(Long msgId, String extra, String thumbnailUrl, String savePath, String fileType, Integer timeout);
 
     /**
      * 获取登录二维码

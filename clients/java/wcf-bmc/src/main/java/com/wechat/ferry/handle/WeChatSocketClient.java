@@ -639,7 +639,7 @@ public class WeChatSocketClient {
      * @param id 待撤回消息的 id
      * @return 结果状态码 0 为成功，其他失败
      */
-    public int revokeMsg(Integer id) {
+    public int revokeMsg(Long id) {
         int ret = -1;
         Request req = Request.newBuilder().setFuncValue(Functions.FUNC_REVOKE_MSG_VALUE).setUi64(id).build();
         Response rsp = sendCmd(req);

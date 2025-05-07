@@ -260,33 +260,18 @@ public class WeChatDllController {
     }
 
     /**
-     * 下载视频
+     * 文件保存至本机
      *
      * @param request 请求入参
-     * @return 下载文件的路径
+     * @return 保存到本机的路径
      *
      * @author zm
      * @date 2025-05-01
      */
-    @ApiOperation(value = "下载视频", notes = "download_video")
-    @PostMapping(value = "/download/video")
-    public TResponse<String> downloadVideo(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
-        String path = weChatDllService.downloadVideo(request);
-        return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
-    }
-
-    /**
-     * 下载图片
-     *
-     * @param request 请求入参
-     * @return 下载文件的路径
-     * @author zm
-     * @date 2025-05-02
-     */
-    @ApiOperation(value = "下载图片", notes = "download_picture")
-    @PostMapping(value = "/download/image")
-    public TResponse<String> downloadImage(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
-        String path = weChatDllService.downloadImage(request);
+    @ApiOperation(value = "文件保存至本机", notes = "fileSaveToLocal")
+    @PostMapping(value = "/file/saveToLocal")
+    public TResponse<String> fileSaveToLocal(@Validated @RequestBody WxPpWcfDownloadAttachReq request) {
+        String path = weChatDllService.fileSaveToLocal(request);
         return TResponse.ok(ResponseCodeEnum.SUCCESS, path);
     }
 

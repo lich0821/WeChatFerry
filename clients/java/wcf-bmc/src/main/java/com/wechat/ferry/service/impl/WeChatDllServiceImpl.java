@@ -436,7 +436,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         // 公共校验
         checkClientStatus();
         log.info("[撤回消息]-[消息撤回]-入参打印：{}", request);
-        Integer msgId = Integer.valueOf(request.getMsgId());
+        Long msgId = request.getMsgId();
         // FUNC_REVOKE_MSG_VALUE
         int state = wechatSocketClient.revokeMsg(msgId);
         // 回调处理
@@ -446,7 +446,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public String revokeMsg(String msgId) {
+    public String revokeMsg(Long msgId) {
         WxPpWcfRevokeMsgReq request = new WxPpWcfRevokeMsgReq();
         request.setMsgId(msgId);
         return this.revokeMsg(request);
@@ -649,69 +649,61 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public String downloadVideo(WxPpWcfDownloadAttachReq request) {
+    public String fileSaveToLocal(WxPpWcfDownloadAttachReq request) {
         long startTime = System.currentTimeMillis();
         // 公共校验
         checkClientStatus();
-        log.info("[下载]-[下载视频]-入参打印：{}", request);
+        log.info("[文件保存]-[保存至本机]-入参打印：{}", request);
         if (ObjectUtils.isEmpty(request.getSavePath())) {
             request.setSavePath(weChatFerryProperties.getFileSavePath());
-            log.info("[下载]-[下载视频]-重置文件保存路径：{}", request.getSavePath());
-        }
-        // 第一步，下载
-        downloadDbAttach(request.getMsgId(), request.getThumbnailUrl(), request.getExtra());
-        // 第二步，检测文件,指定下载的目录
-        String base = PathUtil.removeExtension(request.getSavePath());
-        String filePath = base + request.getFileType();
-        String path = null;
-        for (int i = 0; i < request.getTimeout(); i++) {
-            if (new File(filePath).exists()) {
-                path = filePath;
-                log.info("视频下载完毕：{}", path);
-                break;
-            } else {
-                log.info("等待下载中：{}", i);
-                forceSleep(1000);
-            }
-        }
-        long endTime = System.currentTimeMillis();
-        log.info("[下载]-[下载视频]-处理结束，耗时：{}ms", (endTime - startTime));
-        return path;
-    }
-
-    @Override
-    public String downloadImage(WxPpWcfDownloadAttachReq request) {
-        long startTime = System.currentTimeMillis();
-        // 公共校验
-        checkClientStatus();
-        log.info("[下载]-[下载图片]-入参打印：{}", request);
-        if (ObjectUtils.isEmpty(request.getSavePath())) {
-            request.setSavePath(weChatFerryProperties.getFileSavePath());
-            log.info("[下载]-[下载图片]-重置文件保存路径：{}", request.getSavePath());
+            log.info("[文件保存]-[保存至本机]-入参中的保存路径为空，重置文件保存路径：{}", request.getSavePath());
         }
         // 校验文件路径
         checkFileResourcePath(request.getSavePath());
-        // 第一步，下载
+        // 下载入库
         downloadDbAttach(request.getMsgId(), request.getThumbnailUrl(), request.getExtra());
-        // 第二步解密图片-下载图片
-        // FUNC_DECRYPT_IMAGE_VALUE
-        String filePath = wechatSocketClient.decryptImage(request.getExtra(), request.getSavePath());
-        // 强制等待2秒
-        forceSleep(2000);
-        String path = null;
+        String filePath = "";
+        // 判断是否是图片
+        if (!ObjectUtils.isEmpty(request.getExtra()) && request.getExtra().contains("/Image/")) {
+            // 解密图片-下载图片
+            // FUNC_DECRYPT_IMAGE_VALUE
+            filePath = wechatSocketClient.decryptImage(request.getExtra(), request.getSavePath());
+            // 强制等待2秒
+            forceSleep(2000);
+        } else {
+            // 非图片
+            String base = PathUtil.removeExtension(request.getSavePath());
+            filePath = base + request.getFileType();
+        }
+        String localPath = "";
         for (int i = 0; i < request.getTimeout(); i++) {
             if (new File(filePath).exists()) {
-                log.info("图片下载完毕：{}", filePath);
-                path = filePath;
+                localPath = filePath;
+                log.info("[文件保存]-[保存至本机]-保存完毕：{}", localPath);
                 break;
             } else {
-                log.info("等待下载中：{}", i);
+                log.info("等待保存至本机，保存中......{}", i);
                 forceSleep(1000);
             }
         }
         long endTime = System.currentTimeMillis();
-        log.info("[下载]-[下载图片]-处理结束，耗时：{}ms", (endTime - startTime));
-        return path;
+        log.info("[文件保存]-[保存至本机]-处理结束，耗时：{}ms", (endTime - startTime));
+        return localPath;
+    }
+
+    @Override
+    public String fileSaveToLocal(Long msgId, String extra, String thumbnailUrl, String savePath, String fileType, Integer timeout) {
+        if (ObjectUtils.isEmpty(timeout)) {
+            timeout = 30;
+        }
+        WxPpWcfDownloadAttachReq request = new WxPpWcfDownloadAttachReq();
+        request.setMsgId(msgId);
+        request.setExtra(extra);
+        request.setThumbnailUrl(thumbnailUrl);
+        request.setSavePath(savePath);
+        request.setFileType(fileType);
+        request.setTimeout(timeout);
+        return this.fileSaveToLocal(request);
     }
 
     @Override
@@ -872,11 +864,11 @@ public class WeChatDllServiceImpl implements WeChatDllService {
      * @author chandler
      * @date 2025-05-02
      */
-    private void downloadDbAttach(String msgId, String thumbnailUrl, String extra) {
+    private void downloadDbAttach(Long msgId, String thumbnailUrl, String extra) {
         // 强制等待2秒
         forceSleep(2000);
         // FUNC_DOWNLOAD_ATTACH_VALUE
-        int state = wechatSocketClient.downloadAttach(Long.valueOf(msgId), thumbnailUrl, extra);
+        int state = wechatSocketClient.downloadAttach(msgId, thumbnailUrl, extra);
         if (state != 0) {
             log.error("{}:下载视频出错", msgId);
             throw new BizException("下载视频出错");

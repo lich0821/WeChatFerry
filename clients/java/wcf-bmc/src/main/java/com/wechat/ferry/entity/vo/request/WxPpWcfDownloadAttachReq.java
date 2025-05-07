@@ -21,7 +21,7 @@ public class WxPpWcfDownloadAttachReq {
      */
     @NotBlank(message = "消息编号不能为空")
     @ApiModelProperty(value = "消息编号")
-    private String msgId;
+    private Long msgId;
 
     /**
      * 消息中的extra
