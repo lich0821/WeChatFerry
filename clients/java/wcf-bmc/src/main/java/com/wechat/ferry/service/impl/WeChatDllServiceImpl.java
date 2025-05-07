@@ -25,7 +25,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfFileSaveReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
@@ -649,7 +649,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
     }
 
     @Override
-    public String fileSaveToLocal(WxPpWcfDownloadAttachReq request) {
+    public String fileSaveToLocal(WxPpWcfFileSaveReq request) {
         long startTime = System.currentTimeMillis();
         // 公共校验
         checkClientStatus();
@@ -696,7 +696,7 @@ public class WeChatDllServiceImpl implements WeChatDllService {
         if (ObjectUtils.isEmpty(timeout)) {
             timeout = 30;
         }
-        WxPpWcfDownloadAttachReq request = new WxPpWcfDownloadAttachReq();
+        WxPpWcfFileSaveReq request = new WxPpWcfFileSaveReq();
         request.setMsgId(msgId);
         request.setExtra(extra);
         request.setThumbnailUrl(thumbnailUrl);

@@ -6,7 +6,7 @@ import com.wechat.ferry.entity.vo.request.WxPpWcfAddFriendGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseSqlReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDatabaseTableReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfDeleteGroupMemberReq;
-import com.wechat.ferry.entity.vo.request.WxPpWcfDownloadAttachReq;
+import com.wechat.ferry.entity.vo.request.WxPpWcfFileSaveReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfInviteGroupMemberReq;
 import com.wechat.ferry.entity.vo.request.WxPpWcfPassFriendApplyReq;
@@ -497,7 +497,7 @@ public interface WeChatDllService {
      * @author wmz
      * @date 2025-05-02
      */
-    String fileSaveToLocal(WxPpWcfDownloadAttachReq request);
+    String fileSaveToLocal(WxPpWcfFileSaveReq request);
 
     /**
      * 文件保存至本机
