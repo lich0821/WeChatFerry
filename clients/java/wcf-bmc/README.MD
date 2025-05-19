@@ -50,7 +50,9 @@
 
 ### 修改配置文件
 
-配置文件：src/main/resources/application.yml
+配置文件：
+- src/main/resources/application.yml
+- src/main/resources/config/application-dev.yml
 
 根据自己的dll目录位置修改配置文件
 
@@ -125,6 +127,7 @@ wcf-bmc
 │
 ├─config                                    配置文件目录
 │  ├─application.yml                        配置文件
+│  ├─application-dev.yml                    开发环境配置文件
 │  └─logback-spring.xml                     日志配置文件
 │
 ├─wcf-bmc-xx.x.x.x.jar                      打包后的源码包

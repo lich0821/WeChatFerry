@@ -43,7 +43,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
         receiveMsgCallback(jsonString);
         // 转为JSON对象
         WxPpMsgDTO dto = JSON.parseObject(jsonString, WxPpMsgDTO.class);
-        log.debug("[收到消息]-[消息内容]-打印：{}", dto);
+        log.debug("[接收消息]-[消息内容]-打印：{}", dto);
         // 有开启的群聊配置
         if (weChatFerryProperties.getOpenMsgGroupSwitch() && !weChatFerryProperties.getOpenMsgGroups().isEmpty()) {
             Map<String, List<String>> openMsgGroupMap = new LinkedHashMap<>();
@@ -80,7 +80,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
 
             // 指定处理的群聊
             if (!openMsgGroupMap.isEmpty()) {
-                log.debug("[收到消息后处理]-[汇总后的所有功能]-openMsgGroupMap：{}", openMsgGroupMap);
+                log.debug("[接收消息]-[功能处理]-[汇总后的所有功能]-openMsgGroupMap：{}", openMsgGroupMap);
                 List<String> fnNoList = new ArrayList<>();
                 // 先执行所有群都需要执行的
                 if (openMsgGroupMap.containsKey("ALL")) {
@@ -92,7 +92,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                 }
                 // 需要执行的策略
                 if (!CollectionUtils.isEmpty(fnNoList)) {
-                    log.debug("[收到消息后处理]-[汇总后的单群功能]-fnNoList：{}，群号：{}", fnNoList, dto.getRoomId());
+                    log.debug("[接收消息]-[功能处理]-fnNoList：{}，群号：{}", fnNoList, dto.getRoomId());
                     for (String no : fnNoList) {
                         // 根据功能号获取对应的策略
                         ReceiveMsgStrategy receiveMsgStrategy = ReceiveMsgFactory.getStrategy(no);
@@ -103,7 +103,7 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                 }
             }
         }
-        log.debug("[收到消息]-本条消息处理完毕！msgId:{}", dto.getId());
+        log.debug("[接收消息]-msgId:[{}],本条消息处理完毕！", dto.getId());
     }
 
     private void receiveMsgCallback(String jsonString) {
@@ -116,11 +116,11 @@ public class WeChatMsgServiceImpl implements WeChatMsgService {
                 try {
                     String responseStr = HttpClientUtil.doPostJson(receiveMsgFwdUrl, jsonString);
                     if (judgeSuccess(responseStr)) {
-                        log.error("[接收消息]-消息回调至外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
+                        log.error("[接收消息]-[消息回调]-消息回调至外部接口,获取响应状态失败！-URL：{}", receiveMsgFwdUrl);
                     }
-                    log.debug("[接收消息]-[回调接收到的消息]-回调消息至：{}", receiveMsgFwdUrl);
+                    log.debug("[接收消息]-[消息回调]-[回调接收到的消息]-回调消息至：{}", receiveMsgFwdUrl);
                 } catch (Exception e) {
-                    log.error("[接收消息]-消息回调接口[{}]服务异常：", receiveMsgFwdUrl, e);
+                    log.error("[接收消息]-[消息回调]-消息回调接口[{}]服务异常：", receiveMsgFwdUrl, e);
                 }
             }
         }
