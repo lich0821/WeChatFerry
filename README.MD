@@ -54,6 +54,7 @@
 * Python
 * HTTP
 * NodeJS
+* Java
 
 </details>
 
@@ -79,6 +80,7 @@ pip install --upgrade wcferry
 * [wcf-http](https://github.com/yuxiaoli/wcf-http)（基于 Python）
 
 ### Java
+* [SpringBoot版](https://github.com/PathfinderAx/WeChatFerry)（基于SpringBoot+Maven：`为避免代码冲突，请先至此仓库提交PR后统一合并至主仓库`）
 * [java](clients/java/wcferry/README.MD)
 
 ### NodeJS

@@ -5,6 +5,9 @@
 `声明：` 本项目是基于 clients/java/wcferry 项目改造，随着时间推进，项目结构和代码规范逐渐产生分离，使用此项目的人员可参考之前的项目
 我们在开发时请尽量保持注释的完整性，便于阅读维护
 
+* [仓库地址：https://github.com/PathfinderAx/WeChatFerry](https://github.com/PathfinderAx/WeChatFerry)（基于SpringBoot+Maven：`为避免代码冲突，请先至此仓库提交PR后统一合并至主仓库`）
+
+
 ## 快速使用
 
 ### 环境准备
@@ -47,7 +50,9 @@
 
 ### 修改配置文件
 
-配置文件：src/main/resources/application.yml
+配置文件：
+- src/main/resources/application.yml
+- src/main/resources/config/application-dev.yml
 
 根据自己的dll目录位置修改配置文件
 
@@ -122,6 +127,7 @@ wcf-bmc
 │
 ├─config                                    配置文件目录
 │  ├─application.yml                        配置文件
+│  ├─application-dev.yml                    开发环境配置文件
 │  └─logback-spring.xml                     日志配置文件
 │
 ├─wcf-bmc-xx.x.x.x.jar                      打包后的源码包
@@ -260,6 +266,10 @@ WeChatFerry框架：wcf
 message RoomData
 
 ```
+
+### 开发约定
+
+* 1.控制层仅处理数据操作，异常请在业务层进行抛出，系统会自动捕获并返回给前端
 
 ### 提交规范
 
