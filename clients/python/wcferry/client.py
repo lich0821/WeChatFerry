@@ -15,6 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from queue import Queue
 from threading import Thread
 from time import sleep
@@ -869,12 +870,12 @@ class Wcf():
             self.LOG.error(f"下载失败")
             return ""
         cnt = 0
-        while cnt < timeout:
+        start_time = time.time()  # 记录开始时间
+        while (time.time() - start_time) < timeout:
             path = self.decrypt_image(extra, dir)
             if path:
                 return path
             sleep(1)
-            cnt += 1
 
         self.LOG.error(f"下载超时")
         return ""
@@ -901,14 +902,13 @@ class Wcf():
             return ""
 
         cnt = 0
-        while cnt < timeout:
+        start_time = time.time()  # 记录开始时间
+        while (time.time() - start_time) < timeout:
             if os.path.exists(file_path):
                 os.makedirs(dir, exist_ok=True)
                 shutil.move(file_path, target_path)
                 return target_path
-
             sleep(1)
-            cnt += 1
 
         self.LOG.error(f"下载超时")
         return ""
