@@ -1,7 +1,0 @@
-[submodule "clients/node"]
-	path = clients/node
-	url = https://github.com/stkevintan/node-wcferry
-	branch = main
-[submodule "clients/wcferry-node"]
-	path = clients/wcferry-node
-	url = https://github.com/dr-forget/wcferry-node.git
