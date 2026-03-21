@@ -1,0 +1,7 @@
+sphinx-autoapi
+markdown-it-py[linkify,plugins]
+myst_parser
+sphinx
+sphinx_copybutton
+sphinx_rtd_theme
+sphinxcontrib-napoleon
