@@ -1,4 +1,4 @@
-﻿syntax = "proto3";
+syntax = "proto3";
 
 package wcf;
 option java_package = "com.iamteer";
@@ -36,7 +36,6 @@ enum Functions {
     FUNC_ADD_ROOM_MEMBERS = 0x70;
     FUNC_DEL_ROOM_MEMBERS = 0x71;
     FUNC_INV_ROOM_MEMBERS = 0x72;
-    FUNC_SHUTDOWN         = 0xFF;
 }
 
 message Request
@@ -118,7 +117,7 @@ message XmlMsg
     string receiver = 1; // 消息接收人
     string content  = 2; // xml 内容
     string path     = 3; // 图片路径
-    uint64 type     = 4; // 消息类型
+    int32 type      = 4; // 消息类型
 }
 
 message MsgTypes { map<int32, string> types = 1; }
@@ -179,7 +178,6 @@ message UserInfo
     string name   = 2; // 昵称
     string mobile = 3; // 手机号
     string home   = 4; // 文件/图片等父路径
-    string alias  = 5; // 修改后的wxid
 }
 
 message DecPath
@@ -235,25 +233,4 @@ message ForwardMsg
 {
     uint64 id       = 1 [ jstype = JS_STRING ]; // 待转发消息 ID
     string receiver = 2;                        // 转发接收目标，群为 roomId，个人为 wxid
-}
-
-message RoomData
-{
-    message RoomMember
-    {
-                 string wxid = 1;
-        optional string name = 2;  // 群昵称
-                 int32 state = 3;
-    }
-
-    repeated RoomMember members = 1;
-
-    optional int32 field_2  = 2;
-             int32 field_3  = 3;
-    optional int32 field_4  = 4;
-             int32 capacity = 5;
-    optional string field_6 = 6;
-             int32 field_7  = 7;
-             int32 field_8  = 8;
-    repeated string admins  = 9;  // 管理员
 }

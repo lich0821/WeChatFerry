@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 
-#include <optional>
+#include <cstdint>
+#include <cstddef>
 #include <string>
 #include <vector>
 
 #include "wcf.pb.h"
-
 #include "pb_types.h"
 
 namespace db
@@ -29,6 +29,6 @@ std::vector<uint8_t> get_audio_data(uint64_t msg_id);
 // RPC 方法
 bool rpc_get_db_names(uint8_t *out, size_t *len);
 bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len);
-bool rpc_exec_db_query(const DbQuery query, uint8_t *out, size_t *len);
+bool rpc_exec_db_query(const DbQuery &query, uint8_t *out, size_t *len);
 
 } // namespace db

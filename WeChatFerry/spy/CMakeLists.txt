@@ -15,8 +15,8 @@ add_library(spy SHARED
   database_executor.h
   contact_manager.cpp
   contact_manager.h
-  message_handler.cpp
-  message_handler.h
+  message_receiver.cpp
+  message_receiver.h
   rpc_server.cpp
   rpc_server.h
   message_sender.cpp
@@ -33,9 +33,9 @@ add_library(spy SHARED
   spy.def
 
   # Common files
-  ${CMAKE_SOURCE_DIR}/com/util.cpp
-  ${CMAKE_SOURCE_DIR}/com/util.h
-  ${CMAKE_SOURCE_DIR}/com/log.hpp
+  ${CMAKE_SOURCE_DIR}/spy/com/util.cpp
+  ${CMAKE_SOURCE_DIR}/spy/com/util.h
+  ${CMAKE_SOURCE_DIR}/spy/com/log.hpp
 
   # RPC files
   ${CMAKE_SOURCE_DIR}/rpc/pb_util.cpp
@@ -87,8 +87,8 @@ add_custom_command(
 # Add generated files as dependencies
 add_custom_target(protobuf_generation
   DEPENDS
-    ${CMAKE_SOURCE_DIR}/rpc/proto/wcf.pb.c
-    ${CMAKE_SOURCE_DIR}/rpc/proto/wcf.pb.h
+  ${CMAKE_SOURCE_DIR}/rpc/proto/wcf.pb.c
+  ${CMAKE_SOURCE_DIR}/rpc/proto/wcf.pb.h
 )
 add_dependencies(spy protobuf_generation)
 

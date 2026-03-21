@@ -1,10 +1,12 @@
-﻿#include "message_sender.h"
+#include "message_sender.h"
 
+#include <filesystem>
 #include <sstream>
 #include <vector>
 
 #include "account_manager.h"
 #include "database_executor.h"
+#include "framework.h"
 #include "log.hpp"
 #include "offsets.h"
 #include "rpc_helper.h"
@@ -12,351 +14,569 @@
 #include "spy_types.h"
 #include "util.h"
 
+namespace fs = std::filesystem;
+
+namespace
+{
+
+struct RichTextData {
+    std::string name;
+    std::string account;
+    std::string title;
+    std::string digest;
+    std::string url;
+    std::string thumburl;
+    std::string receiver;
+};
+
+} // namespace
+
 namespace message
 {
 
-namespace OsSend = Offsets::Message::Send;
-
-Sender &Sender::get_instance()
+void send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
 {
-    static Sender instance;
-    return instance;
+    int success        = 0;
+    char buffer[0x2D8] = { 0 };
+
+    uint32_t sendCall1 = g_WeChatWinDllAddr + Offsets::Message::Send::TEXT_CALL1;
+    uint32_t sendCall2 = g_WeChatWinDllAddr + Offsets::Message::Send::TEXT_CALL2;
+    uint32_t sendCall3 = g_WeChatWinDllAddr + Offsets::Message::Send::TEXT_CALL3;
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsMsg  = util::s2w(msg);
+    WxString wxMsg(wsMsg);
+    WxString wxWxid(wsWxid);
+
+    std::vector<std::wstring> vAtWxids;
+    std::vector<WxString> vWxAtWxids;
+    if (!at_wxids.empty()) {
+        std::wstringstream wss(util::s2w(at_wxids));
+        while (wss.good()) {
+            std::wstring wstr;
+            getline(wss, wstr, L',');
+            vAtWxids.push_back(wstr);
+            WxString wxAtWxid(vAtWxids.back());
+            vWxAtWxids.push_back(wxAtWxid);
+        }
+    }
+
+    __asm
+    {
+        pushad;
+        call sendCall1;
+        push 0x0;
+        push 0x0;
+        push 0x0;
+        push 0x1;
+        lea eax, vWxAtWxids;
+        push eax;
+        lea eax, wxMsg;
+        push eax;
+        lea edx, wxWxid;
+        lea ecx, buffer;
+        call sendCall2;
+        mov success, eax;
+        add esp, 0x18;
+        lea ecx, buffer;
+        call sendCall3;
+        popad;
+    }
 }
 
-Sender::Sender()
+void send_image(const std::string &wxid, const std::string &path)
 {
-    func_new_chat_msg    = Spy::getFunction<New_t>(OsSend::INSTANCE);
-    func_free_chat_msg   = Spy::getFunction<Free_t>(OsSend::FREE);
-    func_send_msg_mgr    = Spy::getFunction<SendMsgMgr_t>(OsSend::MGR);
-    func_send_text       = Spy::getFunction<SendText_t>(OsSend::TEXT);
-    func_send_image      = Spy::getFunction<SendImage_t>(OsSend::IMAGE);
-    func_get_app_mgr     = Spy::getFunction<GetAppMgr_t>(OsSend::APP_MGR);
-    func_send_file       = Spy::getFunction<SendFile_t>(OsSend::FILE);
-    func_new_mmreader    = Spy::getFunction<New_t>(OsSend::NEW_MM_READER);
-    func_free_mmreader   = Spy::getFunction<Free_t>(OsSend::FREE_MM_READER);
-    func_send_rich_text  = Spy::getFunction<SendRichText_t>(OsSend::RICH_TEXT);
-    func_send_pat        = Spy::getFunction<SendPat_t>(OsSend::PAT);
-    func_forward         = Spy::getFunction<Forward_t>(OsSend::FORWARD);
-    func_get_emotion_mgr = Spy::getFunction<GetEmotionMgr_t>(OsSend::EMOTION_MGR);
-    func_send_emotion    = Spy::getFunction<SendEmotion_t>(OsSend::EMOTION);
-    func_send_xml        = Spy::getFunction<SendXml_t>(OsSend::XML);
-    func_xml_buf_sign    = Spy::getFunction<XmlBufSign_t>(OsSend::XML_BUF_SIGN);
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+    int success      = 0;
+    uint32_t tmpEAX  = 0;
+    char buf[0x2D8]  = { 0 };
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
+
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
+
+    uint32_t sendCall1 = g_WeChatWinDllAddr + Offsets::Message::Send::IMG_CALL1;
+    uint32_t sendCall2 = g_WeChatWinDllAddr + Offsets::Message::Send::IMG_CALL2;
+    uint32_t sendCall3 = g_WeChatWinDllAddr + Offsets::Message::Send::IMG_CALL3;
+    uint32_t sendCall4 = g_WeChatWinDllAddr + Offsets::Message::Send::IMG_CALL4;
+
+    __asm {
+        pushad;
+        call       sendCall1;
+        sub        esp,0x14;
+        mov        tmpEAX,eax;
+        lea        eax,nullbuffer;
+        mov        ecx,esp;
+        lea        edi,wxPath;
+        push       eax;
+        call       sendCall2;
+        mov        ecx,dword ptr [tmpEAX];
+        lea        eax,wxWxid;
+        push       edi;
+        push       eax;
+        lea        eax,buf;
+        push       eax;
+        call       sendCall3;
+        mov        success,eax;
+        lea        ecx,buf;
+        call       sendCall4;
+        popad;
+    }
 }
 
-void Sender::send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
+void send_file(const std::string &wxid, const std::string &path)
 {
-    util::WxStringHolder<std::string> holderMsg(msg);
-    util::WxStringHolder<std::string> holderWxid(wxid);
+    if (g_WeChatWinDllAddr == 0) {
+        return;
+    }
+    int success         = 0;
+    uint32_t tmpEAX     = 0;
+    char buffer[0x2D8]  = { 0 };
 
-    auto wxAtWxids   = util::parse_wxids(at_wxids).wxWxids;
-    QWORD pWxAtWxids = wxAtWxids.empty() ? 0 : reinterpret_cast<QWORD>(&wxAtWxids);
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
 
-    char buffer[1104] = { 0 };
-    func_send_msg_mgr();
-    func_send_text(reinterpret_cast<QWORD>(&buffer), &holderWxid.wx, &holderMsg.wx, pWxAtWxids, 1, 1, 0, 0);
-    func_free_chat_msg(reinterpret_cast<QWORD>(&buffer));
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
+
+    uint32_t sendCall1 = g_WeChatWinDllAddr + Offsets::Message::Send::FILE_CALL1;
+    uint32_t sendCall2 = g_WeChatWinDllAddr + Offsets::Message::Send::FILE_CALL2;
+    uint32_t sendCall3 = g_WeChatWinDllAddr + Offsets::Message::Send::FILE_CALL3;
+    uint32_t sendCall4 = g_WeChatWinDllAddr + Offsets::Message::Send::FILE_CALL4;
+
+    __asm {
+        pushad;
+        pushfd;
+        call sendCall1;
+        sub esp, 0x14;
+        mov tmpEAX, eax;
+        lea eax, nullbuffer;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        push 0x0;
+        sub esp, 0x14;
+        mov edi, esp;
+        mov dword ptr[edi], 0;
+        mov dword ptr[edi + 0x4], 0;
+        mov dword ptr[edi + 0x8], 0;
+        mov dword ptr[edi + 0xc], 0;
+        mov dword ptr[edi + 0x10], 0;
+        sub esp, 0x14;
+        lea eax, wxPath;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        sub esp, 0x14;
+        lea eax, wxWxid;
+        mov ecx, esp;
+        push eax;
+        call sendCall2;
+        mov ecx, dword ptr[tmpEAX];
+        lea eax, buffer;
+        push eax;
+        call sendCall3;
+        mov al, byte ptr[eax + 0x38];
+        movzx eax, al;
+        mov success, eax;
+        lea ecx, buffer;
+        call sendCall4;
+        popfd;
+        popad;
+    }
 }
 
-void Sender::send_image(const std::string &wxid, const std::string &path)
+void send_xml(const std::string &receiver, const std::string &xml, const std::string &path, int type)
 {
-    util::WxStringHolder<std::string> holderWxid(wxid);
-    util::WxStringHolder<std::string> holderPath(path);
-
-    char msg[1192]    = { 0 };
-    char msgTmp[1192] = { 0 };
-    QWORD *flag[10]   = { 0 };
-
-    QWORD tmp1 = 1, tmp2 = 0, tmp3 = 0;
-    QWORD pMsgTmp = func_new_chat_msg((QWORD)(&msgTmp));
-    flag[0]       = reinterpret_cast<QWORD *>(tmp1);
-    flag[1]       = reinterpret_cast<QWORD *>(pMsgTmp);
-    flag[8]       = &tmp2;
-    flag[9]       = &tmp3;
-
-    QWORD pMsg    = func_new_chat_msg((QWORD)(&msg));
-    QWORD sendMgr = func_send_msg_mgr();
-    func_send_image(sendMgr, pMsg, &holderWxid.wx, &holderPath.wx, reinterpret_cast<QWORD>(&flag));
-
-    func_free_chat_msg(pMsg);
-    func_free_chat_msg(pMsgTmp);
-}
-
-void Sender::send_file(const std::string &wxid, const std::string &path)
-{
-    WxString *wxWxid = util::CreateWxString(wxid);
-    WxString *wxPath = util::CreateWxString(path);
-    if (!wxWxid || !wxPath) {
-        util::FreeWxString(wxWxid);
-        util::FreeWxString(wxPath);
+    if (g_WeChatWinDllAddr == 0) {
         return;
     }
 
-    char *chat_msg = reinterpret_cast<char *>(util::AllocFromHeap(0x460));
-    if (!chat_msg) {
-        util::FreeWxString(wxWxid);
-        util::FreeWxString(wxPath);
+    uint32_t sendXmlCall1 = g_WeChatWinDllAddr + Offsets::Message::Send::XML_CALL1;
+    uint32_t sendXmlCall2 = g_WeChatWinDllAddr + Offsets::Message::Send::XML_CALL2;
+    uint32_t sendXmlCall3 = g_WeChatWinDllAddr + Offsets::Message::Send::XML_CALL3;
+    uint32_t sendXmlCall4 = g_WeChatWinDllAddr + Offsets::Message::Send::XML_CALL4;
+    uint32_t sendXmlParam = g_WeChatWinDllAddr + Offsets::Message::Send::XML_PARAM;
+
+    char buffer[0xFF0] = { 0 };
+    char nullBuf[0x1C] = { 0 };
+
+    std::wstring wsSender   = util::s2w(account::get_self_wxid());
+    std::wstring wsReceiver = util::s2w(receiver);
+    std::wstring wsXml      = util::s2w(xml);
+
+    WxString wxPath;
+    WxString wxNull;
+    WxString wxXml(wsXml);
+    WxString wxSender(wsSender);
+    WxString wxReceiver(wsReceiver);
+
+    if (!path.empty()) {
+        std::wstring wsPath = util::s2w(path);
+        wxPath              = WxString(wsPath);
+    }
+
+    uint32_t sendtype = type;
+    __asm {
+        pushad;
+        pushfd;
+        lea ecx, buffer;
+        call sendXmlCall1;
+        mov eax, [sendtype];
+        push eax;
+        lea eax, nullBuf;
+        lea edx, wxSender;
+        push eax;
+        lea eax, wxPath;
+        push eax;
+        lea eax, wxXml;
+        push eax;
+        lea edi, wxReceiver;
+        push edi;
+        lea ecx, buffer;
+        call sendXmlCall2;
+        add esp, 0x14;
+        lea eax, wxNull;
+        push eax;
+        lea ecx, buffer;
+        call sendXmlCall3;
+        mov dl, 0x0;
+        lea ecx, buffer;
+        push sendXmlParam;
+        push sendXmlParam;
+        call sendXmlCall4;
+        add esp, 0x8;
+        popfd;
+        popad;
+    }
+}
+
+void send_emotion(const std::string &wxid, const std::string &path)
+{
+    if (g_WeChatWinDllAddr == 0) {
         return;
     }
 
-    QWORD *tmp1 = util::AllocBuffer<QWORD>(4);
-    QWORD *tmp2 = util::AllocBuffer<QWORD>(4);
-    QWORD *tmp3 = util::AllocBuffer<QWORD>(4);
-    if (!tmp1 || !tmp2 || !tmp3) {
-        func_free_chat_msg(reinterpret_cast<QWORD>(chat_msg));
-        util::FreeBuffer(chat_msg);
-        util::FreeBuffer(tmp1);
-        util::FreeBuffer(tmp2);
-        util::FreeBuffer(tmp3);
-        util::FreeWxString(wxWxid);
-        util::FreeWxString(wxPath);
-        return;
+    char buffer[0x1C] = { 0 };
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
+
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+    WxString nullbuffer;
+
+    uint32_t sendCall1 = g_WeChatWinDllAddr + Offsets::Message::Send::EMO_CALL1;
+    uint32_t sendCall2 = g_WeChatWinDllAddr + Offsets::Message::Send::EMO_CALL2;
+    uint32_t sendCall3 = g_WeChatWinDllAddr + Offsets::Message::Send::EMO_CALL3;
+
+    __asm {
+        pushad;
+        pushfd;
+        mov ebx, dword ptr[sendCall3];
+        lea eax, buffer;
+        push eax;
+        push 0x0;
+        sub esp, 0x14;
+        mov esi, esp;
+        mov dword ptr [esi], 0x0;
+        mov dword ptr [esi+0x4], 0x0;
+        mov dword ptr [esi+0x8], 0x0;
+        mov dword ptr [esi+0xC], 0x0;
+        mov dword ptr [esi+0x10], 0x0;
+        push 0x2;
+        lea eax, wxWxid;
+        sub esp, 0x14;
+        mov ecx, esp;
+        push eax;
+        call sendCall1;
+        sub esp, 0x14;
+        mov esi, esp;
+        mov dword ptr [esi], 0x0;
+        mov dword ptr [esi+0x4], 0x0;
+        mov dword ptr [esi+0x8], 0x0;
+        mov dword ptr [esi+0xC], 0x0;
+        mov dword ptr [esi+0x10], 0x0;
+        sub esp, 0x14;
+        mov ecx, esp;
+        lea eax, wxPath;
+        push eax;
+        call sendCall1;
+        mov ecx, ebx;
+        call sendCall2;
+        popfd;
+        popad;
+    }
+}
+
+int send_rich_text(const RichText &rt)
+{
+    RichTextData richText;
+    richText.name     = rt.name ? rt.name : "";
+    richText.account  = rt.account ? rt.account : "";
+    richText.title    = rt.title ? rt.title : "";
+    richText.digest   = rt.digest ? rt.digest : "";
+    richText.url      = rt.url ? rt.url : "";
+    richText.thumburl = rt.thumburl ? rt.thumburl : "";
+    richText.receiver = rt.receiver ? rt.receiver : "";
+
+    int status       = -1;
+    char buff[0x238] = { 0 };
+
+    uint32_t rtCall3 = g_WeChatWinDllAddr + Offsets::RichText::CALL3;
+    uint32_t rtCall2 = g_WeChatWinDllAddr + Offsets::RichText::CALL2;
+    uint32_t rtCall1 = g_WeChatWinDllAddr + Offsets::RichText::CALL1;
+    uint32_t rtCall5 = g_WeChatWinDllAddr + Offsets::RichText::CALL5;
+    uint32_t rtCall4 = g_WeChatWinDllAddr + Offsets::RichText::CALL4;
+
+    __asm {
+        pushad;
+        pushfd;
+        lea ecx,buff;
+        call rtCall1;
+        popfd;
+        popad;
     }
 
-    QWORD app_mgr = func_get_app_mgr();
-    func_send_file(app_mgr, chat_msg, wxWxid, wxPath, 1, tmp1, 0, tmp2, 0, tmp3, 0, 0xC);
-    func_free_chat_msg(reinterpret_cast<QWORD>(chat_msg));
+    std::wstring receiver = util::s2w(richText.receiver);
+    std::wstring title    = util::s2w(richText.title);
+    std::wstring url      = util::s2w(richText.url);
+    std::wstring thumburl = util::s2w(richText.thumburl);
+    std::wstring account  = util::s2w(richText.account);
+    std::wstring name     = util::s2w(richText.name);
+    std::wstring digest   = util::s2w(richText.digest);
 
-    util::FreeBuffer(chat_msg);
-    util::FreeBuffer(tmp1);
-    util::FreeBuffer(tmp2);
-    util::FreeBuffer(tmp3);
-    util::FreeWxString(wxWxid);
-    util::FreeWxString(wxPath);
-}
+    WxString wxReceiver(receiver);
+    WxString wxTitle(title);
+    WxString wxUrl(url);
+    WxString wxThumburl(thumburl);
+    WxString wxAccount(account);
+    WxString wxName(name);
+    WxString wxDigest(digest);
 
-void Sender::send_xml(const std::string &receiver, const std::string &xml, const std::string &path, uint64_t type)
-{
-    char buff1[0x500] = { 0 };
-    char buff2[0x500] = { 0 };
-    char buff3[0x1C]  = { 0 };
+    memcpy(&buff[0x4], &wxTitle, sizeof(wxTitle));
+    memcpy(&buff[0x2C], &wxUrl, sizeof(wxUrl));
+    memcpy(&buff[0x6C], &wxThumburl, sizeof(wxThumburl));
+    memcpy(&buff[0x94], &wxDigest, sizeof(wxDigest));
+    memcpy(&buff[0x1A0], &wxAccount, sizeof(wxAccount));
+    memcpy(&buff[0x1B4], &wxName, sizeof(wxName));
 
-    auto pBuff1 = func_new_chat_msg(reinterpret_cast<QWORD>(buff1));
-    auto pBuff2 = func_new_chat_msg(reinterpret_cast<QWORD>(buff2));
-    auto pBuff3 = reinterpret_cast<QWORD>(&buff3);
-
-    QWORD array[4] = { 0 };
-
-    auto sign = func_xml_buf_sign(pBuff2, reinterpret_cast<QWORD>(&array), 0x1);
-
-    util::WxStringHolder<std::string> to(receiver);
-    util::WxStringHolder<std::string> body(xml);
-    util::WxStringHolder<std::string> thumb(path);
-    util::WxStringHolder<std::string> from(account::get_self_wxid());
-
-    func_send_xml(pBuff1, &from.wx, &to.wx, &body.wx, &thumb.wx, pBuff3, type, 0x4, sign, pBuff2);
-    func_free_chat_msg(pBuff1);
-    func_free_chat_msg(pBuff2);
-}
-
-void Sender::send_emotion(const std::string &wxid, const std::string &path)
-{
-    WxString *wxWxid = util::CreateWxString(wxid);
-    WxString *wxPath = util::CreateWxString(path);
-    QWORD *buff      = util::AllocBuffer<QWORD>(8);
-    if (!wxWxid || !wxPath || !buff) {
-        util::FreeWxString(wxWxid);
-        util::FreeWxString(wxPath);
-        util::FreeBuffer(buff);
-        return;
+    __asm {
+        pushad;
+        pushfd;
+        call rtCall2;
+        lea ecx, buff;
+        push ecx;
+        sub esp, 0x14;
+        mov edi, eax;
+        mov ecx, esp;
+        lea ebx, wxReceiver;
+        push ebx;
+        call rtCall3;
+        mov ecx, edi;
+        call rtCall4;
+        mov status, eax;
+        add ebx, 0x14;
+        lea ecx, buff;
+        push 0x0;
+        call rtCall5;
+        popfd;
+        popad;
     }
 
-    QWORD mgr = func_get_emotion_mgr();
-    func_send_emotion(mgr, wxPath, buff, wxWxid, 2, buff, 0, buff);
-    util::FreeBuffer(buff);
-    util::FreeWxString(wxWxid);
-    util::FreeWxString(wxPath);
+    return status;
 }
 
-int Sender::send_rich_text(const RichText &rt)
+int send_pat(const std::string &roomid, const std::string &wxid)
 {
-    QWORD status = -1;
+    int status = -1;
 
-    char *buff          = util::AllocBuffer<char>(0x3F0);
-    WxString *pReceiver = util::CreateWxString(rt.receiver);
-    WxString *pTitle    = util::CreateWxString(rt.title);
-    WxString *pUrl      = util::CreateWxString(rt.url);
-    WxString *pThumburl = util::CreateWxString(rt.thumburl);
-    WxString *pDigest   = util::CreateWxString(rt.digest);
-    WxString *pAccount  = util::CreateWxString(rt.account);
-    WxString *pName     = util::CreateWxString(rt.name);
-    if (!buff || !pReceiver || !pTitle || !pUrl || !pThumburl || !pDigest || !pAccount || !pName) {
-        util::FreeWxString(pReceiver);
-        util::FreeWxString(pTitle);
-        util::FreeWxString(pUrl);
-        util::FreeWxString(pThumburl);
-        util::FreeWxString(pDigest);
-        util::FreeWxString(pAccount);
-        util::FreeWxString(pName);
-        util::FreeBuffer(buff);
-        LOG_ERROR("Out of Memory...");
-        return static_cast<int>(status);
+    std::wstring wsRoomid = util::s2w(roomid);
+    std::wstring wsWxid   = util::s2w(wxid);
+    WxString wxRoomid(wsRoomid);
+    WxString wxWxid(wsWxid);
+
+    uint32_t pmCall1 = g_WeChatWinDllAddr + Offsets::Pat::CALL1;
+    uint32_t pmCall2 = g_WeChatWinDllAddr + Offsets::Pat::CALL2;
+    uint32_t pmCall3 = g_WeChatWinDllAddr + Offsets::Pat::CALL3;
+
+    __asm {
+        pushad;
+        call  pmCall1;
+        push  pmCall2;
+        push  0x0;
+        push  eax;
+        lea   ecx, wxRoomid;
+        lea   edx, wxWxid;
+        call  pmCall3;
+        add   esp, 0xc;
+        movzx eax, al;
+        mov   status, eax;
+        popad;
     }
 
-    func_new_mmreader(reinterpret_cast<QWORD>(buff));
-    memcpy(buff + 0x8, pTitle, sizeof(WxString));
-    memcpy(buff + 0x48, pUrl, sizeof(WxString));
-    memcpy(buff + 0xB0, pThumburl, sizeof(WxString));
-    memcpy(buff + 0xF0, pDigest, sizeof(WxString));
-    memcpy(buff + 0x2C0, pAccount, sizeof(WxString));
-    memcpy(buff + 0x2E0, pName, sizeof(WxString));
-
-    status = func_send_rich_text(func_get_app_mgr(), pReceiver, buff);
-    func_free_mmreader(reinterpret_cast<QWORD>(buff));
-
-    // TODO: 验证是否有内存泄露
-    // util::FreeWxString(pReceiver);
-    // util::FreeWxString(pTitle);
-    // util::FreeWxString(pUrl);
-    // util::FreeWxString(pThumburl);
-    // util::FreeWxString(pDigest);
-    // util::FreeWxString(pAccount);
-    // util::FreeWxString(pName);
-    util::FreeBuffer(buff);
-
-    return static_cast<int>(status);
+    return status;
 }
 
-int Sender::send_pat(const std::string &roomid, const std::string &wxid)
+int forward(uint64_t msgid, const std::string &receiver)
 {
-    QWORD status = -1;
-
-    util::WxStringHolder<std::string> holderRoom(roomid);
-    util::WxStringHolder<std::string> holderWxid(wxid);
-
-    status = func_send_pat(&holderRoom.wx, &holderWxid.wx);
-
-    return static_cast<int>(status);
-}
-
-int Sender::forward(QWORD msgid, const std::string &receiver)
-{
-    uint32_t dbIdx = 0;
-    QWORD localId  = 0;
+    int status       = -1;
+    uint32_t dbIdx   = 0;
+    uint64_t localId = 0;
 
     if (db::get_local_id_and_dbidx(msgid, &localId, &dbIdx) != 0) {
-        LOG_ERROR("Failed to get localId, Please check id: {}", msgid);
-        return -1;
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(msgid));
+        return status;
     }
 
-    LARGE_INTEGER l;
-    l.HighPart = dbIdx;
-    l.LowPart  = static_cast<DWORD>(localId);
+    std::wstring wsReceiver = util::s2w(receiver);
+    WxString wxReceiver(wsReceiver);
 
-    WxString *pReceiver = util::CreateWxString(receiver);
+    uint32_t fmCall1 = g_WeChatWinDllAddr + Offsets::Forward::CALL1;
+    uint32_t fmCall2 = g_WeChatWinDllAddr + Offsets::Forward::CALL2;
 
-    return static_cast<int>(func_forward(pReceiver, l.QuadPart, 0x4, 0x0));
+    __asm {
+        pushad;
+        pushfd;
+        mov        edx, dword ptr [dbIdx];
+        push       edx;
+        mov        eax, dword ptr [localId];
+        push       eax;
+        sub        esp, 0x14;
+        mov        ecx, esp;
+        lea        esi, wxReceiver;
+        push       esi;
+        call       fmCall1;
+        xor        ecx, ecx;
+        call       fmCall2;
+        movzx      eax, al;
+        mov        status, eax;
+        add        esp, 0x1c;
+        popfd;
+        popad;
+    }
+
+    return status;
 }
 
-// RPC 方法
-bool Sender::rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
+bool rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_SEND_TXT>(out, len, [&](Response &rsp) {
-        if (text.msg == nullptr || text.receiver == nullptr || strlen(text.msg) == 0 || strlen(text.receiver) == 0) {
+    return fill_response<Functions_FUNC_SEND_TXT>(out, len, [&text](Response &rsp) {
+        if ((text.msg == NULL) || (text.receiver == NULL)) {
             LOG_ERROR("Empty message or receiver.");
             rsp.msg.status = -1;
         } else {
-            send_text(text.receiver, text.msg, text.aters ? text.aters : "");
+            std::string msg(text.msg);
+            std::string receiver(text.receiver);
+            std::string aters(text.aters ? text.aters : "");
+            send_text(receiver, msg, aters);
             rsp.msg.status = 0;
         }
     });
 }
 
-bool Sender::rpc_send_image(const PathMsg &file, uint8_t *out, size_t *len)
+bool rpc_send_image(const PathMsg &file, uint8_t *out, size_t *len)
 {
-    std::string path(file.path);
-    std::string receiver(file.receiver);
-    return fill_response<Functions_FUNC_SEND_IMG>(out, len, [&](Response &rsp) {
-        if (path.empty() || receiver.empty()) {
+    return fill_response<Functions_FUNC_SEND_IMG>(out, len, [&file](Response &rsp) {
+        if ((file.path == NULL) || (file.receiver == NULL)) {
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
+        } else if (!fs::exists(file.path)) {
+            LOG_ERROR("Path does not exist: {}", file.path);
+            rsp.msg.status = -2;
         } else {
-            send_image(receiver, path);
+            send_image(file.receiver, file.path);
             rsp.msg.status = 0;
         }
     });
 }
 
-bool Sender::rpc_send_file(const PathMsg &file, uint8_t *out, size_t *len)
+bool rpc_send_file(const PathMsg &file, uint8_t *out, size_t *len)
 {
-    std::string path(file.path);
-    std::string receiver(file.receiver);
-    return fill_response<Functions_FUNC_SEND_FILE>(out, len, [&](Response &rsp) {
-        if (path.empty() || receiver.empty()) {
+    return fill_response<Functions_FUNC_SEND_FILE>(out, len, [&file](Response &rsp) {
+        if ((file.path == NULL) || (file.receiver == NULL)) {
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
+        } else if (!fs::exists(file.path)) {
+            LOG_ERROR("Path does not exist: {}", file.path);
+            rsp.msg.status = -2;
         } else {
-            send_file(receiver, path);
+            send_file(file.receiver, file.path);
             rsp.msg.status = 0;
         }
     });
 }
 
-bool Sender::rpc_send_emotion(const PathMsg &file, uint8_t *out, size_t *len)
+bool rpc_send_emotion(const PathMsg &file, uint8_t *out, size_t *len)
 {
-    std::string path(file.path);
-    std::string receiver(file.receiver);
-    return fill_response<Functions_FUNC_SEND_EMOTION>(out, len, [&](Response &rsp) {
-        if (path.empty() || receiver.empty()) {
+    return fill_response<Functions_FUNC_SEND_EMOTION>(out, len, [&file](Response &rsp) {
+        if ((file.path == NULL) || (file.receiver == NULL)) {
             LOG_ERROR("Empty path or receiver.");
             rsp.msg.status = -1;
+        } else if (!fs::exists(file.path)) {
+            LOG_ERROR("Path does not exist: {}", file.path);
+            rsp.msg.status = -2;
         } else {
-            send_emotion(receiver, path);
+            send_emotion(file.receiver, file.path);
             rsp.msg.status = 0;
         }
     });
 }
 
-bool Sender::rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
+bool rpc_send_xml(const XmlMsg &xml, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_SEND_XML>(out, len, [&](Response &rsp) {
-        if (xml.content == nullptr || xml.receiver == nullptr) {
+    return fill_response<Functions_FUNC_SEND_XML>(out, len, [&xml](Response &rsp) {
+        if ((xml.content == NULL) || (xml.receiver == NULL)) {
             LOG_ERROR("Empty content or receiver.");
             rsp.msg.status = -1;
         } else {
-            send_xml(xml.receiver, xml.content, xml.path, xml.type);
+            std::string content(xml.content);
+            std::string receiver(xml.receiver);
+            std::string path(xml.path ? xml.path : "");
+            int type = xml.type;
+            send_xml(receiver, content, path, type);
             rsp.msg.status = 0;
         }
     });
 }
 
-bool Sender::rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
+bool rpc_send_rich_text(const RichText &rt, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_SEND_RICH_TXT>(out, len, [&](Response &rsp) {
-        if (rt.receiver == nullptr) {
-            LOG_ERROR("Empty receiver.");
-            rsp.msg.status = -1;
-        } else {
-            rsp.msg.status = send_rich_text(rt);
-        }
+    return fill_response<Functions_FUNC_SEND_RICH_TXT>(out, len, [&rt](Response &rsp) {
+        int status      = send_rich_text(rt);
+        rsp.msg.status = status;
     });
 }
 
-bool Sender::rpc_send_pat(const PatMsg &pat, uint8_t *out, size_t *len)
+bool rpc_send_pat(const PatMsg &pat, uint8_t *out, size_t *len)
 {
-    std::string wxid(pat.wxid);
-    std::string roomid(pat.roomid);
-    return fill_response<Functions_FUNC_SEND_PAT_MSG>(out, len, [&](Response &rsp) {
-        if (roomid.empty() || wxid.empty()) {
+    return fill_response<Functions_FUNC_SEND_PAT_MSG>(out, len, [&pat](Response &rsp) {
+        if ((pat.roomid == NULL) || (pat.wxid == NULL)) {
             LOG_ERROR("Empty roomid or wxid.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = send_pat(roomid, wxid);
+            int status = send_pat(pat.roomid, pat.wxid);
+            rsp.msg.status = status;
         }
     });
 }
 
-bool Sender::rpc_forward(const ForwardMsg &fm, uint8_t *out, size_t *len)
+bool rpc_forward(const ForwardMsg &fm, uint8_t *out, size_t *len)
 {
-    uint64_t msgid = fm.id;
-    std::string receiver(fm.receiver);
-    return fill_response<Functions_FUNC_FORWARD_MSG>(out, len, [&](Response &rsp) {
-        if (receiver.empty()) {
+    return fill_response<Functions_FUNC_FORWARD_MSG>(out, len, [&fm](Response &rsp) {
+        if (fm.receiver == NULL) {
             LOG_ERROR("Empty receiver.");
             rsp.msg.status = -1;
         } else {
-            rsp.msg.status = forward(msgid, receiver);
+            int status = forward(fm.id, fm.receiver);
+            rsp.msg.status = status;
         }
     });
 }
 
-}
+} // namespace message

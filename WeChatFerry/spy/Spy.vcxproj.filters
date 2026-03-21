@@ -18,22 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\com\framework.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="rpc_server.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="database_executor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="contact_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="message_handler.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="message_sender.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="spy.h">
@@ -63,16 +48,7 @@
     <ClInclude Include="..\rpc\pb_types.h">
       <Filter>nnrpc</Filter>
     </ClInclude>
-    <ClInclude Include="chatroom_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="account_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="misc_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sqlite3.h">
@@ -81,13 +57,40 @@
     <ClInclude Include="..\smc\codec.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\com\util.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\com\log.hpp">
+    <ClInclude Include="com\log.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="rpc_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="com\framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="offsets.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="account_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="contact_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="com\util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="chatroom_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="database_executor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="message_receiver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="message_sender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="misc_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,16 +101,7 @@
     <ClCompile Include="rpc_server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="database_executor.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="contact_manager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="message_handler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="message_sender.cpp">
+    <ClCompile Include="message_receiver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="spy.cpp">
@@ -128,20 +122,32 @@
     <ClCompile Include="..\rpc\pb_util.cpp">
       <Filter>nnrpc</Filter>
     </ClCompile>
+    <ClCompile Include="account_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="contact_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="com\util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="chatroom_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="account_manager.cpp">
+    <ClCompile Include="database_executor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="message_sender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="misc_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\com\util.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="spy.def">
+      <Filter>源文件</Filter>
+    </None>
     <None Include="..\rpc\proto\wcf.proto">
       <Filter>nnrpc</Filter>
     </None>

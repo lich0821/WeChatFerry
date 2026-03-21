@@ -4,17 +4,28 @@
 #include <cstdint>
 #include <string_view>
 
+#include "framework.h"
+
 namespace Spy
 {
-constexpr std::string_view SUPPORT_VERSION = "3.9.12.51";
-inline std::atomic<std::uintptr_t> WeChatDll { 0 };
 
-template <typename T> inline T getFunction(std::uintptr_t offset) { return reinterpret_cast<T>(WeChatDll + offset); }
-template <typename T> inline T getFunction(std::uintptr_t base, std::uintptr_t offset)
-{
-    return reinterpret_cast<T>(base + offset);
-}
+constexpr std::string_view SUPPORT_VERSION = "3.9.2.23";
 
-int Init(void *args);
-void Cleanup();
+// 初始化和清理
+void init(void *args);
+void cleanup();
+
+// 登录状态检查
+bool is_logged_in();
+
+} // namespace Spy
+
+// 全局变量：WeChatWin.dll 基址（保留以兼容现有代码）
+extern uint32_t g_WeChatWinDllAddr;
+
+// 保留 C 接口以兼容
+extern "C" {
+void InitSpy(void *args);
+void CleanupSpy();
+int IsLogin(void);
 }

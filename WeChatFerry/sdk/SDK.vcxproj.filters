@@ -15,21 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\com\framework.h">
+    <ClInclude Include="framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sdk.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="injector.h">
+    <ClInclude Include="..\spy\com\util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\com\util.h">
+    <ClInclude Include="injector.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\spy\com\util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="sdk.cpp">
@@ -38,8 +41,10 @@
     <ClCompile Include="injector.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\com\util.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sdk.def">
       <Filter>源文件</Filter>
-    </ClCompile>
+    </None>
   </ItemGroup>
 </Project>

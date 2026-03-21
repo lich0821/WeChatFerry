@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <map>
 #include <string>
@@ -55,7 +55,6 @@ typedef struct {
     string name;
     string mobile;
     string home;
-    string alias;
 } UserInfo_t;
 
 typedef struct {
