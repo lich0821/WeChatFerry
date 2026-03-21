@@ -1,6 +1,6 @@
 # WeChatFerry
 
-一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/s/CGLfSaNDy8MyuyPWGjGJ7w)。
+一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/)。
 
 <details>
 <summary><b>⚠️ 免责声明【必读】⚠️</b></summary>
@@ -9,14 +9,10 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/c2JggTBlOP8fP9j-MlMAvg)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/)|[🙋 FAQ](https://mp.weixin.qq.com/)|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人示例。
-
-|![碲矿](assets/TEQuant.jpg)|![赞赏](assets/QR.jpeg)|
-|:-:|:-:|
-|后台回复 `WCF` 加群交流|如果你觉得有用|
 
 <details><summary>点击查看功能清单</summary>
 
