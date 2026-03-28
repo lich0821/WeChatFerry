@@ -249,7 +249,6 @@ xcopy /y "$(OutDir)$(TargetFileName)" "$(ProjectDir)..\..\clients\python\wcferry
     <ClInclude Include="rpc_server.h" />
     <ClInclude Include="spy.h" />
     <ClInclude Include="spy_types.h" />
-    <ClInclude Include="sqlite3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\rpc\nanopb\pb_common.c" />

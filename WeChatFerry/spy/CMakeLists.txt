@@ -28,7 +28,6 @@ add_library(spy SHARED
   account_manager.h
   resource.h
   rpc_helper.h
-  sqlite3.h
   dllmain.cpp
   spy.def
 
@@ -58,7 +57,7 @@ target_link_directories(spy PRIVATE
 )
 
 # Link dependencies
-target_link_libraries(spy PRIVATE 
+target_link_libraries(spy PRIVATE
   Codec
   mp3lame
   version
