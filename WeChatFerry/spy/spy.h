@@ -9,7 +9,7 @@
 namespace Spy
 {
 
-constexpr std::string_view SUPPORT_VERSION = "3.9.2.23";
+constexpr std::string_view SUPPORT_VERSION = "3.9.12.56";
 
 // 初始化和清理
 void init(void *args);

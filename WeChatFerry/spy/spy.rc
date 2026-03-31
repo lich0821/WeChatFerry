@@ -52,7 +52,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 39,0,13,0
- PRODUCTVERSION 3,9,2,23
+ PRODUCTVERSION 3,9,12,56
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -74,7 +74,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2023"
             VALUE "OriginalFilename", "spy.dll"
             VALUE "ProductName", "WeChatFerry"
-            VALUE "ProductVersion", "3.9.2.23"
+            VALUE "ProductVersion", "3.9.12.56"
         END
     END
     BLOCK "VarFileInfo"
