@@ -30,6 +30,22 @@ extern uint32_t g_WeChatWinDllAddr;
 namespace
 {
 
+using ManagerGetterFn        = void *(*)();
+using BufferInitFn           = void(__thiscall *)(void *buffer);
+using BufferCleanupExFn      = void(__thiscall *)(void *buffer, int free_memory);
+using WarmupFn               = void (*)();
+using RefreshFirstPageFn     = int(__thiscall *)(void *manager, void *buffer, int forward);
+using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high,
+                                                 RawVector_t *cursor);
+using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *path, int reserved,
+                                                 WxString *ocr_buffer, uint32_t *tmp, const WxString *null_obj);
+using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
+using LoadAttachmentMetaFn   = int(__thiscall *)(void *buffer, uint32_t local_id, uint32_t db_idx);
+using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, int reserved, int sync);
+using RevokeMessageFn        = int(__thiscall *)(void *manager, void *chat_msg);
+using ReceiveTransferFn      = int(__fastcall *)(void *pay_info, const WxString *wxid, uint64_t scratch,
+                                                 int confirm);
+
 std::string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 {
     *key = HEADER_PNG1 ^ header1;
@@ -52,21 +68,15 @@ std::string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
 
 int get_first_page()
 {
-    int rv           = -1;
-    uint32_t pyqCall1 = g_WeChatWinDllAddr + Offsets::Moments::CALL1;
-    uint32_t pyqCall2 = g_WeChatWinDllAddr + Offsets::Moments::CALL2;
+    int rv = -1;
 
     char buf[0xB44] = { 0 };
-    __asm {
-        pushad;
-        call pyqCall1;
-        push 0x1;
-        lea ecx, buf;
-        push ecx;
-        mov ecx, eax;
-        call pyqCall2;
-        mov rv, eax;
-        popad;
+    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL1);
+    auto requestFirstPage  = reinterpret_cast<RefreshFirstPageFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL2);
+
+    void *manager = getMomentsManager();
+    if (manager != nullptr) {
+        rv = requestFirstPage(manager, buf, 1);
     }
 
     return rv;
@@ -74,25 +84,14 @@ int get_first_page()
 
 int get_next_page(uint64_t id)
 {
-    int rv           = -1;
-    uint32_t pyqCall1 = g_WeChatWinDllAddr + Offsets::Moments::CALL1;
-    uint32_t pyqCall3 = g_WeChatWinDllAddr + Offsets::Moments::CALL3;
+    int rv = -1;
 
-    RawVector_t tmp = { 0 };
-
-    __asm {
-        pushad;
-        call pyqCall1;
-        lea ecx, tmp;
-        push ecx;
-        mov ebx, dword ptr [id + 0x04];
-        push ebx;
-        mov edi, dword ptr [id]
-        push edi;
-        mov ecx, eax;
-        call pyqCall3;
-        mov rv, eax;
-        popad;
+    RawVector_t tmp         = { 0 };
+    auto getMomentsManager  = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL1);
+    auto requestNextPage    = reinterpret_cast<RefreshNextPageFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL3);
+    void *manager           = getMomentsManager();
+    if (manager != nullptr) {
+        rv = requestNextPage(manager, static_cast<uint32_t>(id), static_cast<uint32_t>(id >> 32), &tmp);
     }
 
     return rv;
@@ -105,69 +104,18 @@ namespace misc
 
 std::string decrypt_image(const std::string &src, const std::string &dir)
 {
-    if (!fs::exists(src)) {
-        return "";
-    }
-
-    std::ifstream in(src.c_str(), std::ios::binary);
-    if (!in.is_open()) {
-        LOG_ERROR("Failed to read file {}", src);
-        return "";
-    }
-
-    std::filebuf *pfb = in.rdbuf();
-    size_t size       = pfb->pubseekoff(0, std::ios::end, std::ios::in);
-    pfb->pubseekpos(0, std::ios::in);
-
-    std::vector<char> buff;
-    buff.resize(size);
-    char *pBuf = buff.data();
-    pfb->sgetn(pBuf, size);
-    in.close();
-
-    uint8_t key    = 0x00;
-    std::string ext = get_key(pBuf[0], pBuf[1], &key);
-    if (ext.empty()) {
-        LOG_ERROR("Failed to get key.");
-        return "";
-    }
-
-    for (size_t i = 0; i < size; i++) {
-        pBuf[i] ^= key;
-    }
-
-    std::string dst = "";
-
-    try {
-        if (dir.empty()) {
-            dst = fs::path(src).replace_extension(ext).string();
-        } else {
-            dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
-            dst += fs::path(src).stem().string() + ext;
-        }
-
-        replace(dst.begin(), dst.end(), '\\', '/');
-    } catch (const std::exception &e) {
-        LOG_ERROR(util::gb2312_to_utf8(e.what()));
-    } catch (...) {
-        LOG_ERROR("Unknow exception.");
-        return "";
-    }
-
-    std::ofstream out(dst.c_str(), std::ios::binary);
-    if (!out.is_open()) {
-        LOG_ERROR("Failed to write file {}", dst);
-        return "";
-    }
-
-    out.write(pBuf, size);
-    out.close();
-
-    return dst;
+    (void)src;
+    (void)dir;
+    LOG_ERROR("Not Implemented yet.");
+    return "";
 }
 
 int refresh_pyq(uint64_t id)
 {
+    (void)id;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
+
     if (!gIsListeningPyq) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
         return -1;
@@ -182,6 +130,12 @@ int refresh_pyq(uint64_t id)
 
 int download_attachment(uint64_t id, const std::string &thumb, const std::string &extra)
 {
+    (void)id;
+    (void)thumb;
+    (void)extra;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
+
     int status    = -1;
     uint64_t localId;
     uint32_t dbIdx;
@@ -196,27 +150,16 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
     }
 
     char buff[0x2D8] = { 0 };
-    uint32_t dlCall1 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL1;
-    uint32_t dlCall2 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL2;
-    uint32_t dlCall3 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL3;
-    uint32_t dlCall4 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL4;
-    uint32_t dlCall5 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL5;
-    uint32_t dlCall6 = g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL6;
+    auto initAttachmentBuffer = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL1);
+    auto warmupAttachment     = reinterpret_cast<WarmupFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL2);
+    auto loadAttachmentMeta   = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL3);
+    auto getAttachmentManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL4);
+    auto startAttachmentDl    = reinterpret_cast<DownloadAttachmentFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL5);
+    auto cleanupAttachment    = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL6);
 
-    __asm {
-        pushad;
-        pushfd;
-        lea ecx, buff;
-        call dlCall1;
-        call dlCall2;
-        push dword ptr [dbIdx];
-        lea ecx, buff;
-        push dword ptr [localId];
-        call dlCall3;
-        add esp, 0x8;
-        popfd;
-        popad;
-    }
+    initAttachmentBuffer(buff);
+    warmupAttachment();
+    loadAttachmentMeta(buff, static_cast<uint32_t>(localId), dbIdx);
 
     uint32_t type = util::get_dword((uint32_t)(buff + 0x38));
 
@@ -257,29 +200,21 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
     memcpy(&buff[0x1B0], &wxSavePath, sizeof(wxSavePath));
     memcpy(&buff[0x29C], &temp, sizeof(temp));
 
-    __asm {
-        pushad;
-        pushfd;
-        call dlCall4;
-        push 0x1;
-        push 0x0;
-        lea ecx, buff;
-        push ecx;
-        mov ecx, eax;
-        call dlCall5;
-        mov status, eax;
-        lea ecx, buff;
-        push 0x0;
-        call dlCall6;
-        popfd;
-        popad;
+    void *manager = getAttachmentManager();
+    if (manager != nullptr) {
+        status = startAttachmentDl(manager, buff, 0, 1);
     }
+    cleanupAttachment(buff, 0);
 
     return status;
 }
 
 int revoke_message(uint64_t id)
 {
+    (void)id;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
+
     int status    = -1;
     uint64_t localId;
     uint32_t dbIdx;
@@ -290,41 +225,32 @@ int revoke_message(uint64_t id)
 
     char chat_msg[0x2D8] = { 0 };
 
-    uint32_t rmCall1 = g_WeChatWinDllAddr + Offsets::Revoke::CALL1;
-    uint32_t rmCall2 = g_WeChatWinDllAddr + Offsets::Revoke::CALL2;
-    uint32_t rmCall3 = g_WeChatWinDllAddr + Offsets::Revoke::CALL3;
-    uint32_t rmCall4 = g_WeChatWinDllAddr + Offsets::Revoke::CALL4;
-    uint32_t rmCall5 = g_WeChatWinDllAddr + Offsets::Revoke::CALL5;
+    auto initRevokeBuffer   = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL1);
+    auto getRevokeManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL2);
+    auto loadRevokeMeta     = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL3);
+    auto revokeMessageFn    = reinterpret_cast<RevokeMessageFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL4);
+    auto cleanupRevoke      = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL5);
 
-    __asm {
-        pushad;
-        pushfd;
-        lea        ecx, chat_msg;
-        call       rmCall1;
-        call       rmCall2;
-        push       dword ptr [dbIdx];
-        lea        ecx, chat_msg;
-        push       dword ptr [localId];
-        call       rmCall3;
-        add        esp, 0x8;
-        call       rmCall2;
-        lea        ecx, chat_msg;
-        push       ecx;
-        mov        ecx, eax;
-        call       rmCall4;
-        mov        status, eax;
-        lea        ecx, chat_msg;
-        push       0x0;
-        call       rmCall5;
-        popfd;
-        popad;
+    initRevokeBuffer(chat_msg);
+    getRevokeManager();
+    loadRevokeMeta(chat_msg, static_cast<uint32_t>(localId), dbIdx);
+
+    void *manager = getRevokeManager();
+    if (manager != nullptr) {
+        status = revokeMessageFn(manager, chat_msg);
     }
+    cleanupRevoke(chat_msg, 0);
 
     return status;
 }
 
 std::string get_audio(uint64_t id, const std::string &dir)
 {
+    (void)id;
+    (void)dir;
+    LOG_ERROR("Not Implemented yet.");
+    return "";
+
     std::string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
     mp3path += to_string(id) + ".mp3";
     replace(mp3path.begin(), mp3path.end(), '\\', '/');
@@ -347,6 +273,10 @@ std::string get_audio(uint64_t id, const std::string &dir)
 
 OcrResult_t get_ocr_result(const std::string &path)
 {
+    (void)path;
+    LOG_ERROR("Not Implemented yet.");
+    return { -1, "" };
+
     OcrResult_t ret = { -1, "" };
 
     if (!fs::exists(path)) {
@@ -360,32 +290,17 @@ OcrResult_t get_ocr_result(const std::string &path)
     WxString nullObj;
     WxString ocrBuffer;
 
-    uint32_t ocrCall1 = g_WeChatWinDllAddr + Offsets::OCR::CALL1;
-    uint32_t ocrCall2 = g_WeChatWinDllAddr + Offsets::OCR::CALL2;
-    uint32_t ocrCall3 = g_WeChatWinDllAddr + Offsets::OCR::CALL3;
+    auto initOcrBuffer   = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL1);
+    auto getOcrManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL2);
+    auto runOcr          = reinterpret_cast<RunOcrFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL3);
 
     uint32_t tmp = 0;
     int status   = -1;
-    __asm {
-        pushad;
-        pushfd;
-        lea   ecx, ocrBuffer;
-        call  ocrCall1;
-        call  ocrCall2;
-        lea   ecx, nullObj;
-        push  ecx;
-        lea   ecx, tmp;
-        push  ecx;
-        lea   ecx, ocrBuffer;
-        push  ecx;
-        push  0x0;
-        lea   ecx, wxPath;
-        push  ecx;
-        mov   ecx, eax;
-        call  ocrCall3;
-        mov   status, eax;
-        popfd;
-        popad;
+    initOcrBuffer(&ocrBuffer);
+
+    void *manager = getOcrManager();
+    if (manager != nullptr) {
+        status = runOcr(manager, &wxPath, 0, &ocrBuffer, &tmp, &nullObj);
     }
 
     if (status != 0) {
@@ -414,22 +329,20 @@ OcrResult_t get_ocr_result(const std::string &path)
 
 std::string get_login_url()
 {
+    LOG_ERROR("Not Implemented yet.");
+    return "";
+
     if (util::get_dword(g_WeChatWinDllAddr + Offsets::Account::SERVICE) == 1) {
         LOG_DEBUG("Already logined.");
         return "";
     }
 
-    uint32_t refreshLoginQrcodeCall1 = g_WeChatWinDllAddr + Offsets::QRCode::CALL1;
-    uint32_t refreshLoginQrcodeCall2 = g_WeChatWinDllAddr + Offsets::QRCode::CALL2;
+    auto getQrCodeManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::QRCode::CALL1);
+    auto refreshQrCode    = reinterpret_cast<RefreshLoginQrCodeFn>(g_WeChatWinDllAddr + Offsets::QRCode::CALL2);
 
-    __asm {
-        pushad;
-        pushfd;
-        call refreshLoginQrcodeCall1;
-        mov ecx, eax;
-        call refreshLoginQrcodeCall2;
-        popfd;
-        popad;
+    void *manager = getQrCodeManager();
+    if (manager != nullptr) {
+        refreshQrCode(manager);
     }
 
     const char *url = util::get_string(g_WeChatWinDllAddr + Offsets::QRCode::URL);
@@ -447,11 +360,13 @@ std::string get_login_url()
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)
 {
-    int rv                = 0;
-    uint32_t call1        = g_WeChatWinDllAddr + Offsets::Transfer::CALL1;
-    uint32_t call2        = g_WeChatWinDllAddr + Offsets::Transfer::CALL2;
-    uint32_t call3        = g_WeChatWinDllAddr + Offsets::Transfer::CALL3;
+    (void)wxid;
+    (void)transferid;
+    (void)transactionid;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
 
+    int rv                = 0;
     char payInfo[0x134] = { 0 };
     std::wstring wsWxid = util::s2w(wxid);
     std::wstring wsTfid = util::s2w(transferid);
@@ -462,31 +377,18 @@ int receive_transfer(const std::string &wxid, const std::string &transferid, con
     WxString wxTaid(wsTaid);
 
     LOG_DEBUG("Receiving transfer, from: {}, transferid: {}, transactionid: {}", wxid, transferid, transactionid);
-    __asm {
-        pushad;
-        lea ecx, payInfo;
-        call call1;
-        mov dword ptr[payInfo + 0x4], 0x1;
-        mov dword ptr[payInfo + 0x4C], 0x1;
-        popad;
-    }
+    auto initTransferInfo = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL1);
+    auto receiveTransfer  = reinterpret_cast<ReceiveTransferFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL2);
+    auto cleanupTransfer  = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL3);
+
+    initTransferInfo(payInfo);
+    *reinterpret_cast<uint32_t *>(payInfo + 0x4)  = 0x1;
+    *reinterpret_cast<uint32_t *>(payInfo + 0x4C) = 0x1;
     memcpy(&payInfo[0x1C], &wxTaid, sizeof(wxTaid));
     memcpy(&payInfo[0x38], &wxTfid, sizeof(wxTfid));
 
-    __asm {
-        pushad;
-        push 0x1;
-        sub esp, 0x8;
-        lea edx, wxWxid;
-        lea ecx, payInfo;
-        call call2;
-        mov rv, eax;
-        add esp, 0xC;
-        push 0x0;
-        lea ecx, payInfo;
-        call call3;
-        popad;
-    }
+    rv = receiveTransfer(payInfo, &wxWxid, 0, 1);
+    cleanupTransfer(payInfo, 0);
 
     return rv;
 }

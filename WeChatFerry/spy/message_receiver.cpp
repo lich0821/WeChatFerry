@@ -4,11 +4,12 @@
 
 #include <algorithm>
 #include <condition_variable>
+#include <cstdint>
+#include <cstring>
 #include <mutex>
 #include <queue>
 
 #include "account_manager.h"
-#include "framework.h"
 #include "log.hpp"
 #include "offsets.h"
 #include "pb_util.h"
@@ -24,15 +25,20 @@ extern std::queue<WxMsg_t> gMsgQueue;
 namespace
 {
 
-uint32_t recv_msg_hook_addr      = 0;
-uint32_t recv_msg_call_addr      = 0;
-uint32_t recv_msg_jump_back_addr = 0;
-char recv_msg_backup_code[5]     = { 0 };
+using ReceiveMessageFn = uintptr_t(__thiscall *)(void *msg);
+using ReceivePyqFn     = uintptr_t(__thiscall *)(void *self, uint32_t data);
 
-uint32_t recv_pyq_hook_addr      = 0;
-uint32_t recv_pyq_call_addr      = 0;
-uint32_t recv_pyq_jump_back_addr = 0;
-char recv_pyq_backup_code[5]     = { 0 };
+struct DetourHook {
+    uint32_t target      = 0;
+    void *trampoline     = nullptr;
+    unsigned char saved[5] = { 0 };
+    bool installed       = false;
+};
+
+ReceiveMessageFn gRealReceiveMessage = nullptr;
+ReceivePyqFn gRealReceivePyq         = nullptr;
+DetourHook gMessageHook;
+DetourHook gPyqHook;
 
 MsgTypes_t build_msg_types()
 {
@@ -71,19 +77,80 @@ MsgTypes_t build_msg_types()
              { 0x41000031, "file" } };
 }
 
-void hook_address(uint32_t hook_addr, LPVOID func_addr, char backup_code[5])
+bool write_jump(uint32_t src, const void *dst)
 {
-    BYTE jmp_code[5] = { 0 };
-    jmp_code[0]      = 0xE9;
-    *reinterpret_cast<uint32_t *>(&jmp_code[1]) = reinterpret_cast<uint32_t>(func_addr) - hook_addr - 5;
+    DWORD old_protect = 0;
+    if (!VirtualProtect(reinterpret_cast<LPVOID>(src), 5, PAGE_EXECUTE_READWRITE, &old_protect)) {
+        return false;
+    }
 
-    ReadProcessMemory(GetCurrentProcess(), reinterpret_cast<LPVOID>(hook_addr), backup_code, 5, 0);
-    WriteProcessMemory(GetCurrentProcess(), reinterpret_cast<LPVOID>(hook_addr), jmp_code, 5, 0);
+    unsigned char jump[5] = { 0xE9, 0, 0, 0, 0 };
+    *reinterpret_cast<uint32_t *>(&jump[1]) = reinterpret_cast<uint32_t>(dst) - src - 5;
+    std::memcpy(reinterpret_cast<void *>(src), jump, sizeof(jump));
+    FlushInstructionCache(GetCurrentProcess(), reinterpret_cast<LPCVOID>(src), sizeof(jump));
+
+    DWORD restored = 0;
+    VirtualProtect(reinterpret_cast<LPVOID>(src), 5, old_protect, &restored);
+    return true;
 }
 
-void unhook_address(uint32_t hook_addr, char restore_code[5])
+bool install_hook(DetourHook &hook, uint32_t target, const void *replacement, void **original)
 {
-    WriteProcessMemory(GetCurrentProcess(), reinterpret_cast<LPVOID>(hook_addr), restore_code, 5, 0);
+    if (hook.installed) {
+        *original = hook.trampoline;
+        return true;
+    }
+
+    hook.target = target;
+    std::memcpy(hook.saved, reinterpret_cast<void *>(target), sizeof(hook.saved));
+
+    auto trampoline = static_cast<unsigned char *>(
+        VirtualAlloc(nullptr, 16, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+    if (trampoline == nullptr) {
+        LOG_ERROR("VirtualAlloc failed for trampoline.");
+        return false;
+    }
+
+    std::memcpy(trampoline, hook.saved, sizeof(hook.saved));
+    trampoline[5] = 0xE9;
+    *reinterpret_cast<uint32_t *>(trampoline + 6) = (target + 5) - (reinterpret_cast<uint32_t>(trampoline) + 10);
+
+    if (!write_jump(target, replacement)) {
+        VirtualFree(trampoline, 0, MEM_RELEASE);
+        LOG_ERROR("Failed to patch hook target: 0x{:08X}", target);
+        return false;
+    }
+
+    hook.trampoline = trampoline;
+    hook.installed  = true;
+    *original       = trampoline;
+    return true;
+}
+
+void remove_hook(DetourHook &hook)
+{
+    if (!hook.installed) {
+        return;
+    }
+
+    DWORD old_protect = 0;
+    if (VirtualProtect(reinterpret_cast<LPVOID>(hook.target), 5, PAGE_EXECUTE_READWRITE, &old_protect)) {
+        std::memcpy(reinterpret_cast<void *>(hook.target), hook.saved, sizeof(hook.saved));
+        FlushInstructionCache(GetCurrentProcess(), reinterpret_cast<LPCVOID>(hook.target), sizeof(hook.saved));
+        DWORD restored = 0;
+        VirtualProtect(reinterpret_cast<LPVOID>(hook.target), 5, old_protect, &restored);
+    } else {
+        LOG_ERROR("Failed to restore hook target: 0x{:08X}", hook.target);
+    }
+
+    if (hook.trampoline != nullptr) {
+        VirtualFree(hook.trampoline, 0, MEM_RELEASE);
+    }
+
+    hook.target     = 0;
+    hook.trampoline = nullptr;
+    hook.installed  = false;
+    std::memset(hook.saved, 0, sizeof(hook.saved));
 }
 
 void dispatch_msg(uint32_t reg)
@@ -123,7 +190,7 @@ void dispatch_msg(uint32_t reg)
     } catch (const std::exception &e) {
         LOG_ERROR(util::gb2312_to_utf8(e.what()));
     } catch (...) {
-        LOG_ERROR("Unknow exception.");
+        LOG_ERROR("Unknown exception.");
     }
 
     {
@@ -134,33 +201,15 @@ void dispatch_msg(uint32_t reg)
     gCV.notify_all();
 }
 
-static __declspec(naked) void receive_msg_func()
+uintptr_t __fastcall receive_message_hook(void *msg, void *)
 {
-    __asm {
-        pushad
-        pushfd
-        push ecx
-        call dispatch_msg
-        add esp, 0x4
-        popfd
-        popad
-        call recv_msg_call_addr
-        jmp recv_msg_jump_back_addr
-    }
+    dispatch_msg(reinterpret_cast<uint32_t>(msg));
+    return gRealReceiveMessage ? gRealReceiveMessage(msg) : 0;
 }
 
 void listen_message()
 {
-    if (gIsListening || (g_WeChatWinDllAddr == 0)) {
-        return;
-    }
-
-    recv_msg_hook_addr      = g_WeChatWinDllAddr + Offsets::Message::Receive::HOOK;
-    recv_msg_call_addr      = g_WeChatWinDllAddr + Offsets::Message::Receive::CALL;
-    recv_msg_jump_back_addr = recv_msg_hook_addr + 5;
-
-    hook_address(recv_msg_hook_addr, reinterpret_cast<LPVOID>(receive_msg_func), recv_msg_backup_code);
-    gIsListening = true;
+    LOG_ERROR("Not Implemented yet.");
 }
 
 void unlisten_message()
@@ -169,11 +218,12 @@ void unlisten_message()
         return;
     }
 
-    unhook_address(recv_msg_hook_addr, recv_msg_backup_code);
-    gIsListening = false;
+    remove_hook(gMessageHook);
+    gRealReceiveMessage = nullptr;
+    gIsListening        = false;
 }
 
-void dispatch_pyq(DWORD reg)
+void dispatch_pyq(uint32_t reg)
 {
     uint32_t start_addr = *reinterpret_cast<DWORD *>(reg + Offsets::Moments::START);
     uint32_t end_addr   = *reinterpret_cast<DWORD *>(reg + Offsets::Moments::END);
@@ -204,33 +254,15 @@ void dispatch_pyq(DWORD reg)
     }
 }
 
-static __declspec(naked) void receive_pyq_func()
+uintptr_t __fastcall receive_pyq_hook(void *self, void *, uint32_t data)
 {
-    __asm {
-        pushad
-        pushfd
-        push [esp + 0x24]
-        call dispatch_pyq
-        add esp, 0x4
-        popfd
-        popad
-        call recv_pyq_call_addr
-        jmp recv_pyq_jump_back_addr
-    }
+    dispatch_pyq(data);
+    return gRealReceivePyq ? gRealReceivePyq(self, data) : 0;
 }
 
 void listen_pyq()
 {
-    if (gIsListeningPyq || (g_WeChatWinDllAddr == 0)) {
-        return;
-    }
-
-    recv_pyq_hook_addr      = g_WeChatWinDllAddr + Offsets::Moments::HOOK;
-    recv_pyq_call_addr      = g_WeChatWinDllAddr + Offsets::Moments::CALL;
-    recv_pyq_jump_back_addr = recv_pyq_hook_addr + 5;
-
-    hook_address(recv_pyq_hook_addr, reinterpret_cast<LPVOID>(receive_pyq_func), recv_pyq_backup_code);
-    gIsListeningPyq = true;
+    LOG_ERROR("Not Implemented yet.");
 }
 
 void unlisten_pyq()
@@ -239,7 +271,8 @@ void unlisten_pyq()
         return;
     }
 
-    unhook_address(recv_pyq_hook_addr, recv_pyq_backup_code);
+    remove_hook(gPyqHook);
+    gRealReceivePyq = nullptr;
     gIsListeningPyq = false;
 }
 
@@ -250,7 +283,8 @@ namespace message
 
 MsgTypes_t get_msg_types()
 {
-    return build_msg_types();
+    LOG_ERROR("Not Implemented yet.");
+    return {};
 }
 
 bool rpc_get_msg_types(uint8_t *out, size_t *len)
@@ -284,8 +318,7 @@ bool rpc_disable_recv_txt(uint8_t *out, size_t *len)
 
 void stop_receiving()
 {
-    unlisten_message();
-    unlisten_pyq();
+    LOG_ERROR("Not Implemented yet.");
 }
 
 } // namespace message

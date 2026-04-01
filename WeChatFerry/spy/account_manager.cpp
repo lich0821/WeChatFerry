@@ -2,16 +2,29 @@
 
 #include <mutex>
 
+#include <ShlObj.h>
+
 #include "log.hpp"
 #include "util.h"
 #include "offsets.h"
 #include "rpc_helper.h"
 #include "spy.h"
 
+#pragma comment(lib, "Shell32.lib")
+
 namespace account
 {
 
 namespace OsAcc = Offsets::Account;
+
+static std::string get_default_home_path()
+{
+    wchar_t path[MAX_PATH] = { 0 };
+    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PERSONAL, nullptr, SHGFP_TYPE_CURRENT, path))) {
+        return util::w2s(std::wstring(path)) + "\\WeChat Files\\";
+    }
+    return "";
+}
 
 // 辅助函数：获取字符串值（x86 平台使用 0x14 偏移）
 static std::string get_string_value(uint32_t base_addr, uint32_t offset)
@@ -37,6 +50,10 @@ std::string get_home_path()
                 cached_home = path + "\\WeChat Files\\";
             }
         }
+
+        if (cached_home.empty()) {
+            cached_home = get_default_home_path();
+        }
     });
 
     return cached_home;
@@ -44,42 +61,20 @@ std::string get_home_path()
 
 std::string get_self_wxid()
 {
-    static std::string cached_wxid;
-    static std::once_flag wxid_once;
-
-    std::call_once(wxid_once, []() {
-        uint32_t base = g_WeChatWinDllAddr;
-        if (base) {
-            try {
-                cached_wxid = get_string_value(base, OsAcc::WXID);
-            } catch (...) {
-                LOG_ERROR("Failed to get wxid");
-                cached_wxid = "empty_wxid";
-            }
-        }
-    });
-
-    return cached_wxid;
+    LOG_ERROR("Not Implemented yet.");
+    return "";
 }
 
 bool is_logged_in()
 {
-    uint32_t base = g_WeChatWinDllAddr;
-    return base && util::get_dword(base + OsAcc::SERVICE) != 0;
+    LOG_ERROR("Not Implemented yet.");
+    return false;
 }
 
 UserInfo_t get_user_info()
 {
-    UserInfo_t ui;
-    uint32_t base = g_WeChatWinDllAddr;
-    if (!base)
-        return ui;
-
-    ui.wxid   = get_self_wxid();
-    ui.name   = get_string_value(base, OsAcc::NAME);
-    ui.mobile = util::get_p_string(base + OsAcc::MOBILE);
-    ui.home   = get_home_path();
-
+    LOG_ERROR("Not Implemented yet.");
+    UserInfo_t ui = {};
     return ui;
 }
 

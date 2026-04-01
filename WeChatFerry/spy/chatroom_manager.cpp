@@ -14,171 +14,65 @@
 namespace chatroom
 {
 
+namespace
+{
+
+struct WxStringValue {
+    const wchar_t *wptr;
+    uint32_t size;
+    uint32_t capacity;
+    const char *ptr;
+    uint32_t clen;
+};
+
+struct InviteAddrValue {
+    uint32_t first;
+    uint32_t second;
+};
+
+using ChatroomManagerGetterFn = void *(*)();
+using AddMembersFn            = int(__thiscall *)(void *manager, const std::vector<WxString> *members,
+                                       WxStringValue roomid, int64_t reserved);
+using DelMembersFn            = int(__thiscall *)(void *manager, const std::vector<WxString> *members,
+                                       WxStringValue roomid);
+using SetupInviteManagerFn    = void(__thiscall *)(void *manager, DWORD *addr);
+using WarmupInviteFn          = void (*)();
+using BuildInviteAddrFn       = void(__thiscall *)(InviteAddrValue *out, DWORD *src);
+using BuildInviteRoomFn       = void(__thiscall *)(WxStringValue *out, const WxString *src);
+using InviteMembersFn         = int(__stdcall *)(const std::vector<WxString> *members, WxStringValue roomid,
+                                                 InviteAddrValue addr_value);
+using CommitInviteFn          = int(__thiscall *)(void *manager, int confirm, int reserved);
+using CleanupInviteAddrFn     = void(__thiscall *)(DWORD *addr);
+
+WxStringValue to_value(const WxString &value)
+{
+    return { value.wptr, value.size, value.capacity, value.ptr, value.clen };
+}
+
+} // namespace
+
 int add_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    if (roomid.empty() || wxids.empty()) {
-        LOG_ERROR("Empty roomid or wxids.");
-        return -1;
-    }
-
-    int rv            = 0;
-    uint32_t armCall1 = g_WeChatWinDllAddr + Offsets::Chatroom::ADD_CALL1;
-    uint32_t armCall2 = g_WeChatWinDllAddr + Offsets::Chatroom::ADD_CALL2;
-    uint32_t armCall3 = g_WeChatWinDllAddr + Offsets::Chatroom::ADD_CALL3;
-
-    uint32_t temp         = 0;
-    std::wstring wsRoomid = util::s2w(roomid);
-    WxString wxRoomid(wsRoomid);
-
-    std::vector<std::wstring> vMembers;
-    std::vector<WxString> vWxMembers;
-    std::wstringstream wss(util::s2w(wxids));
-    while (wss.good()) {
-        std::wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString txtMember(vMembers.back());
-        vWxMembers.push_back(txtMember);
-    }
-
-    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
-    __asm {
-        pushad;
-        pushfd;
-        call armCall1;
-        sub esp, 0x8;
-        mov temp, eax;
-        mov ecx, esp;
-        mov dword ptr[ecx], 0x0;
-        mov dword ptr[ecx + 4], 0x0;
-        test esi, esi;
-        sub esp, 0x14;
-        mov ecx, esp;
-        lea eax, wxRoomid;
-        push eax;
-        call armCall2;
-        mov ecx, temp;
-        lea eax, vWxMembers;
-        push eax;
-        call armCall3;
-        mov rv, eax;
-        popfd;
-        popad;
-    }
-    return rv;
+    (void)roomid;
+    (void)wxids;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
 }
 
 int del_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    if (roomid.empty() || wxids.empty()) {
-        LOG_ERROR("Empty roomid or wxids.");
-        return -1;
-    }
-
-    int rv            = 0;
-    uint32_t drmCall1 = g_WeChatWinDllAddr + Offsets::Chatroom::DEL_CALL1;
-    uint32_t drmCall2 = g_WeChatWinDllAddr + Offsets::Chatroom::DEL_CALL2;
-    uint32_t drmCall3 = g_WeChatWinDllAddr + Offsets::Chatroom::DEL_CALL3;
-
-    uint32_t temp         = 0;
-    std::wstring wsRoomid = util::s2w(roomid);
-    WxString wxRoomid(wsRoomid);
-
-    std::vector<std::wstring> vMembers;
-    std::vector<WxString> vWxMembers;
-    std::wstringstream wss(util::s2w(wxids));
-    while (wss.good()) {
-        std::wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString txtMember(vMembers.back());
-        vWxMembers.push_back(txtMember);
-    }
-
-    LOG_DEBUG("Deleting {} members[{}] from {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
-    __asm {
-        pushad;
-        pushfd;
-        call drmCall1;
-        sub esp, 0x14;
-        mov esi, eax;
-        mov ecx, esp;
-        lea edi, wxRoomid;
-        push edi;
-        call drmCall2;
-        mov ecx, esi;
-        lea eax, vWxMembers;
-        push eax;
-        call drmCall3;
-        mov rv, eax;
-        popfd;
-        popad;
-    }
-    return rv;
+    (void)roomid;
+    (void)wxids;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
 }
 
 int invite_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    std::wstring wsRoomid = util::s2w(roomid);
-    WxString wxRoomid(wsRoomid);
-
-    std::vector<std::wstring> vMembers;
-    std::vector<WxString> vWxMembers;
-    std::wstringstream wss(util::s2w(wxids));
-    while (wss.good()) {
-        std::wstring wstr;
-        getline(wss, wstr, L',');
-        vMembers.push_back(wstr);
-        WxString wxMember(vMembers.back());
-        vWxMembers.push_back(wxMember);
-    }
-
-    LOG_DEBUG("Inviting {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
-
-    uint32_t irmCall1 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL1;
-    uint32_t irmCall2 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL2;
-    uint32_t irmCall3 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL3;
-    uint32_t irmCall4 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL4;
-    uint32_t irmCall5 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL5;
-    uint32_t irmCall6 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL6;
-    uint32_t irmCall7 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL7;
-    uint32_t irmCall8 = g_WeChatWinDllAddr + Offsets::Chatroom::INV_CALL8;
-
-    uint32_t sys_addr = (DWORD)GetModuleHandleA("win32u.dll") + 0x116C;
-    DWORD addr[2]     = { sys_addr, 0 };
-    __asm {
-        pushad;
-        pushfd;
-        call irmCall1;
-        lea  ecx, addr;
-        push ecx;
-        mov  ecx, eax;
-        call irmCall2;
-        call irmCall3;
-        sub  esp, 0x8;
-        lea  eax, addr;
-        mov  ecx, esp;
-        push eax;
-        call irmCall4;
-        sub  esp, 0x14;
-        mov  ecx, esp;
-        lea  eax, wxRoomid;
-        push eax;
-        call irmCall5;
-        lea  eax, vWxMembers;
-        push eax;
-        call irmCall6;
-        call irmCall1;
-        push 0x0;
-        push 0x1;
-        mov  ecx, eax;
-        call irmCall7;
-        lea  ecx, addr;
-        call irmCall8;
-        popfd;
-        popad;
-    }
-    return 1;
+    (void)roomid;
+    (void)wxids;
+    LOG_ERROR("Not Implemented yet.");
+    return -1;
 }
 
 bool rpc_add_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
