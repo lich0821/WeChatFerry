@@ -3,7 +3,7 @@
 #include <cstdint>
 
 // x86 平台偏移地址定义
-// 支持微信版本: 3.9.2.23
+// 支持微信版本: 3.9.12.56
 
 namespace Offsets
 {
