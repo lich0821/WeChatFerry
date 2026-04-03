@@ -67,8 +67,8 @@ std::string get_self_wxid()
 
 bool is_logged_in()
 {
-    LOG_ERROR("Not Implemented yet.");
-    return false;
+    uint32_t base = g_WeChatWinDllAddr;
+    return base && util::get_dword(base + OsAcc::SERVICE) != 0;
 }
 
 UserInfo_t get_user_info()
