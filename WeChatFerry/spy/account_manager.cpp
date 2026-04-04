@@ -61,8 +61,11 @@ std::string get_home_path()
 
 std::string get_self_wxid()
 {
-    LOG_ERROR("Not Implemented yet.");
-    return "";
+    uint32_t base = g_WeChatWinDllAddr;
+    if (!base) {
+        return "";
+    }
+    return get_string_value(base, OsAcc::WXID);
 }
 
 bool is_logged_in()

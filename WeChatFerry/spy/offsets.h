@@ -11,7 +11,7 @@ namespace Offsets
 namespace Account
 {
     constexpr uint32_t SERVICE = 0x4368508;  // 登录状态服务（AccountService 全局对象 RVA 0x4368308 + 0x200，登录后非零）
-    constexpr uint32_t WXID    = 0x2FFD484;  // 微信ID
+    constexpr uint32_t WXID    = 0x4368354;  // 微信ID（AccountService obj+0x4C，std::string，容量位 WXID+0x14）
     constexpr uint32_t NAME    = 0x2FFD590;  // 昵称
     constexpr uint32_t MOBILE  = 0x2FFD500;  // 手机号
     constexpr uint32_t HOME    = 0x30238CC;  // 数据目录
