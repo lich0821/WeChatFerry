@@ -76,8 +76,18 @@ bool is_logged_in()
 
 UserInfo_t get_user_info()
 {
-    LOG_ERROR("Not Implemented yet.");
-    UserInfo_t ui = {};
+    UserInfo_t ui;
+    uint32_t base = g_WeChatWinDllAddr;
+    if (!base) {
+        return ui;
+    }
+
+    // wxid/name/mobile 均为 AccountService 对象内的 std::string 成员，统一走 get_string_value
+    ui.wxid   = get_self_wxid();
+    ui.name   = get_string_value(base, OsAcc::NAME);
+    ui.mobile = get_string_value(base, OsAcc::MOBILE);
+    ui.home   = get_home_path();
+
     return ui;
 }
 
