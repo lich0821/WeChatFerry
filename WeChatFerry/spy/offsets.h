@@ -81,12 +81,22 @@ namespace Contact
 
 namespace Database
 {
-    constexpr uint32_t EXEC  = 0x141BDF0;
-    constexpr uint32_t BASE  = 0x2366934;
-    constexpr uint32_t START = 0x1428;
-    constexpr uint32_t END   = 0x142C;
-    constexpr uint32_t SLOT  = 0x3C;
-    constexpr uint32_t NAME  = 0x50;
+    // ---- 裸 sqlite3 API（RVA，运行时 + g_WeChatWinDllAddr）----
+    // 3.9.12.56 走进程内已解密句柄：从已开库管理器取裸 sqlite3*，直接调下列裸 sqlite 函数。
+    constexpr uint32_t PREPARE_V2   = 0x2A97C50;  // sqlite3_prepare_v2(db, zSql, nByte, &ppStmt, &pzTail)
+    constexpr uint32_t STEP         = 0x2A5E2E0;  // sqlite3_step(stmt) → 100=ROW/101=DONE
+    constexpr uint32_t FINALIZE     = 0x2A5D330;  // sqlite3_finalize(stmt)
+    constexpr uint32_t COLUMN_COUNT = 0x2A5E840;  // sqlite3_column_count(stmt)
+    constexpr uint32_t COLUMN_NAME  = 0x2A5EEB0;  // sqlite3_column_name(stmt, iCol)
+    constexpr uint32_t COLUMN_TYPE  = 0x2A5EDA0;  // sqlite3_column_type(stmt, iCol) 1I/2F/3T/4B/5NULL
+    constexpr uint32_t COLUMN_BLOB  = 0x2A5E8E0;  // sqlite3_column_blob(stmt, iCol)
+    constexpr uint32_t COLUMN_BYTES = 0x2A5E970;  // sqlite3_column_bytes(stmt, iCol)
+    constexpr uint32_t COLUMN_TEXT  = 0x2A5EC60;  // sqlite3_column_text(stmt, iCol)
+
+    // ---- 已打开数据库管理器（进程内已解密句柄）—— 待解析（#05 后续）----
+    // AccountStorageMgr 单例（枚举根之一）；取句柄经虚函数 getHandle（vtable[2]，非固定偏移）。
+    // TODO: 定位持有全部已打开库的“扁平总管理器”（每项含 库名 + 句柄），据此实现 库名→sqlite3* 枚举。
+    constexpr uint32_t INSTANCE = 0x4327610;  // AccountStorageMgr g_pInstance（dword_14327610）
 } // namespace Database
 
 namespace Friend
