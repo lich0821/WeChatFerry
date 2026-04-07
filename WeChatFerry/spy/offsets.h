@@ -93,10 +93,17 @@ namespace Database
     constexpr uint32_t COLUMN_BYTES = 0x2A5E970;  // sqlite3_column_bytes(stmt, iCol)
     constexpr uint32_t COLUMN_TEXT  = 0x2A5EC60;  // sqlite3_column_text(stmt, iCol)
 
-    // ---- 已打开数据库管理器（进程内已解密句柄）—— 待解析（#05 后续）----
-    // AccountStorageMgr 单例（枚举根之一）；取句柄经虚函数 getHandle（vtable[2]，非固定偏移）。
-    // TODO: 定位持有全部已打开库的“扁平总管理器”（每项含 库名 + 句柄），据此实现 库名→sqlite3* 枚举。
-    constexpr uint32_t INSTANCE = 0x4327610;  // AccountStorageMgr g_pInstance（dword_14327610）
+    // ---- 已打开数据库管理器（进程内已解密句柄，扁平枚举）----
+    // AccountStorageMgr::initStorage(sub_117254C0) 的 "init main storage" 循环：
+    //   managerObj = *(g_WeChatWinDllAddr + INSTANCE)
+    //   begin = *(managerObj + START); end = *(managerObj + END);  逐 4 字节遍历，*p = storage 对象指针
+    //   storage 内：*(storage + SLOT) = 裸 sqlite3*（getHandle=vtable[2] 即 `return *(this+0x34)`，
+    //   且 initStorage 把连接池解析出的句柄写回 storage+0x34，双重印证）；storage + NAME = std::wstring 库路径
+    constexpr uint32_t INSTANCE = 0x4327610;  // AccountStorageMgr g_pInstance（dword_14327610，存管理器对象指针）
+    constexpr uint32_t START    = 0x1430;     // managerObj → 主 storage 数组 begin 指针（+5168）
+    constexpr uint32_t END      = 0x1434;     // managerObj → 主 storage 数组 end 指针（+5172）
+    constexpr uint32_t SLOT     = 0x34;       // storage → 裸 sqlite3* 句柄
+    constexpr uint32_t NAME     = 0x4C;       // storage → 库路径 std::wstring（_Bx 起始，容量位 +0x14）
 } // namespace Database
 
 namespace Friend

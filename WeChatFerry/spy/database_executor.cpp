@@ -1,249 +1,160 @@
-#include "database_executor.h"
+﻿#include "database_executor.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
-#include <filesystem>
+#include <cstring>
 #include <map>
 #include <string>
-#include <system_error>
 #include <vector>
 
-#include <ShlObj.h>
-
-#include "account_manager.h"
 #include "log.hpp"
+#include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
 #include "util.h"
 
-#pragma comment(lib, "Shell32.lib")
+extern uint32_t g_WeChatWinDllAddr;
 
-namespace fs = std::filesystem;
+namespace db
+{
+
+namespace OsDb = Offsets::Database;
 
 namespace
 {
 
-struct sqlite3;
-struct sqlite3_stmt;
-
+// SQLite 返回码与列类型
 constexpr int SQLITE_OK      = 0;
 constexpr int SQLITE_ROW     = 100;
+constexpr int SQLITE_DONE    = 101;
 constexpr int SQLITE_INTEGER = 1;
 constexpr int SQLITE_FLOAT   = 2;
 constexpr int SQLITE_TEXT    = 3;
 constexpr int SQLITE_BLOB    = 4;
 constexpr int SQLITE_NULL    = 5;
 
-using sqlite3_open16_fn       = int(__cdecl *)(const void *filename, sqlite3 **ppDb);
-using sqlite3_close_fn        = int(__cdecl *)(sqlite3 *db);
-using sqlite3_prepare_v2_fn   = int(__cdecl *)(sqlite3 *db, const char *sql, int nByte, sqlite3_stmt **ppStmt,
-                                             const char **pzTail);
-using sqlite3_step_fn         = int(__cdecl *)(sqlite3_stmt *stmt);
-using sqlite3_finalize_fn     = int(__cdecl *)(sqlite3_stmt *stmt);
-using sqlite3_column_count_fn = int(__cdecl *)(sqlite3_stmt *stmt);
-using sqlite3_column_name_fn  = const char *(__cdecl *)(sqlite3_stmt *stmt, int iCol);
-using sqlite3_column_type_fn  = int(__cdecl *)(sqlite3_stmt *stmt, int iCol);
-using sqlite3_column_blob_fn  = const void *(__cdecl *)(sqlite3_stmt *stmt, int iCol);
-using sqlite3_column_text_fn  = const unsigned char *(__cdecl *)(sqlite3_stmt *stmt, int iCol);
-using sqlite3_column_bytes_fn = int(__cdecl *)(sqlite3_stmt *stmt, int iCol);
+// WeChatWin.dll 进程内（已解密）SQLCipher/sqlite3 内部 API —— 均为 __cdecl。
+// 地址来自 offsets.h::Database（RVA + g_WeChatWinDllAddr）。
+using sqlite3_prepare_v2_fn   = int(__cdecl *)(void *, const char *, int, void **, const char **);
+using sqlite3_step_fn         = int(__cdecl *)(void *);
+using sqlite3_finalize_fn     = int(__cdecl *)(void *);
+using sqlite3_column_count_fn = int(__cdecl *)(void *);
+using sqlite3_column_name_fn  = const char *(__cdecl *)(void *, int);
+using sqlite3_column_type_fn  = int(__cdecl *)(void *, int);
+using sqlite3_column_blob_fn  = const void *(__cdecl *)(void *, int);
+using sqlite3_column_bytes_fn = int(__cdecl *)(void *, int);
+using sqlite3_column_text_fn  = const unsigned char *(__cdecl *)(void *, int);
 
 struct SqliteApi {
-    HMODULE module               = nullptr;
-    sqlite3_open16_fn open16     = nullptr;
-    sqlite3_close_fn close       = nullptr;
-    sqlite3_prepare_v2_fn prepare = nullptr;
-    sqlite3_step_fn step         = nullptr;
-    sqlite3_finalize_fn finalize = nullptr;
-    sqlite3_column_count_fn column_count = nullptr;
-    sqlite3_column_name_fn column_name   = nullptr;
-    sqlite3_column_type_fn column_type   = nullptr;
-    sqlite3_column_blob_fn column_blob   = nullptr;
-    sqlite3_column_text_fn column_text   = nullptr;
-    sqlite3_column_bytes_fn column_bytes = nullptr;
-
-    bool init()
-    {
-        if (module != nullptr) {
-            return true;
-        }
-
-        module = LoadLibraryW(L"winsqlite3.dll");
-        if (module == nullptr) {
-            LOG_ERROR("Failed to load winsqlite3.dll");
-            return false;
-        }
-
-        open16       = reinterpret_cast<sqlite3_open16_fn>(GetProcAddress(module, "sqlite3_open16"));
-        close        = reinterpret_cast<sqlite3_close_fn>(GetProcAddress(module, "sqlite3_close"));
-        prepare      = reinterpret_cast<sqlite3_prepare_v2_fn>(GetProcAddress(module, "sqlite3_prepare_v2"));
-        step         = reinterpret_cast<sqlite3_step_fn>(GetProcAddress(module, "sqlite3_step"));
-        finalize     = reinterpret_cast<sqlite3_finalize_fn>(GetProcAddress(module, "sqlite3_finalize"));
-        column_count = reinterpret_cast<sqlite3_column_count_fn>(GetProcAddress(module, "sqlite3_column_count"));
-        column_name  = reinterpret_cast<sqlite3_column_name_fn>(GetProcAddress(module, "sqlite3_column_name"));
-        column_type  = reinterpret_cast<sqlite3_column_type_fn>(GetProcAddress(module, "sqlite3_column_type"));
-        column_blob  = reinterpret_cast<sqlite3_column_blob_fn>(GetProcAddress(module, "sqlite3_column_blob"));
-        column_text  = reinterpret_cast<sqlite3_column_text_fn>(GetProcAddress(module, "sqlite3_column_text"));
-        column_bytes = reinterpret_cast<sqlite3_column_bytes_fn>(GetProcAddress(module, "sqlite3_column_bytes"));
-
-        if ((open16 == nullptr) || (close == nullptr) || (prepare == nullptr) || (step == nullptr) ||
-            (finalize == nullptr) || (column_count == nullptr) || (column_name == nullptr) ||
-            (column_type == nullptr) || (column_blob == nullptr) || (column_text == nullptr) ||
-            (column_bytes == nullptr)) {
-            LOG_ERROR("Failed to resolve winsqlite3 symbols");
-            FreeLibrary(module);
-            module = nullptr;
-            return false;
-        }
-
-        return true;
-    }
+    sqlite3_prepare_v2_fn prepare_v2;
+    sqlite3_step_fn step;
+    sqlite3_finalize_fn finalize;
+    sqlite3_column_count_fn column_count;
+    sqlite3_column_name_fn column_name;
+    sqlite3_column_type_fn column_type;
+    sqlite3_column_blob_fn column_blob;
+    sqlite3_column_bytes_fn column_bytes;
+    sqlite3_column_text_fn column_text;
 };
 
-SqliteApi &sqlite_api()
+const SqliteApi &sqlite_api()
 {
-    static SqliteApi api;
+    // g_WeChatWinDllAddr 在 InitSpy 期间即已就绪，RPC 线程首次调用时才构造，安全。
+    static const SqliteApi api = {
+        reinterpret_cast<sqlite3_prepare_v2_fn>(g_WeChatWinDllAddr + OsDb::PREPARE_V2),
+        reinterpret_cast<sqlite3_step_fn>(g_WeChatWinDllAddr + OsDb::STEP),
+        reinterpret_cast<sqlite3_finalize_fn>(g_WeChatWinDllAddr + OsDb::FINALIZE),
+        reinterpret_cast<sqlite3_column_count_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_COUNT),
+        reinterpret_cast<sqlite3_column_name_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_NAME),
+        reinterpret_cast<sqlite3_column_type_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_TYPE),
+        reinterpret_cast<sqlite3_column_blob_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_BLOB),
+        reinterpret_cast<sqlite3_column_bytes_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_BYTES),
+        reinterpret_cast<sqlite3_column_text_fn>(g_WeChatWinDllAddr + OsDb::COLUMN_TEXT),
+    };
     return api;
 }
 
-class SqliteDb
-{
-  public:
-    SqliteDb() = default;
-
-    ~SqliteDb()
-    {
-        if (db_ != nullptr) {
-            sqlite_api().close(db_);
-        }
-    }
-
-    SqliteDb(const SqliteDb &)            = delete;
-    SqliteDb &operator=(const SqliteDb &) = delete;
-
-    bool open(const std::wstring &path)
-    {
-        if (!sqlite_api().init()) {
-            return false;
-        }
-
-        return sqlite_api().open16(path.c_str(), &db_) == SQLITE_OK;
-    }
-
-    sqlite3 *get() const
-    {
-        return db_;
-    }
-
-  private:
-    sqlite3 *db_ = nullptr;
-};
-
-class SqliteStmt
-{
-  public:
-    explicit SqliteStmt(sqlite3_stmt *stmt) : stmt_(stmt) {}
-
-    ~SqliteStmt()
-    {
-        if (stmt_ != nullptr) {
-            sqlite_api().finalize(stmt_);
-        }
-    }
-
-    SqliteStmt(const SqliteStmt &)            = delete;
-    SqliteStmt &operator=(const SqliteStmt &) = delete;
-
-    sqlite3_stmt *get() const
-    {
-        return stmt_;
-    }
-
-  private:
-    sqlite3_stmt *stmt_ = nullptr;
-};
-
-using db_map_t = std::map<std::string, std::wstring>;
-
+// 库名 → 已解密 sqlite3* 句柄
+using db_map_t = std::map<std::string, uint32_t>;
 db_map_t db_map;
 
-std::wstring get_default_wechat_root()
+// 读取 storage 对象内 storage+NAME 处的 std::wstring（MSVC 布局：_Bx 起始，容量位 +0x14；
+// wchar_t 的 SSO 阈值为 8：容量 >= 8 走堆指针，否则内联缓冲）并取文件名（basename）。
+std::string read_db_name(uint32_t wstr_addr)
 {
-    wchar_t path[MAX_PATH] = { 0 };
-    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PERSONAL, nullptr, SHGFP_TYPE_CURRENT, path))) {
-        return std::wstring(path) + L"\\WeChat Files\\";
+    uint32_t capacity     = util::get_dword(wstr_addr + 0x14);
+    const wchar_t *buffer = (capacity >= 8) ? reinterpret_cast<const wchar_t *>(util::get_dword(wstr_addr))
+                                            : reinterpret_cast<const wchar_t *>(wstr_addr);
+    if ((buffer == nullptr) || (*buffer == L'\0')) {
+        return "";
     }
-    return L"";
+
+    std::wstring path(buffer);
+    size_t pos = path.find_last_of(L"\\/");
+    if (pos != std::wstring::npos) {
+        path = path.substr(pos + 1);
+    }
+    return util::w2s(path);
 }
 
-std::vector<std::wstring> build_search_roots()
-{
-    std::vector<std::wstring> roots;
-
-    std::string home = account::get_home_path();
-    if (home.empty()) {
-        home = util::w2s(get_default_wechat_root());
-    }
-
-    if (home.empty()) {
-        return roots;
-    }
-
-    std::wstring whome = util::s2w(home);
-    std::string wxid   = account::get_self_wxid();
-    if (!wxid.empty()) {
-        roots.push_back(whome + util::s2w(wxid));
-    }
-    roots.push_back(whome);
-
-    return roots;
-}
-
+// 遍历 AccountStorageMgr 主 storage 数组，建立 库名 → sqlite3* 映射。
 void refresh_db_map()
 {
     db_map.clear();
 
-    for (const auto &root : build_search_roots()) {
-        if (root.empty()) {
+    uint32_t base = g_WeChatWinDllAddr;
+    if (base == 0) {
+        return;
+    }
+
+    uint32_t mgr = util::get_dword(base + OsDb::INSTANCE);
+    if (mgr == 0) {
+        LOG_ERROR("AccountStorageMgr instance is null.");
+        return;
+    }
+
+    uint32_t begin = util::get_dword(mgr + OsDb::START);
+    uint32_t end   = util::get_dword(mgr + OsDb::END);
+    if ((begin == 0) || (end < begin)) {
+        return;
+    }
+
+    for (uint32_t p = begin; p < end; p += 4) {
+        uint32_t storage = util::get_dword(p);
+        if (storage == 0) {
             continue;
         }
 
-        std::error_code ec;
-        if (!fs::exists(root, ec)) {
+        uint32_t handle = util::get_dword(storage + OsDb::SLOT);
+        if (handle == 0) {
             continue;
         }
 
-        fs::recursive_directory_iterator it(root, fs::directory_options::skip_permission_denied, ec);
-        fs::recursive_directory_iterator end;
-        for (; !ec && it != end; it.increment(ec)) {
-            if (ec || !it->is_regular_file(ec)) {
-                continue;
-            }
-
-            const fs::path &path = it->path();
-            if (path.extension() != L".db") {
-                continue;
-            }
-
-            std::string name = util::w2s(path.filename().wstring());
-            db_map.emplace(name, path.wstring());
+        std::string name = read_db_name(storage + OsDb::NAME);
+        if (name.empty()) {
+            continue;
         }
+
+        db_map.emplace(name, handle);
     }
 }
 
-const std::wstring *find_db_path(const std::string &db)
+uint32_t find_db_handle(const std::string &db)
 {
     if (db_map.empty()) {
         refresh_db_map();
     }
 
     auto it = db_map.find(db);
-    if (it != db_map.end()) {
-        return &it->second;
+    if (it != db_map.end() && it->second != 0) {
+        return it->second;
     }
 
+    // 句柄可能因重登录等变化，重建一次再试。
     refresh_db_map();
     it = db_map.find(db);
-    return it == db_map.end() ? nullptr : &it->second;
+    return (it == db_map.end()) ? 0 : it->second;
 }
 
 std::string field_to_string(const DbField_t &field)
@@ -274,8 +185,8 @@ std::vector<std::pair<int, std::string>> find_dbs_by_prefix(const char *prefix)
     }
 
     std::vector<std::pair<int, std::string>> result;
-    for (const auto &[name, path] : db_map) {
-        (void)path;
+    for (const auto &[name, handle] : db_map) {
+        (void)handle;
         int idx = parse_db_index(name, prefix);
         if (idx >= 0) {
             result.emplace_back(idx, name);
@@ -286,50 +197,82 @@ std::vector<std::pair<int, std::string>> find_dbs_by_prefix(const char *prefix)
     return result;
 }
 
-DbRows_t query_rows(const std::wstring &path, const std::string &sql)
+} // namespace
+
+DbNames_t get_db_names()
+{
+    if (db_map.empty()) {
+        refresh_db_map();
+    }
+
+    DbNames_t names;
+    names.reserve(db_map.size());
+    for (const auto &[name, handle] : db_map) {
+        (void)handle;
+        names.push_back(name);
+    }
+    return names;
+}
+
+DbTables_t get_db_tables(const std::string &db)
+{
+    DbTables_t tables;
+
+    DbRows_t rows = exec_db_query(db, "SELECT name, sql FROM sqlite_master WHERE type = 'table' ORDER BY name;");
+    for (const auto &row : rows) {
+        DbTable_t table;
+        for (const auto &field : row) {
+            if (field.column == "name") {
+                table.name = field_to_string(field);
+            } else if (field.column == "sql") {
+                std::string sql = field_to_string(field);
+                sql.erase(std::remove(sql.begin(), sql.end(), '\t'), sql.end());
+                table.sql = sql;
+            }
+        }
+        tables.push_back(table);
+    }
+    return tables;
+}
+
+DbRows_t exec_db_query(const std::string &db, const std::string &sql)
 {
     DbRows_t rows;
 
-    SqliteDb db;
-    if (!db.open(path)) {
-        LOG_ERROR("Failed to open database: {}", util::w2s(path));
+    uint32_t handle = find_db_handle(db);
+    if (handle == 0) {
+        LOG_ERROR("Failed to get handle for database '{}'.", db);
         return rows;
     }
 
-    sqlite3_stmt *stmt = nullptr;
-    int rc             = sqlite_api().prepare(db.get(), sql.c_str(), -1, &stmt, nullptr);
+    const SqliteApi &api = sqlite_api();
+
+    void *stmt = nullptr;
+    int rc     = api.prepare_v2(reinterpret_cast<void *>(handle), sql.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK || stmt == nullptr) {
-        LOG_ERROR("Failed to prepare SQL on {}", util::w2s(path));
+        LOG_ERROR("SQL prepare failed on '{}' (rc={}).", db, rc);
         return rows;
     }
 
-    SqliteStmt holder(stmt);
-
-    while (sqlite_api().step(stmt) == SQLITE_ROW) {
+    while (api.step(stmt) == SQLITE_ROW) {
         DbRow_t row;
-        int col_count = sqlite_api().column_count(stmt);
+        int col_count = api.column_count(stmt);
         for (int i = 0; i < col_count; ++i) {
             DbField_t field;
-            field.type   = sqlite_api().column_type(stmt, i);
-            field.column = sqlite_api().column_name(stmt, i);
+            field.type          = api.column_type(stmt, i);
+            const char *colName = api.column_name(stmt, i);
+            field.column        = (colName != nullptr) ? colName : "";
 
-            if (field.type == SQLITE_NULL) {
-                row.push_back(field);
-                continue;
-            }
-
-            int length = sqlite_api().column_bytes(stmt, i);
-            if (length <= 0) {
-                row.push_back(field);
-                continue;
-            }
-
-            if (field.type == SQLITE_BLOB) {
-                const auto *blob = reinterpret_cast<const uint8_t *>(sqlite_api().column_blob(stmt, i));
-                field.content.assign(blob, blob + length);
-            } else {
-                const auto *text = reinterpret_cast<const uint8_t *>(sqlite_api().column_text(stmt, i));
-                field.content.assign(text, text + length);
+            if (field.type != SQLITE_NULL) {
+                int length = api.column_bytes(stmt, i);
+                if (length > 0) {
+                    const uint8_t *data = (field.type == SQLITE_BLOB)
+                                              ? reinterpret_cast<const uint8_t *>(api.column_blob(stmt, i))
+                                              : reinterpret_cast<const uint8_t *>(api.column_text(stmt, i));
+                    if (data != nullptr) {
+                        field.content.assign(data, data + length);
+                    }
+                }
             }
 
             row.push_back(field);
@@ -337,35 +280,8 @@ DbRows_t query_rows(const std::wstring &path, const std::string &sql)
         rows.push_back(row);
     }
 
+    api.finalize(stmt);
     return rows;
-}
-
-} // namespace
-
-namespace db
-{
-
-DbNames_t get_db_names()
-{
-    LOG_ERROR("Not Implemented yet.");
-    DbNames_t names;
-    return names;
-}
-
-DbTables_t get_db_tables(const std::string &db)
-{
-    (void)db;
-    LOG_ERROR("Not Implemented yet.");
-    DbTables_t tables;
-    return tables;
-}
-
-DbRows_t exec_db_query(const std::string &db, const std::string &sql)
-{
-    (void)db;
-    (void)sql;
-    LOG_ERROR("Not Implemented yet.");
-    return {};
 }
 
 int get_local_id_and_dbidx(uint64_t id, uint64_t *local_id, uint32_t *db_idx)
@@ -417,8 +333,9 @@ std::vector<uint8_t> get_audio_data(uint64_t msg_id)
 
 bool rpc_get_db_names(uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_GET_DB_NAMES>(out, len, [](Response &rsp) {
-        DbNames_t dbnames              = get_db_names();
+    // 数据须活到 fill_response 内的 pb_encode（assign 返回后才编码），故置于此作用域。
+    DbNames_t dbnames = get_db_names();
+    return fill_response<Functions_FUNC_GET_DB_NAMES>(out, len, [&dbnames](Response &rsp) {
         rsp.msg.dbs.names.funcs.encode = encode_dbnames;
         rsp.msg.dbs.names.arg          = &dbnames;
     });
@@ -426,8 +343,8 @@ bool rpc_get_db_names(uint8_t *out, size_t *len)
 
 bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_GET_DB_TABLES>(out, len, [&db](Response &rsp) {
-        DbTables_t tables                  = get_db_tables(db);
+    DbTables_t tables = get_db_tables(db);
+    return fill_response<Functions_FUNC_GET_DB_TABLES>(out, len, [&tables](Response &rsp) {
         rsp.msg.tables.tables.funcs.encode = encode_tables;
         rsp.msg.tables.tables.arg          = &tables;
     });
@@ -435,17 +352,15 @@ bool rpc_get_db_tables(const std::string &db, uint8_t *out, size_t *len)
 
 bool rpc_exec_db_query(const DbQuery &query, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_EXEC_DB_QUERY>(out, len, [&query](Response &rsp) {
-        if ((query.db == nullptr) || (query.sql == nullptr)) {
-            LOG_ERROR("Empty db or sql.");
-            DbRows_t rows;
-            rsp.msg.rows.rows.funcs.encode = encode_rows;
-            rsp.msg.rows.rows.arg          = &rows;
-        } else {
-            DbRows_t rows = exec_db_query(query.db, query.sql);
-            rsp.msg.rows.rows.funcs.encode = encode_rows;
-            rsp.msg.rows.rows.arg          = &rows;
-        }
+    DbRows_t rows;
+    if ((query.db == nullptr) || (query.sql == nullptr)) {
+        LOG_ERROR("Empty db or sql.");
+    } else {
+        rows = exec_db_query(query.db, query.sql);
+    }
+    return fill_response<Functions_FUNC_EXEC_DB_QUERY>(out, len, [&rows](Response &rsp) {
+        rsp.msg.rows.rows.funcs.encode = encode_rows;
+        rsp.msg.rows.rows.arg          = &rows;
     });
 }
 
