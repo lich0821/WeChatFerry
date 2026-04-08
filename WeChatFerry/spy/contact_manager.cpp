@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 
 #include "contact_manager.h"
 
@@ -153,8 +153,20 @@ namespace contact
 
 std::vector<RpcContact_t> get_contacts()
 {
-    LOG_ERROR("Not Implemented yet.");
     std::vector<RpcContact_t> contacts;
+
+    // 依据 MicroMsg.db 的 Contact 表实际列动态拼 SQL（缺列以 '' / 0 占位），再走进程内裸 sqlite3（#05）。
+    std::string sql = build_contact_query(nullptr);
+    if (sql.empty()) {
+        LOG_ERROR("Failed to build contact query (missing UserName column?).");
+        return contacts;
+    }
+
+    DbRows_t rows = db::exec_db_query("MicroMsg.db", sql);
+    contacts.reserve(rows.size());
+    for (const auto &row : rows) {
+        contacts.push_back(row_to_contact(row));
+    }
     return contacts;
 }
 
