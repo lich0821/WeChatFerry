@@ -188,9 +188,20 @@ int add_friend_by_wxid(const std::string &wxid, const std::string &msg)
 
 RpcContact_t get_contact_by_wxid(const std::string &wxid)
 {
-    LOG_ERROR("Not Implemented yet.");
     RpcContact_t contact = {};
     contact.wxid         = wxid;
+
+    // 与 get_contacts 同一条链，仅带 WHERE UserName=? 过滤单个联系人。
+    std::string sql = build_contact_query(&wxid);
+    if (sql.empty()) {
+        LOG_ERROR("Failed to build contact query (missing UserName column?).");
+        return contact;
+    }
+
+    DbRows_t rows = db::exec_db_query("MicroMsg.db", sql);
+    if (!rows.empty()) {
+        contact = row_to_contact(rows.front());
+    }
     return contact;
 }
 
