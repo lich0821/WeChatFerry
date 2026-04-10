@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 
 #include "message_receiver.h"
 
@@ -283,8 +283,8 @@ namespace message
 
 MsgTypes_t get_msg_types()
 {
-    LOG_ERROR("Not Implemented yet.");
-    return {};
+    // 纯静态映射表，无偏移、无依赖。
+    return build_msg_types();
 }
 
 bool rpc_get_msg_types(uint8_t *out, size_t *len)
