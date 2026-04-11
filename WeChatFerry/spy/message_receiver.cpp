@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <cstdint>
 #include <cstring>
+#include <intrin.h>
 #include <mutex>
 #include <queue>
 
@@ -203,13 +204,26 @@ void dispatch_msg(uint32_t reg)
 
 uintptr_t __fastcall receive_message_hook(void *msg, void *)
 {
-    dispatch_msg(reinterpret_cast<uint32_t>(msg));
+    // CALL(=ChatMsg::~ChatMsg) 有大量调用点，故在入口处按“返回地址==定点 HOOK+5”过滤：
+    // 仅当本次析构由 SyncMgr::doAddMsg 尾部那条 call 触发（即刚收下一条消息）时才 dispatch。
+    if (reinterpret_cast<uint32_t>(_ReturnAddress())
+        == g_WeChatWinDllAddr + Offsets::Message::Receive::HOOK + 5) {
+        dispatch_msg(reinterpret_cast<uint32_t>(msg));
+    }
     return gRealReceiveMessage ? gRealReceiveMessage(msg) : 0;
 }
 
 void listen_message()
 {
-    LOG_ERROR("Not Implemented yet.");
+    if (gIsListening || (g_WeChatWinDllAddr == 0)) {
+        return;
+    }
+
+    uint32_t target = g_WeChatWinDllAddr + Offsets::Message::Receive::CALL;
+    if (install_hook(gMessageHook, target, reinterpret_cast<const void *>(receive_message_hook),
+                     reinterpret_cast<void **>(&gRealReceiveMessage))) {
+        gIsListening = true;
+    }
 }
 
 void unlisten_message()
@@ -318,7 +332,8 @@ bool rpc_disable_recv_txt(uint8_t *out, size_t *len)
 
 void stop_receiving()
 {
-    LOG_ERROR("Not Implemented yet.");
+    unlisten_message();
+    unlisten_pyq();
 }
 
 } // namespace message

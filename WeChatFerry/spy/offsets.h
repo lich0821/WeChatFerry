@@ -49,19 +49,25 @@ namespace Message
 
     namespace Receive
     {
-        constexpr uint32_t HOOK    = 0xD19A0B;
-        constexpr uint32_t CALL    = 0x756960;
-        constexpr uint32_t MSG_ID  = 0x30;
-        constexpr uint32_t TYPE    = 0x38;
-        constexpr uint32_t IS_SELF = 0x3C;
-        constexpr uint32_t TS      = 0x44;
-        constexpr uint32_t ROOM_ID = 0x48;
-        constexpr uint32_t CONTENT = 0x70;
-        constexpr uint32_t WXID    = 0x180;
-        constexpr uint32_t SIGN    = 0x194;
-        constexpr uint32_t THUMB   = 0x1A8;
-        constexpr uint32_t EXTRA   = 0x1BC;
-        constexpr uint32_t MSG_XML = 0x1FC;
+        // HOOK = doAddMsg(SyncMgr, sub_117B8990) 尾部对“已收 ChatMsg”调用 ChatMsg::~ChatMsg 的 call 站点
+        //        （0x117B93B5: `lea ecx,[ebp-418h]; call sub_11199010`，ecx=已解析 ChatMsg 基址）。
+        //        因 CALL(=~ChatMsg) 有 50+ 调用点，不能直接 hook 其入口——改为 hook 入口后按“返回地址==HOOK+5”过滤，
+        //        即仅当来自本站点时才 dispatch，等价于旧的裸 asm 定点 hook 且不引入内联汇编。
+        constexpr uint32_t HOOK    = 0x17B93B5;  // 定点 call 站点（返回地址过滤用 HOOK+5）
+        constexpr uint32_t CALL    = 0x1199010;  // ChatMsg::~ChatMsg 入口（detour 目标；前 5 字节 51 56 57 8B FE 可安全搬进 trampoline）
+        // ---- ChatMsg 对象字段（相对已解析 ChatMsg 基址）----
+        // 经 v3223/v31256 ctor+dtor 对比校验：低区（<0x48）不变；高区字段整体 +8（this+0x134 子对象内每个 std::string 后移 2 dword）。
+        constexpr uint32_t MSG_ID  = 0x30;   // 不变
+        constexpr uint32_t TYPE    = 0x38;   // 不变
+        constexpr uint32_t IS_SELF = 0x3C;   // 不变
+        constexpr uint32_t TS      = 0x44;   // 不变
+        constexpr uint32_t ROOM_ID = 0x48;   // 不变（std::wstring）
+        constexpr uint32_t CONTENT = 0x70;   // 不变（std::wstring）
+        constexpr uint32_t WXID    = 0x188;  // 0x180 +8（子对象 std::string）
+        constexpr uint32_t SIGN    = 0x19C;  // 0x194 +8
+        constexpr uint32_t THUMB   = 0x1B0;  // 0x1A8 +8
+        constexpr uint32_t EXTRA   = 0x1C4;  // 0x1BC +8
+        constexpr uint32_t MSG_XML = 0x204;  // 0x1FC +8
     } // namespace Receive
 } // namespace Message
 
