@@ -149,18 +149,25 @@ namespace Transfer
 
 namespace Moments
 {
-    constexpr uint32_t HOOK    = 0x14F9E15;
-    constexpr uint32_t CALL    = 0x14FA0A0;
+    // 接收路径（#12 已解验，v3223/v31256 双会话）：
+    //   CALL = SnsTimeLineMgr::OnSnsTimeLineSceneFinish 入口（朋友圈接收回调，__thiscall(this,a2,a3)，2 个调用者）；
+    //   HOOK = OnProcessTimelineResp::<lambda_1> 内 `call OnSnsTimeLineSceneFinish(this,&container,0)` 定点，
+    //          用返回地址 == HOOK+5 过滤（手法同 #11），a2 即 dispatch 的容器指针。
+    constexpr uint32_t HOOK    = 0x1FDB1E5;
+    constexpr uint32_t CALL    = 0x1FDB4D0;
+    // CALL1/2/3（单例 getter / 首页 / 翻页刷新）仅 refresh_pyq(#28) 用，仍是 3.9.2.23 旧值，待 #28 迁移。
     constexpr uint32_t CALL1   = 0xC39680;
     constexpr uint32_t CALL2   = 0x14E2140;
     constexpr uint32_t CALL3   = 0x14E21E0;
+    // 容器字段：主 feed 数组 begin/end 指针（容器 = a2）。
     constexpr uint32_t START   = 0x20;
     constexpr uint32_t END     = 0x24;
-    constexpr uint32_t TS      = 0x2C;
-    constexpr uint32_t WXID    = 0x18;
-    constexpr uint32_t CONTENT = 0x3C;
-    constexpr uint32_t XML     = 0x384;
-    constexpr uint32_t STEP    = 0xB48;
+    // 单个 SnsObject（元素，STEP 字节）内字段（#12 重验：低区不变，XML 随元素增大位移）：
+    constexpr uint32_t TS      = 0x2C;   // 不变（内层子对象 gap 内的 dword）
+    constexpr uint32_t WXID    = 0x18;   // 不变（内层子对象首个 std::string）
+    constexpr uint32_t CONTENT = 0x3C;   // 不变（内层子对象第 2 个 std::string）
+    constexpr uint32_t XML     = 0x64C;  // 原 0x384；包装体高区第 3 个 string 块，元素增大后 dword225→dword403
+    constexpr uint32_t STEP    = 0xE18;  // 原 0xB48；单个 SnsObject 大小 2888→3608
 } // namespace Moments
 
 namespace Attachment

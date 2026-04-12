@@ -27,7 +27,9 @@ namespace
 {
 
 using ReceiveMessageFn = uintptr_t(__thiscall *)(void *msg);
-using ReceivePyqFn     = uintptr_t(__thiscall *)(void *self, uint32_t data);
+// OnSnsTimeLineSceneFinish(this, container, flag)：this 走 ecx，container(=朋友圈容器) 与 flag 为两个栈参。
+// flag 必须原样透传——该入口有 2 个调用者，丢参会破坏另一条（非接收）调用路径。
+using ReceivePyqFn     = uintptr_t(__thiscall *)(void *self, uint32_t data, uint32_t flag);
 
 struct DetourHook {
     uint32_t target      = 0;
@@ -268,15 +270,28 @@ void dispatch_pyq(uint32_t reg)
     }
 }
 
-uintptr_t __fastcall receive_pyq_hook(void *self, void *, uint32_t data)
+uintptr_t __fastcall receive_pyq_hook(void *self, void *, uint32_t data, uint32_t flag)
 {
-    dispatch_pyq(data);
-    return gRealReceivePyq ? gRealReceivePyq(self, data) : 0;
+    // CALL(=OnSnsTimeLineSceneFinish) 有 2 个调用者，仅当本次由 OnProcessTimelineResp 定点触发
+    // （返回地址 == HOOK+5）才是"刚收到一批朋友圈"，此时 data 即容器指针。手法同 #11。
+    if (reinterpret_cast<uint32_t>(_ReturnAddress())
+        == g_WeChatWinDllAddr + Offsets::Moments::HOOK + 5) {
+        dispatch_pyq(data);
+    }
+    return gRealReceivePyq ? gRealReceivePyq(self, data, flag) : 0;
 }
 
 void listen_pyq()
 {
-    LOG_ERROR("Not Implemented yet.");
+    if (gIsListeningPyq || (g_WeChatWinDllAddr == 0)) {
+        return;
+    }
+
+    uint32_t target = g_WeChatWinDllAddr + Offsets::Moments::CALL;
+    if (install_hook(gPyqHook, target, reinterpret_cast<const void *>(receive_pyq_hook),
+                     reinterpret_cast<void **>(&gRealReceivePyq))) {
+        gIsListeningPyq = true;
+    }
 }
 
 void unlisten_pyq()
