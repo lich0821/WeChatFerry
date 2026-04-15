@@ -22,9 +22,12 @@ namespace Message
 {
     namespace Send
     {
-        constexpr uint32_t TEXT_CALL1 = 0x768140;
-        constexpr uint32_t TEXT_CALL2 = 0xCE6C80;
-        constexpr uint32_t TEXT_CALL3 = 0x756960;
+        // 共享辅助（多个发送函数复用；旧命名 TEXT_CALL1/CALL3、IMG_CALL1/CALL4）：
+        constexpr uint32_t SEND_MGR_GETTER = 0x1197AC0;  // SendMessageMgr 单例 getter（读 dword_143682F4，空则 new(0xB0)+ctor sub_11773FD0）
+        constexpr uint32_t CHATMSG_DTOR    = 0x1199010;  // ChatMsg::~ChatMsg，清理栈上临时 ChatMsg（对象恰好 0x2D8 字节，=Receive::CALL）
+
+        // 发送文本（旧命名 TEXT_CALL2）：
+        constexpr uint32_t SEND_MSG = 0x1783C10;  // SendMessageMgr::sendMsg（__fastcall，ecx=buffer/edx=wxid，6 栈参 msg/at/1/0/0/0）
 
         constexpr uint32_t IMG_CALL1 = 0x768140;
         constexpr uint32_t IMG_CALL2 = 0xF59E40;

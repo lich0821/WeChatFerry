@@ -1,4 +1,4 @@
-#include "message_sender.h"
+﻿#include "message_sender.h"
 
 #include <filesystem>
 #include <sstream>
@@ -78,10 +78,45 @@ namespace message
 
 void send_text(const std::string &wxid, const std::string &msg, const std::string &at_wxids)
 {
-    (void)wxid;
-    (void)msg;
-    (void)at_wxids;
-    LOG_ERROR("Not Implemented yet.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return;
+    }
+
+    // 三步编排（等价旧内联汇编，全部建模为带类型的 C++ 调用）：
+    // 1) SEND_MGR_GETTER：SendMessageMgr 单例 getter（无参，返回值忽略，仅确保单例已初始化）
+    // 2) SEND_MSG：SendMessageMgr::sendMsg（__fastcall：ecx=buffer, edx=wxid，栈参 msg/at/flag=1/0/0/0）
+    // 3) CHATMSG_DTOR：ChatMsg::~ChatMsg，清理 buffer（该对象恰好 0x2D8 字节）
+    auto init_global = reinterpret_cast<InitGlobalFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_MGR_GETTER);
+    auto send_msg    = reinterpret_cast<SendTextFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_MSG);
+    auto cleanup     = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsMsg  = util::s2w(msg);
+    WxString wxWxid(wsWxid);
+    WxString wxMsg(wsMsg);
+
+    // @ 列表：先把所有 wstring 落进 vAtWxids（稳定后再取地址包成 WxString，避免 vector 扩容使指针失效）
+    std::vector<std::wstring> vAtWxids;
+    std::vector<WxString> vWxAtWxids;
+    if (!at_wxids.empty()) {
+        std::wstringstream wss(util::s2w(at_wxids));
+        std::wstring wstr;
+        while (std::getline(wss, wstr, L',')) {
+            if (!wstr.empty()) {
+                vAtWxids.push_back(wstr);
+            }
+        }
+        vWxAtWxids.reserve(vAtWxids.size());
+        for (std::wstring &w : vAtWxids) {
+            vWxAtWxids.push_back(WxString(w));
+        }
+    }
+
+    char buffer[0x2D8] = { 0 };
+    init_global();
+    send_msg(buffer, &wxWxid, &wxMsg, &vWxAtWxids, 1, 0, 0, 0);
+    cleanup(buffer);
 }
 
 void send_image(const std::string &wxid, const std::string &path)
