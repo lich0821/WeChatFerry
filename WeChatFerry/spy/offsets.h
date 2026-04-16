@@ -29,10 +29,12 @@ namespace Message
         // 发送文本（旧命名 TEXT_CALL2）：
         constexpr uint32_t SEND_MSG = 0x1783C10;  // SendMessageMgr::sendMsg（__fastcall，ecx=buffer/edx=wxid，6 栈参 msg/at/1/0/0/0）
 
-        constexpr uint32_t IMG_CALL1 = 0x768140;
-        constexpr uint32_t IMG_CALL2 = 0xF59E40;
-        constexpr uint32_t IMG_CALL3 = 0xCE6640;
-        constexpr uint32_t IMG_CALL4 = 0x756960;
+        // 发送图片：getter=SEND_MGR_GETTER、dtor=CHATMSG_DTOR 与文本发送共用
+        //   （旧命名 IMG_CALL1/IMG_CALL4）；旧 IMG_CALL2（0xF59E40 WxString 构造辅助）在带类型模型里
+        //   不再需要（WxString 直接由 C++ 构造）。校验依据：ChatViewModel::reSendMsg(sub_113CE240) 的 case 3
+        //   与多个真实调用者均为 getter()→SEND_IMAGE(mgr,buf,receiver,path,options)→~ChatMsg(buf)。
+        constexpr uint32_t SEND_IMAGE = 0x1783120;  // SendMessageMgr 图片提交叶子 sub_11783120（旧 IMG_CALL3=0xCE6640）
+                                                    //   __thiscall(mgr, buf, receiver, path, options*)；options 布局见 message_sender.cpp
 
         constexpr uint32_t FILE_CALL1 = 0x76AE20;
         constexpr uint32_t FILE_CALL2 = 0xF59E40;

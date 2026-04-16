@@ -33,13 +33,15 @@ using SendPatFn          = uint8_t(__fastcall *)(WxString *roomid, WxString *wxi
 using BufferInitFn       = void(__thiscall *)(void *buffer);
 using BufferCleanupFn    = void(__thiscall *)(void *buffer);
 using BufferCleanupExFn  = void(__thiscall *)(void *buffer, int free_memory);
-using ImageSessionGetterFn = void **(*)();
+using SendMgrGetterFn    = void *(*)();  // SendMessageMgr 单例 getter（无参，返回 manager*）
 using InitGlobalFn       = void (*)();
 using SendTextFn         = int(__fastcall *)(void *buffer, const WxString *wxid, const WxString *msg,
                                              const std::vector<WxString> *at_wxids, uint32_t flag1,
                                              uint32_t zero1, uint32_t zero2, uint32_t zero3);
-using SendImageFn        = int(__thiscall *)(void *manager, void *buffer, const WxString *wxid,
-                                             const WxString *path, WxStringValue null_value);
+// SendMessageMgr 图片提交叶子（sub_11783120，__thiscall）：
+//   ecx=manager, buf=输出 ChatMsg, receiver/path=WxString*, options=选项结构指针（布局见 send_image）
+using SendImageFn        = void *(__thiscall *)(void *manager, void *buffer, const WxString *receiver,
+                                                const WxString *path, void *options);
 using FileSessionGetterFn = void **(*)();
 using SendFileFn         = void *(__thiscall *)(void *manager, void *buffer, WxStringValue wxid,
                                                 WxStringValue path, WxStringValue null_value, int reserved);
@@ -121,9 +123,40 @@ void send_text(const std::string &wxid, const std::string &msg, const std::strin
 
 void send_image(const std::string &wxid, const std::string &path)
 {
-    (void)wxid;
-    (void)path;
-    LOG_ERROR("Not Implemented yet.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return;
+    }
+
+    // 三步编排（等价旧内联汇编，全部建模为带类型的 C++ 调用）：
+    // 1) SEND_MGR_GETTER：SendMessageMgr 单例 getter（返回值即 manager，直接作 leaf 的 this）
+    // 2) SEND_IMAGE：SendMessageMgr 图片提交叶子（__thiscall：ecx=manager, buf/receiver/path/options）
+    // 3) CHATMSG_DTOR：ChatMsg::~ChatMsg，清理栈上临时 ChatMsg（对象恰好 0x2D8 字节）
+    auto getter   = reinterpret_cast<SendMgrGetterFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_MGR_GETTER);
+    auto send_img = reinterpret_cast<SendImageFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_IMAGE);
+    auto cleanup  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
+    WxString wxWxid(wsWxid);
+    WxString wxPath(wsPath);
+
+    // options 选项结构（镜像 ChatViewModel::reSendMsg(sub_113CE240) case 3 的 v53）。
+    // 叶子 sub_11783120 读取的字段（相对 options）：
+    //   +0x00 type、+0x04/+0x10/+0x14 保留、+0x18 caption wchar*(0→空)、+0x1C caption len、
+    //   +0x2C/+0x30 两个 WxString* 附加串（source/appinfo，普通发图传空串）。
+    // 普通图片：type=1，caption 为空，两个附加串指向空 WxString，其余全 0。
+    WxString extra1;
+    WxString extra2;
+    uint8_t options[0x40] = { 0 };
+    *reinterpret_cast<uint32_t *>(options + 0x00) = 1;              // type = 1（普通图片）
+    *reinterpret_cast<void **>(options + 0x2C)    = &extra1;        // 附加串 1（空）
+    *reinterpret_cast<void **>(options + 0x30)    = &extra2;        // 附加串 2（空）
+
+    char buffer[0x2D8] = { 0 };
+    void *manager = getter();
+    send_img(manager, buffer, &wxWxid, &wxPath, options);
+    cleanup(buffer);
 }
 
 void send_file(const std::string &wxid, const std::string &path)
