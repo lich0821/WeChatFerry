@@ -46,7 +46,10 @@ using FileSessionGetterFn = void **(*)();
 using SendFileFn         = void *(__thiscall *)(void *manager, void *buffer, WxStringValue wxid,
                                                 WxStringValue path, WxStringValue null_value, int reserved);
 using RichTextManagerGetterFn = void *(*)();
-using SendRichTextFn     = int(__thiscall *)(void *manager, void *buffer, WxStringValue receiver);
+// WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝，返回值忽略）
+using WxStringAssignFn   = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
+// AppMsgMgr::sendAppMsg：__thiscall，ecx=manager，收件人 WxString 按值在前、MMReaderItem* buff 在后
+using SendRichTextFn     = int(__thiscall *)(void *manager, WxStringValue receiver, void *buffer);
 using SendXmlBuildFn     = int(__fastcall *)(void *buffer, const WxString *sender, const WxString *receiver,
                                              const WxString *xml, const WxString *path, void *null_buf, int type);
 using SendXmlFinalizeFn  = void(__thiscall *)(void *buffer, const WxString *null_obj);
@@ -184,9 +187,63 @@ void send_emotion(const std::string &wxid, const std::string &path)
 
 int send_rich_text(const RichText &rt)
 {
-    (void)rt;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
+    RichTextData data;
+    data.name     = rt.name ? rt.name : "";
+    data.account  = rt.account ? rt.account : "";
+    data.title    = rt.title ? rt.title : "";
+    data.digest   = rt.digest ? rt.digest : "";
+    data.url      = rt.url ? rt.url : "";
+    data.thumburl = rt.thumburl ? rt.thumburl : "";
+    data.receiver = rt.receiver ? rt.receiver : "";
+
+    if (data.receiver.empty()) {
+        LOG_ERROR("Empty receiver.");
+        return -1;
+    }
+
+    // 五步编排（等价旧内联汇编，全部建模为带类型 C++ 调用，所有权与 WeChat 内部一致）：
+    // 1) CTOR：MMReaderItem 构造（__thiscall(this=buff)，清零全部字段并写 vftable）
+    // 2) ASSIGN：逐字段深拷贝进 MMReaderItem（WeChat mm_alloc 拥有，由 DTOR 释放）
+    // 3) GETTER：AppMsgMgr 单例（返回值即 manager）
+    // 4) SEND：AppMsgMgr::sendAppMsg（__thiscall(manager, receiver 按值, buff)）——内部会 mm_free receiver
+    // 5) DTOR：MMReaderItem 完整析构（释放各字段 + InstanceCounter 递减）
+    auto ctor    = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::RichText::CTOR);
+    auto assign  = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto getter  = reinterpret_cast<RichTextManagerGetterFn>(g_WeChatWinDllAddr + Offsets::RichText::GETTER);
+    auto send    = reinterpret_cast<SendRichTextFn>(g_WeChatWinDllAddr + Offsets::RichText::SEND);
+    auto cleanup = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::RichText::DTOR);
+
+    std::wstring wsTitle    = util::s2w(data.title);
+    std::wstring wsUrl      = util::s2w(data.url);
+    std::wstring wsThumburl = util::s2w(data.thumburl);
+    std::wstring wsDigest   = util::s2w(data.digest);
+    std::wstring wsAccount  = util::s2w(data.account);
+    std::wstring wsName     = util::s2w(data.name);
+    std::wstring wsReceiver = util::s2w(data.receiver);
+
+    char buff[Offsets::RichText::OBJ_SIZE] = { 0 };
+    ctor(buff);
+    assign(buff + Offsets::RichText::F_TITLE, wsTitle.c_str(), -1);
+    assign(buff + Offsets::RichText::F_URL, wsUrl.c_str(), -1);
+    assign(buff + Offsets::RichText::F_THUMBURL, wsThumburl.c_str(), -1);
+    assign(buff + Offsets::RichText::F_DIGEST, wsDigest.c_str(), -1);
+    assign(buff + Offsets::RichText::F_ACCOUNT, wsAccount.c_str(), -1);
+    assign(buff + Offsets::RichText::F_NAME, wsName.c_str(), -1);
+
+    // 收件人须为 WeChat 拥有副本（SEND 内部 mm_free），不能传 std::wstring 别名
+    WxString wxReceiver;
+    assign(&wxReceiver, wsReceiver.c_str(), -1);
+
+    void *manager = getter();
+    int status    = send(manager, to_value(wxReceiver), buff);
+    cleanup(buff);
+
+    return status;
 }
 
 int send_pat(const std::string &roomid, const std::string &wxid)

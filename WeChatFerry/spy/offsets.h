@@ -196,11 +196,28 @@ namespace Revoke
 
 namespace RichText
 {
-    constexpr uint32_t CALL1 = 0x76E630;
-    constexpr uint32_t CALL2 = 0x76AE20;
-    constexpr uint32_t CALL3 = 0xF59E40;
-    constexpr uint32_t CALL4 = 0xB73000;
-    constexpr uint32_t CALL5 = 0x76E350;
+    // 发送消息卡片（语义重命名）。
+    // 业务对象是 MMReaderItem（RTTI .?AVMMReaderItem@@），管理器是 AppMsgMgr 全局单例。
+    // 定位链：v3223 旧汇编 CALL1..5 → v3223 AppMsgMgr getter(sub_1076AE20)/send(sub_10B73000)/
+    //   MMReaderItem ctor(sub_1076E630) → 经 BizProfileMsgBaseItem::ForwardtoUserNames(v31256
+    //   sub_1119D480，构造 MMReaderItem 后走 getter→sub_11628DC0) 及字段读取器逐项对齐得 v31256 值。
+    // 编排（无内联汇编，全部带类型 C++ 调用，所有权与 WeChat 内部一致）：
+    //   CTOR(buff) → 用 ASSIGN 逐字段深拷贝 → GETTER()=manager → SEND(manager, receiver按值, buff) → DTOR(buff)
+    // 注意：SEND 内部会 mm_free 传入的 receiver 字符串，故 receiver 必须用 ASSIGN 建 WeChat 拥有副本（勿传 std::wstring 别名）。
+    constexpr uint32_t CTOR   = 0x11A0220;  // MMReaderItem::MMReaderItem（原 CALL1，__thiscall(this)，vftable ??_7MMReaderItem@@6B@）
+    constexpr uint32_t GETTER = 0x119C990;  // AppMsgMgr 单例 getter（原 CALL2，magic-static，返回 &singleton）
+    constexpr uint32_t ASSIGN = 0x19DAF20;  // WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝，原 CALL3 语义）
+    constexpr uint32_t SEND   = 0x1628DC0;  // AppMsgMgr::sendAppMsg（原 CALL4，__thiscall(manager, WxString receiver 按值, MMReaderItem* buff)）
+    constexpr uint32_t DTOR   = 0x119F530;  // MMReaderItem::~MMReaderItem 完整析构（原 CALL5，__thiscall(this)，释放全部成员+InstanceCounter 递减）
+
+    // MMReaderItem 内 WxString 成员偏移（=该成员 wptr 的字节偏移）。低区不变、account/name 高区整体 +0x14（插入一个 WxString）。
+    constexpr uint32_t F_TITLE    = 0x4;    // dword 1  标题（不变）
+    constexpr uint32_t F_URL      = 0x2C;   // dword 11 链接（不变）
+    constexpr uint32_t F_THUMBURL = 0x6C;   // dword 27 缩略图 URL（不变）
+    constexpr uint32_t F_DIGEST   = 0x94;   // dword 37 摘要（不变）
+    constexpr uint32_t F_ACCOUNT  = 0x1B4;  // dword 109 源用户名（原 0x1A0，+0x14）
+    constexpr uint32_t F_NAME     = 0x1C8;  // dword 114 源显示名（原 0x1B4，+0x14）
+    constexpr uint32_t OBJ_SIZE   = 0x280;  // MMReaderItem 栈缓冲大小（ctor 写至 dword158/0x278，取 WeChat 自身栈分配 v23[160]=0x280）
 } // namespace RichText
 
 namespace Pat
