@@ -222,9 +222,13 @@ namespace RichText
 
 namespace Pat
 {
-    constexpr uint32_t CALL1 = 0x931730;
-    constexpr uint32_t CALL2 = 0x1D58751;
-    constexpr uint32_t CALL3 = 0x1421940;
+    // 拍一拍走 PatMgr。语义重命名。
+    // MGR_GETTER = PatMgr magic-static 单例 getter（读 dword_1436A8C8，空则 new(0x6C)+ctor sub_11EB4620）。
+    // SEND_PAT   = PatMgr::SendPatMsg（串锚定），__usercall：ecx=roomid(chat)、edx=wxid(patted)，
+    //   3 个栈参（getter 结果/0/0）caller-clean（plain retn，调用点 add esp,0xC）；返回 al。
+    //   旧 CALL2(0x1D58751) 指向某函数中部的 retn，是垃圾地址；其对应栈参下游被忽略，改用 0 占位。
+    constexpr uint32_t MGR_GETTER = 0x124A670;
+    constexpr uint32_t SEND_PAT   = 0x1EB5D50;
 } // namespace Pat
 
 namespace OCR

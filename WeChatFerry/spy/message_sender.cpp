@@ -248,10 +248,29 @@ int send_rich_text(const RichText &rt)
 
 int send_pat(const std::string &roomid, const std::string &wxid)
 {
-    (void)roomid;
-    (void)wxid;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
+    // 两步编排（等价旧内联汇编，全部建模为带类型的 C++ 调用）：
+    // 1) CALL1：PatMgr magic-static 单例 getter（确保单例已初始化，其返回值仅作 SendPatMsg 的
+    //    SEH 帧 token 透传——经反编译校验只写入日志帧、从不解引用）。
+    // 2) CALL3：PatMgr::SendPatMsg（__usercall：ecx=roomid、edx=wxid，3 个栈参 caller-clean）。
+    //    以 __fastcall 建模：ecx=roomid、edx=wxid、栈参 manager/0/0。旧 CALL2 是垃圾地址，
+    //    其对应栈参（进队列记录后被下游忽略）改用 0 占位。返回 al 非零即成功。
+    auto getter       = reinterpret_cast<PatManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Pat::MGR_GETTER);
+    auto send_pat_msg = reinterpret_cast<SendPatFn>(g_WeChatWinDllAddr + Offsets::Pat::SEND_PAT);
+
+    std::wstring wsRoomid = util::s2w(roomid);
+    std::wstring wsWxid   = util::s2w(wxid);
+    WxString wxRoomid(wsRoomid);
+    WxString wxWxid(wsWxid);
+
+    void *manager  = getter();
+    uint8_t status = send_pat_msg(&wxRoomid, &wxWxid, manager, 0, 0);
+
+    return status ? 0 : -1;
 }
 
 int forward(uint64_t msgid, const std::string &receiver)
