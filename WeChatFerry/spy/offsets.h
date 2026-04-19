@@ -240,8 +240,18 @@ namespace OCR
 
 namespace Forward
 {
-    constexpr uint32_t CALL1 = 0xF59E40;
-    constexpr uint32_t CALL2 = 0xCE6730;
+    // 转发消息。
+    // 业务入口是 SendMessageMgr::forwordMsg：v3223 sub_10CE6730 → v31256 sub_11783230
+    //   （靠串 "SendMessageMgr::forwordMsg"/"forward scene:%d msgid:%d" 锚定，结构 1:1：
+    //    登录检查 +1420→+1468、内嵌 sub_11783C10=#13 SEND_MSG、msgPtr==0 时走
+    //    sub_1166FE00=ChatMgr::GetMgrByPrefixLocalId 按 localId/dbIdx 加载消息）。
+    // ABI __usercall，
+    //   ecx=scene（转发场景，纯统计元数据，取 5）、edx=msgPtr（传 0 走加载路径），
+    //   栈参：receiver WxString 按值(5 dword) + localId(u32) + dbIdx(u32)；返回 al；
+    //   对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __fastcall 建模、
+    //   栈失衡由 forward() 自身帧指针 epilogue 纠正（同 #13 sendMsg/#16 SendPatMsg 既定模式）。
+    // receiver 用 RichText::ASSIGN(0x19DAF20) 建 WeChat 拥有副本；forwordMsg 末尾 mm_free 它。
+    constexpr uint32_t FORWARD_MSG = 0x1783230;  // SendMessageMgr::forwordMsg（原 CALL2 语义）
 } // namespace Forward
 
 namespace QRCode

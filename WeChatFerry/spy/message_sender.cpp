@@ -54,9 +54,10 @@ using SendXmlBuildFn     = int(__fastcall *)(void *buffer, const WxString *sende
                                              const WxString *xml, const WxString *path, void *null_buf, int type);
 using SendXmlFinalizeFn  = void(__thiscall *)(void *buffer, const WxString *null_obj);
 using SendXmlCommitFn    = int(__fastcall *)(void *buffer, int zero, uint32_t param1, uint32_t param2);
-using PrepareForwardFn   = int(__fastcall *)(void *scratch, uint32_t dbidx_reg, const WxString *receiver,
-                                             uint32_t local_id, uint32_t dbidx_stack);
-using ExecuteForwardFn   = uint8_t(__thiscall *)(void *self);
+// SendMessageMgr::forwordMsg（__usercall，以 __fastcall 建模）：
+//   ecx=scene、edx=msg_ptr（0=按 local_id/db_idx 加载）、栈参 receiver WxString 按值 + local_id + db_idx。
+using ForwardMsgFn       = uint8_t(__fastcall *)(int scene, int msg_ptr, WxStringValue receiver,
+                                                 uint32_t local_id, uint32_t db_idx);
 using SendEmotionFn      = int(__thiscall *)(void *manager, WxStringValue path, WxStringValue null2,
                                              WxStringValue wxid, int type, WxStringValue null1,
                                              int zero, void *buffer);
@@ -275,10 +276,32 @@ int send_pat(const std::string &roomid, const std::string &wxid)
 
 int forward(uint64_t msgid, const std::string &receiver)
 {
-    (void)msgid;
-    (void)receiver;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
+    // 由 MsgSvrID 反查进程内 (localId, dbIdx)
+    uint64_t localId = 0;
+    uint32_t dbIdx   = 0;
+    if (db::get_local_id_and_dbidx(msgid, &localId, &dbIdx) != 0) {
+        LOG_ERROR("Failed to get localId, Please check id: {}", std::to_string(msgid));
+        return -1;
+    }
+
+    // 单步编排（等价旧内联汇编，建模为带类型的 C++ 调用）：SendMessageMgr::forwordMsg。
+    // msg_ptr 传 0 → 内部按 (localId, dbIdx) 加载源消息；scene=5 仅作转发场景统计元数据。
+    // 收件人须为 WeChat 拥有副本（forwordMsg 末尾 mm_free 它），故用 ASSIGN 深拷贝、勿传别名。
+    auto assign      = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto forward_msg = reinterpret_cast<ForwardMsgFn>(g_WeChatWinDllAddr + Offsets::Forward::FORWARD_MSG);
+
+    std::wstring wsReceiver = util::s2w(receiver);
+    WxString wxReceiver;
+    assign(&wxReceiver, wsReceiver.c_str(), -1);
+
+    uint8_t status = forward_msg(5, 0, to_value(wxReceiver), static_cast<uint32_t>(localId), dbIdx);
+
+    return status ? 0 : -1;
 }
 
 bool rpc_send_text(const TextMsg &text, uint8_t *out, size_t *len)
