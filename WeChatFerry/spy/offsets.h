@@ -36,10 +36,18 @@ namespace Message
         constexpr uint32_t SEND_IMAGE = 0x1783120;  // SendMessageMgr 图片提交叶子 sub_11783120（旧 IMG_CALL3=0xCE6640）
                                                     //   __thiscall(mgr, buf, receiver, path, options*)；options 布局见 message_sender.cpp
 
-        constexpr uint32_t FILE_CALL1 = 0x76AE20;
-        constexpr uint32_t FILE_CALL2 = 0xF59E40;
-        constexpr uint32_t FILE_CALL3 = 0xB6D1F0;
-        constexpr uint32_t FILE_CALL4 = 0x756960;
+        // 发送文件：走 AppMsgMgr::sendFile。
+        //   getter=RichText::GETTER(0x119C990, AppMsgMgr 单例)、assign=RichText::ASSIGN(0x19DAF20, WxString::assign)、
+        //   dtor=CHATMSG_DTOR(0x1199010, ChatMsg::~ChatMsg) 三者与卡片/文本发送共用；本命名空间仅新增文件提交叶子 SEND_FILE。
+        // 定位：旧 FILE_CALL3=0xB6D1F0=AppMsgMgr::sendFile（串 "AppMsgMgr::sendFile"）→ v31256 同串唯一 xref
+        //   sub_11621EF0（结构 1:1：串 "copy err,src:%s"/AppMsgMgr.cpp:1143、登录检查、末尾对各 WxString mm_free）。
+        //   旧 FILE_CALL1/2/4（getter/WxString 辅助/dtor）皆为 3.9.2.23 旧值，已被上述共用偏移取代。
+        // ABI：__usercall 对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __thiscall 建模
+        //   （ecx=manager，其余 32 个全部栈参），栈失衡由 send_file() 自身帧指针 epilogue 纠正。
+        //   参数（据 ChatViewModel::reSendMsg(sub_113CE240) case 0x31 精确核对，a3..a34）：
+        //     buffer(输出 ChatMsg) + receiver(WxString) + path(WxString) + 1 + 空 WxString + 0 + 空 WxString + 0 + 0 + 空 WxString + 0 + 0。
+        //   receiver/path 及三个空 WxString 全部被 sendFile mm_free，故须用 ASSIGN 建 WeChat 拥有副本、勿传 std::wstring 别名。
+        constexpr uint32_t SEND_FILE = 0x1621EF0;  // AppMsgMgr::sendFile 提交叶子（旧 FILE_CALL3=0xB6D1F0）
 
         constexpr uint32_t XML_CALL1 = 0xB8A70;
         constexpr uint32_t XML_CALL2 = 0x3ED5E0;

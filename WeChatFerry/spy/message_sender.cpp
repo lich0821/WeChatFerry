@@ -42,9 +42,14 @@ using SendTextFn         = int(__fastcall *)(void *buffer, const WxString *wxid,
 //   ecx=manager, buf=输出 ChatMsg, receiver/path=WxString*, options=选项结构指针（布局见 send_image）
 using SendImageFn        = void *(__thiscall *)(void *manager, void *buffer, const WxString *receiver,
                                                 const WxString *path, void *options);
-using FileSessionGetterFn = void **(*)();
-using SendFileFn         = void *(__thiscall *)(void *manager, void *buffer, WxStringValue wxid,
-                                                WxStringValue path, WxStringValue null_value, int reserved);
+// AppMsgMgr::sendFile（sub_11621EF0）：__usercall 对齐栈 → 以 __thiscall 建模（ecx=manager，其余全部栈参）。
+// 参数镜像 ChatViewModel::reSendMsg case 0x31：buffer + receiver + path + 1 + 空 + 0 + 空 + 0 + 0 + 空 + 0 + 0。
+// receiver/path 及三个空 WxString 都会被 sendFile mm_free，故均须为 ASSIGN 建的 WeChat 拥有副本。
+using SendFileFn         = void *(__thiscall *)(void *manager, void *buffer,
+                                                WxStringValue receiver, WxStringValue path, int flag1,
+                                                WxStringValue empty1, int flag2,
+                                                WxStringValue empty2, int zero1, int zero2,
+                                                WxStringValue empty3, int flag3, int flag4);
 using RichTextManagerGetterFn = void *(*)();
 // WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝，返回值忽略）
 using WxStringAssignFn   = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
@@ -165,9 +170,42 @@ void send_image(const std::string &wxid, const std::string &path)
 
 void send_file(const std::string &wxid, const std::string &path)
 {
-    (void)wxid;
-    (void)path;
-    LOG_ERROR("Not Implemented yet.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return;
+    }
+
+    // 四步编排（等价旧内联汇编，全部建模为带类型 C++ 调用，所有权与 WeChat 内部一致）：
+    // 1) GETTER：AppMsgMgr 单例（与卡片发送共用 RichText::GETTER，返回值即 manager，直接作 leaf 的 this，不 deref）
+    // 2) ASSIGN：把 receiver/path + 三个空串逐一深拷贝进 WeChat 拥有的 WxString（与卡片发送共用 RichText::ASSIGN）
+    // 3) SEND_FILE：AppMsgMgr::sendFile（__thiscall(manager, buffer, ...栈参...)）——内部会 mm_free 传入的全部 WxString
+    // 4) CHATMSG_DTOR：ChatMsg::~ChatMsg，清理栈上临时 ChatMsg（对象恰好 0x2D8 字节）
+    // 参数布局据 ChatViewModel::reSendMsg case 0x31：buffer + receiver + path + 1 + 空 + 0 + 空 + 0 + 0 + 空 + 0 + 0。
+    auto getter    = reinterpret_cast<RichTextManagerGetterFn>(g_WeChatWinDllAddr + Offsets::RichText::GETTER);
+    auto assign    = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto send_file = reinterpret_cast<SendFileFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_FILE);
+    auto cleanup   = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
+
+    // receiver/path 及三个空串都会被 sendFile mm_free，须为 WeChat 拥有副本（用 ASSIGN 深拷贝），绝不传 std::wstring 别名。
+    WxString wxReceiver;
+    WxString wxPath;
+    WxString wxEmpty1;
+    WxString wxEmpty2;
+    WxString wxEmpty3;
+    assign(&wxReceiver, wsWxid.c_str(), -1);
+    assign(&wxPath, wsPath.c_str(), -1);
+    assign(&wxEmpty1, L"", -1);
+    assign(&wxEmpty2, L"", -1);
+    assign(&wxEmpty3, L"", -1);
+
+    char buffer[0x2D8] = { 0 };
+    void *manager      = getter();
+    send_file(manager, buffer, to_value(wxReceiver), to_value(wxPath), 1, to_value(wxEmpty1), 0,
+              to_value(wxEmpty2), 0, 0, to_value(wxEmpty3), 0, 0);
+    cleanup(buffer);
 }
 
 void send_xml(const std::string &receiver, const std::string &xml, const std::string &path, int type)
