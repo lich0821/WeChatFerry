@@ -55,9 +55,19 @@ namespace Message
         constexpr uint32_t XML_CALL4 = 0x3ED7B0;
         constexpr uint32_t XML_PARAM = 0x2386FE4;
 
-        constexpr uint32_t EMO_CALL1 = 0x771980;
-        constexpr uint32_t EMO_CALL2 = 0x4777E0;
-        constexpr uint32_t EMO_CALL3 = 0x239E888;
+        // send_emotion 发本地自定义表情。
+        // 定位：CustomSmileyMgr 模块。发送叶子 sub_116C10C0 内嵌 9 处日志串 "CustomSmileyMgr::sendCustomEmotion" 锚定；
+        //   EMO_MGR_GETTER=sub_1208250（CustomSmileyMgr Meyers 单例 getter，构造函数 sub_116BB450 写 ??_7CustomSmileyMgr@@6B@
+        //   vftable 到 dword_1436A590，返回 &该对象本体）。旧汇编 `mov ebx,[EMO_CALL3]`（解引用全局指针）在目标版的对应物
+        //   即此 getter——目标版全局是对象本体而非指针，故 manager=getter() 直接用、不再 deref（同 send_image）。
+        // ABI（disasm 精确核对）：SEND_CUSTOM_EMOTION 为 __thiscall（ecx=manager），尾声 `mov esp,ebx;pop ebx;retn 5Ch`
+        //   被调清栈 0x5C=92 字节=恰好 7 参（path + 空 + wxid + type=2 + 空 + 0 + buffer），故精确建模即栈平衡、无需帧指针纠正。
+        //   参数与旧汇编逐字节吻合：[ebx+8/0xC]=path.ptr/len 为首参。type 常量取 2（本地文件来源）。
+        // 所有权：函数尾声对传入的 path/wxid/两个空 WxString 的 .ptr 逐个 mm_free（[ebx+1C/28/30/3C/48/54]），
+        //   故须用 ASSIGN 建 WeChat 拥有副本、按值传、绝不自行析构（同 send_file/richtext 模型，无 double-free）。
+        // WxString 拷贝复用 RichText::ASSIGN(0x19DAF20)；buffer 为 0x1C 置零小结构（[+4]=size 置零走正常路径），非 ChatMsg、无 dtor。
+        constexpr uint32_t EMO_MGR_GETTER      = 0x1208250;  // CustomSmileyMgr 单例 getter（返回 &对象本体 dword_1436A590）
+        constexpr uint32_t SEND_CUSTOM_EMOTION = 0x6C10C0;   // CustomSmileyMgr::sendCustomEmotion 发送叶子（旧 EMO_CALL2 无效）
     } // namespace Send
 
     namespace Receive

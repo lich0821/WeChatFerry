@@ -63,9 +63,12 @@ using SendXmlCommitFn    = int(__fastcall *)(void *buffer, int zero, uint32_t pa
 //   ecx=scene、edx=msg_ptr（0=按 local_id/db_idx 加载）、栈参 receiver WxString 按值 + local_id + db_idx。
 using ForwardMsgFn       = uint8_t(__fastcall *)(int scene, int msg_ptr, WxStringValue receiver,
                                                  uint32_t local_id, uint32_t db_idx);
+// CustomSmileyMgr::sendCustomEmotion（sub_116C10C0，__thiscall，ecx=manager，retn 0x5C 被调清栈）：
+//   path/wxid/两个空串按值 WxString，type=2，zero=0，buffer=0x1C 置零小结构指针。内部会 mm_free 全部按值 WxString。
 using SendEmotionFn      = int(__thiscall *)(void *manager, WxStringValue path, WxStringValue null2,
                                              WxStringValue wxid, int type, WxStringValue null1,
                                              int zero, void *buffer);
+using EmoMgrGetterFn     = void *(*)();  // CustomSmileyMgr 单例 getter（无参，返回 &对象本体）
 
 struct RichTextData {
     std::string name;
@@ -219,9 +222,38 @@ void send_xml(const std::string &receiver, const std::string &xml, const std::st
 
 void send_emotion(const std::string &wxid, const std::string &path)
 {
-    (void)wxid;
-    (void)path;
-    LOG_ERROR("Not Implemented yet.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return;
+    }
+
+    // 三步编排（等价旧内联汇编，全部建模为带类型 C++ 调用，所有权与 WeChat 内部一致）：
+    // 1) EMO_MGR_GETTER：CustomSmileyMgr 单例 getter（返回 &对象本体，直接作 this，不 deref）
+    // 2) ASSIGN：path/wxid 及两个空串逐一深拷贝进 WeChat 拥有的 WxString（复用 RichText::ASSIGN）
+    // 3) SEND_CUSTOM_EMOTION：CustomSmileyMgr::sendCustomEmotion
+    //    （__thiscall(manager, path, 空, wxid, type=2, 空, 0, buffer)，retn 0x5C 被调清栈，故精确建模即栈平衡）——
+    //    内部会 mm_free 传入的全部 WxString，故须传 ASSIGN 建的 WeChat 拥有副本、勿自行析构（无 double-free）。
+    // buffer 为 0x1C 置零小结构（[+4]=size，置零走"从文件发送"正常路径），非 ChatMsg、无 dtor。
+    auto getter = reinterpret_cast<EmoMgrGetterFn>(g_WeChatWinDllAddr + Offsets::Message::Send::EMO_MGR_GETTER);
+    auto assign = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto send   = reinterpret_cast<SendEmotionFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_CUSTOM_EMOTION);
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsPath = util::s2w(path);
+
+    // path/wxid 及两个空串都会被 sendCustomEmotion mm_free，须为 WeChat 拥有副本（用 ASSIGN 深拷贝），绝不传 std::wstring 别名。
+    WxString wxPath;
+    WxString wxWxid;
+    WxString wxEmpty1;
+    WxString wxEmpty2;
+    assign(&wxPath, wsPath.c_str(), -1);
+    assign(&wxWxid, wsWxid.c_str(), -1);
+    assign(&wxEmpty1, L"", -1);
+    assign(&wxEmpty2, L"", -1);
+
+    char buffer[0x1C] = { 0 };
+    void *manager     = getter();
+    send(manager, to_value(wxPath), to_value(wxEmpty1), to_value(wxWxid), 2, to_value(wxEmpty2), 0, buffer);
 }
 
 int send_rich_text(const RichText &rt)
