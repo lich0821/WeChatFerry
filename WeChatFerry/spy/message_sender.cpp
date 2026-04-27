@@ -55,10 +55,15 @@ using RichTextManagerGetterFn = void *(*)();
 using WxStringAssignFn   = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
 // AppMsgMgr::sendAppMsg：__thiscall，ecx=manager，收件人 WxString 按值在前、MMReaderItem* buff 在后
 using SendRichTextFn     = int(__thiscall *)(void *manager, WxStringValue receiver, void *buffer);
-using SendXmlBuildFn     = int(__fastcall *)(void *buffer, const WxString *sender, const WxString *receiver,
-                                             const WxString *xml, const WxString *path, void *null_buf, int type);
-using SendXmlFinalizeFn  = void(__thiscall *)(void *buffer, const WxString *null_obj);
-using SendXmlCommitFn    = int(__fastcall *)(void *buffer, int zero, uint32_t param1, uint32_t param2);
+// ChatMsg 默认构造器（sub_11A0ED0，__thiscall(this)→this）；send_xml 需要一个真正构造过的 ChatMsg
+using ChatMsgCtorFn      = void *(__thiscall *)(void *buffer);
+// appmsg 发送核心（sub_11621280）。__usercall caller-clean，以 __fastcall 建模（ecx=chatmsg, edx=from），
+//   8 个栈参 receiver/content/empty1/path/type/flag/empty2/0；栈失衡由 send_xml() 帧指针 epilogue 纠正。
+//   各 WxString 仅被读取深拷贝进 ChatMsg（不 mm_free），故用非拥有 WxString* 即可（同 send_text）。
+using SendAppMsgXmlFn    = char(__fastcall *)(void *chatmsg, const WxString *from, const WxString *receiver,
+                                              const WxString *content, const WxString *empty1,
+                                              const WxString *path, int type, int flag,
+                                              const WxString *empty2, int zero);
 // SendMessageMgr::forwordMsg（__usercall，以 __fastcall 建模）：
 //   ecx=scene、edx=msg_ptr（0=按 local_id/db_idx 加载）、栈参 receiver WxString 按值 + local_id + db_idx。
 using ForwardMsgFn       = uint8_t(__fastcall *)(int scene, int msg_ptr, WxStringValue receiver,
@@ -213,11 +218,39 @@ void send_file(const std::string &wxid, const std::string &path)
 
 void send_xml(const std::string &receiver, const std::string &xml, const std::string &path, int type)
 {
-    (void)receiver;
-    (void)xml;
-    (void)path;
-    (void)type;
-    LOG_ERROR("Not Implemented yet.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return;
+    }
+
+    // 三步编排（复刻 x64 旧基线 send_xml，x86 已把 10 参单体 + sign 生成合并进共享 appmsg 发送核心）：
+    // 1) CHATMSG_CTOR：构造一个真正的 ChatMsg（发送核心会往其字段 assign，必须先构造，不能只置零）
+    // 2) SEND_APPMSG：sub_11621280（__fastcall：ecx=chatmsg, edx=from，8 栈参 receiver/content/空/path/type/flag/空/0）
+    //    - a4=content=完整原始 appmsg XML → ChatMsg+112；a7=type=appmsg 子类型 → ChatMsg+244；内部自算 clientmsgid
+    //    - flag=1 跳过内部 <msgsource> 构造（原始 appmsg 自带内容，无需注入）
+    // 3) CHATMSG_DTOR：ChatMsg::~ChatMsg，释放构造出的 +179 子对象
+    // 所有权：发送核心只读取各 WxString 深拷贝进 ChatMsg（不 mm_free），故直接用非拥有 WxString(std::wstring)，无 double-free。
+    auto ctor = reinterpret_cast<ChatMsgCtorFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
+    auto send = reinterpret_cast<SendAppMsgXmlFn>(g_WeChatWinDllAddr + Offsets::Message::Send::SEND_APPMSG);
+    auto dtor = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
+
+    std::wstring wsFrom     = util::s2w(account::get_self_wxid());  // a2=from（发送核心入口守卫要求非空）
+    std::wstring wsReceiver = util::s2w(receiver);
+    std::wstring wsXml      = util::s2w(xml);
+    std::wstring wsPath     = util::s2w(path);
+    std::wstring wsEmpty;
+
+    WxString wxFrom(wsFrom);
+    WxString wxReceiver(wsReceiver);
+    WxString wxXml(wsXml);
+    WxString wxPath(wsPath);
+    WxString wxEmpty1(wsEmpty);
+    WxString wxEmpty2(wsEmpty);
+
+    char buffer[0x500] = { 0 };
+    ctor(buffer);
+    send(buffer, &wxFrom, &wxReceiver, &wxXml, &wxEmpty1, &wxPath, type, 1, &wxEmpty2, 0);
+    dtor(buffer);
 }
 
 void send_emotion(const std::string &wxid, const std::string &path)

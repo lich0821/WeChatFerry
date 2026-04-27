@@ -30,7 +30,6 @@ namespace Message
         constexpr uint32_t SEND_MSG = 0x1783C10;  // SendMessageMgr::sendMsg（__fastcall，ecx=buffer/edx=wxid，6 栈参 msg/at/1/0/0/0）
 
         // 发送图片：getter=SEND_MGR_GETTER、dtor=CHATMSG_DTOR 与文本发送共用
-        //   （旧命名 IMG_CALL1/IMG_CALL4）；旧 IMG_CALL2（0xF59E40 WxString 构造辅助）在带类型模型里
         //   不再需要（WxString 直接由 C++ 构造）。校验依据：ChatViewModel::reSendMsg(sub_113CE240) 的 case 3
         //   与多个真实调用者均为 getter()→SEND_IMAGE(mgr,buf,receiver,path,options)→~ChatMsg(buf)。
         constexpr uint32_t SEND_IMAGE = 0x1783120;  // SendMessageMgr 图片提交叶子 sub_11783120（旧 IMG_CALL3=0xCE6640）
@@ -39,9 +38,8 @@ namespace Message
         // 发送文件：走 AppMsgMgr::sendFile。
         //   getter=RichText::GETTER(0x119C990, AppMsgMgr 单例)、assign=RichText::ASSIGN(0x19DAF20, WxString::assign)、
         //   dtor=CHATMSG_DTOR(0x1199010, ChatMsg::~ChatMsg) 三者与卡片/文本发送共用；本命名空间仅新增文件提交叶子 SEND_FILE。
-        // 定位：旧 FILE_CALL3=0xB6D1F0=AppMsgMgr::sendFile（串 "AppMsgMgr::sendFile"）→ v31256 同串唯一 xref
+        // 定位：
         //   sub_11621EF0（结构 1:1：串 "copy err,src:%s"/AppMsgMgr.cpp:1143、登录检查、末尾对各 WxString mm_free）。
-        //   旧 FILE_CALL1/2/4（getter/WxString 辅助/dtor）皆为 3.9.2.23 旧值，已被上述共用偏移取代。
         // ABI：__usercall 对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __thiscall 建模
         //   （ecx=manager，其余 32 个全部栈参），栈失衡由 send_file() 自身帧指针 epilogue 纠正。
         //   参数（据 ChatViewModel::reSendMsg(sub_113CE240) case 0x31 精确核对，a3..a34）：
@@ -49,11 +47,21 @@ namespace Message
         //   receiver/path 及三个空 WxString 全部被 sendFile mm_free，故须用 ASSIGN 建 WeChat 拥有副本、勿传 std::wstring 别名。
         constexpr uint32_t SEND_FILE = 0x1621EF0;  // AppMsgMgr::sendFile 提交叶子（旧 FILE_CALL3=0xB6D1F0）
 
-        constexpr uint32_t XML_CALL1 = 0xB8A70;
-        constexpr uint32_t XML_CALL2 = 0x3ED5E0;
-        constexpr uint32_t XML_CALL3 = 0x107F00;
-        constexpr uint32_t XML_CALL4 = 0x3ED7B0;
-        constexpr uint32_t XML_PARAM = 0x2386FE4;
+        // send_xml 发原始 appmsg XML（type 为 appmsg 子类型，如 0x21 小程序）。
+        // 定位：
+        //   new_chat_msg×2 → xml_buf_sign(buf2,array,1)=sign → send_xml(buf1,from,to,body,thumb,buf3,type,4,sign,buf2) → free×2。
+        //   x86 3.9.12.56 已把该 10 参单体 + sign 生成合并进一个共享 appmsg 发送核心 sub_11621280（sign 由其内部 sub_11672DA0 生成、无需外部算）。
+        //   sub_11621280 被 sendFile/forwardAppMsg/sendQuoteMsg/安全提示 appmsg 等 10 个入口共用；照抄最简调用者
+        //   sub_1162A3B0（发固定安全中心 appmsg）的调用点反汇编逐参确认。CHATMSG_CTOR/CHATMSG_DTOR/RichText::ASSIGN 复用。
+        // ABI：__usercall caller-clean（调用点 `add esp,0x20`=8 栈参），
+        //   ecx=a1、edx=a2，以 __fastcall 建模、栈失衡由 send_xml() 自身帧指针 epilogue 纠正（同 send_pat/forward/send_file）。
+        //   参数：a1(ecx)=ChatMsg*（须先 CHATMSG_CTOR 构造）、a2(edx)=from 自己 wxid WxString*(→ChatMsg+380，源自 AccountServiceMgr，
+        //   与 x64 参考 arg2=from 吻合)、a3=收件人 WxString*(→+72 talker)、a4=原始 XML WxString*(→+112 content)、a5=空 WxString*、
+        //   a6=封面图 path WxString*(仅 subType==6 时用)、a7=type(appmsg 子类型→+244)、a8=flag(≠1 时内部建 <msgsource>，取 1 跳过)、
+        //   a9=空 WxString*、a10=0。入口守卫 *(a2+4)/*(a3+4)/*(a4+4) 均须>0（from/receiver/xml 非空）。
+        // 所有权：0x11621280 仅读取各 WxString 并深拷贝进 ChatMsg（不 mm_free 传入串），故用非拥有 WxString(std::wstring) 即可（同 send_text），无 double-free。
+        constexpr uint32_t SEND_APPMSG = 0x1621280;  // appmsg 发送核心（ecx=ChatMsg，原始 XML 走 a4→content）
+        constexpr uint32_t CHATMSG_CTOR = 0x1A0ED0;  // ChatMsg 默认构造器（__thiscall(this)→this，写 ??_7ChatMsg 与 InstanceCounter vftable，new(0x44) 建 +179 子对象）
 
         // send_emotion 发本地自定义表情。
         // 定位：CustomSmileyMgr 模块。发送叶子 sub_116C10C0 内嵌 9 处日志串 "CustomSmileyMgr::sendCustomEmotion" 锚定；
