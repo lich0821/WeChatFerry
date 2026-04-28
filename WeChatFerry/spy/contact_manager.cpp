@@ -29,6 +29,7 @@ struct WxStringValue {
 
 using BufferInitFn        = void(__thiscall *)(void *buffer);
 using BufferCleanupFn     = void(__thiscall *)(void *buffer);
+using WxStringAssignFn    = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
 using AcceptNewFriendFn   = int(__thiscall *)(void *buffer, const WxString *v3, void *nullbuffer,
                                               int reserved1, uint64_t scratch, WxStringValue v4,
                                               int scene, int reserved2);
@@ -172,11 +173,39 @@ std::vector<RpcContact_t> get_contacts()
 
 int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 {
-    (void)v3;
-    (void)v4;
-    (void)scene;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
+    // #21 通过好友申请：AddFriendHelper 三步编排（等价旧内联汇编，全部建模为带类型 C++ 调用，无内联汇编）：
+    // 1) ACCEPT_CTOR：在栈上把 buffer 构造成 AddFriendHelper（写 vftable、零初始化 WxString 字段、注册事件处理器）。
+    // 2) VERIFY_OK：AddFriendHelper::VerifyOK（纯 __thiscall，ecx=buffer；尾 retn 0x30 被调清栈 12 个 dword，
+    //    精确 __thiscall 即栈平衡、无需帧指针纠正）。
+    //    - v3（加密 username）：仅被读取并拷入 this+24 → 用非拥有 WxString 视图即可。
+    //    - v4（ticket）：函数尾部会 mm_free 其 wptr/ptr → 须用 RichText::ASSIGN 建 WeChat 拥有副本、按值传、勿自行析构。
+    // 3) ACCEPT_DTOR：AddFriendHelper 完整析构（释放 this 内 WxString、复位 EventHandler vftable）。
+    auto ctor      = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_CTOR);
+    auto verify_ok = reinterpret_cast<AcceptNewFriendFn>(g_WeChatWinDllAddr + Offsets::Friend::VERIFY_OK);
+    auto dtor      = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_DTOR);
+    auto assign    = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+
+    LOG_DEBUG("accept_new_friend v3: {}, v4: {}, scene: {}", v3, v4, scene);
+
+    std::wstring wsV3 = util::s2w(v3);
+    std::wstring wsV4 = util::s2w(v4);
+    WxString wxV3(wsV3);                       // 非拥有视图：VerifyOK 只读取
+    WxString wxV4;                             // ticket：须为 WeChat 拥有副本（VerifyOK 末尾 mm_free 它）
+    assign(&wxV4, wsV4.c_str(), -1);
+
+    char buffer[0x40]      = { 0 };
+    char nullbuffer[0x3CC] = { 0 };
+
+    ctor(buffer);
+    int success = verify_ok(buffer, &wxV3, nullbuffer, 0, 0, to_value(wxV4), scene, 0);
+    dtor(buffer);
+
+    return success;
 }
 
 int add_friend_by_wxid(const std::string &wxid, const std::string &msg)

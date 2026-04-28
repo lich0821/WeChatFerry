@@ -145,10 +145,16 @@ namespace Database
 
 namespace Friend
 {
-    constexpr uint32_t ACCEPT_CALL1 = 0xA17D50;
-    constexpr uint32_t ACCEPT_CALL2 = 0xF59E40;
-    constexpr uint32_t ACCEPT_CALL3 = 0xA18BD0;
-    constexpr uint32_t ACCEPT_CALL4 = 0xA17E70;
+    // #21 通过好友申请：走 AddFriendHelper（RTTI .?AVAddFriendHelper@@）。
+    //   ACCEPT_CTOR = AddFriendHelper::AddFriendHelper（写 vftable 0x13BFA094，零初始化，注册 4 个事件处理器 sub_11803A10(179/182/177/178)）
+    //   VERIFY_OK   = AddFriendHelper::VerifyOK（串 "AddFriendHelper::VerifyOK" 锚定；内部用 RichText::ASSIGN 把 v3 拷入 this+24；末尾 mm_free v4 的 wptr/ptr）
+    //   ACCEPT_DTOR = AddFriendHelper::~AddFriendHelper（写 vftable，释放 this+6/this+9 的 WxString，复位 EventHandler vftable）
+    // ABI（disasm 精确核对）：VerifyOK 是纯 __thiscall——ecx=buffer(this)，尾 `retn 30h` 被调清栈 0x30=48 字节=恰好 12 dword
+    //   栈参：v3(&WxString) + nullbuffer + 0 + scratch(u64) + v4(WxStringValue 按值 5 dword) + scene + 0。被调清栈=精确 __thiscall 即栈平衡、无需帧指针纠正。
+    // 所有权：v3 仅被读取(拷入 this+24)、不 free → 非拥有视图即可；v4 被 VerifyOK mm_free(wptr+ptr)，故须用 RichText::ASSIGN(0x19DAF20) 建 WeChat 拥有副本、按值传、勿自行析构。
+    constexpr uint32_t ACCEPT_CTOR = 0x4CBD20;  // AddFriendHelper 构造器（原 ACCEPT_CALL1=0xA17D50）
+    constexpr uint32_t VERIFY_OK   = 0x4CCE70;  // AddFriendHelper::VerifyOK（原 ACCEPT_CALL3=0xA18BD0）
+    constexpr uint32_t ACCEPT_DTOR = 0x4CBE40;  // AddFriendHelper 析构器（原 ACCEPT_CALL4=0xA17E70）
 } // namespace Friend
 
 namespace Chatroom
