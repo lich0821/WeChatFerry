@@ -1,4 +1,4 @@
-#include "chatroom_manager.h"
+﻿#include "chatroom_manager.h"
 
 #include <sstream>
 #include <vector>
@@ -31,6 +31,9 @@ struct InviteAddrValue {
 };
 
 using ChatroomManagerGetterFn = void *(*)();
+// WxString::assign(dst,src,len)（__thiscall，mm_realloc 深拷贝）——与卡片/文件发送共用 RichText::ASSIGN
+using WxStringAssignFn        = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
+// ChatRoomMgr::doAddMemberToChatRoom：纯 __thiscall(ecx=manager)，8 栈参（members 1 + roomid 5 + reserved 2），retn 0x20 被调清栈
 using AddMembersFn            = int(__thiscall *)(void *manager, const std::vector<WxString> *members,
                                        WxStringValue roomid, int64_t reserved);
 using DelMembersFn            = int(__thiscall *)(void *manager, const std::vector<WxString> *members,
@@ -53,10 +56,50 @@ WxStringValue to_value(const WxString &value)
 
 int add_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    (void)roomid;
-    (void)wxids;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
+    // 1) 共用 getter：取 ChatRoomMgr 单例（返回对象指针本体，直接用、不 deref）
+    auto get_manager = reinterpret_cast<ChatroomManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Chatroom::MGR_GETTER);
+    void *manager    = get_manager();
+    if (manager == nullptr) {
+        LOG_ERROR("Failed to get ChatRoomMgr.");
+        return -1;
+    }
+
+    // 2) 成员列表：先建全部 std::wstring，再统一包成非拥有 WxString 视图，
+    //    避免 vector 扩容使先前 WxString.wptr 失效。
+    //    doAddMemberToChatRoom 只读取成员并深拷贝进 net scene，故非拥有视图即可。
+    std::vector<std::wstring> vMembers;
+    std::wstringstream wss(util::s2w(wxids));
+    while (wss.good()) {
+        std::wstring wstr;
+        getline(wss, wstr, L',');
+        if (!wstr.empty()) {
+            vMembers.push_back(wstr);
+        }
+    }
+    std::vector<WxString> vWxMembers;
+    vWxMembers.reserve(vMembers.size());
+    for (auto &m : vMembers) {
+        vWxMembers.push_back(WxString(m));
+    }
+
+    // 3) roomid：doAddMemberToChatRoom 末尾会 mm_free roomid 的 wptr/ptr，
+    //    故须用 ASSIGN 建 WeChat 拥有副本、按值传、绝不传 std::wstring 别名。
+    auto assign           = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    std::wstring wsRoomid = util::s2w(roomid);
+    WxString wxRoomid;
+    assign(&wxRoomid, wsRoomid.c_str(), -1);
+
+    LOG_DEBUG("Adding {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
+
+    // 4) doAddMemberToChatRoom(manager, &members, roomidValue(按值), reserved=0)：
+    //    纯 __thiscall(retn 0x20)，栈平衡、无需帧指针纠正。
+    auto add_members = reinterpret_cast<AddMembersFn>(g_WeChatWinDllAddr + Offsets::Chatroom::ADD_MEMBER);
+    return add_members(manager, &vWxMembers, to_value(wxRoomid), 0);
 }
 
 int del_chatroom_member(const std::string &roomid, const std::string &wxids)

@@ -22,11 +22,11 @@ namespace Message
 {
     namespace Send
     {
-        // 共享辅助（多个发送函数复用；旧命名 TEXT_CALL1/CALL3、IMG_CALL1/CALL4）：
+        // 共享辅助：
         constexpr uint32_t SEND_MGR_GETTER = 0x1197AC0;  // SendMessageMgr 单例 getter（读 dword_143682F4，空则 new(0xB0)+ctor sub_11773FD0）
         constexpr uint32_t CHATMSG_DTOR    = 0x1199010;  // ChatMsg::~ChatMsg，清理栈上临时 ChatMsg（对象恰好 0x2D8 字节，=Receive::CALL）
 
-        // 发送文本（旧命名 TEXT_CALL2）：
+        // 发送文本：
         constexpr uint32_t SEND_MSG = 0x1783C10;  // SendMessageMgr::sendMsg（__fastcall，ecx=buffer/edx=wxid，6 栈参 msg/at/1/0/0/0）
 
         // 发送图片：getter=SEND_MGR_GETTER、dtor=CHATMSG_DTOR 与文本发送共用
@@ -87,7 +87,7 @@ namespace Message
         constexpr uint32_t HOOK    = 0x17B93B5;  // 定点 call 站点（返回地址过滤用 HOOK+5）
         constexpr uint32_t CALL    = 0x1199010;  // ChatMsg::~ChatMsg 入口（detour 目标；前 5 字节 51 56 57 8B FE 可安全搬进 trampoline）
         // ---- ChatMsg 对象字段（相对已解析 ChatMsg 基址）----
-        // 经 v3223/v31256 ctor+dtor 对比校验：低区（<0x48）不变；高区字段整体 +8（this+0x134 子对象内每个 std::string 后移 2 dword）。
+        // 低区（<0x48）不变；高区字段整体 +8（this+0x134 子对象内每个 std::string 后移 2 dword）。
         constexpr uint32_t MSG_ID  = 0x30;   // 不变
         constexpr uint32_t TYPE    = 0x38;   // 不变
         constexpr uint32_t IS_SELF = 0x3C;   // 不变
@@ -145,7 +145,7 @@ namespace Database
 
 namespace Friend
 {
-    // #21 通过好友申请：走 AddFriendHelper（RTTI .?AVAddFriendHelper@@）。
+    // 通过好友申请：走 AddFriendHelper（RTTI .?AVAddFriendHelper@@）。
     //   ACCEPT_CTOR = AddFriendHelper::AddFriendHelper（写 vftable 0x13BFA094，零初始化，注册 4 个事件处理器 sub_11803A10(179/182/177/178)）
     //   VERIFY_OK   = AddFriendHelper::VerifyOK（串 "AddFriendHelper::VerifyOK" 锚定；内部用 RichText::ASSIGN 把 v3 拷入 this+24；末尾 mm_free v4 的 wptr/ptr）
     //   ACCEPT_DTOR = AddFriendHelper::~AddFriendHelper（写 vftable，释放 this+6/this+9 的 WxString，复位 EventHandler vftable）
@@ -159,17 +159,20 @@ namespace Friend
 
 namespace Chatroom
 {
-    constexpr uint32_t ADD_CALL1 = 0x78CF20;
-    constexpr uint32_t ADD_CALL2 = 0xF59E40;
-    constexpr uint32_t ADD_CALL3 = 0xBD1DC0;
+    // 共用单例 getter：ChatRoomMgr magic-static（new(0x218)+ctor sub_1167DE60+register，返回对象指针本体）。
+    // add/del/invite 三条链共用（原 ADD_CALL1=DEL_CALL1=INV_CALL3=0x78CF20，#22 解验）
+    constexpr uint32_t MGR_GETTER = 0x11C43A0;
 
-    constexpr uint32_t DEL_CALL1 = 0x78CF20;
-    constexpr uint32_t DEL_CALL2 = 0xF59E40;
-    constexpr uint32_t DEL_CALL3 = 0xBD22A0;
+    // ChatRoomMgr::doAddMemberToChatRoom（串 "ChatRoomMgr::doAddMemberToChatRoom" 锚定；原 ADD_CALL3=0xBD1DC0，#22 解验）。
+    // 纯 __thiscall(ecx=manager, retn 0x20=8 栈参)；末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本。
+    // roomid 的 WxString::assign 复用 RichText::ASSIGN(0x19DAF20)（原 ADD_CALL2=0xF59E40 废弃）。
+    constexpr uint32_t ADD_MEMBER = 0x167F680;
+
+    // 以下删/邀请业务入口仍是 3.9.2.23 旧值，待 #23/#24 重定位（getter 已改用上面的 MGR_GETTER）
+    constexpr uint32_t DEL_CALL3 = 0xBD22A0;  // ChatRoomMgr::doDelMemberFromChatRoom（待校验）
 
     constexpr uint32_t INV_CALL1 = 0x78CB40;
     constexpr uint32_t INV_CALL2 = 0x7F99D0;
-    constexpr uint32_t INV_CALL3 = 0x78CF20;
     constexpr uint32_t INV_CALL4 = 0x78CEF0;
     constexpr uint32_t INV_CALL5 = 0xF59E40;
     constexpr uint32_t INV_CALL6 = 0xBD1A00;
@@ -186,7 +189,7 @@ namespace Transfer
 
 namespace Moments
 {
-    // 接收路径（#12 已解验，v3223/v31256 双会话）：
+    // 接收路径：
     //   CALL = SnsTimeLineMgr::OnSnsTimeLineSceneFinish 入口（朋友圈接收回调，__thiscall(this,a2,a3)，2 个调用者）；
     //   HOOK = OnProcessTimelineResp::<lambda_1> 内 `call OnSnsTimeLineSceneFinish(this,&container,0)` 定点，
     //          用返回地址 == HOOK+5 过滤（手法同 #11），a2 即 dispatch 的容器指针。
@@ -230,7 +233,7 @@ namespace RichText
 {
     // 发送消息卡片（语义重命名）。
     // 业务对象是 MMReaderItem（RTTI .?AVMMReaderItem@@），管理器是 AppMsgMgr 全局单例。
-    // 定位链：v3223 旧汇编 CALL1..5 → v3223 AppMsgMgr getter(sub_1076AE20)/send(sub_10B73000)/
+    // 定位链：AppMsgMgr getter(sub_1076AE20)/send(sub_10B73000)/
     //   MMReaderItem ctor(sub_1076E630) → 经 BizProfileMsgBaseItem::ForwardtoUserNames(v31256
     //   sub_1119D480，构造 MMReaderItem 后走 getter→sub_11628DC0) 及字段读取器逐项对齐得 v31256 值。
     // 编排（无内联汇编，全部带类型 C++ 调用，所有权与 WeChat 内部一致）：
@@ -258,7 +261,6 @@ namespace Pat
     // MGR_GETTER = PatMgr magic-static 单例 getter（读 dword_1436A8C8，空则 new(0x6C)+ctor sub_11EB4620）。
     // SEND_PAT   = PatMgr::SendPatMsg（串锚定），__usercall：ecx=roomid(chat)、edx=wxid(patted)，
     //   3 个栈参（getter 结果/0/0）caller-clean（plain retn，调用点 add esp,0xC）；返回 al。
-    //   旧 CALL2(0x1D58751) 指向某函数中部的 retn，是垃圾地址；其对应栈参下游被忽略，改用 0 占位。
     constexpr uint32_t MGR_GETTER = 0x124A670;
     constexpr uint32_t SEND_PAT   = 0x1EB5D50;
 } // namespace Pat
@@ -281,7 +283,7 @@ namespace Forward
     //   ecx=scene（转发场景，纯统计元数据，取 5）、edx=msgPtr（传 0 走加载路径），
     //   栈参：receiver WxString 按值(5 dword) + localId(u32) + dbIdx(u32)；返回 al；
     //   对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __fastcall 建模、
-    //   栈失衡由 forward() 自身帧指针 epilogue 纠正（同 #13 sendMsg/#16 SendPatMsg 既定模式）。
+    //   栈失衡由 forward() 自身帧指针 epilogue 纠正。
     // receiver 用 RichText::ASSIGN(0x19DAF20) 建 WeChat 拥有副本；forwordMsg 末尾 mm_free 它。
     constexpr uint32_t FORWARD_MSG = 0x1783230;  // SendMessageMgr::forwordMsg（原 CALL2 语义）
 } // namespace Forward
