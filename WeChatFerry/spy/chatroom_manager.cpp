@@ -52,6 +52,26 @@ WxStringValue to_value(const WxString &value)
     return { value.wptr, value.size, value.capacity, value.ptr, value.clen };
 }
 
+// 把逗号分隔的 wxids 拆成非拥有 WxString 视图。storage 持有底层 std::wstring，必须与返回值同生命周期：
+// 先建全部 std::wstring 再统一包视图，避免 vector 扩容使先前 WxString.wptr 失效。
+std::vector<WxString> make_member_views(const std::string &wxids, std::vector<std::wstring> &storage)
+{
+    std::wstringstream wss(util::s2w(wxids));
+    while (wss.good()) {
+        std::wstring wstr;
+        getline(wss, wstr, L',');
+        if (!wstr.empty()) {
+            storage.push_back(wstr);
+        }
+    }
+    std::vector<WxString> views;
+    views.reserve(storage.size());
+    for (auto &m : storage) {
+        views.push_back(WxString(m));
+    }
+    return views;
+}
+
 } // namespace
 
 int add_chatroom_member(const std::string &roomid, const std::string &wxids)
@@ -69,23 +89,9 @@ int add_chatroom_member(const std::string &roomid, const std::string &wxids)
         return -1;
     }
 
-    // 2) 成员列表：先建全部 std::wstring，再统一包成非拥有 WxString 视图，
-    //    避免 vector 扩容使先前 WxString.wptr 失效。
-    //    doAddMemberToChatRoom 只读取成员并深拷贝进 net scene，故非拥有视图即可。
+    // 2) 成员列表：非拥有 WxString 视图（doAddMemberToChatRoom 只读取并深拷贝进 net scene）。
     std::vector<std::wstring> vMembers;
-    std::wstringstream wss(util::s2w(wxids));
-    while (wss.good()) {
-        std::wstring wstr;
-        getline(wss, wstr, L',');
-        if (!wstr.empty()) {
-            vMembers.push_back(wstr);
-        }
-    }
-    std::vector<WxString> vWxMembers;
-    vWxMembers.reserve(vMembers.size());
-    for (auto &m : vMembers) {
-        vWxMembers.push_back(WxString(m));
-    }
+    std::vector<WxString> vWxMembers = make_member_views(wxids, vMembers);
 
     // 3) roomid：doAddMemberToChatRoom 末尾会 mm_free roomid 的 wptr/ptr，
     //    故须用 ASSIGN 建 WeChat 拥有副本、按值传、绝不传 std::wstring 别名。
@@ -104,10 +110,34 @@ int add_chatroom_member(const std::string &roomid, const std::string &wxids)
 
 int del_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    (void)roomid;
-    (void)wxids;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
+    // 1) 共用 getter：与加群同一个 ChatRoomMgr 单例（返回对象指针本体，直接用、不 deref）
+    auto get_manager = reinterpret_cast<ChatroomManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Chatroom::MGR_GETTER);
+    void *manager    = get_manager();
+    if (manager == nullptr) {
+        LOG_ERROR("Failed to get ChatRoomMgr.");
+        return -1;
+    }
+
+    // 2) 成员列表：非拥有 WxString 视图（doDelMemberFromChatRoom 只读取并深拷贝进 net scene）。
+    std::vector<std::wstring> vMembers;
+    std::vector<WxString> vWxMembers = make_member_views(wxids, vMembers);
+
+    // 3) roomid：doDelMemberFromChatRoom 末尾同样 mm_free roomid 的 wptr/ptr，须用 ASSIGN 建 WeChat 拥有副本、按值传。
+    auto assign           = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    std::wstring wsRoomid = util::s2w(roomid);
+    WxString wxRoomid;
+    assign(&wxRoomid, wsRoomid.c_str(), -1);
+
+    LOG_DEBUG("Deleting {} members[{}] from {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
+
+    // 4) doDelMemberFromChatRoom(manager, &members, roomidValue(按值))：6 栈参 retn 0x18 被调清栈、栈平衡（比加群少 reserved）。
+    auto del_members = reinterpret_cast<DelMembersFn>(g_WeChatWinDllAddr + Offsets::Chatroom::DEL_MEMBER);
+    return del_members(manager, &vWxMembers, to_value(wxRoomid));
 }
 
 int invite_chatroom_member(const std::string &roomid, const std::string &wxids)

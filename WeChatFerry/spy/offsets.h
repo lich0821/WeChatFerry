@@ -160,17 +160,21 @@ namespace Friend
 namespace Chatroom
 {
     // 共用单例 getter：ChatRoomMgr magic-static（new(0x218)+ctor sub_1167DE60+register，返回对象指针本体）。
-    // add/del/invite 三条链共用（原 ADD_CALL1=DEL_CALL1=INV_CALL3=0x78CF20，#22 解验）
+    // add/del/invite 三条链共用。
     constexpr uint32_t MGR_GETTER = 0x11C43A0;
 
-    // ChatRoomMgr::doAddMemberToChatRoom（串 "ChatRoomMgr::doAddMemberToChatRoom" 锚定；原 ADD_CALL3=0xBD1DC0，#22 解验）。
+    // ChatRoomMgr::doAddMemberToChatRoom（串 "ChatRoomMgr::doAddMemberToChatRoom" 锚定）。
     // 纯 __thiscall(ecx=manager, retn 0x20=8 栈参)；末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本。
-    // roomid 的 WxString::assign 复用 RichText::ASSIGN(0x19DAF20)（原 ADD_CALL2=0xF59E40 废弃）。
+    // roomid 的 WxString::assign 复用 RichText::ASSIGN(0x19DAF20)。
     constexpr uint32_t ADD_MEMBER = 0x167F680;
 
-    // 以下删/邀请业务入口仍是 3.9.2.23 旧值，待 #23/#24 重定位（getter 已改用上面的 MGR_GETTER）
-    constexpr uint32_t DEL_CALL3 = 0xBD22A0;  // ChatRoomMgr::doDelMemberFromChatRoom（待校验）
+    // ChatRoomMgr::doDelMemberFromChatRoom（串 "ChatRoomMgr::doDelMemberFromChatRoom" 锚定）。
+    // aligned-stack __usercall prologue 但尾 retn 0x18=6 栈参被调清栈（members 1 + roomid 5），
+    // args 读自 ebx 相对（原始栈）→ 从调用者看等价纯 __thiscall、栈平衡、无需帧指针纠正。
+    // 末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本；getter/assign 与加群共用。
+    constexpr uint32_t DEL_MEMBER = 0x167FBD0;
 
+    // 以下邀请业务入口仍是 3.9.2.23 旧值，待重定位（getter 已改用上面的 MGR_GETTER）
     constexpr uint32_t INV_CALL1 = 0x78CB40;
     constexpr uint32_t INV_CALL2 = 0x7F99D0;
     constexpr uint32_t INV_CALL4 = 0x78CEF0;
@@ -192,17 +196,17 @@ namespace Moments
     // 接收路径：
     //   CALL = SnsTimeLineMgr::OnSnsTimeLineSceneFinish 入口（朋友圈接收回调，__thiscall(this,a2,a3)，2 个调用者）；
     //   HOOK = OnProcessTimelineResp::<lambda_1> 内 `call OnSnsTimeLineSceneFinish(this,&container,0)` 定点，
-    //          用返回地址 == HOOK+5 过滤（手法同 #11），a2 即 dispatch 的容器指针。
+    //          用返回地址 == HOOK+5 过滤，a2 即 dispatch 的容器指针。
     constexpr uint32_t HOOK    = 0x1FDB1E5;
     constexpr uint32_t CALL    = 0x1FDB4D0;
-    // CALL1/2/3（单例 getter / 首页 / 翻页刷新）仅 refresh_pyq(#28) 用，仍是 3.9.2.23 旧值，待 #28 迁移。
+    // CALL1/2/3（单例 getter / 首页 / 翻页刷新）仅 refresh_pyq 用，仍是 3.9.2.23 旧值。
     constexpr uint32_t CALL1   = 0xC39680;
     constexpr uint32_t CALL2   = 0x14E2140;
     constexpr uint32_t CALL3   = 0x14E21E0;
     // 容器字段：主 feed 数组 begin/end 指针（容器 = a2）。
     constexpr uint32_t START   = 0x20;
     constexpr uint32_t END     = 0x24;
-    // 单个 SnsObject（元素，STEP 字节）内字段（#12 重验：低区不变，XML 随元素增大位移）：
+    // 单个 SnsObject（元素，STEP 字节）内字段：
     constexpr uint32_t TS      = 0x2C;   // 不变（内层子对象 gap 内的 dword）
     constexpr uint32_t WXID    = 0x18;   // 不变（内层子对象首个 std::string）
     constexpr uint32_t CONTENT = 0x3C;   // 不变（内层子对象第 2 个 std::string）
