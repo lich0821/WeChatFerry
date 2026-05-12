@@ -174,14 +174,14 @@ namespace Chatroom
     // 末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本；getter/assign 与加群共用。
     constexpr uint32_t DEL_MEMBER = 0x167FBD0;
 
-    // 以下邀请业务入口仍是 3.9.2.23 旧值，待重定位（getter 已改用上面的 MGR_GETTER）
-    constexpr uint32_t INV_CALL1 = 0x78CB40;
-    constexpr uint32_t INV_CALL2 = 0x7F99D0;
-    constexpr uint32_t INV_CALL4 = 0x78CEF0;
-    constexpr uint32_t INV_CALL5 = 0xF59E40;
-    constexpr uint32_t INV_CALL6 = 0xBD1A00;
-    constexpr uint32_t INV_CALL7 = 0x7FA980;
-    constexpr uint32_t INV_CALL8 = 0x755060;
+    // 邀请入群：NetSceneInviteChatRoomMember/OpenIM 构建器 + 内部 SceneCenter::doScene 发送
+    //（串 "new NetSceneInviteChatRoomMember (id:%d)" 锚定 sub_1167F280）。
+    // __stdcall(members 指针, roomid WxString 按值 5 dword, 上下文 shared_ptr 按值 2 dword)。
+    // 内部按 roomid 是否以 "@im.chatroom" 结尾分流普通/OpenIM 两种 NetScene，并直接 doScene 发送。
+    // 末尾 mm_free roomid 的 wptr/ptr → roomid 需 ASSIGN 建拥有副本、按值传（同 add/del）；
+    // 上下文 shared_ptr 可传 {0,0}（观察到的调用点即传 NULL，为可选历史信息）；
+    // getter 复用 MGR_GETTER（仅 warmup 确保单例）、roomid 拷贝复用 RichText::ASSIGN。
+    constexpr uint32_t INVITE_MEMBER = 0x167F280;
 } // namespace Chatroom
 
 namespace Transfer

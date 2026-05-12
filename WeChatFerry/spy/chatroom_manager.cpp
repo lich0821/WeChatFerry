@@ -25,9 +25,10 @@ struct WxStringValue {
     uint32_t clen;
 };
 
-struct InviteAddrValue {
-    uint32_t first;
-    uint32_t second;
+// 邀请上下文 shared_ptr（2 dword）：{ref_count 控制块指针, 对象指针}；按值传 {0,0}=NULL 可选历史信息
+struct InviteContext {
+    uint32_t ctrl;
+    uint32_t obj;
 };
 
 using ChatroomManagerGetterFn = void *(*)();
@@ -38,14 +39,9 @@ using AddMembersFn            = int(__thiscall *)(void *manager, const std::vect
                                        WxStringValue roomid, int64_t reserved);
 using DelMembersFn            = int(__thiscall *)(void *manager, const std::vector<WxString> *members,
                                        WxStringValue roomid);
-using SetupInviteManagerFn    = void(__thiscall *)(void *manager, DWORD *addr);
-using WarmupInviteFn          = void (*)();
-using BuildInviteAddrFn       = void(__thiscall *)(InviteAddrValue *out, DWORD *src);
-using BuildInviteRoomFn       = void(__thiscall *)(WxStringValue *out, const WxString *src);
-using InviteMembersFn         = int(__stdcall *)(const std::vector<WxString> *members, WxStringValue roomid,
-                                                 InviteAddrValue addr_value);
-using CommitInviteFn          = int(__thiscall *)(void *manager, int confirm, int reserved);
-using CleanupInviteAddrFn     = void(__thiscall *)(DWORD *addr);
+// NetSceneInviteChatRoomMember 构建器 + 内部 doScene 发送：__stdcall(members 指针, roomid 按值 5 dword, 上下文 shared_ptr 按值 2 dword)
+using InviteMembersFn         = char(__stdcall *)(const std::vector<WxString> *members, WxStringValue roomid,
+                                                  InviteContext context);
 
 WxStringValue to_value(const WxString &value)
 {
@@ -142,10 +138,36 @@ int del_chatroom_member(const std::string &roomid, const std::string &wxids)
 
 int invite_chatroom_member(const std::string &roomid, const std::string &wxids)
 {
-    (void)roomid;
-    (void)wxids;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (roomid.empty() || wxids.empty()) {
+        LOG_ERROR("Empty roomid or wxids.");
+        return -1;
+    }
+
+    // 1) 共用 getter：仅 warmup，确保 ChatRoomMgr 单例已构造（返回值丢弃）。
+    //    邀请核心不经过 manager——NetScene 构建器是自足的 __stdcall，doScene 直接发送。
+    auto get_manager = reinterpret_cast<ChatroomManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Chatroom::MGR_GETTER);
+    if (get_manager() == nullptr) {
+        LOG_ERROR("Failed to get ChatRoomMgr.");
+        return -1;
+    }
+
+    // 2) 成员列表：非拥有 WxString 视图（构建器只读取并深拷贝进 net scene 请求）。
+    std::vector<std::wstring> vMembers;
+    std::vector<WxString> vWxMembers = make_member_views(wxids, vMembers);
+
+    // 3) roomid：构建器末尾会 mm_free roomid 的 wptr/ptr，故须用 ASSIGN 建 WeChat 拥有副本、按值传。
+    auto assign           = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    std::wstring wsRoomid = util::s2w(roomid);
+    WxString wxRoomid;
+    assign(&wxRoomid, wsRoomid.c_str(), -1);
+
+    LOG_DEBUG("Inviting {} members[{}] to {}", vWxMembers.size(), wxids.c_str(), roomid.c_str());
+
+    // 4) 构建器(members, roomidValue 按值, 上下文 shared_ptr={0,0} NULL)：
+    //    内部按 roomid 是否 "@im.chatroom" 结尾分流普通/OpenIM，并 SceneCenter::doScene 发送。
+    //    __stdcall 被调清栈，无需帧指针纠正。返回 1 表示已入队。
+    auto invite_members = reinterpret_cast<InviteMembersFn>(g_WeChatWinDllAddr + Offsets::Chatroom::INVITE_MEMBER);
+    return invite_members(&vWxMembers, to_value(wxRoomid), InviteContext{ 0, 0 });
 }
 
 bool rpc_add_chatroom_member(const MemberMgmt &m, uint8_t *out, size_t *len)
