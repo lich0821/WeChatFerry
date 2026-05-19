@@ -1,4 +1,4 @@
-#pragma warning(disable : 4244)
+﻿#pragma warning(disable : 4244)
 
 #include "misc_manager.h"
 
@@ -32,6 +32,7 @@ namespace
 
 using ManagerGetterFn        = void *(*)();
 using BufferInitFn           = void(__thiscall *)(void *buffer);
+using BufferCleanupFn        = void(__thiscall *)(void *buffer);
 using BufferCleanupExFn      = void(__thiscall *)(void *buffer, int free_memory);
 using WarmupFn               = void (*)();
 using RefreshFirstPageFn     = int(__thiscall *)(void *manager, void *buffer, int forward);
@@ -41,7 +42,12 @@ using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *
                                                  WxString *ocr_buffer, uint32_t *tmp, const WxString *null_obj);
 using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
 using LoadAttachmentMetaFn   = int(__thiscall *)(void *buffer, uint32_t local_id, uint32_t db_idx);
-using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, int reserved, int sync);
+// PreDownLoadMgr::push_attach_task：纯 __thiscall（ecx=manager，尾 retn 0x10=4 栈参被调清栈）。
+// user_clicked 仅 sync==0 分支用，本处 sync=1 传 0（照真实调用点 push_attach_task(manager, buffer, 0, 1, 0)）。
+using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, int reserved, int sync,
+                                                 int user_clicked);
+// WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝）——把落盘路径写成 WeChat 拥有副本。
+using WxStringAssignFn       = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
 using RevokeMessageFn        = int(__thiscall *)(void *manager, void *chat_msg);
 using ReceiveTransferFn      = int(__fastcall *)(void *pay_info, const WxString *wxid, uint64_t scratch,
                                                  int confirm);
@@ -130,13 +136,12 @@ int refresh_pyq(uint64_t id)
 
 int download_attachment(uint64_t id, const std::string &thumb, const std::string &extra)
 {
-    (void)id;
-    (void)thumb;
-    (void)extra;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
 
-    int status    = -1;
+    int status = -1;
     uint64_t localId;
     uint32_t dbIdx;
 
@@ -149,33 +154,40 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
         return status;
     }
 
+    // 编排（全部带类型 C++ 调用，无内联汇编）：
+    //   1) 默认构造一个 ChatMsg（0x2D8 缓冲）
+    //   2) warmup + ChatMgr::GetMgrByPrefixLocalId 按 localId/dbIdx 把消息加载进该 ChatMsg
+    //   3) 依消息类型算出落盘路径，用 ASSIGN 覆写 ChatMsg 的缩略图/附件路径字段并置 init 标志
+    //   4) PreDownLoadMgr::push_attach_task 提交下载
+    //   5) ~ChatMsg 清理（它会 mm_free 上面 ASSIGN 建的路径副本）
     char buff[0x2D8] = { 0 };
-    auto initAttachmentBuffer = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL1);
-    auto warmupAttachment     = reinterpret_cast<WarmupFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL2);
-    auto loadAttachmentMeta   = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL3);
-    auto getAttachmentManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL4);
-    auto startAttachmentDl    = reinterpret_cast<DownloadAttachmentFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL5);
-    auto cleanupAttachment    = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Attachment::DL_CALL6);
+    auto initChatMsg  = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
+    auto warmup       = reinterpret_cast<WarmupFn>(g_WeChatWinDllAddr + Offsets::Attachment::WARMUP);
+    auto loadMsg      = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::LOAD_MSG);
+    auto getManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Attachment::MGR_GETTER);
+    auto pushTask     = reinterpret_cast<DownloadAttachmentFn>(g_WeChatWinDllAddr + Offsets::Attachment::PUSH_TASK);
+    auto assignPath   = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto destroyMsg   = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
 
-    initAttachmentBuffer(buff);
-    warmupAttachment();
-    loadAttachmentMeta(buff, static_cast<uint32_t>(localId), dbIdx);
+    initChatMsg(buff);
+    warmup();
+    loadMsg(buff, static_cast<uint32_t>(localId), dbIdx);
 
-    uint32_t type = util::get_dword((uint32_t)(buff + 0x38));
+    uint32_t type = util::get_dword((uint32_t)(buff + Offsets::Message::Receive::TYPE));
 
     std::string save_path  = "";
     std::string thumb_path = "";
 
     switch (type) {
-        case 0x03:
+        case 0x03:  // 图片
             save_path = extra;
             break;
-        case 0x3E:
+        case 0x3E:  // 视频
         case 0x2B:
             thumb_path = thumb;
             save_path  = fs::path(thumb).replace_extension("mp4").string();
             break;
-        case 0x31:
+        case 0x31:  // 文件
             save_path = extra;
             break;
         default:
@@ -183,6 +195,7 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
     }
 
     if (fs::exists(save_path)) {
+        destroyMsg(buff);
         return 0;
     }
 
@@ -192,19 +205,17 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
     std::wstring wsSavePath  = util::s2w(save_path);
     std::wstring wsThumbPath = util::s2w(thumb_path);
 
-    WxString wxSavePath(wsSavePath);
-    WxString wxThumbPath(wsThumbPath);
+    // 用 WxString::assign 建 WeChat 拥有副本写入 ChatMsg 落盘路径字段（~ChatMsg 负责释放，避免 double-free）；
+    // init 标志置 1 跳过内部重复的子对象初始化。
+    assignPath(buff + Offsets::Attachment::F_THUMB_PATH, wsThumbPath.c_str(), -1);
+    assignPath(buff + Offsets::Attachment::F_SAVE_PATH, wsSavePath.c_str(), -1);
+    *reinterpret_cast<int *>(buff + Offsets::Attachment::F_INITED_FLAG) = 1;
 
-    int temp = 1;
-    memcpy(&buff[0x19C], &wxThumbPath, sizeof(wxThumbPath));
-    memcpy(&buff[0x1B0], &wxSavePath, sizeof(wxSavePath));
-    memcpy(&buff[0x29C], &temp, sizeof(temp));
-
-    void *manager = getAttachmentManager();
+    void *manager = getManager();
     if (manager != nullptr) {
-        status = startAttachmentDl(manager, buff, 0, 1);
+        status = pushTask(manager, buff, 0, 1, 0);
     }
-    cleanupAttachment(buff, 0);
+    destroyMsg(buff);
 
     return status;
 }

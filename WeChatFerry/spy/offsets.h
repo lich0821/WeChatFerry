@@ -216,12 +216,28 @@ namespace Moments
 
 namespace Attachment
 {
-    constexpr uint32_t DL_CALL1 = 0x76F010;
-    constexpr uint32_t DL_CALL2 = 0x792700;
-    constexpr uint32_t DL_CALL3 = 0xBC0370;
-    constexpr uint32_t DL_CALL4 = 0x80F110;
-    constexpr uint32_t DL_CALL5 = 0x82BB40;
-    constexpr uint32_t DL_CALL6 = 0x756E30;
+    // 下载附件走 PreDownLoadMgr。ChatMsg 缓冲复用发送侧三件套：
+    //   构造 = Message::Send::CHATMSG_CTOR(0x1A0ED0, ChatMsg 默认构造器)、
+    //   析构 = Message::Send::CHATMSG_DTOR(0x1199010, ChatMsg::~ChatMsg)；落盘路径拷贝复用 RichText::ASSIGN。
+    // 定位链：
+    //   WARMUP    = ChatMgr 懒初始化（GetMgrByPrefixLocalId 首个调用，magic-static thread-init）；
+    //   LOAD_MSG  = ChatMgr::GetMgrByPrefixLocalId（串 "ChatMgr::GetMgrByPrefixLocalId" 锚定）：
+    //               __usercall(ecx=buffer, 栈上 __int64 = local_id | db_idx<<32)，按 localId/dbIdx 把消息加载进 ChatMsg；
+    //               以 __thiscall 建模，栈失衡由 download_attachment 帧指针 epilogue 纠正（同 forward，二者共用此函数）；
+    //   MGR_GETTER= PreDownLoadMgr magic-static 单例 getter（读 dword_1436A850，空则 new(0x898)+ctor+register）；
+    //   PUSH_TASK = PreDownLoadMgr::push_attach_task（串锚定）：纯 __thiscall(ecx=manager)，
+    //               尾 retn 0x10=4 栈参被调清栈（buffer/reserved/sync/user_clicked），栈平衡、无需帧指针纠正；
+    //               真实调用点 sub_112DD240：push_attach_task(manager, buffer, 0, 1, 0)。
+    constexpr uint32_t WARMUP     = 0x11C7290;
+    constexpr uint32_t LOAD_MSG   = 0x166FE00;
+    constexpr uint32_t MGR_GETTER = 0x1240DE0;
+    constexpr uint32_t PUSH_TASK  = 0x12DA8A0;
+
+    // ChatMsg 内下载目标字段（相对 ChatMsg 基址）。type 读 Message::Receive::TYPE(0x38，不变)。
+    // 路径字段会被 ~ChatMsg mm_free，故须用 RichText::ASSIGN 建 WeChat 拥有副本（勿 memcpy 非拥有视图，防 double-free）。
+    constexpr uint32_t F_THUMB_PATH  = 0x1A4;  // 缩略图落盘路径 WxString（旧 0x19C +8）
+    constexpr uint32_t F_SAVE_PATH   = 0x1B8;  // 附件落盘路径 WxString（旧 0x1B0 +8）
+    constexpr uint32_t F_INITED_FLAG = 0x2AC;  // "子对象已初始化"标志（旧 0x29C +0x10；置 1 跳过重复 init）
 } // namespace Attachment
 
 namespace Revoke
