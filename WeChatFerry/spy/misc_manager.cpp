@@ -222,11 +222,7 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
 
 int revoke_message(uint64_t id)
 {
-    (void)id;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
-
-    int status    = -1;
+    int status = -1;
     uint64_t localId;
     uint32_t dbIdx;
     if (db::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
@@ -234,23 +230,24 @@ int revoke_message(uint64_t id)
         return status;
     }
 
+    // ChatMsg 精确 0x2D8 字节（同发送侧），栈上构造后按 localId/dbIdx 加载再撤回。
     char chat_msg[0x2D8] = { 0 };
 
-    auto initRevokeBuffer   = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL1);
-    auto getRevokeManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL2);
-    auto loadRevokeMeta     = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL3);
-    auto revokeMessageFn    = reinterpret_cast<RevokeMessageFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL4);
-    auto cleanupRevoke      = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Revoke::CALL5);
+    auto initChatMsg     = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
+    auto loadMsg         = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::LOAD_MSG);
+    auto getRevokeMgr    = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Revoke::MGR_GETTER);
+    auto revokeMessageFn = reinterpret_cast<RevokeMessageFn>(g_WeChatWinDllAddr + Offsets::Revoke::REVOKE_MSG);
+    auto destroyChatMsg  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
 
-    initRevokeBuffer(chat_msg);
-    getRevokeManager();
-    loadRevokeMeta(chat_msg, static_cast<uint32_t>(localId), dbIdx);
+    initChatMsg(chat_msg);
+    // GetMgrByPrefixLocalId 内部自初始化 ChatMgr，无需单独 warmup；栈失衡由本函数帧指针 epilogue 纠正。
+    loadMsg(chat_msg, static_cast<uint32_t>(localId), dbIdx);
 
-    void *manager = getRevokeManager();
+    void *manager = getRevokeMgr();
     if (manager != nullptr) {
         status = revokeMessageFn(manager, chat_msg);
     }
-    cleanupRevoke(chat_msg, 0);
+    destroyChatMsg(chat_msg);
 
     return status;
 }

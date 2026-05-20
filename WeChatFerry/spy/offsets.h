@@ -242,11 +242,17 @@ namespace Attachment
 
 namespace Revoke
 {
-    constexpr uint32_t CALL1 = 0x76F010;
-    constexpr uint32_t CALL2 = 0x792700;
-    constexpr uint32_t CALL3 = 0xBC0370;
-    constexpr uint32_t CALL4 = 0xBB5F70;
-    constexpr uint32_t CALL5 = 0x756E30;
+    // 撤回消息：3.9.2.23 的 ChatMgr::revokeMsg 在本版重构为 ChatRevokeMgr::revokeMsg。
+    // ChatMsg 缓冲复用发送侧三件套：构造=Message::Send::CHATMSG_CTOR、析构=Message::Send::CHATMSG_DTOR；
+    // 按 localId/dbIdx 加载消息复用 Attachment::LOAD_MSG（ChatMgr::GetMgrByPrefixLocalId，内部自初始化 ChatMgr）。
+    // 定位链：串 "ChatRevokeMgr::revokeMsg" 唯一 data xref → REVOKE_MSG 函数体；
+    //   其瘦调用者 sub_11325BF0 里 manager = MGR_GETTER() 直接透传（不 deref）。
+    //   MGR_GETTER = ChatRevokeMgr magic-static 单例 getter（返回 &对象本体 dword_1436A8E8）；
+    //   REVOKE_MSG = ChatRevokeMgr::revokeMsg：纯 __thiscall(ecx=manager, chat_msg)，
+    //                尾 retn 4=1 栈参(chat_msg)被调清栈、栈平衡、无需帧指针纠正；
+    //                读 chat_msg+64=type、chat_msg+48=localId，加入 be_revoke set 并延迟发送 NetSceneRevokeMsg。
+    constexpr uint32_t MGR_GETTER = 0x1245280;
+    constexpr uint32_t REVOKE_MSG = 0x12469F0;
 } // namespace Revoke
 
 namespace RichText
