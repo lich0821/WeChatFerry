@@ -186,9 +186,25 @@ namespace Chatroom
 
 namespace Transfer
 {
-    constexpr uint32_t CALL1 = 0x7B2E60;
-    constexpr uint32_t CALL2 = 0x15E2C20;
-    constexpr uint32_t CALL3 = 0x79C250;
+    // 领取转账走 WCPayInfo（带虚表的支付信息对象）+ TenPayTransfer::TenPayTransferConfirm 场景。
+    // 定位：串 "TenPayTransfer::TenPayTransferConfirm::doSceneExConfirm"(接受) 与 "...doSceneExRefuse"(拒绝) 锚定，
+    //   其共同调用者 sub_120DE350(payInfo, wxid WxString, scratch:u64, confirm) 即受理入口；真实调用点在
+    //   TransferWnd::eventProc case 887 以 confirm=1 传入 AppMsg 内嵌的 WCPayInfo(+1564)、wxid 用 ASSIGN 拥有副本。
+    //   payInfo 结构布局与 AppMsgParser::ParseXML 填充的 wcpayinfo 子对象一致（transcationid@0x1C、transferid@0x38）。
+    // ABI（disasm+调用点核对）：RECV_TRANSFER 反编译标 __fastcall（ecx=payInfo、edx=wxid），但调用者在 call 后
+    //   `add esp,0Ch` 清 3 栈参 → 实为 caller-clean（同 forward/send_file 的 __usercall 模式）；以 __fastcall 建模、
+    //   栈失衡由 receive_transfer 自身帧指针 epilogue 纠正（依赖 Release 保留帧指针）。
+    // 所有权：RECV_TRANSFER 只读 payInfo 与 wxid（内部各自深拷贝、真实调用者在调用后 mm_free wxid）→ wxid 用非拥有视图；
+    //   transactionid/transferid 用 RichText::ASSIGN 建 WeChat 拥有副本写入，PAY_INFO_DTOR 负责 mm_free（避免 double-free）。
+    constexpr uint32_t PAY_INFO_CTOR  = 0x120AF00;  // WCPayInfo 默认构造器（写 InstanceCounter+WCPayInfo vftable，零初始化全部成员）
+    constexpr uint32_t RECV_TRANSFER  = 0x120DE350; // TenPayTransfer 受理入口（confirm=1 接受/=0 拒绝）
+    constexpr uint32_t PAY_INFO_DTOR  = 0x111D4570; // WCPayInfo 析构器（逐个 mm_free WxString 成员 + InstanceCounter 递减）
+
+    // WCPayInfo 字段偏移。
+    constexpr uint32_t F_PAYSUBTYPE     = 0x04;  // 支付子类型 int
+    constexpr uint32_t F_TRANSACTION_ID = 0x1C;  // 交易号 WxString
+    constexpr uint32_t F_TRANSFER_ID    = 0x38;  // 转账单号 WxString
+    constexpr uint32_t F_EFFECTIVE_DATE = 0x4C;  // 生效标志 int
 } // namespace Transfer
 
 namespace Moments

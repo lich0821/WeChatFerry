@@ -33,7 +33,6 @@ namespace
 using ManagerGetterFn        = void *(*)();
 using BufferInitFn           = void(__thiscall *)(void *buffer);
 using BufferCleanupFn        = void(__thiscall *)(void *buffer);
-using BufferCleanupExFn      = void(__thiscall *)(void *buffer, int free_memory);
 using WarmupFn               = void (*)();
 using RefreshFirstPageFn     = int(__thiscall *)(void *manager, void *buffer, int forward);
 using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high,
@@ -49,6 +48,8 @@ using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, in
 // WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝）——把落盘路径写成 WeChat 拥有副本。
 using WxStringAssignFn       = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
 using RevokeMessageFn        = int(__thiscall *)(void *manager, void *chat_msg);
+// TenPayTransfer 受理入口：反编译标 __fastcall（ecx=pay_info, edx=wxid），实为 caller-clean（同 forward），
+// 以 __fastcall 建模、栈失衡由 receive_transfer 帧指针 epilogue 纠正。scratch 为废弃的 __int64 占位，传 0。
 using ReceiveTransferFn      = int(__fastcall *)(void *pay_info, const WxString *wxid, uint64_t scratch,
                                                  int confirm);
 
@@ -368,35 +369,43 @@ std::string get_login_url()
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)
 {
-    (void)wxid;
-    (void)transferid;
-    (void)transactionid;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
 
-    int rv                = 0;
-    char payInfo[0x134] = { 0 };
+    int rv = -1;
+
+    // WCPayInfo 带虚表且约 0x158 字节；先默认构造再逐字段 ASSIGN，最后析构。缓冲取 0x160 冗余覆盖。
+    char payInfo[0x160] = { 0 };
+
     std::wstring wsWxid = util::s2w(wxid);
     std::wstring wsTfid = util::s2w(transferid);
     std::wstring wsTaid = util::s2w(transactionid);
 
+    // wxid 仅被受理入口读取（内部转 std::string、真实调用者调用后自行 free），故用非拥有 WxString 视图。
     WxString wxWxid(wsWxid);
-    WxString wxTfid(wsTfid);
-    WxString wxTaid(wsTaid);
 
     LOG_DEBUG("Receiving transfer, from: {}, transferid: {}, transactionid: {}", wxid, transferid, transactionid);
-    auto initTransferInfo = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL1);
-    auto receiveTransfer  = reinterpret_cast<ReceiveTransferFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL2);
-    auto cleanupTransfer  = reinterpret_cast<BufferCleanupExFn>(g_WeChatWinDllAddr + Offsets::Transfer::CALL3);
 
-    initTransferInfo(payInfo);
-    *reinterpret_cast<uint32_t *>(payInfo + 0x4)  = 0x1;
-    *reinterpret_cast<uint32_t *>(payInfo + 0x4C) = 0x1;
-    memcpy(&payInfo[0x1C], &wxTaid, sizeof(wxTaid));
-    memcpy(&payInfo[0x38], &wxTfid, sizeof(wxTfid));
+    auto initPayInfo     = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Transfer::PAY_INFO_CTOR);
+    auto receiveTransfer = reinterpret_cast<ReceiveTransferFn>(g_WeChatWinDllAddr + Offsets::Transfer::RECV_TRANSFER);
+    auto assignField     = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto destroyPayInfo  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Transfer::PAY_INFO_DTOR);
 
+    // 默认构造：写两个 vftable + 零初始化全部 WxString 成员（受理入口内部会拷贝构造它，故所有成员须先初始化）。
+    initPayInfo(payInfo);
+
+    *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_PAYSUBTYPE)     = 1;
+    *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_EFFECTIVE_DATE) = 1;
+
+    // 用 ASSIGN 把交易号/转账单号写成 WeChat 拥有副本（析构器负责 mm_free，避免非拥有视图被 free 导致 double-free）。
+    assignField(payInfo + Offsets::Transfer::F_TRANSACTION_ID, wsTaid.c_str(), -1);
+    assignField(payInfo + Offsets::Transfer::F_TRANSFER_ID, wsTfid.c_str(), -1);
+
+    // confirm=1 表示接受/领取；scratch 为废弃占位传 0。
     rv = receiveTransfer(payInfo, &wxWxid, 0, 1);
-    cleanupTransfer(payInfo, 0);
+    destroyPayInfo(payInfo);
 
     return rv;
 }
