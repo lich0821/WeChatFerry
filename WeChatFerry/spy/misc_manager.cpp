@@ -34,9 +34,10 @@ using ManagerGetterFn        = void *(*)();
 using BufferInitFn           = void(__thiscall *)(void *buffer);
 using BufferCleanupFn        = void(__thiscall *)(void *buffer);
 using WarmupFn               = void (*)();
-using RefreshFirstPageFn     = int(__thiscall *)(void *manager, void *buffer, int forward);
-using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high,
-                                                 RawVector_t *cursor);
+// SnsTimeLineMgr::TryGetFirstPageScene / GetNextPageScene：纯 __thiscall（ecx=manager，retn 4/8 被调清栈）。
+// 新版构建器内部自建 NetScene 并经 doScene 发送，不再需要旧版的输出 buffer / cursor 参数。
+using RefreshFirstPageFn     = int(__thiscall *)(void *manager, int forward);
+using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high);
 using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *path, int reserved,
                                                  WxString *ocr_buffer, uint32_t *tmp, const WxString *null_obj);
 using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
@@ -77,13 +78,12 @@ int get_first_page()
 {
     int rv = -1;
 
-    char buf[0xB44] = { 0 };
-    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL1);
-    auto requestFirstPage  = reinterpret_cast<RefreshFirstPageFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL2);
+    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::MGR_GETTER);
+    auto requestFirstPage  = reinterpret_cast<RefreshFirstPageFn>(g_WeChatWinDllAddr + Offsets::Moments::GET_FIRST_PAGE);
 
     void *manager = getMomentsManager();
     if (manager != nullptr) {
-        rv = requestFirstPage(manager, buf, 1);
+        rv = requestFirstPage(manager, 1);
     }
 
     return rv;
@@ -93,12 +93,12 @@ int get_next_page(uint64_t id)
 {
     int rv = -1;
 
-    RawVector_t tmp         = { 0 };
-    auto getMomentsManager  = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL1);
-    auto requestNextPage    = reinterpret_cast<RefreshNextPageFn>(g_WeChatWinDllAddr + Offsets::Moments::CALL3);
-    void *manager           = getMomentsManager();
+    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::MGR_GETTER);
+    auto requestNextPage   = reinterpret_cast<RefreshNextPageFn>(g_WeChatWinDllAddr + Offsets::Moments::GET_NEXT_PAGE);
+
+    void *manager = getMomentsManager();
     if (manager != nullptr) {
-        rv = requestNextPage(manager, static_cast<uint32_t>(id), static_cast<uint32_t>(id >> 32), &tmp);
+        rv = requestNextPage(manager, static_cast<uint32_t>(id), static_cast<uint32_t>(id >> 32));
     }
 
     return rv;
@@ -119,10 +119,6 @@ std::string decrypt_image(const std::string &src, const std::string &dir)
 
 int refresh_pyq(uint64_t id)
 {
-    (void)id;
-    LOG_ERROR("Not Implemented yet.");
-    return -1;
-
     if (!gIsListeningPyq) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
         return -1;

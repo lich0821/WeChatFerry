@@ -215,10 +215,14 @@ namespace Moments
     //          用返回地址 == HOOK+5 过滤，a2 即 dispatch 的容器指针。
     constexpr uint32_t HOOK    = 0x1FDB1E5;
     constexpr uint32_t CALL    = 0x1FDB4D0;
-    // CALL1/2/3（单例 getter / 首页 / 翻页刷新）仅 refresh_pyq 用，仍是 3.9.2.23 旧值。
-    constexpr uint32_t CALL1   = 0xC39680;
-    constexpr uint32_t CALL2   = 0x14E2140;
-    constexpr uint32_t CALL3   = 0x14E21E0;
+    // 刷新路径（refresh_pyq 用）：SnsTimeLineMgr 单例 + 两个自足的 Scene 构建器。
+    //   MGR_GETTER     = SnsTimeLineMgr 单例 getter（magic-static，new(0x120)+ctor，返回对象本体）；
+    //   GET_FIRST_PAGE = SnsTimeLineMgr::TryGetFirstPageScene，__thiscall(manager, forward)，retn 4 被调清栈；
+    //   GET_NEXT_PAGE  = SnsTimeLineMgr::GetNextPageScene，__thiscall(manager, id_low, id_high)，retn 8 被调清栈。
+    // 新版这两个构建器内部自建 NetScene 并经 doScene 直接发送——不再需要旧版的输出 buffer / cursor 参数。
+    constexpr uint32_t MGR_GETTER     = 0x1F77D90;
+    constexpr uint32_t GET_FIRST_PAGE = 0x1FDE8A0;
+    constexpr uint32_t GET_NEXT_PAGE  = 0x1FDED90;
     // 容器字段：主 feed 数组 begin/end 指针（容器 = a2）。
     constexpr uint32_t START   = 0x20;
     constexpr uint32_t END     = 0x24;
