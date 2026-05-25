@@ -38,8 +38,15 @@ using WarmupFn               = void (*)();
 // 新版构建器内部自建 NetScene 并经 doScene 发送，不再需要旧版的输出 buffer / cursor 参数。
 using RefreshFirstPageFn     = int(__thiscall *)(void *manager, int forward);
 using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high);
+// OCRManager::DoOCRTask：__usercall caller-clean，以 __thiscall 建模（ecx=manager，5 栈参），
+// 栈失衡由 get_ocr_result 帧指针 epilogue 纠正。result_list 为结果链表头、found_flag 为缓存命中标志输出。
 using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *path, int reserved,
-                                                 WxString *ocr_buffer, uint32_t *tmp, const WxString *null_obj);
+                                                 void *result_list, uint32_t *found_flag,
+                                                 const WxString *null_obj);
+// WeChat 全局 operator new（分配链表哨兵结点，须与 RESULT_DTOR 的 operator delete 配对）。
+using OperatorNewFn          = void *(__cdecl *)(size_t);
+// OCR 结果链表析构器（__thiscall，ecx=链表头）。
+using OcrResultDtorFn        = void(__thiscall *)(void *result_list);
 using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
 using LoadAttachmentMetaFn   = int(__thiscall *)(void *buffer, uint32_t local_id, uint32_t db_idx);
 // PreDownLoadMgr::push_attach_task：纯 __thiscall（ecx=manager，尾 retn 0x10=4 栈参被调清栈）。
@@ -276,12 +283,19 @@ std::string get_audio(uint64_t id, const std::string &dir)
     return mp3path;
 }
 
+// OCR 结果链表头：一个 std::list 头（哨兵指针 + 计数）后接若干缓存命中时被回填的标量字段。
+// DoOCRTask 缓存命中会把结点接入链表并往 +8..+0x14 写数据，故须留足空间并预先建成合法空链表。
+struct OcrResultList {
+    void    *head;  // +0x00 哨兵结点（自环空链表）
+    uint32_t count; // +0x04 结点数
+    uint32_t f8;    // +0x08 缓存命中回填
+    uint32_t fc;    // +0x0C
+    uint64_t f10;   // +0x10
+    uint64_t pad;   // +0x18 冗余，覆盖缓存命中的整段写入
+};
+
 OcrResult_t get_ocr_result(const std::string &path)
 {
-    (void)path;
-    LOG_ERROR("Not Implemented yet.");
-    return { -1, "" };
-
     OcrResult_t ret = { -1, "" };
 
     if (!fs::exists(path)) {
@@ -293,42 +307,51 @@ OcrResult_t get_ocr_result(const std::string &path)
 
     WxString wxPath(wsPath);
     WxString nullObj;
-    WxString ocrBuffer;
 
-    auto initOcrBuffer   = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL1);
-    auto getOcrManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL2);
-    auto runOcr          = reinterpret_cast<RunOcrFn>(g_WeChatWinDllAddr + Offsets::OCR::CALL3);
+    auto opNew         = reinterpret_cast<OperatorNewFn>(g_WeChatWinDllAddr + Offsets::OCR::RESULT_NEW);
+    auto getOcrManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::OCR::MGR_GETTER);
+    auto runOcr        = reinterpret_cast<RunOcrFn>(g_WeChatWinDllAddr + Offsets::OCR::RUN_OCR);
+    auto destroyList   = reinterpret_cast<OcrResultDtorFn>(g_WeChatWinDllAddr + Offsets::OCR::RESULT_DTOR);
 
-    uint32_t tmp = 0;
-    int status   = -1;
-    initOcrBuffer(&ocrBuffer);
+    // 构造合法空链表：哨兵结点自环（与 WeChat 内联初始化一致），
+    // 缓存命中路径 DoOCRTask 会 splice 结点，无有效哨兵会崩。
+    OcrResultList buffer = { 0 };
+    void **sentinel      = static_cast<void **>(opNew(0x58));
+    if (sentinel == nullptr) {
+        LOG_ERROR("Failed to alloc OCR result buffer.");
+        return ret;
+    }
+    sentinel[0]  = sentinel; // next -> self
+    sentinel[1]  = sentinel; // prev -> self
+    buffer.head  = sentinel;
+
+    uint32_t found = 0;
+    int status     = -1;
 
     void *manager = getOcrManager();
     if (manager != nullptr) {
-        status = runOcr(manager, &wxPath, 0, &ocrBuffer, &tmp, &nullObj);
+        status = runOcr(manager, &wxPath, 0, &buffer, &found, &nullObj);
     }
 
+    // DoOCRTask 缓存命中返回 0 并同步回填链表；异步入队返回非 0 task_id（此时无同步结果）。
     if (status != 0) {
-        LOG_ERROR("OCR status: {}", to_string(status));
+        destroyList(&buffer);
         return ret;
     }
 
     ret.status = status;
 
-    uint32_t addr   = (DWORD)&ocrBuffer;
-    uint32_t header = util::get_dword(addr);
-    uint32_t num    = util::get_dword(addr + 0x4);
-    if (num <= 0) {
-        return ret;
-    }
-
+    uint32_t addr   = reinterpret_cast<uint32_t>(&buffer);
+    uint32_t header = util::get_dword(addr);       // 哨兵/首结点
+    uint32_t num    = util::get_dword(addr + 0x4); // 结点数
     for (uint32_t i = 0; i < num; i++) {
-        uint32_t content = util::get_dword(header);
-        ret.result += util::w2s(util::get_wstring(content + 0x14));
+        uint32_t content = util::get_dword(header);                     // 下一结点
+        ret.result += util::w2s(util::get_wstring(content + 0x14));     // 结点内文本 WxString.wptr
         ret.result += "\n";
         header = content;
     }
 
+    destroyList(&buffer);
     return ret;
 }
 

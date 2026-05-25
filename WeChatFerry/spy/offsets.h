@@ -262,7 +262,7 @@ namespace Attachment
 
 namespace Revoke
 {
-    // 撤回消息：3.9.2.23 的 ChatMgr::revokeMsg 在本版重构为 ChatRevokeMgr::revokeMsg。
+    // 撤回消息：重构为 ChatRevokeMgr::revokeMsg。
     // ChatMsg 缓冲复用发送侧三件套：构造=Message::Send::CHATMSG_CTOR、析构=Message::Send::CHATMSG_DTOR；
     // 按 localId/dbIdx 加载消息复用 Attachment::LOAD_MSG（ChatMgr::GetMgrByPrefixLocalId，内部自初始化 ChatMgr）。
     // 定位链：串 "ChatRevokeMgr::revokeMsg" 唯一 data xref → REVOKE_MSG 函数体；
@@ -313,9 +313,20 @@ namespace Pat
 
 namespace OCR
 {
-    constexpr uint32_t CALL1 = 0x80A800;
-    constexpr uint32_t CALL2 = 0x80F270;
-    constexpr uint32_t CALL3 = 0x13DA3E0;
+    // 图片 OCR 走 OCRManager。
+    // MGR_GETTER  = OCRManager magic-static 单例 getter（dword_1436AEE0，空则 operator new(0x9C)+ctor）。
+    // RUN_OCR     = OCRManager::DoOCRTask（串 "OCRManager::DoOCRTask" 锚定），
+    //   __usercall caller-clean（aligned-stack prologue、args 读自 [ebx+…]、plain retn）：
+    //   ecx=manager、5 栈参(path, reserved=0, result_list, found_flag, null_obj)、返回 task_id(int64)。
+    //   以 __thiscall 建模、栈失衡由 get_ocr_result 帧指针 epilogue 纠正（同 send_text/forward）。
+    //   异步：仅缓存命中时同步把结果结点接入 result_list 并置 found_flag=1、返回 0；
+    //   否则入队后返回非 0 task_id（此时无同步结果）。结点内文本 WxString 在 node+0x14（未变）。
+    // RESULT_NEW  = WeChat 全局 operator new（??2@YAPAXI@Z），分配 0x58 字节链表哨兵结点。
+    // RESULT_DTOR = OCR 结果链表析构器（先经尾结点断环、再遍历释放各结点 + 哨兵；与 RESULT_NEW 配对）。
+    constexpr uint32_t MGR_GETTER  = 0x12B5F50;
+    constexpr uint32_t RUN_OCR     = 0x1E7A2E0;
+    constexpr uint32_t RESULT_NEW  = 0x3234B97;
+    constexpr uint32_t RESULT_DTOR = 0x12B6140;
 } // namespace OCR
 
 namespace Forward
