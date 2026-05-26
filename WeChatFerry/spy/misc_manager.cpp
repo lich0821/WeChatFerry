@@ -357,25 +357,33 @@ OcrResult_t get_ocr_result(const std::string &path)
 
 std::string get_login_url()
 {
-    LOG_ERROR("Not Implemented yet.");
-    return "";
-
-    if (util::get_dword(g_WeChatWinDllAddr + Offsets::Account::SERVICE) == 1) {
-        LOG_DEBUG("Already logined.");
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
         return "";
     }
 
-    auto getQrCodeManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::QRCode::CALL1);
-    auto refreshQrCode    = reinterpret_cast<RefreshLoginQrCodeFn>(g_WeChatWinDllAddr + Offsets::QRCode::CALL2);
-
-    void *manager = getQrCodeManager();
-    if (manager != nullptr) {
-        refreshQrCode(manager);
+    // 已登录则无二维码可刷（SERVICE != 0 即在线，与 account::is_logged_in 语义一致）。
+    if (util::get_dword(g_WeChatWinDllAddr + Offsets::Account::SERVICE) != 0) {
+        LOG_DEBUG("Already logged in, no QR code to refresh.");
+        return "";
     }
 
-    const char *url = util::get_string(g_WeChatWinDllAddr + Offsets::QRCode::URL);
-    uint8_t cnt     = 0;
-    while (url[0] == 0) {
+    // QRCodeLoginMgr 单例 getter 返回管理器对象本体；getQRCodeImage（thiscall）经 doScene 触发
+    // NetSceneGetLoginQRCode 异步获取，完成后把登录 uuid 回填到管理器 +8 的 std::string。
+    auto getQrCodeManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::QRCode::MGR_GETTER);
+    auto getQrCodeImage   = reinterpret_cast<RefreshLoginQrCodeFn>(g_WeChatWinDllAddr + Offsets::QRCode::GET_QRCODE);
+
+    void *manager = getQrCodeManager();
+    if (manager == nullptr) {
+        LOG_ERROR("Failed to get QRCodeLoginMgr.");
+        return "";
+    }
+    getQrCodeImage(manager);
+
+    // uuid 存于管理器 +8 的 MSVC std::string（size@+0x10、cap@+0x14）；异步回填故轮询 size。
+    uint32_t strAddr = g_WeChatWinDllAddr + Offsets::QRCode::URL;
+    uint8_t cnt      = 0;
+    while (util::get_dword(strAddr + 0x10) == 0) {
         if (cnt > 5) {
             LOG_ERROR("Refresh QR Code timeout.");
             return "";
@@ -383,7 +391,16 @@ std::string get_login_url()
         Sleep(1000);
         cnt++;
     }
-    return "http://weixin.qq.com/x/" + std::string(url);
+
+    // 短 uuid 走 SSO（地址即缓冲区），容量 >= 16 时 +0 处为堆指针。
+    uint32_t size    = util::get_dword(strAddr + 0x10);
+    uint32_t cap     = util::get_dword(strAddr + 0x14);
+    const char *uuid = (cap >= 16) ? *reinterpret_cast<const char **>(strAddr)
+                                   : reinterpret_cast<const char *>(strAddr);
+    if (uuid == nullptr) {
+        return "";
+    }
+    return "http://weixin.qq.com/x/" + std::string(uuid, size);
 }
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)

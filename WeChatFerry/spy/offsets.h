@@ -347,9 +347,13 @@ namespace Forward
 
 namespace QRCode
 {
-    constexpr uint32_t CALL1 = 0xAE9DB0;
-    constexpr uint32_t CALL2 = 0xCDA6F0;
-    constexpr uint32_t URL   = 0x3040DE8;
+    // 刷新登录二维码走 QRCodeLoginMgr。MGR_GETTER 是单例 magic-static（返回管理器对象本体，
+    // 首次调用惰性构造）；GET_QRCODE 是 QRCodeLoginMgr::getQRCodeImage（thiscall，经 doScene
+    // 触发 NetSceneGetLoginQRCode 异步获取）。URL 指向管理器 +8 的登录 uuid（MSVC std::string，
+    // size@+0x10、cap@+0x14；短 uuid 走 SSO，地址即缓冲区，长则 +0 处为堆指针）。
+    constexpr uint32_t MGR_GETTER = 0x1589600;  // QRCodeLoginMgr 单例 getter（原 CALL1）
+    constexpr uint32_t GET_QRCODE = 0x17725A0;  // QRCodeLoginMgr::getQRCodeImage（原 CALL2）
+    constexpr uint32_t URL        = 0x436C398;  // 登录 uuid std::string（管理器 +8）
 } // namespace QRCode
 
 } // namespace Offsets
