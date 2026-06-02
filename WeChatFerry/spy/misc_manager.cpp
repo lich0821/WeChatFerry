@@ -2,8 +2,10 @@
 
 #include "misc_manager.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 #include "codec.h"
 #include "database_executor.h"
@@ -118,10 +120,71 @@ namespace misc
 
 std::string decrypt_image(const std::string &src, const std::string &dir)
 {
-    (void)src;
-    (void)dir;
-    LOG_ERROR("Not Implemented yet.");
-    return "";
+    // 微信图片是原图逐字节异或同一个单字节密钥；由前两字节与已知图片头（PNG/JPG/GIF）
+    if (!fs::exists(src)) {
+        return "";
+    }
+
+    std::ifstream in(src.c_str(), std::ios::binary);
+    if (!in.is_open()) {
+        LOG_ERROR("Failed to read file {}", src);
+        return "";
+    }
+
+    std::filebuf *pfb = in.rdbuf();
+    size_t size       = pfb->pubseekoff(0, std::ios::end, std::ios::in);
+    pfb->pubseekpos(0, std::ios::in);
+
+    std::vector<char> buff;
+    buff.resize(size);
+    char *pBuf = buff.data();
+    pfb->sgetn(pBuf, size);
+    in.close();
+
+    if (size < 2) {
+        LOG_ERROR("File too small: {}", src);
+        return "";
+    }
+
+    uint8_t key     = 0x00;
+    std::string ext = get_key(pBuf[0], pBuf[1], &key);
+    if (ext.empty()) {
+        LOG_ERROR("Failed to get key.");
+        return "";
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        pBuf[i] ^= key;
+    }
+
+    std::string dst = "";
+
+    try {
+        if (dir.empty()) {
+            dst = fs::path(src).replace_extension(ext).string();
+        } else {
+            dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+            dst += fs::path(src).stem().string() + ext;
+        }
+
+        std::replace(dst.begin(), dst.end(), '\\', '/');
+    } catch (const std::exception &e) {
+        LOG_ERROR(util::gb2312_to_utf8(e.what()));
+    } catch (...) {
+        LOG_ERROR("Unknow exception.");
+        return "";
+    }
+
+    std::ofstream out(dst.c_str(), std::ios::binary);
+    if (!out.is_open()) {
+        LOG_ERROR("Failed to write file {}", dst);
+        return "";
+    }
+
+    out.write(pBuf, size);
+    out.close();
+
+    return dst;
 }
 
 int refresh_pyq(uint64_t id)
