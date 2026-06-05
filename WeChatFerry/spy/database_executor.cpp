@@ -98,6 +98,71 @@ std::string read_db_name(uint32_t wstr_addr)
     return util::w2s(path);
 }
 
+// 读取 WxString（wptr 直接在 +0，非 MSVC std::wstring 的 SSO 联合）指向的库名，取文件名（basename）。
+// MultiDBMsgMgr 的 item 名（item+0）和媒体包装的名（StorageBase+0x4C）都是这种布局。
+std::string read_wptr_db_name(uint32_t wxstr_addr)
+{
+    const wchar_t *buffer = reinterpret_cast<const wchar_t *>(util::get_dword(wxstr_addr));
+    if ((buffer == nullptr) || (*buffer == L'\0')) {
+        return "";
+    }
+
+    std::wstring path(buffer);
+    size_t pos = path.find_last_of(L"\\/");
+    if (pos != std::wstring::npos) {
+        path = path.substr(pos + 1);
+    }
+    return util::w2s(path);
+}
+
+// 遍历 MultiDBMsgMgr 的环形 item 数组，把 MSGn.db / MediaMSGn.db 的裸句柄并入 db_map。
+// 消息与语音多库不在 AccountStorageMgr 的主数组里，故单独枚举（未登录时管理器为 0，跳过即可）。
+void refresh_msg_db_map()
+{
+    uint32_t base = g_WeChatWinDllAddr;
+    if (base == 0) {
+        return;
+    }
+
+    uint32_t mgr = util::get_dword(base + OsDb::MSG_MGR);
+    if (mgr == 0) {
+        return;
+    }
+
+    uint32_t ring  = util::get_dword(mgr + OsDb::MSG_RING_BASE);
+    uint32_t cap   = util::get_dword(mgr + OsDb::MSG_RING_CAP);
+    uint32_t head  = util::get_dword(mgr + OsDb::MSG_RING_HEAD);
+    uint32_t count = util::get_dword(mgr + OsDb::MSG_RING_COUNT);
+    if ((ring == 0) || (cap == 0)) {
+        return;
+    }
+
+    for (uint32_t i = 0; i < count; i++) {
+        uint32_t slot = (i + head) & (cap - 1);
+        uint32_t item = util::get_dword(ring + slot * 4);
+        if (item == 0) {
+            continue;
+        }
+
+        // MSG 库：句柄由 Init 缓存于 item+0x60；名在 item+0（WxString wptr）。
+        uint32_t msgHandle = util::get_dword(item + OsDb::MSG_ITEM_HANDLE);
+        std::string msgName = read_wptr_db_name(item + OsDb::MSG_ITEM_NAME);
+        if ((msgHandle != 0) && !msgName.empty()) {
+            db_map[msgName] = msgHandle;
+        }
+
+        // MediaMSG 库：走媒体存储包装（item+0x14），句柄在包装 +0x38、名在包装 +0x4C。
+        uint32_t media = util::get_dword(item + OsDb::MSG_ITEM_MEDIA);
+        if (media != 0) {
+            uint32_t mediaHandle = util::get_dword(media + OsDb::MEDIA_HANDLE);
+            std::string mediaName = read_wptr_db_name(media + OsDb::MEDIA_NAME);
+            if ((mediaHandle != 0) && !mediaName.empty()) {
+                db_map[mediaName] = mediaHandle;
+            }
+        }
+    }
+}
+
 // 遍历 AccountStorageMgr 主 storage 数组，建立 库名 → sqlite3* 映射。
 void refresh_db_map()
 {
@@ -138,6 +203,9 @@ void refresh_db_map()
 
         db_map.emplace(name, handle);
     }
+
+    // 并入 MSG / MediaMSG 多库（消息、语音查询依赖）。
+    refresh_msg_db_map();
 }
 
 uint32_t find_db_handle(const std::string &db)

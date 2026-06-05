@@ -321,14 +321,16 @@ int revoke_message(uint64_t id)
 
 std::string get_audio(uint64_t id, const std::string &dir)
 {
-    (void)id;
-    (void)dir;
-    LOG_ERROR("Not Implemented yet.");
-    return "";
+    // 语音存于 MediaMSGn.db 的 Media 表（Buf 列为 silk 编码，首字节为标志需跳过）；取出后转 mp3 落盘。
+    // 依赖数据库层的 MSG 多库枚举（MultiDBMsgMgr），否则 get_audio_data 查不到 MediaMSG 库。
+    if (dir.empty()) {
+        LOG_ERROR("Empty dir.");
+        return "";
+    }
 
     std::string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
     mp3path += to_string(id) + ".mp3";
-    replace(mp3path.begin(), mp3path.end(), '\\', '/');
+    std::replace(mp3path.begin(), mp3path.end(), '\\', '/');
     if (fs::exists(mp3path)) {
         return mp3path;
     }

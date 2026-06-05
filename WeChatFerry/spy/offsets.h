@@ -141,6 +141,30 @@ namespace Database
     constexpr uint32_t END      = 0x1434;     // managerObj → 主 storage 数组 end 指针（+5172）
     constexpr uint32_t SLOT     = 0x34;       // storage → 裸 sqlite3* 句柄
     constexpr uint32_t NAME     = 0x4C;       // storage → 库路径 std::wstring（_Bx 起始，容量位 +0x14）
+
+    // ---- MSG / MediaMSG 多库（MultiDBMsgMgr，独立于上面的主 storage 数组）----
+    // 消息与语音库不在 AccountStorageMgr 的扁平数组里，而由 MultiDBMsgMgr 单例管理（MultiDBMsgMgr::Init
+    // 里遍历 Multi 目录逐个 InitStorageItem）。管理器内是一个环形（deque 式）item 指针数组：
+    //   mgr    = *(g_WeChatWinDllAddr + MSG_MGR)                          单例对象指针（惰性构造，未登录时为 0）
+    //   base   = *(mgr + MSG_RING_BASE); cap = *(mgr + MSG_RING_CAP)      cap 为 2 的幂
+    //   head   = *(mgr + MSG_RING_HEAD); count = *(mgr + MSG_RING_COUNT)
+    //   逻辑索引 i 的 item = *(base + 4 * ((i + head) & (cap - 1)))       与 Init 的 this[11..14] 一致
+    // 每个 item（对应旧基线的 db_addr）：
+    //   item + MSG_ITEM_NAME    = MSGn.db 名 WxString（wptr 在 +0，读法用 get_wstring）
+    //   item + MSG_ITEM_HANDLE  = MSG 裸 sqlite3*（Init 调 MSG 包装 getHandle 后回填于此）
+    //   item + MSG_ITEM_MEDIA   = MediaMSG 存储包装（BufInfoStorage，继承 StorageBase）
+    //   item + MSG_ITEM_STORAGE = MSG 存储包装（MultiDBMsgStorage）
+    // 媒体包装（StorageBase）：+ MEDIA_NAME = MediaMSGn.db 名 WxString（wptr@0）；+ MEDIA_HANDLE = 裸 sqlite3*。
+    constexpr uint32_t MSG_MGR         = 0x436A8CC;  // MultiDBMsgMgr 单例对象指针（dword_1436A8CC）
+    constexpr uint32_t MSG_RING_BASE   = 0x2C;       // mgr → 环形 item 指针数组基址
+    constexpr uint32_t MSG_RING_CAP    = 0x30;       // mgr → 环形容量（2 的幂）
+    constexpr uint32_t MSG_RING_HEAD   = 0x34;       // mgr → 环形头索引
+    constexpr uint32_t MSG_RING_COUNT  = 0x38;       // mgr → item 数量
+    constexpr uint32_t MSG_ITEM_NAME   = 0x00;       // item → MSGn.db 名 WxString（wptr@0）
+    constexpr uint32_t MSG_ITEM_HANDLE = 0x60;       // item → MSG 裸 sqlite3*（Init 缓存）
+    constexpr uint32_t MSG_ITEM_MEDIA  = 0x14;       // item → MediaMSG 存储包装（StorageBase 派生）
+    constexpr uint32_t MEDIA_NAME      = 0x4C;       // 媒体包装 → MediaMSGn.db 名 WxString（wptr@0）
+    constexpr uint32_t MEDIA_HANDLE    = 0x38;       // 媒体包装 → 裸 sqlite3*
 } // namespace Database
 
 namespace Friend
