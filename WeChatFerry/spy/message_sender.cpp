@@ -32,7 +32,6 @@ using SendPatFn          = uint8_t(__fastcall *)(WxString *roomid, WxString *wxi
                                                  uint32_t reserved1, uint32_t reserved2);
 using BufferInitFn       = void(__thiscall *)(void *buffer);
 using BufferCleanupFn    = void(__thiscall *)(void *buffer);
-using BufferCleanupExFn  = void(__thiscall *)(void *buffer, int free_memory);
 using SendMgrGetterFn    = void *(*)();  // SendMessageMgr 单例 getter（无参，返回 manager*）
 using InitGlobalFn       = void (*)();
 using SendTextFn         = int(__fastcall *)(void *buffer, const WxString *wxid, const WxString *msg,
