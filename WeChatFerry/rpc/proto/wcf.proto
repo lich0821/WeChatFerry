@@ -13,6 +13,7 @@ enum Functions {
     FUNC_GET_DB_TABLES    = 0x14;
     FUNC_GET_USER_INFO    = 0x15;
     FUNC_GET_AUDIO_MSG    = 0x16;
+    FUNC_GET_DB_KEY       = 0x17;
     FUNC_SEND_TXT         = 0x20;
     FUNC_SEND_IMG         = 0x21;
     FUNC_SEND_FILE        = 0x22;
