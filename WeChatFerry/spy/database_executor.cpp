@@ -399,6 +399,63 @@ std::vector<uint8_t> get_audio_data(uint64_t msg_id)
     return {};
 }
 
+std::string get_db_key()
+{
+    if (db_map.empty()) {
+        refresh_db_map();
+    }
+
+    // 同一账号所有库共用同一 32 字节生密钥，取任一已开句柄沿 SQLCipher codec 链读出即可。
+    // get_dword 仅在 addr==0 时返回 0，故每段中间指针都要显式判空后再加偏移，否则 get_dword(小地址) 会崩。
+    for (const auto &[name, handle] : db_map) {
+        (void)name;
+        if (handle == 0) {
+            continue;
+        }
+
+        uint32_t btree = util::get_dword(handle + OsDb::DB_BTREE);
+        if (btree == 0) {
+            continue;
+        }
+        uint32_t shared = util::get_dword(btree + OsDb::BTREE_SHARED);
+        if (shared == 0) {
+            continue;
+        }
+        uint32_t pager = util::get_dword(shared + OsDb::SHARED_PAGER);
+        if (pager == 0) {
+            continue;
+        }
+        uint32_t codec = util::get_dword(pager + OsDb::PAGER_CODEC);
+        if (codec == 0) {
+            continue;
+        }
+        uint32_t ctx = util::get_dword(codec + OsDb::CODEC_READCTX);
+        if (ctx == 0) {
+            continue;
+        }
+
+        uint32_t key_ptr = util::get_dword(ctx + OsDb::CIPHER_PASS);
+        uint32_t key_len = util::get_dword(ctx + OsDb::CIPHER_PASSSZ);
+        if ((key_ptr == 0) || (key_len == 0) || (key_len > 64)) {
+            continue;
+        }
+
+        // 进程内直接读生密钥字节，转小写十六进制（外部可用 PRAGMA key = "x'...'" 离线打开）。
+        const uint8_t *key      = reinterpret_cast<const uint8_t *>(key_ptr);
+        static const char hex[] = "0123456789abcdef";
+        std::string result;
+        result.reserve(key_len * 2);
+        for (uint32_t i = 0; i < key_len; ++i) {
+            result.push_back(hex[key[i] >> 4]);
+            result.push_back(hex[key[i] & 0x0F]);
+        }
+        return result;
+    }
+
+    LOG_ERROR("Failed to read database key (not logged in or no db opened).");
+    return "";
+}
+
 bool rpc_get_db_names(uint8_t *out, size_t *len)
 {
     // 数据须活到 fill_response 内的 pb_encode（assign 返回后才编码），故置于此作用域。
@@ -429,6 +486,15 @@ bool rpc_exec_db_query(const DbQuery &query, uint8_t *out, size_t *len)
     return fill_response<Functions_FUNC_EXEC_DB_QUERY>(out, len, [&rows](Response &rsp) {
         rsp.msg.rows.rows.funcs.encode = encode_rows;
         rsp.msg.rows.rows.arg          = &rows;
+    });
+}
+
+bool rpc_get_db_key(uint8_t *out, size_t *len)
+{
+    // key 须活到 fill_response 内的 pb_encode，故经带数据的重载按引用传入。
+    std::string key = get_db_key();
+    return fill_response<Functions_FUNC_GET_DB_KEY>(out, len, key, [](Response &rsp, std::string &key) {
+        rsp.msg.str = (char *)key.c_str();
     });
 }
 

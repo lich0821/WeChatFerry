@@ -165,6 +165,24 @@ namespace Database
     constexpr uint32_t MSG_ITEM_MEDIA  = 0x14;       // item → MediaMSG 存储包装（StorageBase 派生）
     constexpr uint32_t MEDIA_NAME      = 0x4C;       // 媒体包装 → MediaMSGn.db 名 WxString（wptr@0）
     constexpr uint32_t MEDIA_HANDLE    = 0x38;       // 媒体包装 → 裸 sqlite3*
+
+    // ---- 生库密钥（SQLCipher codec 链，供离线解密）----
+    // 微信经 SQLCipher 的 URI 参数（file:...?hexkey=）设 key，生密钥最终由 sqlite3CodecAttach 交给
+    // codec，并驻留在挂于每个已开 sqlite3* 的 cipher_ctx 里。同一账号所有库共用同一 32 字节生密钥，
+    // 故从任一已开库句柄沿下面的链即可读出（无需 Hook）。各字段偏移取自 SQLCipher setter 反汇编：
+    //   sqlite3PagerSetCodec 把 codec 存于 pager+0xDC；sqlcipher_codec_ctx_init 建 read_ctx 于 codec+0x54；
+    //   cipher_ctx_copy 显示 pass（生密钥指针）在 +0x10、pass_sz（字节数）在 +0x04。
+    //   链：db → *(db+DB_BTREE)=Btree → *(Btree+BTREE_SHARED)=BtShared → *(BtShared+SHARED_PAGER)=Pager
+    //       → *(Pager+PAGER_CODEC)=codec → *(codec+CODEC_READCTX)=cipher_ctx
+    //       → 密钥指针 *(cipher_ctx+CIPHER_PASS)，长度 *(cipher_ctx+CIPHER_PASSSZ)
+    // 注：为结构体字段偏移（非 RVA），使用时不加 g_WeChatWinDllAddr。仅登录并打开过库后才有效。
+    constexpr uint32_t DB_BTREE      = 0x14;  // sqlite3* → aDb[0].pBt（aDb@+0x10，.pBt@+4）
+    constexpr uint32_t BTREE_SHARED  = 0x04;  // Btree → BtShared
+    constexpr uint32_t SHARED_PAGER  = 0x00;  // BtShared → Pager（首字段）
+    constexpr uint32_t PAGER_CODEC   = 0xDC;  // Pager → codec（pCodec）
+    constexpr uint32_t CODEC_READCTX = 0x54;  // codec → read cipher_ctx
+    constexpr uint32_t CIPHER_PASS   = 0x10;  // cipher_ctx → 生密钥指针（pass）
+    constexpr uint32_t CIPHER_PASSSZ = 0x04;  // cipher_ctx → 生密钥字节数（pass_sz）
 } // namespace Database
 
 namespace Friend

@@ -17,6 +17,7 @@ static const std::unordered_map<Functions, int> rpc_tag_map = {
     { Functions_FUNC_GET_DB_NAMES, Response_dbs_tag },
     { Functions_FUNC_GET_DB_TABLES, Response_tables_tag },
     { Functions_FUNC_GET_AUDIO_MSG, Response_str_tag },
+    { Functions_FUNC_GET_DB_KEY, Response_str_tag },
     { Functions_FUNC_SEND_TXT, Response_status_tag },
     { Functions_FUNC_SEND_IMG, Response_status_tag },
     { Functions_FUNC_SEND_FILE, Response_status_tag },
