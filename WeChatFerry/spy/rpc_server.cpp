@@ -129,6 +129,9 @@ static const std::unordered_map<Functions, RpcFunctionHandler> rpcFunctionMap = 
     { Functions_FUNC_EXEC_DB_QUERY, [](const Request &r, uint8_t *out, size_t *len) {
         return db::rpc_exec_db_query(r.msg.query, out, len);
     }},
+    { Functions_FUNC_GET_DB_KEY, [](const Request &r, uint8_t *out, size_t *len) {
+        return db::rpc_get_db_key(out, len);
+    }},
 
     // Chatroom Manager 模块
     { Functions_FUNC_ADD_ROOM_MEMBERS, [](const Request &r, uint8_t *out, size_t *len) {
