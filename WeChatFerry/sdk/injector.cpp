@@ -1,6 +1,20 @@
 ﻿#include "injector.h"
 
+#include <stdio.h>
+
 typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+
+bool g_guiMode = false;
+
+void ReportError(LPCWSTR message, LPCWSTR title)
+{
+    if (g_guiMode) {
+        MessageBox(NULL, message, title, MB_OK | MB_ICONERROR);
+    } else {
+        fwprintf(stderr, L"[%s] %s\n", title, message);
+        fflush(stderr);
+    }
+}
 
 static void ShowErrorMessage(DWORD dwError, HANDLE hProcess)
 {
@@ -14,7 +28,7 @@ static void ShowErrorMessage(DWORD dwError, HANDLE hProcess)
         }
     }
     wsprintf(szErrorMessage, L"LoadLibrary 调用失败。错误码: %lu", dwError);
-    MessageBox(NULL, szErrorMessage, L"InjectDll", 0);
+    ReportError(szErrorMessage, L"InjectDll");
 }
 
 HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
@@ -24,14 +38,14 @@ HANDLE InjectDll(DWORD pid, LPCWSTR dllPath, HMODULE *injectedBase)
     // 1. 打开目标进程
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
     if (hProcess == NULL) {
-        MessageBox(NULL, L"打开进程失败", L"InjectDll", 0);
+        ReportError(L"打开进程失败", L"InjectDll");
         return NULL;
     }
 
     // 2. 在目标进程的内存里开辟空间
     LPVOID pRemoteAddress = VirtualAllocEx(hProcess, NULL, cszDLL, MEM_COMMIT, PAGE_READWRITE);
     if (pRemoteAddress == NULL) {
-        MessageBox(NULL, L"DLL 路径写入失败", L"InjectDll", 0);
+        ReportError(L"DLL 路径写入失败", L"InjectDll");
         return NULL;
     }
 
@@ -64,7 +78,7 @@ bool EjectDll(HANDLE process, HMODULE dllBase)
     // 使目标进程调用 FreeLibrary，卸载 DLL
     hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)FreeLibrary, (LPVOID)dllBase, 0, NULL);
     if (hThread == NULL) {
-        MessageBox(NULL, L"FreeLibrary 调用失败!", L"EjectDll", 0);
+        ReportError(L"FreeLibrary 调用失败!", L"EjectDll");
         return false;
     }
 
@@ -119,7 +133,7 @@ bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR func
 
     LPVOID pRemoteAddress = VirtualAllocEx(process, NULL, sz, MEM_COMMIT, PAGE_READWRITE);
     if (pRemoteAddress == NULL) {
-        MessageBox(NULL, L"申请内存失败", L"CallDllFuncEx", 0);
+        ReportError(L"申请内存失败", L"CallDllFuncEx");
         return NULL;
     }
 
@@ -128,7 +142,7 @@ bool CallDllFuncEx(HANDLE process, LPCWSTR dllPath, HMODULE dllBase, LPCSTR func
     HANDLE hThread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, pRemoteAddress, 0, NULL);
     if (hThread == NULL) {
         VirtualFree(pRemoteAddress, 0, MEM_RELEASE);
-        MessageBox(NULL, L"远程调用失败", L"CallDllFuncEx", 0);
+        ReportError(L"远程调用失败", L"CallDllFuncEx");
         return false;
     }
     WaitForSingleObject(hThread, INFINITE);

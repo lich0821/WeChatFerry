@@ -8,17 +8,32 @@
 #include "sdk.h"
 #include "util.h"
 
-#define WCF_LOCK ".wcf.lock"
+#define WCF_LOCK L".wcf.lock"
 
 static bool debugMode             = false;
 static HANDLE wcProcess           = NULL;
 static HMODULE spyBase            = NULL;
 static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
+void WxSetGuiMode(bool enable) { g_guiMode = enable; }
+
+// 取 sdk.dll 所在目录（注入器自身目录），用作 lock 文件与 spy 工作目录的锚点，
+// 避免依赖调用方 CWD——否则 start/stop 若 CWD 不同，stop 找不到 lock。
+static void GetModuleDir(WCHAR *dir)
+{
+    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), dir, MAX_PATH);
+    PathRemoveFileSpec(dir);
+}
+
+static void GetLockPath(WCHAR *lockPath)
+{
+    GetModuleDir(lockPath);
+    PathAppend(lockPath, WCF_LOCK);
+}
+
 static int GetDllPath(bool debug, wchar_t *dllPath)
 {
-    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), spyDllPath, MAX_PATH);
-    PathRemoveFileSpec(spyDllPath);
+    GetModuleDir(spyDllPath);
     if (debug) {
         PathAppend(spyDllPath, WECHATINJECTDLL_DEBUG);
     } else {
@@ -26,7 +41,7 @@ static int GetDllPath(bool debug, wchar_t *dllPath)
     }
 
     if (!PathFileExists(spyDllPath)) {
-        MessageBox(NULL, spyDllPath, L"文件不存在", 0);
+        ReportError(spyDllPath, L"文件不存在");
         return ERROR_FILE_NOT_FOUND;
     }
 
@@ -45,30 +60,35 @@ int WxInitSDK(bool debug, int port)
 
     status = util::open_wechat(&wcPid);
     if (status != 0) {
-        MessageBox(NULL, L"打开微信失败", L"WxInitSDK", 0);
+        ReportError(L"打开微信失败", L"WxInitSDK");
         return status;
     }
 
     Sleep(2000); // 等待微信打开
     wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
-        MessageBox(NULL, L"注入失败", L"WxInitSDK", 0);
+        ReportError(L"注入失败", L"WxInitSDK");
         return -1;
     }
 
+    WCHAR moduleDir[MAX_PATH] = { 0 };
+    GetModuleDir(moduleDir);
+
     PortPath_t pp = { 0 };
     pp.port       = port;
-    sprintf_s(pp.path, MAX_PATH, "%s", std::filesystem::current_path().string().c_str());
+    sprintf_s(pp.path, MAX_PATH, "%s", util::w2s(moduleDir).c_str());
 
     if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
-        MessageBox(NULL, L"初始化失败", L"WxInitSDK", 0);
+        ReportError(L"初始化失败", L"WxInitSDK");
         return -1;
     }
 
 #ifdef WCF
-    FILE *fd = fopen(WCF_LOCK, "wb");
+    WCHAR lockPath[MAX_PATH] = { 0 };
+    GetLockPath(lockPath);
+    FILE *fd = _wfopen(lockPath, L"wb");
     if (fd == NULL) {
-        MessageBox(NULL, L"无法打开lock文件", L"WxInitSDK", 0);
+        ReportError(L"无法打开lock文件", L"WxInitSDK");
         return -2;
     }
     fwrite((uint8_t *)&debug, sizeof(debug), 1, fd);
@@ -86,19 +106,21 @@ int WxDestroySDK()
     bool debug;
     uint32_t pid = util::get_wechat_pid();
     if (pid == 0) {
-        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
+        ReportError(L"微信未运行", L"WxDestroySDK");
         return status;
     }
 
     wcProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
     if (wcProcess == NULL) {
-        MessageBox(NULL, L"微信未运行", L"WxDestroySDK", 0);
+        ReportError(L"微信未运行", L"WxDestroySDK");
         return -1;
     }
 
-    FILE *fd = fopen(WCF_LOCK, "rb");
+    WCHAR lockPath[MAX_PATH] = { 0 };
+    GetLockPath(lockPath);
+    FILE *fd = _wfopen(lockPath, L"rb");
     if (fd == NULL) {
-        MessageBox(NULL, L"无法打开lock文件", L"WxDestroySDK", 0);
+        ReportError(L"无法打开lock文件", L"WxDestroySDK");
         return -2;
     }
     fread((uint8_t *)&debug, sizeof(debug), 1, fd);
