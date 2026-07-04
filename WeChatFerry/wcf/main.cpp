@@ -22,7 +22,8 @@ void help()
             "  6 初始化 spy(RPC 服务)失败\n"
             "  7 .wcf.lock 读写失败\n"
             "  8 停止时微信未运行\n"
-            "  9 卸载 spy 失败\n");
+            "  9 卸载 spy 失败\n"
+            " 10 spy 已注入(重复 start)\n");
 }
 
 int main(int argc, char *argv[])

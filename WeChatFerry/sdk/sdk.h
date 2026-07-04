@@ -12,6 +12,7 @@ enum WxStatus {
     WX_ERR_LOCK               = 7, // .wcf.lock 读写失败
     WX_ERR_WECHAT_NOT_RUNNING = 8, // 停止时微信未运行
     WX_ERR_EJECT              = 9, // 卸载 spy 失败
+    WX_ERR_ALREADY_INJECTED   = 10, // spy 已注入(重复 start)
 };
 
 int WxInitSDK(bool debug, int port);
