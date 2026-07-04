@@ -83,7 +83,8 @@ int WxInitSDK(bool debug, int port)
         return status;
     }
 
-    if (util::open_wechat(&wcPid) != ERROR_SUCCESS) {
+    bool launched = false;
+    if (util::open_wechat(&wcPid, &launched) != ERROR_SUCCESS) {
         ReportError(L"打开微信失败", L"WxInitSDK");
         return WX_ERR_OPEN_WECHAT;
     }
@@ -93,7 +94,9 @@ int WxInitSDK(bool debug, int port)
         return WX_ERR_ALREADY_INJECTED;
     }
 
-    Sleep(2000); // 等待微信打开
+    if (launched) {
+        Sleep(2000); // 仅新拉起微信时才等待其启动；已在运行则无需空等
+    }
     wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
         ReportError(L"注入失败", L"WxInitSDK");

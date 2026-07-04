@@ -180,8 +180,12 @@ uint32_t get_wechat_pid()
     return pid;
 }
 
-int open_wechat(uint32_t *pid)
+int open_wechat(uint32_t *pid, bool *launched)
 {
+    if (launched) {
+        *launched = false;
+    }
+
     *pid = get_wechat_pid();
     if (*pid) {
         return ERROR_SUCCESS;
@@ -205,6 +209,9 @@ int open_wechat(uint32_t *pid)
     CloseHandle(pi.hProcess);
 
     *pid = pi.dwProcessId;
+    if (launched) {
+        *launched = true;
+    }
 
     return ERROR_SUCCESS;
 }

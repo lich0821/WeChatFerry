@@ -60,7 +60,9 @@ inline std::string get_pp_string(uint32_t addr)
 
 // 函数声明（使用 snake_case 命名）
 uint32_t get_wechat_pid();
-int open_wechat(uint32_t *pid);
+// launched(可选出参)：微信本已运行则置 false，本次新拉起则置 true，
+// 供调用方决定是否需要等待微信启动。
+int open_wechat(uint32_t *pid, bool *launched = nullptr);
 int get_wechat_version(wchar_t *version);
 int get_wstring_by_address(uint32_t address, wchar_t *buffer, uint32_t buffer_size);
 uint32_t get_memory_int_by_address(void *hProcess, uint32_t address);
