@@ -60,7 +60,7 @@ jobs:
         shell: pwsh
         run: |
           cd ${{ github.workspace }}/WeChatFerry
-          C:/Tools/vcpkg/vcpkg install --triplet x64-windows-static
+          C:/Tools/vcpkg/vcpkg install --triplet x86-windows-static
           C:/Tools/vcpkg/vcpkg integrate install
 
       - name: 解析并构建 Release/Debug
@@ -70,8 +70,8 @@ jobs:
             Write-Host "Building $cfg"
             msbuild WeChatFerry/WeChatFerry.sln `
               /p:Configuration=$cfg `
-              /p:Platform="x64" `
-              /p:VcpkgTriplet="x64-windows-static" `
+              /p:Platform="x86" `
+              /p:VcpkgTriplet="x86-windows-static" `
               /p:VcpkgEnableManifest=true `
               /verbosity:minimal
           }
@@ -83,4 +83,5 @@ jobs:
           name: wechatferry-binaries
           path: |
             WeChatFerry/Out/*.dll
+            WeChatFerry/Out/*.exe
             WeChatFerry/Out/*.md
