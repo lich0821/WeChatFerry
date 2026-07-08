@@ -1,13 +1,10 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__version__ = "39.5.2.0"
+__version__ = "39.6.0.0"
 
 import atexit
 import base64
-import ctypes
-import ctypes.wintypes
-import gc
 import logging
 import mimetypes
 import os
@@ -78,7 +75,6 @@ class Wcf():
         self.LOG.info(f"wcferry version: {__version__}")
         self.port = port
         self.host = host
-        self.sdk = None
         if host is None:
             self._local_mode = True
             self.host = "127.0.0.1"
@@ -125,25 +121,18 @@ class Wcf():
             self.LOG.error(f"修改控制台代码页失败: {e}")
 
     def _sdk_init(self, debug, port):
-        sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-        if sdk.WxInitSDK(debug, port) != 0:
-            self.LOG.error("初始化失败！")
+        # 经 wcf.exe 子进程注入：spy 为 32 位，用独立进程驱动可兼容 32/64 位 Python
+        cmd = [os.path.join(self._wcf_root, "wcf.exe"), "start", str(port)]
+        if debug:
+            cmd.append("debug")
+        ret = subprocess.run(cmd, cwd=self._wcf_root).returncode
+        if ret not in (0, 10):  # 0=成功，10=spy 已注入（视为已就绪）
+            self.LOG.error(f"初始化失败，wcf.exe 退出码: {ret}")
             os._exit(-1)
 
-        # 主动卸载
-        ctypes.windll.kernel32.FreeLibrary.argtypes = [ctypes.wintypes.HMODULE]
-        ctypes.windll.kernel32.FreeLibrary(sdk._handle)
-        del sdk  # 删除 Python 对象、触发垃圾回收
-        gc.collect()
-
-    def _sdk_destroy(self):
-        sdk = ctypes.cdll.LoadLibrary(f"{self._wcf_root}/sdk.dll")
-        sdk.WxDestroySDK()
-        # 主动卸载
-        ctypes.windll.kernel32.FreeLibrary.argtypes = [ctypes.wintypes.HMODULE]
-        ctypes.windll.kernel32.FreeLibrary(sdk._handle)
-        del sdk  # 删除 Python 对象、触发垃圾回收
-        gc.collect()
+    def _sdk_destroy(self) -> int:
+        return subprocess.run(
+            [os.path.join(self._wcf_root, "wcf.exe"), "stop"], cwd=self._wcf_root).returncode
 
     def cleanup(self) -> None:
         """关闭连接，回收资源"""
@@ -152,14 +141,10 @@ class Wcf():
 
         self.disable_recv_msg()
 
-        req = wcf_pb2.Request()
-        req.func = wcf_pb2.FUNC_SHUTDOWN
-        _ = self._send_request(req)
-
         self.cmd_socket.close()
         self.msg_socket.close()
 
-        if self._local_mode and self.sdk and self._sdk_destroy() != 0:
+        if self._local_mode and self._sdk_destroy() != 0:
             self.LOG.error("退出失败！")
 
         self._is_running = False
@@ -273,6 +258,14 @@ class Wcf():
         tables = json_format.MessageToDict(rsp.tables).get("tables", [])
 
         return tables
+
+    def get_db_key(self) -> str:
+        """获取数据库密钥（32 字节，返回小写十六进制串，供外部离线解密 .db）"""
+        req = wcf_pb2.Request()
+        req.func = wcf_pb2.FUNC_GET_DB_KEY  # FUNC_GET_DB_KEY
+        rsp = self._send_request(req)
+
+        return rsp.str
 
     def get_user_info(self) -> Dict:
         """获取登录账号个人信息"""

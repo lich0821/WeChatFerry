@@ -26,10 +26,13 @@ setup(
     include_package_data=True,
     install_requires=[
         "setuptools",
-        "grpcio-tools",
+        "protobuf>=4.25.0",
         "pynng",
         "requests",
     ],
+    extras_require={
+        "dev": ["grpcio-tools>=1.62"],
+    },
     classifiers=[
         "Environment :: Win32 (MS Windows)",
         "Intended Audience :: Developers",
