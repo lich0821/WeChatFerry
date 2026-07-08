@@ -26,10 +26,10 @@ static std::string get_default_home_path()
     return "";
 }
 
-// 辅助函数：获取字符串值（x86 平台使用 0x14 偏移）
+// 读取 AccountService 对象内的 std::string 成员（容量位在 +0x14，据此判定 SSO 内联/堆）
 static std::string get_string_value(uint32_t base_addr, uint32_t offset)
 {
-    uint32_t type = util::get_dword(base_addr + offset + 0x14);  // x86: 0x14
+    uint32_t type = util::get_dword(base_addr + offset + 0x14);
     if (type == 0xF) {
         return util::get_p_string(base_addr + offset);
     } else {
@@ -82,7 +82,6 @@ UserInfo_t get_user_info()
         return ui;
     }
 
-    // wxid/name/mobile 均为 AccountService 对象内的 std::string 成员，统一走 get_string_value
     ui.wxid   = get_self_wxid();
     ui.name   = get_string_value(base, OsAcc::NAME);
     ui.mobile = get_string_value(base, OsAcc::MOBILE);

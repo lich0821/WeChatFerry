@@ -156,7 +156,7 @@ std::vector<RpcContact_t> get_contacts()
 {
     std::vector<RpcContact_t> contacts;
 
-    // 依据 MicroMsg.db 的 Contact 表实际列动态拼 SQL（缺列以 '' / 0 占位），再走进程内裸 sqlite3（#05）。
+    // 依据 MicroMsg.db 的 Contact 表实际列动态拼 SQL（缺列以 '' / 0 占位）
     std::string sql = build_contact_query(nullptr);
     if (sql.empty()) {
         LOG_ERROR("Failed to build contact query (missing UserName column?).");
@@ -178,13 +178,8 @@ int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
         return -1;
     }
 
-    // #21 通过好友申请：AddFriendHelper 三步编排（等价旧内联汇编，全部建模为带类型 C++ 调用，无内联汇编）：
-    // 1) ACCEPT_CTOR：在栈上把 buffer 构造成 AddFriendHelper（写 vftable、零初始化 WxString 字段、注册事件处理器）。
-    // 2) VERIFY_OK：AddFriendHelper::VerifyOK（纯 __thiscall，ecx=buffer；尾 retn 0x30 被调清栈 12 个 dword，
-    //    精确 __thiscall 即栈平衡、无需帧指针纠正）。
-    //    - v3（加密 username）：仅被读取并拷入 this+24 → 用非拥有 WxString 视图即可。
-    //    - v4（ticket）：函数尾部会 mm_free 其 wptr/ptr → 须用 RichText::ASSIGN 建 WeChat 拥有副本、按值传、勿自行析构。
-    // 3) ACCEPT_DTOR：AddFriendHelper 完整析构（释放 this 内 WxString、复位 EventHandler vftable）。
+    // v3（加密 username）仅被读取（拷入 this+24），用非拥有视图即可；
+    // v4（ticket）会被 VerifyOK mm_free，须用 ASSIGN 建 WeChat 拥有副本。
     auto ctor      = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_CTOR);
     auto verify_ok = reinterpret_cast<AcceptNewFriendFn>(g_WeChatWinDllAddr + Offsets::Friend::VERIFY_OK);
     auto dtor      = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_DTOR);

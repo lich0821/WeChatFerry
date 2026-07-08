@@ -55,7 +55,7 @@ static bool lIsRunning = false;
 static nng_socket cmdSock, msgSock; // TODO: 断开检测
 static uint8_t gBuffer[G_BUF_SIZE] = { 0 };
 
-// RPC 函数映射表 - 使用 lambda 包装调用
+// Functions 枚举 → 处理函数映射表
 using RpcFunctionHandler = std::function<bool(const Request &, uint8_t *, size_t *)>;
 
 static const std::unordered_map<Functions, RpcFunctionHandler> rpcFunctionMap = {
@@ -185,7 +185,6 @@ static bool dispatcher(uint8_t *in, size_t in_len, uint8_t *out, size_t *out_len
 
     LOG_DEBUG("{:#04x}[{}] length: {}", (uint8_t)req.func, magic_enum::enum_name(req.func), in_len);
 
-    // 使用函数映射表分发请求
     auto it = rpcFunctionMap.find(req.func);
     if (it != rpcFunctionMap.end()) {
         ret = it->second(req, out, out_len);

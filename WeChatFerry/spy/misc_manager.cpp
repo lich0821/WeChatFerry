@@ -36,30 +36,19 @@ using ManagerGetterFn        = void *(*)();
 using BufferInitFn           = void(__thiscall *)(void *buffer);
 using BufferCleanupFn        = void(__thiscall *)(void *buffer);
 using WarmupFn               = void (*)();
-// SnsTimeLineMgr::TryGetFirstPageScene / GetNextPageScene：纯 __thiscall（ecx=manager，retn 4/8 被调清栈）。
-// 新版构建器内部自建 NetScene 并经 doScene 发送，不再需要旧版的输出 buffer / cursor 参数。
 using RefreshFirstPageFn     = int(__thiscall *)(void *manager, int forward);
 using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high);
-// OCRManager::DoOCRTask：__usercall caller-clean，以 __thiscall 建模（ecx=manager，5 栈参），
-// 栈失衡由 get_ocr_result 帧指针 epilogue 纠正。result_list 为结果链表头、found_flag 为缓存命中标志输出。
 using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *path, int reserved,
                                                  void *result_list, uint32_t *found_flag,
                                                  const WxString *null_obj);
-// WeChat 全局 operator new（分配链表哨兵结点，须与 RESULT_DTOR 的 operator delete 配对）。
 using OperatorNewFn          = void *(__cdecl *)(size_t);
-// OCR 结果链表析构器（__thiscall，ecx=链表头）。
 using OcrResultDtorFn        = void(__thiscall *)(void *result_list);
 using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
 using LoadAttachmentMetaFn   = int(__thiscall *)(void *buffer, uint32_t local_id, uint32_t db_idx);
-// PreDownLoadMgr::push_attach_task：纯 __thiscall（ecx=manager，尾 retn 0x10=4 栈参被调清栈）。
-// user_clicked 仅 sync==0 分支用，本处 sync=1 传 0（照真实调用点 push_attach_task(manager, buffer, 0, 1, 0)）。
 using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, int reserved, int sync,
                                                  int user_clicked);
-// WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝）——把落盘路径写成 WeChat 拥有副本。
 using WxStringAssignFn       = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
 using RevokeMessageFn        = int(__thiscall *)(void *manager, void *chat_msg);
-// TenPayTransfer 受理入口：反编译标 __fastcall（ecx=pay_info, edx=wxid），实为 caller-clean（同 forward），
-// 以 __fastcall 建模、栈失衡由 receive_transfer 帧指针 epilogue 纠正。scratch 为废弃的 __int64 占位，传 0。
 using ReceiveTransferFn      = int(__fastcall *)(void *pay_info, const WxString *wxid, uint64_t scratch,
                                                  int confirm);
 
@@ -120,7 +109,7 @@ namespace misc
 
 std::string decrypt_image(const std::string &src, const std::string &dir)
 {
-    // 微信图片是原图逐字节异或同一个单字节密钥；由前两字节与已知图片头（PNG/JPG/GIF）
+    // 微信图片是原图逐字节异或同一单字节密钥；由前两字节与已知图片头（PNG/JPG/GIF）反推密钥
     if (!fs::exists(src)) {
         return "";
     }
@@ -221,12 +210,7 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
         return status;
     }
 
-    // 编排（全部带类型 C++ 调用，无内联汇编）：
-    //   1) 默认构造一个 ChatMsg（0x2D8 缓冲）
-    //   2) warmup + ChatMgr::GetMgrByPrefixLocalId 按 localId/dbIdx 把消息加载进该 ChatMsg
-    //   3) 依消息类型算出落盘路径，用 ASSIGN 覆写 ChatMsg 的缩略图/附件路径字段并置 init 标志
-    //   4) PreDownLoadMgr::push_attach_task 提交下载
-    //   5) ~ChatMsg 清理（它会 mm_free 上面 ASSIGN 建的路径副本）
+    // 加载消息进 ChatMsg → 依类型算落盘路径写入其字段 → 提交下载 → 析构
     char buff[0x2D8] = { 0 };
     auto initChatMsg  = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
     auto warmup       = reinterpret_cast<WarmupFn>(g_WeChatWinDllAddr + Offsets::Attachment::WARMUP);
@@ -272,8 +256,7 @@ int download_attachment(uint64_t id, const std::string &thumb, const std::string
     std::wstring wsSavePath  = util::s2w(save_path);
     std::wstring wsThumbPath = util::s2w(thumb_path);
 
-    // 用 WxString::assign 建 WeChat 拥有副本写入 ChatMsg 落盘路径字段（~ChatMsg 负责释放，避免 double-free）；
-    // init 标志置 1 跳过内部重复的子对象初始化。
+    // 路径字段会被 ~ChatMsg mm_free，须用 ASSIGN 建 WeChat 拥有副本；init 标志置 1 跳过重复子对象初始化
     assignPath(buff + Offsets::Attachment::F_THUMB_PATH, wsThumbPath.c_str(), -1);
     assignPath(buff + Offsets::Attachment::F_SAVE_PATH, wsSavePath.c_str(), -1);
     *reinterpret_cast<int *>(buff + Offsets::Attachment::F_INITED_FLAG) = 1;
@@ -307,7 +290,7 @@ int revoke_message(uint64_t id)
     auto destroyChatMsg  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
 
     initChatMsg(chat_msg);
-    // GetMgrByPrefixLocalId 内部自初始化 ChatMgr，无需单独 warmup；栈失衡由本函数帧指针 epilogue 纠正。
+    // GetMgrByPrefixLocalId 内部自初始化 ChatMgr，无需单独 warmup
     loadMsg(chat_msg, static_cast<uint32_t>(localId), dbIdx);
 
     void *manager = getRevokeMgr();
@@ -348,8 +331,7 @@ std::string get_audio(uint64_t id, const std::string &dir)
     return mp3path;
 }
 
-// OCR 结果链表头：一个 std::list 头（哨兵指针 + 计数）后接若干缓存命中时被回填的标量字段。
-// DoOCRTask 缓存命中会把结点接入链表并往 +8..+0x14 写数据，故须留足空间并预先建成合法空链表。
+// OCR 结果链表头：std::list 头（哨兵指针 + 计数）后接缓存命中时被回填的标量字段，须留足空间避免越界
 struct OcrResultList {
     void    *head;  // +0x00 哨兵结点（自环空链表）
     uint32_t count; // +0x04 结点数
@@ -433,8 +415,7 @@ std::string get_login_url()
         return "";
     }
 
-    // QRCodeLoginMgr 单例 getter 返回管理器对象本体；getQRCodeImage（thiscall）经 doScene 触发
-    // NetSceneGetLoginQRCode 异步获取，完成后把登录 uuid 回填到管理器 +8 的 std::string。
+    // getQRCodeImage 经 doScene 异步获取，完成后把登录 uuid 回填到管理器 +8 的 std::string
     auto getQrCodeManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::QRCode::MGR_GETTER);
     auto getQrCodeImage   = reinterpret_cast<RefreshLoginQrCodeFn>(g_WeChatWinDllAddr + Offsets::QRCode::GET_QRCODE);
 
@@ -494,13 +475,13 @@ int receive_transfer(const std::string &wxid, const std::string &transferid, con
     auto assignField     = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
     auto destroyPayInfo  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Transfer::PAY_INFO_DTOR);
 
-    // 默认构造：写两个 vftable + 零初始化全部 WxString 成员（受理入口内部会拷贝构造它，故所有成员须先初始化）。
+    // 受理入口会拷贝构造 payInfo，故所有成员须先默认构造初始化
     initPayInfo(payInfo);
 
     *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_PAYSUBTYPE)     = 1;
     *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_EFFECTIVE_DATE) = 1;
 
-    // 用 ASSIGN 把交易号/转账单号写成 WeChat 拥有副本（析构器负责 mm_free，避免非拥有视图被 free 导致 double-free）。
+    // 交易号/转账单号会被析构器 mm_free，须用 ASSIGN 建 WeChat 拥有副本
     assignField(payInfo + Offsets::Transfer::F_TRANSACTION_ID, wsTaid.c_str(), -1);
     assignField(payInfo + Offsets::Transfer::F_TRANSFER_ID, wsTfid.c_str(), -1);
 

@@ -7,7 +7,6 @@
 #include "offsets.h"
 #include "rpc_server.h"
 
-// 全局变量
 uint32_t g_WeChatWinDllAddr = 0;
 
 namespace Spy
@@ -56,7 +55,6 @@ bool is_logged_in()
 
 } // namespace Spy
 
-// C 接口实现
 extern "C" {
 
 void InitSpy(void *args)

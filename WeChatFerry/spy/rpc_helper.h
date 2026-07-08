@@ -43,7 +43,7 @@ static const std::unordered_map<Functions, int> rpc_tag_map = {
     { Functions_FUNC_INV_ROOM_MEMBERS, Response_status_tag }
 };
 
-// 模板函数：简化 RPC 响应填充（无额外数据）
+// 填充并编码 RPC 响应（无额外数据）
 template <Functions FuncType, typename AssignFunc>
 bool fill_response(uint8_t *out, size_t *len, AssignFunc assign)
 {
@@ -68,7 +68,7 @@ bool fill_response(uint8_t *out, size_t *len, AssignFunc assign)
     return true;
 }
 
-// 模板函数：简化 RPC 响应填充（带额外数据）
+// 填充并编码 RPC 响应（额外数据须活到编码完成，故按引用传入）
 template <Functions FuncType, typename DataType, typename AssignFunc>
 bool fill_response(uint8_t *out, size_t *len, DataType &&data, AssignFunc &&assign)
 {

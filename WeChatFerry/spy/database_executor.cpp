@@ -34,8 +34,7 @@ constexpr int SQLITE_TEXT    = 3;
 constexpr int SQLITE_BLOB    = 4;
 constexpr int SQLITE_NULL    = 5;
 
-// WeChatWin.dll 进程内（已解密）SQLCipher/sqlite3 内部 API —— 均为 __cdecl。
-// 地址来自 offsets.h::Database（RVA + g_WeChatWinDllAddr）。
+// 进程内（已解密）SQLCipher/sqlite3 内部 API，均为 __cdecl
 using sqlite3_prepare_v2_fn   = int(__cdecl *)(void *, const char *, int, void **, const char **);
 using sqlite3_step_fn         = int(__cdecl *)(void *);
 using sqlite3_finalize_fn     = int(__cdecl *)(void *);
@@ -406,7 +405,7 @@ std::string get_db_key()
     }
 
     // 同一账号所有库共用同一 32 字节生密钥，取任一已开句柄沿 SQLCipher codec 链读出即可。
-    // get_dword 仅在 addr==0 时返回 0，故每段中间指针都要显式判空后再加偏移，否则 get_dword(小地址) 会崩。
+    // 每段中间指针都须显式判空后再加偏移，否则 get_dword(小地址) 会崩。
     for (const auto &[name, handle] : db_map) {
         (void)name;
         if (handle == 0) {

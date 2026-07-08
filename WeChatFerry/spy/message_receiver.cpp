@@ -27,8 +27,7 @@ namespace
 {
 
 using ReceiveMessageFn = uintptr_t(__thiscall *)(void *msg);
-// OnSnsTimeLineSceneFinish(this, container, flag)：this 走 ecx，container(=朋友圈容器) 与 flag 为两个栈参。
-// flag 必须原样透传——该入口有 2 个调用者，丢参会破坏另一条（非接收）调用路径。
+// flag 必须原样透传：OnSnsTimeLineSceneFinish 有 2 个调用者，丢参会破坏另一条（非接收）路径
 using ReceivePyqFn     = uintptr_t(__thiscall *)(void *self, uint32_t data, uint32_t flag);
 
 struct DetourHook {
@@ -206,8 +205,7 @@ void dispatch_msg(uint32_t reg)
 
 uintptr_t __fastcall receive_message_hook(void *msg, void *)
 {
-    // CALL(=ChatMsg::~ChatMsg) 有大量调用点，故在入口处按“返回地址==定点 HOOK+5”过滤：
-    // 仅当本次析构由 SyncMgr::doAddMsg 尾部那条 call 触发（即刚收下一条消息）时才 dispatch。
+    // ~ChatMsg 有大量调用点，按“返回地址==HOOK+5”过滤，仅当本次由收消息的定点 call 触发时才 dispatch
     if (reinterpret_cast<uint32_t>(_ReturnAddress())
         == g_WeChatWinDllAddr + Offsets::Message::Receive::HOOK + 5) {
         dispatch_msg(reinterpret_cast<uint32_t>(msg));
@@ -272,8 +270,8 @@ void dispatch_pyq(uint32_t reg)
 
 uintptr_t __fastcall receive_pyq_hook(void *self, void *, uint32_t data, uint32_t flag)
 {
-    // CALL(=OnSnsTimeLineSceneFinish) 有 2 个调用者，仅当本次由 OnProcessTimelineResp 定点触发
-    // （返回地址 == HOOK+5）才是"刚收到一批朋友圈"，此时 data 即容器指针。手法同 #11。
+    // OnSnsTimeLineSceneFinish 有 2 个调用者，仅当由 OnProcessTimelineResp 定点触发（返回地址==HOOK+5）
+    // 才是"刚收到一批朋友圈"，此时 data 即容器指针
     if (reinterpret_cast<uint32_t>(_ReturnAddress())
         == g_WeChatWinDllAddr + Offsets::Moments::HOOK + 5) {
         dispatch_pyq(data);
@@ -312,7 +310,6 @@ namespace message
 
 MsgTypes_t get_msg_types()
 {
-    // 纯静态映射表，无偏移、无依赖。
     return build_msg_types();
 }
 

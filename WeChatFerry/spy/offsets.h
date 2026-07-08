@@ -10,12 +10,12 @@ namespace Offsets
 
 namespace Account
 {
-    constexpr uint32_t SERVICE = 0x4368508;  // 登录状态服务（AccountService 全局对象 RVA 0x4368308 + 0x200，登录后非零）
-    constexpr uint32_t WXID    = 0x4368354;  // 微信ID（AccountService obj+0x4C，std::string，容量位 WXID+0x14）
-    constexpr uint32_t NAME    = 0x4368460;  // 昵称（AccountService obj+0x158，第12个 std::string）
-    constexpr uint32_t MOBILE  = 0x43683D0;  // 手机号（AccountService obj+0xC8，第6个 std::string）
-    constexpr uint32_t HOME    = 0x434BD64;  // 数据目录（FileUtils p_WideCharStr，wchar_t* 指针，指向文档父目录）
-    constexpr uint32_t LOGIN   = 0x0;        // 登录状态偏移（相对于SERVICE）
+    constexpr uint32_t SERVICE = 0x4368508;  // 登录状态服务（登录后非零）
+    constexpr uint32_t WXID    = 0x4368354;  // 微信ID（std::string，容量位 WXID+0x14）
+    constexpr uint32_t NAME    = 0x4368460;  // 昵称（std::string）
+    constexpr uint32_t MOBILE  = 0x43683D0;  // 手机号（std::string）
+    constexpr uint32_t HOME    = 0x434BD64;  // 数据目录（wchar_t* 指向文档父目录）
+    constexpr uint32_t LOGIN   = 0x0;        // 登录状态偏移（相对 SERVICE）
 } // namespace Account
 
 namespace Message
@@ -23,82 +23,47 @@ namespace Message
     namespace Send
     {
         // 共享辅助：
-        constexpr uint32_t SEND_MGR_GETTER = 0x1197AC0;  // SendMessageMgr 单例 getter（读 dword_143682F4，空则 new(0xB0)+ctor sub_11773FD0）
-        constexpr uint32_t CHATMSG_DTOR    = 0x1199010;  // ChatMsg::~ChatMsg，清理栈上临时 ChatMsg（对象恰好 0x2D8 字节，=Receive::CALL）
+        constexpr uint32_t SEND_MGR_GETTER = 0x1197AC0;  // SendMessageMgr 单例 getter
+        constexpr uint32_t CHATMSG_DTOR    = 0x1199010;  // ChatMsg::~ChatMsg（对象恰好 0x2D8 字节，=Receive::CALL）
 
         // 发送文本：
         constexpr uint32_t SEND_MSG = 0x1783C10;  // SendMessageMgr::sendMsg（__fastcall，ecx=buffer/edx=wxid，6 栈参 msg/at/1/0/0/0）
 
-        // 发送图片：getter=SEND_MGR_GETTER、dtor=CHATMSG_DTOR 与文本发送共用
-        //   不再需要（WxString 直接由 C++ 构造）。校验依据：ChatViewModel::reSendMsg(sub_113CE240) 的 case 3
-        //   与多个真实调用者均为 getter()→SEND_IMAGE(mgr,buf,receiver,path,options)→~ChatMsg(buf)。
-        constexpr uint32_t SEND_IMAGE = 0x1783120;  // SendMessageMgr 图片提交叶子 sub_11783120（旧 IMG_CALL3=0xCE6640）
-                                                    //   __thiscall(mgr, buf, receiver, path, options*)；options 布局见 message_sender.cpp
+        // 发送图片（getter/dtor 与文本发送共用）：
+        constexpr uint32_t SEND_IMAGE = 0x1783120;  // SendMessageMgr 图片提交叶子（__thiscall(mgr,buf,receiver,path,options)；options 布局见 message_sender.cpp）
 
-        // 发送文件：走 AppMsgMgr::sendFile。
-        //   getter=RichText::GETTER(0x119C990, AppMsgMgr 单例)、assign=RichText::ASSIGN(0x19DAF20, WxString::assign)、
-        //   dtor=CHATMSG_DTOR(0x1199010, ChatMsg::~ChatMsg) 三者与卡片/文本发送共用；本命名空间仅新增文件提交叶子 SEND_FILE。
-        // 定位：
-        //   sub_11621EF0（结构 1:1：串 "copy err,src:%s"/AppMsgMgr.cpp:1143、登录检查、末尾对各 WxString mm_free）。
-        // ABI：__usercall 对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __thiscall 建模
-        //   （ecx=manager，其余 32 个全部栈参），栈失衡由 send_file() 自身帧指针 epilogue 纠正。
-        //   参数（据 ChatViewModel::reSendMsg(sub_113CE240) case 0x31 精确核对，a3..a34）：
-        //     buffer(输出 ChatMsg) + receiver(WxString) + path(WxString) + 1 + 空 WxString + 0 + 空 WxString + 0 + 0 + 空 WxString + 0 + 0。
-        //   receiver/path 及三个空 WxString 全部被 sendFile mm_free，故须用 ASSIGN 建 WeChat 拥有副本、勿传 std::wstring 别名。
-        constexpr uint32_t SEND_FILE = 0x1621EF0;  // AppMsgMgr::sendFile 提交叶子（旧 FILE_CALL3=0xB6D1F0）
+        // 发送文件：走 AppMsgMgr::sendFile（getter=RichText::GETTER、assign=RichText::ASSIGN、dtor=CHATMSG_DTOR 复用）。
+        // __usercall 建模为 __thiscall(ecx=manager，其余全部栈参)；receiver/path 及三个空串会被 mm_free，须用 ASSIGN 建拥有副本。
+        constexpr uint32_t SEND_FILE = 0x1621EF0;  // AppMsgMgr::sendFile 提交叶子
 
-        // send_xml 发原始 appmsg XML（type 为 appmsg 子类型，如 0x21 小程序）。
-        // 定位：
-        //   new_chat_msg×2 → xml_buf_sign(buf2,array,1)=sign → send_xml(buf1,from,to,body,thumb,buf3,type,4,sign,buf2) → free×2。
-        //   x86 3.9.12.56 已把该 10 参单体 + sign 生成合并进一个共享 appmsg 发送核心 sub_11621280（sign 由其内部 sub_11672DA0 生成、无需外部算）。
-        //   sub_11621280 被 sendFile/forwardAppMsg/sendQuoteMsg/安全提示 appmsg 等 10 个入口共用；照抄最简调用者
-        //   sub_1162A3B0（发固定安全中心 appmsg）的调用点反汇编逐参确认。CHATMSG_CTOR/CHATMSG_DTOR/RichText::ASSIGN 复用。
-        // ABI：__usercall caller-clean（调用点 `add esp,0x20`=8 栈参），
-        //   ecx=a1、edx=a2，以 __fastcall 建模、栈失衡由 send_xml() 自身帧指针 epilogue 纠正（同 send_pat/forward/send_file）。
-        //   参数：a1(ecx)=ChatMsg*（须先 CHATMSG_CTOR 构造）、a2(edx)=from 自己 wxid WxString*(→ChatMsg+380，源自 AccountServiceMgr，
-        //   与 x64 参考 arg2=from 吻合)、a3=收件人 WxString*(→+72 talker)、a4=原始 XML WxString*(→+112 content)、a5=空 WxString*、
-        //   a6=封面图 path WxString*(仅 subType==6 时用)、a7=type(appmsg 子类型→+244)、a8=flag(≠1 时内部建 <msgsource>，取 1 跳过)、
-        //   a9=空 WxString*、a10=0。入口守卫 *(a2+4)/*(a3+4)/*(a4+4) 均须>0（from/receiver/xml 非空）。
-        // 所有权：0x11621280 仅读取各 WxString 并深拷贝进 ChatMsg（不 mm_free 传入串），故用非拥有 WxString(std::wstring) 即可（同 send_text），无 double-free。
-        constexpr uint32_t SEND_APPMSG = 0x1621280;  // appmsg 发送核心（ecx=ChatMsg，原始 XML 走 a4→content）
-        constexpr uint32_t CHATMSG_CTOR = 0x1A0ED0;  // ChatMsg 默认构造器（__thiscall(this)→this，写 ??_7ChatMsg 与 InstanceCounter vftable，new(0x44) 建 +179 子对象）
+        // send_xml 发原始 appmsg XML（type 为 appmsg 子类型，如 0x21 小程序）。__usercall 建模为 __fastcall(ecx=ChatMsg, edx=from)，
+        // 原始 XML 走 a4→content、type→a7、flag=1 跳过内部 <msgsource>；各 WxString 仅被读取深拷贝进 ChatMsg（用非拥有视图即可）。
+        constexpr uint32_t SEND_APPMSG  = 0x1621280;  // appmsg 发送核心（多入口共用）
+        constexpr uint32_t CHATMSG_CTOR = 0x1A0ED0;   // ChatMsg 默认构造器（__thiscall(this)→this）
 
-        // send_emotion 发本地自定义表情。
-        // 定位：CustomSmileyMgr 模块。发送叶子 sub_116C10C0 内嵌 9 处日志串 "CustomSmileyMgr::sendCustomEmotion" 锚定；
-        //   EMO_MGR_GETTER=sub_1208250（CustomSmileyMgr Meyers 单例 getter，构造函数 sub_116BB450 写 ??_7CustomSmileyMgr@@6B@
-        //   vftable 到 dword_1436A590，返回 &该对象本体）。旧汇编 `mov ebx,[EMO_CALL3]`（解引用全局指针）在目标版的对应物
-        //   即此 getter——目标版全局是对象本体而非指针，故 manager=getter() 直接用、不再 deref（同 send_image）。
-        // ABI（disasm 精确核对）：SEND_CUSTOM_EMOTION 为 __thiscall（ecx=manager），尾声 `mov esp,ebx;pop ebx;retn 5Ch`
-        //   被调清栈 0x5C=92 字节=恰好 7 参（path + 空 + wxid + type=2 + 空 + 0 + buffer），故精确建模即栈平衡、无需帧指针纠正。
-        //   参数与旧汇编逐字节吻合：[ebx+8/0xC]=path.ptr/len 为首参。type 常量取 2（本地文件来源）。
-        // 所有权：函数尾声对传入的 path/wxid/两个空 WxString 的 .ptr 逐个 mm_free（[ebx+1C/28/30/3C/48/54]），
-        //   故须用 ASSIGN 建 WeChat 拥有副本、按值传、绝不自行析构（同 send_file/richtext 模型，无 double-free）。
-        // WxString 拷贝复用 RichText::ASSIGN(0x19DAF20)；buffer 为 0x1C 置零小结构（[+4]=size 置零走正常路径），非 ChatMsg、无 dtor。
-        constexpr uint32_t EMO_MGR_GETTER      = 0x1208250;  // CustomSmileyMgr 单例 getter（返回 &对象本体 dword_1436A590）
-        constexpr uint32_t SEND_CUSTOM_EMOTION = 0x6C10C0;   // CustomSmileyMgr::sendCustomEmotion 发送叶子（旧 EMO_CALL2 无效）
+        // send_emotion 发本地自定义表情。SEND_CUSTOM_EMOTION 为 __thiscall(ecx=manager, retn 0x5C 被调清栈)；
+        // path/wxid 及两个空串会被 mm_free，须用 ASSIGN 建拥有副本。buffer 为 0x1C 置零小结构，非 ChatMsg、无 dtor。
+        constexpr uint32_t EMO_MGR_GETTER      = 0x1208250;  // CustomSmileyMgr 单例 getter（返回 &对象本体）
+        constexpr uint32_t SEND_CUSTOM_EMOTION = 0x6C10C0;   // CustomSmileyMgr::sendCustomEmotion 发送叶子
     } // namespace Send
 
     namespace Receive
     {
-        // HOOK = doAddMsg(SyncMgr, sub_117B8990) 尾部对“已收 ChatMsg”调用 ChatMsg::~ChatMsg 的 call 站点
-        //        （0x117B93B5: `lea ecx,[ebp-418h]; call sub_11199010`，ecx=已解析 ChatMsg 基址）。
-        //        因 CALL(=~ChatMsg) 有 50+ 调用点，不能直接 hook 其入口——改为 hook 入口后按“返回地址==HOOK+5”过滤，
-        //        即仅当来自本站点时才 dispatch，等价于旧的裸 asm 定点 hook 且不引入内联汇编。
+        // 收消息定点：hook ~ChatMsg 入口后按“返回地址==HOOK+5”过滤，仅当来自 doAddMsg 尾部那条 call 时才 dispatch
         constexpr uint32_t HOOK    = 0x17B93B5;  // 定点 call 站点（返回地址过滤用 HOOK+5）
-        constexpr uint32_t CALL    = 0x1199010;  // ChatMsg::~ChatMsg 入口（detour 目标；前 5 字节 51 56 57 8B FE 可安全搬进 trampoline）
+        constexpr uint32_t CALL    = 0x1199010;  // ChatMsg::~ChatMsg 入口（detour 目标；前 5 字节可安全搬进 trampoline）
         // ---- ChatMsg 对象字段（相对已解析 ChatMsg 基址）----
-        // 低区（<0x48）不变；高区字段整体 +8（this+0x134 子对象内每个 std::string 后移 2 dword）。
-        constexpr uint32_t MSG_ID  = 0x30;   // 不变
-        constexpr uint32_t TYPE    = 0x38;   // 不变
-        constexpr uint32_t IS_SELF = 0x3C;   // 不变
-        constexpr uint32_t TS      = 0x44;   // 不变
-        constexpr uint32_t ROOM_ID = 0x48;   // 不变（std::wstring）
-        constexpr uint32_t CONTENT = 0x70;   // 不变（std::wstring）
-        constexpr uint32_t WXID    = 0x188;  // 0x180 +8（子对象 std::string）
-        constexpr uint32_t SIGN    = 0x19C;  // 0x194 +8
-        constexpr uint32_t THUMB   = 0x1B0;  // 0x1A8 +8
-        constexpr uint32_t EXTRA   = 0x1C4;  // 0x1BC +8
-        constexpr uint32_t MSG_XML = 0x204;  // 0x1FC +8
+        constexpr uint32_t MSG_ID  = 0x30;
+        constexpr uint32_t TYPE    = 0x38;
+        constexpr uint32_t IS_SELF = 0x3C;
+        constexpr uint32_t TS      = 0x44;
+        constexpr uint32_t ROOM_ID = 0x48;   // std::wstring
+        constexpr uint32_t CONTENT = 0x70;   // std::wstring
+        constexpr uint32_t WXID    = 0x188;  // std::string
+        constexpr uint32_t SIGN    = 0x19C;
+        constexpr uint32_t THUMB   = 0x1B0;
+        constexpr uint32_t EXTRA   = 0x1C4;
+        constexpr uint32_t MSG_XML = 0x204;
     } // namespace Receive
 } // namespace Message
 
@@ -131,52 +96,34 @@ namespace Database
     constexpr uint32_t COLUMN_TEXT  = 0x2A5EC60;  // sqlite3_column_text(stmt, iCol)
 
     // ---- 已打开数据库管理器（进程内已解密句柄，扁平枚举）----
-    // AccountStorageMgr::initStorage(sub_117254C0) 的 "init main storage" 循环：
-    //   managerObj = *(g_WeChatWinDllAddr + INSTANCE)
-    //   begin = *(managerObj + START); end = *(managerObj + END);  逐 4 字节遍历，*p = storage 对象指针
-    //   storage 内：*(storage + SLOT) = 裸 sqlite3*（getHandle=vtable[2] 即 `return *(this+0x34)`，
-    //   且 initStorage 把连接池解析出的句柄写回 storage+0x34，双重印证）；storage + NAME = std::wstring 库路径
-    constexpr uint32_t INSTANCE = 0x4327610;  // AccountStorageMgr g_pInstance（dword_14327610，存管理器对象指针）
-    constexpr uint32_t START    = 0x1430;     // managerObj → 主 storage 数组 begin 指针（+5168）
-    constexpr uint32_t END      = 0x1434;     // managerObj → 主 storage 数组 end 指针（+5172）
+    // managerObj = *(base + INSTANCE)；[managerObj+START, managerObj+END) 逐 4 字节遍历得 storage 对象指针；
+    // storage+SLOT = 裸 sqlite3*，storage+NAME = 库路径 std::wstring。
+    constexpr uint32_t INSTANCE = 0x4327610;  // AccountStorageMgr 单例（存管理器对象指针）
+    constexpr uint32_t START    = 0x1430;     // managerObj → 主 storage 数组 begin 指针
+    constexpr uint32_t END      = 0x1434;     // managerObj → 主 storage 数组 end 指针
     constexpr uint32_t SLOT     = 0x34;       // storage → 裸 sqlite3* 句柄
-    constexpr uint32_t NAME     = 0x4C;       // storage → 库路径 std::wstring（_Bx 起始，容量位 +0x14）
+    constexpr uint32_t NAME     = 0x4C;       // storage → 库路径 std::wstring（容量位 +0x14）
 
     // ---- MSG / MediaMSG 多库（MultiDBMsgMgr，独立于上面的主 storage 数组）----
-    // 消息与语音库不在 AccountStorageMgr 的扁平数组里，而由 MultiDBMsgMgr 单例管理（MultiDBMsgMgr::Init
-    // 里遍历 Multi 目录逐个 InitStorageItem）。管理器内是一个环形（deque 式）item 指针数组：
-    //   mgr    = *(g_WeChatWinDllAddr + MSG_MGR)                          单例对象指针（惰性构造，未登录时为 0）
-    //   base   = *(mgr + MSG_RING_BASE); cap = *(mgr + MSG_RING_CAP)      cap 为 2 的幂
-    //   head   = *(mgr + MSG_RING_HEAD); count = *(mgr + MSG_RING_COUNT)
-    //   逻辑索引 i 的 item = *(base + 4 * ((i + head) & (cap - 1)))       与 Init 的 this[11..14] 一致
-    // 每个 item（对应旧基线的 db_addr）：
-    //   item + MSG_ITEM_NAME    = MSGn.db 名 WxString（wptr 在 +0，读法用 get_wstring）
-    //   item + MSG_ITEM_HANDLE  = MSG 裸 sqlite3*（Init 调 MSG 包装 getHandle 后回填于此）
-    //   item + MSG_ITEM_MEDIA   = MediaMSG 存储包装（BufInfoStorage，继承 StorageBase）
-    //   item + MSG_ITEM_STORAGE = MSG 存储包装（MultiDBMsgStorage）
-    // 媒体包装（StorageBase）：+ MEDIA_NAME = MediaMSGn.db 名 WxString（wptr@0）；+ MEDIA_HANDLE = 裸 sqlite3*。
-    constexpr uint32_t MSG_MGR         = 0x436A8CC;  // MultiDBMsgMgr 单例对象指针（dword_1436A8CC）
+    // 消息与语音库由 MultiDBMsgMgr 单例的环形 item 指针数组管理（惰性构造，未登录时 mgr 为 0）：
+    //   逻辑索引 i 的 item = *(base + 4 * ((i + head) & (cap - 1)))，cap 为 2 的幂。
+    constexpr uint32_t MSG_MGR         = 0x436A8CC;  // MultiDBMsgMgr 单例对象指针
     constexpr uint32_t MSG_RING_BASE   = 0x2C;       // mgr → 环形 item 指针数组基址
     constexpr uint32_t MSG_RING_CAP    = 0x30;       // mgr → 环形容量（2 的幂）
     constexpr uint32_t MSG_RING_HEAD   = 0x34;       // mgr → 环形头索引
     constexpr uint32_t MSG_RING_COUNT  = 0x38;       // mgr → item 数量
     constexpr uint32_t MSG_ITEM_NAME   = 0x00;       // item → MSGn.db 名 WxString（wptr@0）
-    constexpr uint32_t MSG_ITEM_HANDLE = 0x60;       // item → MSG 裸 sqlite3*（Init 缓存）
+    constexpr uint32_t MSG_ITEM_HANDLE = 0x60;       // item → MSG 裸 sqlite3*
     constexpr uint32_t MSG_ITEM_MEDIA  = 0x14;       // item → MediaMSG 存储包装（StorageBase 派生）
     constexpr uint32_t MEDIA_NAME      = 0x4C;       // 媒体包装 → MediaMSGn.db 名 WxString（wptr@0）
     constexpr uint32_t MEDIA_HANDLE    = 0x38;       // 媒体包装 → 裸 sqlite3*
 
     // ---- 生库密钥（SQLCipher codec 链，供离线解密）----
-    // 微信经 SQLCipher 的 URI 参数（file:...?hexkey=）设 key，生密钥最终由 sqlite3CodecAttach 交给
-    // codec，并驻留在挂于每个已开 sqlite3* 的 cipher_ctx 里。同一账号所有库共用同一 32 字节生密钥，
-    // 故从任一已开库句柄沿下面的链即可读出（无需 Hook）。各字段偏移取自 SQLCipher setter 反汇编：
-    //   sqlite3PagerSetCodec 把 codec 存于 pager+0xDC；sqlcipher_codec_ctx_init 建 read_ctx 于 codec+0x54；
-    //   cipher_ctx_copy 显示 pass（生密钥指针）在 +0x10、pass_sz（字节数）在 +0x04。
-    //   链：db → *(db+DB_BTREE)=Btree → *(Btree+BTREE_SHARED)=BtShared → *(BtShared+SHARED_PAGER)=Pager
-    //       → *(Pager+PAGER_CODEC)=codec → *(codec+CODEC_READCTX)=cipher_ctx
-    //       → 密钥指针 *(cipher_ctx+CIPHER_PASS)，长度 *(cipher_ctx+CIPHER_PASSSZ)
-    // 注：为结构体字段偏移（非 RVA），使用时不加 g_WeChatWinDllAddr。仅登录并打开过库后才有效。
-    constexpr uint32_t DB_BTREE      = 0x14;  // sqlite3* → aDb[0].pBt（aDb@+0x10，.pBt@+4）
+    // 同一账号所有库共用同一 32 字节生密钥，从任一已开库句柄沿下链即可读出（无需 Hook）：
+    //   db → +DB_BTREE → +BTREE_SHARED → +SHARED_PAGER → +PAGER_CODEC → +CODEC_READCTX=cipher_ctx
+    //   → 密钥指针 +CIPHER_PASS、长度 +CIPHER_PASSSZ
+    // 注：均为结构体字段偏移（非 RVA），使用时不加 g_WeChatWinDllAddr；仅登录并打开过库后才有效。
+    constexpr uint32_t DB_BTREE      = 0x14;  // sqlite3* → aDb[0].pBt
     constexpr uint32_t BTREE_SHARED  = 0x04;  // Btree → BtShared
     constexpr uint32_t SHARED_PAGER  = 0x00;  // BtShared → Pager（首字段）
     constexpr uint32_t PAGER_CODEC   = 0xDC;  // Pager → codec（pCodec）
@@ -187,60 +134,31 @@ namespace Database
 
 namespace Friend
 {
-    // 通过好友申请：走 AddFriendHelper（RTTI .?AVAddFriendHelper@@）。
-    //   ACCEPT_CTOR = AddFriendHelper::AddFriendHelper（写 vftable 0x13BFA094，零初始化，注册 4 个事件处理器 sub_11803A10(179/182/177/178)）
-    //   VERIFY_OK   = AddFriendHelper::VerifyOK（串 "AddFriendHelper::VerifyOK" 锚定；内部用 RichText::ASSIGN 把 v3 拷入 this+24；末尾 mm_free v4 的 wptr/ptr）
-    //   ACCEPT_DTOR = AddFriendHelper::~AddFriendHelper（写 vftable，释放 this+6/this+9 的 WxString，复位 EventHandler vftable）
-    // ABI（disasm 精确核对）：VerifyOK 是纯 __thiscall——ecx=buffer(this)，尾 `retn 30h` 被调清栈 0x30=48 字节=恰好 12 dword
-    //   栈参：v3(&WxString) + nullbuffer + 0 + scratch(u64) + v4(WxStringValue 按值 5 dword) + scene + 0。被调清栈=精确 __thiscall 即栈平衡、无需帧指针纠正。
-    // 所有权：v3 仅被读取(拷入 this+24)、不 free → 非拥有视图即可；v4 被 VerifyOK mm_free(wptr+ptr)，故须用 RichText::ASSIGN(0x19DAF20) 建 WeChat 拥有副本、按值传、勿自行析构。
-    constexpr uint32_t ACCEPT_CTOR = 0x4CBD20;  // AddFriendHelper 构造器（原 ACCEPT_CALL1=0xA17D50）
-    constexpr uint32_t VERIFY_OK   = 0x4CCE70;  // AddFriendHelper::VerifyOK（原 ACCEPT_CALL3=0xA18BD0）
-    constexpr uint32_t ACCEPT_DTOR = 0x4CBE40;  // AddFriendHelper 析构器（原 ACCEPT_CALL4=0xA17E70）
+    // 通过好友申请：走 AddFriendHelper。VerifyOK 为纯 __thiscall(ecx=this, retn 0x30 被调清栈)；
+    // v3(加密 username)仅被读取用非拥有视图，v4(ticket)会被 mm_free 须用 ASSIGN 建拥有副本。
+    constexpr uint32_t ACCEPT_CTOR = 0x4CBD20;  // AddFriendHelper 构造器
+    constexpr uint32_t VERIFY_OK   = 0x4CCE70;  // AddFriendHelper::VerifyOK
+    constexpr uint32_t ACCEPT_DTOR = 0x4CBE40;  // AddFriendHelper 析构器
 } // namespace Friend
 
 namespace Chatroom
 {
-    // 共用单例 getter：ChatRoomMgr magic-static（new(0x218)+ctor sub_1167DE60+register，返回对象指针本体）。
-    // add/del/invite 三条链共用。
+    // ChatRoomMgr 单例 getter，add/del/invite 三条链共用；roomid 均会被 mm_free，须用 ASSIGN 建拥有副本。
     constexpr uint32_t MGR_GETTER = 0x11C43A0;
-
-    // ChatRoomMgr::doAddMemberToChatRoom（串 "ChatRoomMgr::doAddMemberToChatRoom" 锚定）。
-    // 纯 __thiscall(ecx=manager, retn 0x20=8 栈参)；末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本。
-    // roomid 的 WxString::assign 复用 RichText::ASSIGN(0x19DAF20)。
-    constexpr uint32_t ADD_MEMBER = 0x167F680;
-
-    // ChatRoomMgr::doDelMemberFromChatRoom（串 "ChatRoomMgr::doDelMemberFromChatRoom" 锚定）。
-    // aligned-stack __usercall prologue 但尾 retn 0x18=6 栈参被调清栈（members 1 + roomid 5），
-    // args 读自 ebx 相对（原始栈）→ 从调用者看等价纯 __thiscall、栈平衡、无需帧指针纠正。
-    // 末尾 mm_free roomid 的 wptr/ptr → 需 ASSIGN 建拥有副本；getter/assign 与加群共用。
-    constexpr uint32_t DEL_MEMBER = 0x167FBD0;
-
-    // 邀请入群：NetSceneInviteChatRoomMember/OpenIM 构建器 + 内部 SceneCenter::doScene 发送
-    //（串 "new NetSceneInviteChatRoomMember (id:%d)" 锚定 sub_1167F280）。
-    // __stdcall(members 指针, roomid WxString 按值 5 dword, 上下文 shared_ptr 按值 2 dword)。
-    // 内部按 roomid 是否以 "@im.chatroom" 结尾分流普通/OpenIM 两种 NetScene，并直接 doScene 发送。
-    // 末尾 mm_free roomid 的 wptr/ptr → roomid 需 ASSIGN 建拥有副本、按值传（同 add/del）；
-    // 上下文 shared_ptr 可传 {0,0}（观察到的调用点即传 NULL，为可选历史信息）；
-    // getter 复用 MGR_GETTER（仅 warmup 确保单例）、roomid 拷贝复用 RichText::ASSIGN。
+    constexpr uint32_t ADD_MEMBER = 0x167F680;  // ChatRoomMgr::doAddMemberToChatRoom（__thiscall, retn 0x20）
+    constexpr uint32_t DEL_MEMBER = 0x167FBD0;  // ChatRoomMgr::doDelMemberFromChatRoom（__thiscall, retn 0x18）
+    // NetSceneInviteChatRoomMember 构建器 + 内部 doScene 发送（__stdcall(members, roomid 按值, 上下文 shared_ptr 按值)）；
+    // 内部按 roomid 是否以 "@im.chatroom" 结尾分流普通/OpenIM，上下文 shared_ptr 传 {0,0}。
     constexpr uint32_t INVITE_MEMBER = 0x167F280;
 } // namespace Chatroom
 
 namespace Transfer
 {
-    // 领取转账走 WCPayInfo（带虚表的支付信息对象）+ TenPayTransfer::TenPayTransferConfirm 场景。
-    // 定位：串 "TenPayTransfer::TenPayTransferConfirm::doSceneExConfirm"(接受) 与 "...doSceneExRefuse"(拒绝) 锚定，
-    //   其共同调用者 sub_120DE350(payInfo, wxid WxString, scratch:u64, confirm) 即受理入口；真实调用点在
-    //   TransferWnd::eventProc case 887 以 confirm=1 传入 AppMsg 内嵌的 WCPayInfo(+1564)、wxid 用 ASSIGN 拥有副本。
-    //   payInfo 结构布局与 AppMsgParser::ParseXML 填充的 wcpayinfo 子对象一致（transcationid@0x1C、transferid@0x38）。
-    // ABI（disasm+调用点核对）：RECV_TRANSFER 反编译标 __fastcall（ecx=payInfo、edx=wxid），但调用者在 call 后
-    //   `add esp,0Ch` 清 3 栈参 → 实为 caller-clean（同 forward/send_file 的 __usercall 模式）；以 __fastcall 建模、
-    //   栈失衡由 receive_transfer 自身帧指针 epilogue 纠正（依赖 Release 保留帧指针）。
-    // 所有权：RECV_TRANSFER 只读 payInfo 与 wxid（内部各自深拷贝、真实调用者在调用后 mm_free wxid）→ wxid 用非拥有视图；
-    //   transactionid/transferid 用 RichText::ASSIGN 建 WeChat 拥有副本写入，PAY_INFO_DTOR 负责 mm_free（避免 double-free）。
-    constexpr uint32_t PAY_INFO_CTOR  = 0x120AF00;  // WCPayInfo 默认构造器（写 InstanceCounter+WCPayInfo vftable，零初始化全部成员）
+    // 领取转账走 WCPayInfo（带虚表）+ TenPayTransfer 受理入口。RECV_TRANSFER __usercall 建模为 __fastcall(ecx=payInfo, edx=wxid)；
+    // wxid 只读用非拥有视图，transactionid/transferid 用 ASSIGN 建拥有副本（由 PAY_INFO_DTOR mm_free）。
+    constexpr uint32_t PAY_INFO_CTOR  = 0x120AF00;  // WCPayInfo 默认构造器
     constexpr uint32_t RECV_TRANSFER  = 0x120DE350; // TenPayTransfer 受理入口（confirm=1 接受/=0 拒绝）
-    constexpr uint32_t PAY_INFO_DTOR  = 0x111D4570; // WCPayInfo 析构器（逐个 mm_free WxString 成员 + InstanceCounter 递减）
+    constexpr uint32_t PAY_INFO_DTOR  = 0x111D4570; // WCPayInfo 析构器
 
     // WCPayInfo 字段偏移。
     constexpr uint32_t F_PAYSUBTYPE     = 0x04;  // 支付子类型 int
@@ -251,150 +169,101 @@ namespace Transfer
 
 namespace Moments
 {
-    // 接收路径：
-    //   CALL = SnsTimeLineMgr::OnSnsTimeLineSceneFinish 入口（朋友圈接收回调，__thiscall(this,a2,a3)，2 个调用者）；
-    //   HOOK = OnProcessTimelineResp::<lambda_1> 内 `call OnSnsTimeLineSceneFinish(this,&container,0)` 定点，
-    //          用返回地址 == HOOK+5 过滤，a2 即 dispatch 的容器指针。
+    // 接收路径：hook OnSnsTimeLineSceneFinish 入口后按返回地址==HOOK+5 过滤，此时 a2 即容器指针
     constexpr uint32_t HOOK    = 0x1FDB1E5;
-    constexpr uint32_t CALL    = 0x1FDB4D0;
-    // 刷新路径（refresh_pyq 用）：SnsTimeLineMgr 单例 + 两个自足的 Scene 构建器。
-    //   MGR_GETTER     = SnsTimeLineMgr 单例 getter（magic-static，new(0x120)+ctor，返回对象本体）；
-    //   GET_FIRST_PAGE = SnsTimeLineMgr::TryGetFirstPageScene，__thiscall(manager, forward)，retn 4 被调清栈；
-    //   GET_NEXT_PAGE  = SnsTimeLineMgr::GetNextPageScene，__thiscall(manager, id_low, id_high)，retn 8 被调清栈。
-    // 新版这两个构建器内部自建 NetScene 并经 doScene 直接发送——不再需要旧版的输出 buffer / cursor 参数。
-    constexpr uint32_t MGR_GETTER     = 0x1F77D90;
-    constexpr uint32_t GET_FIRST_PAGE = 0x1FDE8A0;
-    constexpr uint32_t GET_NEXT_PAGE  = 0x1FDED90;
-    // 容器字段：主 feed 数组 begin/end 指针（容器 = a2）。
+    constexpr uint32_t CALL    = 0x1FDB4D0;  // SnsTimeLineMgr::OnSnsTimeLineSceneFinish 入口（2 个调用者）
+    // 刷新路径（refresh_pyq）：两个 Scene 构建器内部自建 NetScene 经 doScene 直接发送
+    constexpr uint32_t MGR_GETTER     = 0x1F77D90;  // SnsTimeLineMgr 单例 getter
+    constexpr uint32_t GET_FIRST_PAGE = 0x1FDE8A0;  // TryGetFirstPageScene（__thiscall(manager, forward), retn 4）
+    constexpr uint32_t GET_NEXT_PAGE  = 0x1FDED90;  // GetNextPageScene（__thiscall(manager, id_low, id_high), retn 8）
+    // 容器字段：主 feed 数组 begin/end 指针（容器 = a2）
     constexpr uint32_t START   = 0x20;
     constexpr uint32_t END     = 0x24;
     // 单个 SnsObject（元素，STEP 字节）内字段：
-    constexpr uint32_t TS      = 0x2C;   // 不变（内层子对象 gap 内的 dword）
-    constexpr uint32_t WXID    = 0x18;   // 不变（内层子对象首个 std::string）
-    constexpr uint32_t CONTENT = 0x3C;   // 不变（内层子对象第 2 个 std::string）
-    constexpr uint32_t XML     = 0x64C;  // 原 0x384；包装体高区第 3 个 string 块，元素增大后 dword225→dword403
-    constexpr uint32_t STEP    = 0xE18;  // 原 0xB48；单个 SnsObject 大小 2888→3608
+    constexpr uint32_t TS      = 0x2C;
+    constexpr uint32_t WXID    = 0x18;   // 内层子对象首个 std::string
+    constexpr uint32_t CONTENT = 0x3C;   // 内层子对象第 2 个 std::string
+    constexpr uint32_t XML     = 0x64C;
+    constexpr uint32_t STEP    = 0xE18;  // 单个 SnsObject 大小
 } // namespace Moments
 
 namespace Attachment
 {
-    // 下载附件走 PreDownLoadMgr。ChatMsg 缓冲复用发送侧三件套：
-    //   构造 = Message::Send::CHATMSG_CTOR(0x1A0ED0, ChatMsg 默认构造器)、
-    //   析构 = Message::Send::CHATMSG_DTOR(0x1199010, ChatMsg::~ChatMsg)；落盘路径拷贝复用 RichText::ASSIGN。
-    // 定位链：
-    //   WARMUP    = ChatMgr 懒初始化（GetMgrByPrefixLocalId 首个调用，magic-static thread-init）；
-    //   LOAD_MSG  = ChatMgr::GetMgrByPrefixLocalId（串 "ChatMgr::GetMgrByPrefixLocalId" 锚定）：
-    //               __usercall(ecx=buffer, 栈上 __int64 = local_id | db_idx<<32)，按 localId/dbIdx 把消息加载进 ChatMsg；
-    //               以 __thiscall 建模，栈失衡由 download_attachment 帧指针 epilogue 纠正（同 forward，二者共用此函数）；
-    //   MGR_GETTER= PreDownLoadMgr magic-static 单例 getter（读 dword_1436A850，空则 new(0x898)+ctor+register）；
-    //   PUSH_TASK = PreDownLoadMgr::push_attach_task（串锚定）：纯 __thiscall(ecx=manager)，
-    //               尾 retn 0x10=4 栈参被调清栈（buffer/reserved/sync/user_clicked），栈平衡、无需帧指针纠正；
-    //               真实调用点 sub_112DD240：push_attach_task(manager, buffer, 0, 1, 0)。
-    constexpr uint32_t WARMUP     = 0x11C7290;
-    constexpr uint32_t LOAD_MSG   = 0x166FE00;
-    constexpr uint32_t MGR_GETTER = 0x1240DE0;
-    constexpr uint32_t PUSH_TASK  = 0x12DA8A0;
+    // 下载附件走 PreDownLoadMgr（ChatMsg 缓冲复用 Send::CHATMSG_CTOR/DTOR，路径拷贝复用 RichText::ASSIGN）。
+    // LOAD_MSG（ChatMgr::GetMgrByPrefixLocalId）__usercall 建模为 __thiscall，与 forward 共用；
+    // PUSH_TASK 纯 __thiscall(retn 0x10)，调用形如 push_attach_task(manager, buffer, 0, 1, 0)。
+    constexpr uint32_t WARMUP     = 0x11C7290;  // ChatMgr 懒初始化
+    constexpr uint32_t LOAD_MSG   = 0x166FE00;  // ChatMgr::GetMgrByPrefixLocalId（按 localId/dbIdx 加载消息进 ChatMsg）
+    constexpr uint32_t MGR_GETTER = 0x1240DE0;  // PreDownLoadMgr 单例 getter
+    constexpr uint32_t PUSH_TASK  = 0x12DA8A0;  // PreDownLoadMgr::push_attach_task
 
-    // ChatMsg 内下载目标字段（相对 ChatMsg 基址）。type 读 Message::Receive::TYPE(0x38，不变)。
-    // 路径字段会被 ~ChatMsg mm_free，故须用 RichText::ASSIGN 建 WeChat 拥有副本（勿 memcpy 非拥有视图，防 double-free）。
-    constexpr uint32_t F_THUMB_PATH  = 0x1A4;  // 缩略图落盘路径 WxString（旧 0x19C +8）
-    constexpr uint32_t F_SAVE_PATH   = 0x1B8;  // 附件落盘路径 WxString（旧 0x1B0 +8）
-    constexpr uint32_t F_INITED_FLAG = 0x2AC;  // "子对象已初始化"标志（旧 0x29C +0x10；置 1 跳过重复 init）
+    // ChatMsg 内下载目标字段（type 读 Message::Receive::TYPE）。路径字段会被 ~ChatMsg mm_free，须用 ASSIGN 建拥有副本。
+    constexpr uint32_t F_THUMB_PATH  = 0x1A4;  // 缩略图落盘路径 WxString
+    constexpr uint32_t F_SAVE_PATH   = 0x1B8;  // 附件落盘路径 WxString
+    constexpr uint32_t F_INITED_FLAG = 0x2AC;  // "子对象已初始化"标志（置 1 跳过重复 init）
 } // namespace Attachment
 
 namespace Revoke
 {
-    // 撤回消息：重构为 ChatRevokeMgr::revokeMsg。
-    // ChatMsg 缓冲复用发送侧三件套：构造=Message::Send::CHATMSG_CTOR、析构=Message::Send::CHATMSG_DTOR；
-    // 按 localId/dbIdx 加载消息复用 Attachment::LOAD_MSG（ChatMgr::GetMgrByPrefixLocalId，内部自初始化 ChatMgr）。
-    // 定位链：串 "ChatRevokeMgr::revokeMsg" 唯一 data xref → REVOKE_MSG 函数体；
-    //   其瘦调用者 sub_11325BF0 里 manager = MGR_GETTER() 直接透传（不 deref）。
-    //   MGR_GETTER = ChatRevokeMgr magic-static 单例 getter（返回 &对象本体 dword_1436A8E8）；
-    //   REVOKE_MSG = ChatRevokeMgr::revokeMsg：纯 __thiscall(ecx=manager, chat_msg)，
-    //                尾 retn 4=1 栈参(chat_msg)被调清栈、栈平衡、无需帧指针纠正；
-    //                读 chat_msg+64=type、chat_msg+48=localId，加入 be_revoke set 并延迟发送 NetSceneRevokeMsg。
-    constexpr uint32_t MGR_GETTER = 0x1245280;
-    constexpr uint32_t REVOKE_MSG = 0x12469F0;
+    // 撤回消息走 ChatRevokeMgr::revokeMsg（ChatMsg 缓冲复用 Send::CHATMSG_CTOR/DTOR，加载消息复用 Attachment::LOAD_MSG）。
+    // REVOKE_MSG 纯 __thiscall(ecx=manager, chat_msg, retn 4)。
+    constexpr uint32_t MGR_GETTER = 0x1245280;  // ChatRevokeMgr 单例 getter（返回 &对象本体）
+    constexpr uint32_t REVOKE_MSG = 0x12469F0;  // ChatRevokeMgr::revokeMsg
 } // namespace Revoke
 
 namespace RichText
 {
-    // 发送消息卡片（语义重命名）。
-    // 业务对象是 MMReaderItem（RTTI .?AVMMReaderItem@@），管理器是 AppMsgMgr 全局单例。
-    // 定位链：AppMsgMgr getter(sub_1076AE20)/send(sub_10B73000)/
-    //   MMReaderItem ctor(sub_1076E630) → 经 BizProfileMsgBaseItem::ForwardtoUserNames(v31256
-    //   sub_1119D480，构造 MMReaderItem 后走 getter→sub_11628DC0) 及字段读取器逐项对齐得 v31256 值。
-    // 编排（无内联汇编，全部带类型 C++ 调用，所有权与 WeChat 内部一致）：
-    //   CTOR(buff) → 用 ASSIGN 逐字段深拷贝 → GETTER()=manager → SEND(manager, receiver按值, buff) → DTOR(buff)
-    // 注意：SEND 内部会 mm_free 传入的 receiver 字符串，故 receiver 必须用 ASSIGN 建 WeChat 拥有副本（勿传 std::wstring 别名）。
-    constexpr uint32_t CTOR   = 0x11A0220;  // MMReaderItem::MMReaderItem（原 CALL1，__thiscall(this)，vftable ??_7MMReaderItem@@6B@）
-    constexpr uint32_t GETTER = 0x119C990;  // AppMsgMgr 单例 getter（原 CALL2，magic-static，返回 &singleton）
-    constexpr uint32_t ASSIGN = 0x19DAF20;  // WxString::assign(src,len)（__thiscall(this,src,len)，mm_realloc 深拷贝，原 CALL3 语义）
-    constexpr uint32_t SEND   = 0x1628DC0;  // AppMsgMgr::sendAppMsg（原 CALL4，__thiscall(manager, WxString receiver 按值, MMReaderItem* buff)）
-    constexpr uint32_t DTOR   = 0x119F530;  // MMReaderItem::~MMReaderItem 完整析构（原 CALL5，__thiscall(this)，释放全部成员+InstanceCounter 递减）
+    // 发送消息卡片：业务对象 MMReaderItem + AppMsgMgr 单例。
+    // 编排：CTOR(buff) → 用 ASSIGN 逐字段深拷贝 → GETTER()=manager → SEND(manager, receiver 按值, buff) → DTOR(buff)。
+    // receiver 会被 SEND mm_free，须用 ASSIGN 建 WeChat 拥有副本。
+    constexpr uint32_t CTOR   = 0x11A0220;  // MMReaderItem::MMReaderItem（__thiscall(this)）
+    constexpr uint32_t GETTER = 0x119C990;  // AppMsgMgr 单例 getter
+    constexpr uint32_t ASSIGN = 0x19DAF20;  // WxString::assign(src,len)（__thiscall, mm_realloc 深拷贝）
+    constexpr uint32_t SEND   = 0x1628DC0;  // AppMsgMgr::sendAppMsg（__thiscall(manager, WxString receiver 按值, MMReaderItem* buff)）
+    constexpr uint32_t DTOR   = 0x119F530;  // MMReaderItem::~MMReaderItem 完整析构
 
-    // MMReaderItem 内 WxString 成员偏移（=该成员 wptr 的字节偏移）。低区不变、account/name 高区整体 +0x14（插入一个 WxString）。
-    constexpr uint32_t F_TITLE    = 0x4;    // dword 1  标题（不变）
-    constexpr uint32_t F_URL      = 0x2C;   // dword 11 链接（不变）
-    constexpr uint32_t F_THUMBURL = 0x6C;   // dword 27 缩略图 URL（不变）
-    constexpr uint32_t F_DIGEST   = 0x94;   // dword 37 摘要（不变）
-    constexpr uint32_t F_ACCOUNT  = 0x1B4;  // dword 109 源用户名（原 0x1A0，+0x14）
-    constexpr uint32_t F_NAME     = 0x1C8;  // dword 114 源显示名（原 0x1B4，+0x14）
-    constexpr uint32_t OBJ_SIZE   = 0x280;  // MMReaderItem 栈缓冲大小（ctor 写至 dword158/0x278，取 WeChat 自身栈分配 v23[160]=0x280）
+    // MMReaderItem 内 WxString 成员偏移（=该成员 wptr 的字节偏移）。
+    constexpr uint32_t F_TITLE    = 0x4;    // 标题
+    constexpr uint32_t F_URL      = 0x2C;   // 链接
+    constexpr uint32_t F_THUMBURL = 0x6C;   // 缩略图 URL
+    constexpr uint32_t F_DIGEST   = 0x94;   // 摘要
+    constexpr uint32_t F_ACCOUNT  = 0x1B4;  // 源用户名
+    constexpr uint32_t F_NAME     = 0x1C8;  // 源显示名
+    constexpr uint32_t OBJ_SIZE   = 0x280;  // MMReaderItem 栈缓冲大小
 } // namespace RichText
 
 namespace Pat
 {
-    // 拍一拍走 PatMgr。语义重命名。
-    // MGR_GETTER = PatMgr magic-static 单例 getter（读 dword_1436A8C8，空则 new(0x6C)+ctor sub_11EB4620）。
-    // SEND_PAT   = PatMgr::SendPatMsg（串锚定），__usercall：ecx=roomid(chat)、edx=wxid(patted)，
-    //   3 个栈参（getter 结果/0/0）caller-clean（plain retn，调用点 add esp,0xC）；返回 al。
+    // 拍一拍走 PatMgr。SEND_PAT（PatMgr::SendPatMsg）__usercall 建模为 __fastcall(ecx=roomid, edx=wxid)，
+    // 栈参 manager/0/0，返回 al 非零即成功。
     constexpr uint32_t MGR_GETTER = 0x124A670;
     constexpr uint32_t SEND_PAT   = 0x1EB5D50;
 } // namespace Pat
 
 namespace OCR
 {
-    // 图片 OCR 走 OCRManager。
-    // MGR_GETTER  = OCRManager magic-static 单例 getter（dword_1436AEE0，空则 operator new(0x9C)+ctor）。
-    // RUN_OCR     = OCRManager::DoOCRTask（串 "OCRManager::DoOCRTask" 锚定），
-    //   __usercall caller-clean（aligned-stack prologue、args 读自 [ebx+…]、plain retn）：
-    //   ecx=manager、5 栈参(path, reserved=0, result_list, found_flag, null_obj)、返回 task_id(int64)。
-    //   以 __thiscall 建模、栈失衡由 get_ocr_result 帧指针 epilogue 纠正（同 send_text/forward）。
-    //   异步：仅缓存命中时同步把结果结点接入 result_list 并置 found_flag=1、返回 0；
-    //   否则入队后返回非 0 task_id（此时无同步结果）。结点内文本 WxString 在 node+0x14（未变）。
-    // RESULT_NEW  = WeChat 全局 operator new（??2@YAPAXI@Z），分配 0x58 字节链表哨兵结点。
-    // RESULT_DTOR = OCR 结果链表析构器（先经尾结点断环、再遍历释放各结点 + 哨兵；与 RESULT_NEW 配对）。
+    // 图片 OCR 走 OCRManager。RUN_OCR（DoOCRTask）__usercall 建模为 __thiscall(ecx=manager, 5 栈参)，返回 task_id；
+    // 异步：仅缓存命中时同步回填 result_list 并置 found_flag=1、返回 0（结点文本 WxString 在 node+0x14）。
     constexpr uint32_t MGR_GETTER  = 0x12B5F50;
     constexpr uint32_t RUN_OCR     = 0x1E7A2E0;
-    constexpr uint32_t RESULT_NEW  = 0x3234B97;
-    constexpr uint32_t RESULT_DTOR = 0x12B6140;
+    constexpr uint32_t RESULT_NEW  = 0x3234B97;  // 全局 operator new（分配链表哨兵结点，与 RESULT_DTOR 配对）
+    constexpr uint32_t RESULT_DTOR = 0x12B6140;  // OCR 结果链表析构器
 } // namespace OCR
 
 namespace Forward
 {
-    // 转发消息。
-    // 业务入口是 SendMessageMgr::forwordMsg：v3223 sub_10CE6730 → v31256 sub_11783230
-    //   （靠串 "SendMessageMgr::forwordMsg"/"forward scene:%d msgid:%d" 锚定，结构 1:1：
-    //    登录检查 +1420→+1468、内嵌 sub_11783C10=#13 SEND_MSG、msgPtr==0 时走
-    //    sub_1166FE00=ChatMgr::GetMgrByPrefixLocalId 按 localId/dbIdx 加载消息）。
-    // ABI __usercall，
-    //   ecx=scene（转发场景，纯统计元数据，取 5）、edx=msgPtr（传 0 走加载路径），
-    //   栈参：receiver WxString 按值(5 dword) + localId(u32) + dbIdx(u32)；返回 al；
-    //   对齐栈 prologue(push ebx;mov ebx,esp;and esp,-8) → caller-clean，以 __fastcall 建模、
-    //   栈失衡由 forward() 自身帧指针 epilogue 纠正。
-    // receiver 用 RichText::ASSIGN(0x19DAF20) 建 WeChat 拥有副本；forwordMsg 末尾 mm_free 它。
-    constexpr uint32_t FORWARD_MSG = 0x1783230;  // SendMessageMgr::forwordMsg（原 CALL2 语义）
+    // 转发消息走 SendMessageMgr::forwordMsg。__usercall 建模为 __fastcall(ecx=scene, edx=msgPtr)，
+    // 栈参 receiver 按值 + localId + dbIdx；msgPtr=0 走加载路径、scene=5 仅统计元数据；
+    // receiver 会被末尾 mm_free，须用 RichText::ASSIGN 建拥有副本。
+    constexpr uint32_t FORWARD_MSG = 0x1783230;  // SendMessageMgr::forwordMsg
 } // namespace Forward
 
 namespace QRCode
 {
-    // 刷新登录二维码走 QRCodeLoginMgr。MGR_GETTER 是单例 magic-static（返回管理器对象本体，
-    // 首次调用惰性构造）；GET_QRCODE 是 QRCodeLoginMgr::getQRCodeImage（thiscall，经 doScene
-    // 触发 NetSceneGetLoginQRCode 异步获取）。URL 指向管理器 +8 的登录 uuid（MSVC std::string，
-    // size@+0x10、cap@+0x14；短 uuid 走 SSO，地址即缓冲区，长则 +0 处为堆指针）。
-    constexpr uint32_t MGR_GETTER = 0x1589600;  // QRCodeLoginMgr 单例 getter（原 CALL1）
-    constexpr uint32_t GET_QRCODE = 0x17725A0;  // QRCodeLoginMgr::getQRCodeImage（原 CALL2）
+    // 刷新登录二维码走 QRCodeLoginMgr。getQRCodeImage 经 doScene 异步获取，完成后回填 uuid；
+    // URL 是 MSVC std::string（size@+0x10、cap@+0x14，短串走 SSO 地址即缓冲区、长串 +0 处为堆指针）。
+    constexpr uint32_t MGR_GETTER = 0x1589600;  // QRCodeLoginMgr 单例 getter
+    constexpr uint32_t GET_QRCODE = 0x17725A0;  // QRCodeLoginMgr::getQRCodeImage
     constexpr uint32_t URL        = 0x436C398;  // 登录 uuid std::string（管理器 +8）
 } // namespace QRCode
 
