@@ -1,6 +1,6 @@
 # WeChatFerry
 
-一个玩微信的工具。更多介绍见：[WeChatFerry: 一个玩微信的工具](https://mp.weixin.qq.com/)。
+一个让微信封号的工具，千万不要使用。更多介绍见：[~~WeChatFerry: 一个玩微信的工具~~]()。
 
 <details>
 <summary><b>⚠️ 免责声明【必读】⚠️</b></summary>
@@ -9,7 +9,7 @@
 
 </details>
 
-|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 Python 视频教程](https://mp.weixin.qq.com/)|[🙋 FAQ](https://mp.weixin.qq.com/)|
+|[📖 Python 文档](https://wechatferry.readthedocs.io/)|[📺 ~~Python 视频教程~~]()|[🙋 ~~FAQ~~]()|
 |:-:|:-:|:-:|
 
 👉 [WeChatRobot🤖](https://github.com/lich0821/WeChatRobot)，一个基于 WeChatFerry 的 Python 机器人示例。
@@ -23,6 +23,7 @@
 * 获取联系人
 * 获取可查询数据库
 * 获取数据库所有表
+* 获取数据库密钥
 * 获取语音消息
 * 发送文本消息（可 @）
 * 发送图片消息
@@ -38,7 +39,9 @@
 * 获取朋友圈消息
 * 下载图片、视频、文件
 * 解密图片
+* 图片 OCR 识别
 * 通过好友申请
+* 领取转账
 * 添加群成员
 * 删除群成员
 * 邀请群成员
@@ -50,6 +53,9 @@
 * Python
 * HTTP
 * NodeJS
+* Go
+* Java
+* Rust
 
 </details>
 
@@ -126,9 +132,9 @@ vcpkg integrate install # 失败则说明未正确安装或者未正确配置环
 
 #### 安装相关组件
 
-编译时会自动安装。但如果需要使用 `protoc.exe`，则需要配置一下 `protoc.exe` 环境变量：`<vcpkg_package_installed_path>\x64-windows-static\x64-windows-static\tools\protobuf`。
+编译时会自动安装。但如果需要使用 `protoc.exe`，则需要配置一下 `protoc.exe` 环境变量：`<vcpkg_package_installed_path>\x86-windows-static\x86-windows-static\tools\protobuf`。
 
-（本文为：`C:\Projs\WeChatFerry\WeChatFerry\vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf`）
+（本文为：`C:\Projs\WeChatFerry\WeChatFerry\vcpkg_installed\x86-windows-static\x86-windows-static\tools\protobuf`）
 
 #### 安装 VS2019
 
@@ -145,11 +151,27 @@ pip install grpcio-tools==1.48.2
 
 ### 编译
 
-使用 VS2019 打开工程，编译即可。编译成功后，在 `WeChatFerry\WeChatFerry\Out` 目录中会看到相应的 DLL 文件。
+使用 VS2019 打开工程（解决方案只有 `x86` 平台），编译即可。编译成功后，在 `WeChatFerry\WeChatFerry\Out` 目录中会看到相应的 DLL 及命令行工具 `wcf.exe`。
 
 **注**：如果遇到执行 `protoc` 时的 9009 错误，检查是否是 python3 环境有问题，或者 protoc 命令的环境变量配置不正确。
 
 ### 运行
+
+有两种驱动方式：
+
+**方式一：`wcf.exe` 命令行（推荐，适合子进程编排 / 64 位客户端）**
+
+```sh
+wcf.exe start 10086          # 注入并在命令端口 10086 启动 RPC（消息端口为 10087）
+wcf.exe start 10086 debug    # 注入 debug 版 spy
+wcf.exe stop                 # 卸载 spy
+wcf.exe start 10086 --gui    # 出错时弹模态框（默认写 stderr，返回语义化退出码，便于自动化）
+```
+
+因 spy 为 32 位，64 位客户端无法直接 `LoadLibrary` 加载 `sdk.dll`，改由子进程调用 `wcf.exe` 驱动注入。语义化退出码：`0` 成功、`2` 参数错误、`3` spy DLL 不存在、`4` 打开/启动微信失败、`5` 注入失败、`6` 初始化 RPC 失败、`7` `.wcf.lock` 读写失败、`8` 停止时微信未运行、`9` 卸载失败、`10` spy 已注入（重复 start）。
+
+**方式二：32 位进程内直接加载 `sdk.dll`（Python 需为 32 位）**
+
 ```py
 import ctypes
 # 加载 sdk.dll （需要绝对路径）
@@ -178,33 +200,36 @@ WeChatFerry
 ├── LICENSE                 # LICENSE
 ├── README.MD               # 说明
 ├── WeChatFerry
-│   ├── WeChatFerry.sln     # VS2019 工程文件
-│   ├── com                 # 公共模块
-│   ├── rpc                 # RPC 模块
-│   ├── sdk                 # 注入及启动模块
-│   ├── smc                 # Silk-Mp3 转换模块
-│   └── spy                 # 核心功能实现模块
+│   ├── WeChatFerry.sln     # VS2019 工程文件
+│   ├── com                 # 公共模块
+│   ├── rpc                 # RPC 模块
+│   ├── sdk                 # 注入及启动模块
+│   ├── smc                 # Silk-Mp3 转换模块
+│   ├── spy                 # 核心功能实现模块
+│   └── wcf                 # 命令行工具（wcf.exe）
 ├── assets
-│   ├── QR.jpeg             # 二维码，测试用图
-│   ├── TEQuant.jpg         # 二维码，测试用图
-│   └── demo.gif            # 示例动图
+│   ├── QR.jpeg             # 二维码，测试用图
+│   ├── TEQuant.jpg         # 二维码，测试用图
+│   └── demo.gif            # 示例动图
 ├── clients
-│   ├── go                  # Go 客户端
-│   ├── gohttp              # HTTP 客户端
-│   ├── http                # HTTP 客户端
-│   ├── java                # Java 客户端
-│   ├── node                # Node.js 客户端
-│   ├── pyauto              # 群友封装的客户端
-│   ├── python              # Python 客户端
-│   └── rust                # Rust 客户端
+│   ├── go                  # Go 客户端
+│   ├── go_wcf_http         # Go HTTP 客户端
+│   ├── gohttp              # HTTP 客户端
+│   ├── http                # HTTP 客户端
+│   ├── java                # Java 客户端
+│   ├── node                # Node.js 客户端
+│   ├── pyauto              # 群友封装的客户端
+│   ├── python              # Python 客户端
+│   ├── rust                # Rust 客户端
+│   └── wcferry-node        # Node.js 客户端
 └── docs                    # 文档
-
 ```
 
 ## 版本更新
 
-### v39.5.2
-* 没有新功能
+### v39.6.0
+* 适配微信 `3.9.12.56`，核心 spy 由 x64 迁回 **x86**（32 位）。
+* `wcf.exe` 增强：语义化退出码、`--gui` 开关、重复注入防护、按需等待微信启动。
 
 <details><summary>点击查看更多</summary>
 
@@ -215,6 +240,9 @@ WeChatFerry
 * `x` 是适配的微信的小版本号，从 0 开始
 * `y` 是 `WeChatFerry` 的版本，从 0 开始
 * `z` 是各客户端的版本，从 0 开始
+
+### v39.5.2
+* 没有新功能
 
 ### v39.5.1
 * 修复邀请进群偶发失败
