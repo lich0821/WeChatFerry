@@ -137,7 +137,8 @@ xcopy /y "$(OutDir)$(TargetFileName)" "$(ProjectDir)..\..\clients\python\wcferry
       <Message>Copy spy.dll</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command></Command>
+      <Command>cd /d "$(ProjectDir)..\rpc\proto"
+..\tool\protoc.bat --plugin=protoc-gen-nanopb=..\tool\protoc-gen-nanopb.bat --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
@@ -181,7 +182,8 @@ xcopy /y "$(OutDir)$(TargetFileName)" "$(ProjectDir)..\..\clients\python\wcferry
       <Message>Copy spy.dll</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command></Command>
+      <Command>cd /d "$(ProjectDir)..\rpc\proto"
+..\tool\protoc.bat --plugin=protoc-gen-nanopb=..\tool\protoc-gen-nanopb.bat --nanopb_out=. wcf.proto</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Generating PB files</Message>
