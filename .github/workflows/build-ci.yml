@@ -71,7 +71,6 @@ jobs:
             msbuild WeChatFerry/WeChatFerry.sln `
               /p:Configuration=$cfg `
               /p:Platform="x86" `
-              /p:VcpkgTriplet="x86-windows-static" `
               /p:VcpkgEnableManifest=true `
               /verbosity:minimal
           }
