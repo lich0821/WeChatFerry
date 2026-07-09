@@ -12,7 +12,13 @@
 #include <thread>
 #include <unordered_map>
 
+#if __has_include(<magic_enum.hpp>)
 #include <magic_enum.hpp>
+#elif __has_include(<magic_enum/magic_enum.hpp>)
+#include <magic_enum/magic_enum.hpp>
+#else
+#error "magic_enum header not found"
+#endif
 #include <nng/nng.h>
 #include <nng/protocol/pair1/pair.h>
 #include <nng/supplemental/util/platform.h>

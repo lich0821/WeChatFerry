@@ -107,12 +107,12 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\;$(ProjectDir)..\rpc;$(ProjectDir)..\rpc\nanopb;$(ProjectDir)..\rpc\proto;$(ProjectDir)..\smc;$(ProjectDir);$(ProjectDir)com;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\;$(ProjectDir)..\rpc;$(ProjectDir)..\rpc\nanopb;$(ProjectDir)..\rpc\proto;$(ProjectDir)..\smc;$(ProjectDir);$(ProjectDir)com;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,12 +155,12 @@ xcopy /y "$(OutDir)$(TargetFileName)" "$(ProjectDir)..\..\clients\python\wcferry
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\;$(ProjectDir)..\rpc;$(ProjectDir)..\rpc\nanopb;$(ProjectDir)..\rpc\proto;$(ProjectDir)..\smc;$(ProjectDir);$(ProjectDir)com;C:\Tools\vcpkg\installed\x86-windows-static\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\;$(ProjectDir)..\rpc;$(ProjectDir)..\rpc\nanopb;$(ProjectDir)..\rpc\proto;$(ProjectDir)..\smc;$(ProjectDir);$(ProjectDir)com;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4251;4731;4819</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/EHa %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHa /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
