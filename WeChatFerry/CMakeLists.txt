@@ -40,7 +40,7 @@ add_link_options(
 
 # Include directories
 include_directories(
-  ${CMAKE_SOURCE_DIR}/com
+  ${CMAKE_SOURCE_DIR}/spy/com
   ${CMAKE_SOURCE_DIR}/rpc
   ${CMAKE_SOURCE_DIR}/rpc/nanopb
   ${CMAKE_SOURCE_DIR}/rpc/proto

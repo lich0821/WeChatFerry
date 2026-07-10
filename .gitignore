@@ -10,6 +10,7 @@ Debug/
 Release/
 x64/
 Out/
+_build/
 
 # Generated files
 *.pb.h

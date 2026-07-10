@@ -1,135 +1,184 @@
 ﻿#pragma warning(disable : 4244)
+
 #include "misc_manager.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 #include "codec.h"
 #include "database_executor.h"
+#include "framework.h"
 #include "log.hpp"
-#include "message_handler.h"
 #include "offsets.h"
+#include "pb_util.h"
 #include "rpc_helper.h"
-#include "rpc_server.h"
-#include "spy.h"
 #include "spy_types.h"
 #include "util.h"
 
-namespace misc
-{
-using namespace std;
-namespace fs     = std::filesystem;
-namespace OsMisc = Offsets::Misc;
-namespace OsSns  = Offsets::Misc::Sns;
+#define HEADER_PNG1 0x89
+#define HEADER_PNG2 0x50
+#define HEADER_JPG1 0xFF
+#define HEADER_JPG2 0xD8
+#define HEADER_GIF1 0x47
+#define HEADER_GIF2 0x49
 
-using get_sns_data_mgr_t          = QWORD (*)();
-using get_sns_timeline_mgr_t      = QWORD (*)();
-using get_sns_first_page_t        = QWORD (*)(QWORD, QWORD, QWORD);
-using get_sns_next_page_scene_t   = QWORD (*)(QWORD, QWORD);
-using get_chat_mgr_t              = QWORD (*)();
-using new_chat_msg_t              = QWORD (*)(char *);
-using free_chat_msg_t             = QWORD (*)(QWORD);
-using get_pre_download_mgr_t      = QWORD (*)();
-using get_mgr_by_prefix_localid_t = QWORD (*)(QWORD, QWORD);
-using push_attach_task_t          = QWORD (*)(QWORD, QWORD, QWORD, QWORD);
-using get_ocr_manager_t           = QWORD (*)();
-using do_ocr_task_t               = QWORD (*)(QWORD, QWORD, QWORD, QWORD, QWORD, QWORD);
-using get_qr_code_mgr_t           = QWORD (*)();
+namespace fs = std::filesystem;
 
-struct ImagePattern {
-    uint8_t header1_candidate;
-    uint8_t header2_expected;
-    const char *extension;
-};
+extern bool gIsListeningPyq;
+extern uint32_t g_WeChatWinDllAddr;
 
-static constexpr ImagePattern patterns[] = {
-    { 0x89, 0x50, ".png" },
-    { 0xFF, 0xD8, ".jpg" },
-    { 0x47, 0x49, ".gif" },
-};
-
-static std::string detect_image_extension(uint8_t header1, uint8_t header2, uint8_t *key)
+namespace
 {
 
-    for (const auto &pat : patterns) {
-        *key = pat.header1_candidate ^ header1;
-        if ((pat.header2_expected ^ *key) == header2) {
-            return pat.extension;
-        }
+using ManagerGetterFn        = void *(*)();
+using BufferInitFn           = void(__thiscall *)(void *buffer);
+using BufferCleanupFn        = void(__thiscall *)(void *buffer);
+using WarmupFn               = void (*)();
+using RefreshFirstPageFn     = int(__thiscall *)(void *manager, int forward);
+using RefreshNextPageFn      = int(__thiscall *)(void *manager, uint32_t id_low, uint32_t id_high);
+using RunOcrFn               = int(__thiscall *)(void *manager, const WxString *path, int reserved,
+                                                 void *result_list, uint32_t *found_flag,
+                                                 const WxString *null_obj);
+using OperatorNewFn          = void *(__cdecl *)(size_t);
+using OcrResultDtorFn        = void(__thiscall *)(void *result_list);
+using RefreshLoginQrCodeFn   = void(__thiscall *)(void *manager);
+using LoadAttachmentMetaFn   = int(__thiscall *)(void *buffer, uint32_t local_id, uint32_t db_idx);
+using DownloadAttachmentFn   = int(__thiscall *)(void *manager, void *buffer, int reserved, int sync,
+                                                 int user_clicked);
+using WxStringAssignFn       = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
+using RevokeMessageFn        = int(__thiscall *)(void *manager, void *chat_msg);
+using ReceiveTransferFn      = int(__fastcall *)(void *pay_info, const WxString *wxid, uint64_t scratch,
+                                                 int confirm);
+
+std::string get_key(uint8_t header1, uint8_t header2, uint8_t *key)
+{
+    *key = HEADER_PNG1 ^ header1;
+    if ((HEADER_PNG2 ^ *key) == header2) {
+        return ".png";
     }
-    LOG_ERROR("未知类型：{:02x} {:02x}", header1, header2);
+
+    *key = HEADER_JPG1 ^ header1;
+    if ((HEADER_JPG2 ^ *key) == header2) {
+        return ".jpg";
+    }
+
+    *key = HEADER_GIF1 ^ header1;
+    if ((HEADER_GIF2 ^ *key) == header2) {
+        return ".gif";
+    }
+
     return "";
 }
 
-std::string decrypt_image(const fs::path &src, const fs::path &dst_dir)
+int get_first_page()
 {
+    int rv = -1;
+
+    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::MGR_GETTER);
+    auto requestFirstPage  = reinterpret_cast<RefreshFirstPageFn>(g_WeChatWinDllAddr + Offsets::Moments::GET_FIRST_PAGE);
+
+    void *manager = getMomentsManager();
+    if (manager != nullptr) {
+        rv = requestFirstPage(manager, 1);
+    }
+
+    return rv;
+}
+
+int get_next_page(uint64_t id)
+{
+    int rv = -1;
+
+    auto getMomentsManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Moments::MGR_GETTER);
+    auto requestNextPage   = reinterpret_cast<RefreshNextPageFn>(g_WeChatWinDllAddr + Offsets::Moments::GET_NEXT_PAGE);
+
+    void *manager = getMomentsManager();
+    if (manager != nullptr) {
+        rv = requestNextPage(manager, static_cast<uint32_t>(id), static_cast<uint32_t>(id >> 32));
+    }
+
+    return rv;
+}
+
+} // namespace
+
+namespace misc
+{
+
+std::string decrypt_image(const std::string &src, const std::string &dir)
+{
+    // 微信图片是原图逐字节异或同一单字节密钥；由前两字节与已知图片头（PNG/JPG/GIF）反推密钥
     if (!fs::exists(src)) {
-        LOG_ERROR("文件不存在: {}", src.string());
         return "";
     }
 
-    std::ifstream in(src, std::ios::binary);
-    if (!in) {
-        LOG_ERROR("无法打开文件: {}", src.string());
+    std::ifstream in(src.c_str(), std::ios::binary);
+    if (!in.is_open()) {
+        LOG_ERROR("Failed to read file {}", src);
         return "";
     }
 
-    std::vector<char> buffer(std::istreambuf_iterator<char>(in), {});
-    if (buffer.size() < 2) return "";
+    std::filebuf *pfb = in.rdbuf();
+    size_t size       = pfb->pubseekoff(0, std::ios::end, std::ios::in);
+    pfb->pubseekpos(0, std::ios::in);
 
-    uint8_t key = 0x00;
-    auto ext    = detect_image_extension(buffer[0], buffer[1], &key);
+    std::vector<char> buff;
+    buff.resize(size);
+    char *pBuf = buff.data();
+    pfb->sgetn(pBuf, size);
+    in.close();
+
+    if (size < 2) {
+        LOG_ERROR("File too small: {}", src);
+        return "";
+    }
+
+    uint8_t key     = 0x00;
+    std::string ext = get_key(pBuf[0], pBuf[1], &key);
     if (ext.empty()) {
-        LOG_ERROR("无法检测文件类型.");
+        LOG_ERROR("Failed to get key.");
         return "";
     }
 
-    std::for_each(buffer.begin(), buffer.end(), [key](char &c) { c ^= key; });
+    for (size_t i = 0; i < size; i++) {
+        pBuf[i] ^= key;
+    }
 
-    fs::path dst_path = dst_dir / (src.stem().string() + ext);
-    if (!fs::exists(dst_dir)) fs::create_directories(dst_dir);
+    std::string dst = "";
 
-    std::ofstream out(dst_path, std::ios::binary);
-    if (!out) {
-        LOG_ERROR("写入文件失败: {}", dst_path.generic_string());
+    try {
+        if (dir.empty()) {
+            dst = fs::path(src).replace_extension(ext).string();
+        } else {
+            dst = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+            dst += fs::path(src).stem().string() + ext;
+        }
+
+        std::replace(dst.begin(), dst.end(), '\\', '/');
+    } catch (const std::exception &e) {
+        LOG_ERROR(util::gb2312_to_utf8(e.what()));
+    } catch (...) {
+        LOG_ERROR("Unknow exception.");
         return "";
     }
 
-    out.write(buffer.data(), buffer.size());
-    return dst_path.generic_string();
-}
+    std::ofstream out(dst.c_str(), std::ios::binary);
+    if (!out.is_open()) {
+        LOG_ERROR("Failed to write file {}", dst);
+        return "";
+    }
 
-static int get_first_page()
-{
-    int status = -1;
+    out.write(pBuf, size);
+    out.close();
 
-    auto GetSNSDataMgr   = Spy::getFunction<get_sns_data_mgr_t>(OsSns::DATA_MGR);
-    auto GetSNSFirstPage = Spy::getFunction<get_sns_first_page_t>(OsSns::FIRST);
-
-    QWORD buff[16] = { 0 };
-    QWORD mgr      = GetSNSDataMgr();
-    status         = (int)GetSNSFirstPage(mgr, (QWORD)&buff, 1);
-
-    return status;
-}
-
-static int get_next_page(QWORD id)
-{
-    int status = -1;
-
-    auto GetSnsTimeLineMgr   = Spy::getFunction<get_sns_timeline_mgr_t>(OsSns::TIMELINE);
-    auto GetSNSNextPageScene = Spy::getFunction<get_sns_next_page_scene_t>(OsSns::NEXT);
-
-    QWORD mgr = GetSnsTimeLineMgr();
-    status    = (int)GetSNSNextPageScene(mgr, id);
-
-    return status;
+    return dst;
 }
 
 int refresh_pyq(uint64_t id)
 {
-    auto &msgHandler = message::Handler::getInstance();
-    if (!msgHandler.isPyqListening()) {
+    if (!gIsListeningPyq) {
         LOG_ERROR("没有启动朋友圈消息接收，参考：enable_receiving_msg");
         return -1;
     }
@@ -141,293 +190,388 @@ int refresh_pyq(uint64_t id)
     return get_next_page(id);
 }
 
-/*******************************************************************************
- * 都说我不写注释，写一下吧
- * 其实也没啥好写的，就是下载资源
- * 主要介绍一下几个参数：
- * id：好理解，消息 id
- * thumb：图片或者视频的缩略图路径；如果是视频，后缀为 mp4 后就是存在路径了
- * extra：图片、文件的路径
- *******************************************************************************/
-int download_attachment(uint64_t id, const fs::path &thumb, const fs::path &extra)
+int download_attachment(uint64_t id, const std::string &thumb, const std::string &extra)
 {
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
     int status = -1;
-    QWORD localId;
+    uint64_t localId;
     uint32_t dbIdx;
 
-    if (fs::exists(extra)) { // 第一道，不重复下载。TODO: 通过文件大小来判断
-        LOG_WARN("文件已存在：{}", extra.generic_string());
+    if (fs::exists(extra)) {
         return 0;
     }
 
     if (db::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
-        LOG_ERROR("获取 localId 失败, 请检查消息 id: {} 是否正确", to_string(id));
+        LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
         return status;
     }
 
-    auto NewChatMsg            = Spy::getFunction<new_chat_msg_t>(OsMisc::INSATNCE);
-    auto FreeChatMsg           = Spy::getFunction<free_chat_msg_t>(OsMisc::FREE);
-    auto GetChatMgr            = Spy::getFunction<get_chat_mgr_t>(OsMisc::CHAT_MGR);
-    auto GetPreDownLoadMgr     = Spy::getFunction<get_pre_download_mgr_t>(OsMisc::PRE_DOWNLOAD_MGR);
-    auto PushAttachTask        = Spy::getFunction<push_attach_task_t>(OsMisc::PUSH_ATTACH_TASK);
-    auto GetMgrByPrefixLocalId = Spy::getFunction<get_mgr_by_prefix_localid_t>(OsMisc::PRE_LOCAL_ID_MGR);
+    // 加载消息进 ChatMsg → 依类型算落盘路径写入其字段 → 提交下载 → 析构
+    char buff[0x2D8] = { 0 };
+    auto initChatMsg  = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
+    auto warmup       = reinterpret_cast<WarmupFn>(g_WeChatWinDllAddr + Offsets::Attachment::WARMUP);
+    auto loadMsg      = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::LOAD_MSG);
+    auto getManager   = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Attachment::MGR_GETTER);
+    auto pushTask     = reinterpret_cast<DownloadAttachmentFn>(g_WeChatWinDllAddr + Offsets::Attachment::PUSH_TASK);
+    auto assignPath   = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto destroyMsg   = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
 
-    LARGE_INTEGER l;
-    l.HighPart = dbIdx;
-    l.LowPart  = (DWORD)localId;
+    initChatMsg(buff);
+    warmup();
+    loadMsg(buff, static_cast<uint32_t>(localId), dbIdx);
 
-    char *buff = util::AllocBuffer<char>(0x460);
-    if (buff == nullptr) {
-        LOG_ERROR("申请内存失败.");
-        return status;
-    }
+    uint32_t type = util::get_dword((uint32_t)(buff + Offsets::Message::Receive::TYPE));
 
-    QWORD pChatMsg = NewChatMsg(buff);
-    GetChatMgr();
-    GetMgrByPrefixLocalId(l.QuadPart, pChatMsg);
-    QWORD type = util::get_dword(reinterpret_cast<QWORD>(buff) + 0x38);
+    std::string save_path  = "";
+    std::string thumb_path = "";
 
-    fs::path save_path, thumb_path;
     switch (type) {
-        case 0x03: { // Image: extra
+        case 0x03:  // 图片
             save_path = extra;
             break;
-        }
-        case 0x3E:
-        case 0x2B: { // Video: thumb
+        case 0x3E:  // 视频
+        case 0x2B:
             thumb_path = thumb;
-            save_path  = fs::path(thumb).replace_extension("mp4");
+            save_path  = fs::path(thumb).replace_extension("mp4").string();
             break;
-        }
-        case 0x31: { // File: extra
+        case 0x31:  // 文件
             save_path = extra;
             break;
-        }
         default:
-            LOG_ERROR("不支持的文件类型: {}", type);
-            return -2;
+            break;
     }
 
-    if (fs::exists(save_path)) { // 不重复下载。TODO: 通过文件大小来判断
+    if (fs::exists(save_path)) {
+        destroyMsg(buff);
         return 0;
     }
 
-    LOG_DEBUG("保存路径: {}", save_path.generic_string());
-    // 创建父目录，由于路径来源于微信，不做检查
-    fs::create_directory(save_path.parent_path());
+    LOG_DEBUG("path: {}", save_path);
+    fs::create_directory(fs::path(save_path).parent_path().string());
 
-    int temp           = 1;
-    auto wx_save_path  = util::CreateWxString(save_path.make_preferred().string());
-    auto wx_thumb_path = util::CreateWxString(thumb_path.make_preferred().string());
+    std::wstring wsSavePath  = util::s2w(save_path);
+    std::wstring wsThumbPath = util::s2w(thumb_path);
 
-    memcpy(&buff[0x280], wx_thumb_path, sizeof(WxString));
-    memcpy(&buff[0x2A0], wx_save_path, sizeof(WxString));
-    memcpy(&buff[0x40C], &temp, sizeof(temp));
+    // 路径字段会被 ~ChatMsg mm_free，须用 ASSIGN 建 WeChat 拥有副本；init 标志置 1 跳过重复子对象初始化
+    assignPath(buff + Offsets::Attachment::F_THUMB_PATH, wsThumbPath.c_str(), -1);
+    assignPath(buff + Offsets::Attachment::F_SAVE_PATH, wsSavePath.c_str(), -1);
+    *reinterpret_cast<int *>(buff + Offsets::Attachment::F_INITED_FLAG) = 1;
 
-    QWORD mgr = GetPreDownLoadMgr();
-    status    = (int)PushAttachTask(mgr, pChatMsg, 0, 1);
-    FreeChatMsg(pChatMsg);
-    util::FreeBuffer(buff);
+    void *manager = getManager();
+    if (manager != nullptr) {
+        status = pushTask(manager, buff, 0, 1, 0);
+    }
+    destroyMsg(buff);
 
     return status;
-}
-
-std::string get_audio(uint64_t id, const fs::path &dir)
-{
-    if (!fs::exists(dir)) fs::create_directories(dir);
-
-    fs::path mp3path = dir / (std::to_string(id) + ".mp3");
-    if (fs::exists(mp3path)) return mp3path.generic_string();
-
-    auto silk = db::get_audio_data(id);
-    if (silk.empty()) {
-        LOG_ERROR("没有获取到语音数据.");
-        return "";
-    }
-
-    Silk2Mp3(silk, mp3path.generic_string(), 24000);
-    return mp3path.generic_string();
-}
-
-std::string get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr)
-{
-    if (!fs::exists(dir)) fs::create_directories(dir);
-
-    fs::path pcmpath = dir / (std::to_string(id) + ".pcm");
-    if (fs::exists(pcmpath)) return pcmpath.generic_string();
-
-    auto silk = db::get_audio_data(id);
-    if (silk.empty()) {
-        LOG_ERROR("没有获取到语音数据.");
-        return "";
-    }
-
-    std::vector<uint8_t> pcm;
-    SilkDecode(silk, pcm, sr);
-
-    std::ofstream out(pcmpath, std::ios::binary);
-    if (!out) {
-        LOG_ERROR("创建文件失败: {}", pcmpath.generic_string());
-        return "";
-    }
-
-    out.write(reinterpret_cast<char *>(pcm.data()), pcm.size());
-    return pcmpath.generic_string();
-}
-
-OcrResult_t get_ocr_result(const fs::path &path)
-{
-    OcrResult_t ret = { -1, "" };
-#if 0 // 参数没调好，会抛异常，看看有没有好心人来修复
-    if (!fs::exists(path)) {
-        LOG_ERROR("Can not find: {}", path);
-        return ret;
-    }
-
-    get_ocr_manager_t GetOCRManager = (get_ocr_manager_t)(g_WeChatWinDllAddr + 0x1D6C3C0);
-    do_ocr_task_t DoOCRTask         = (do_ocr_task_t)(g_WeChatWinDllAddr + 0x2D10BC0);
-
-    QWORD unk1 = 0, unk2 = 0, unused = 0;
-    QWORD *pUnk1 = &unk1;
-    QWORD *pUnk2 = &unk2;
-    // 路径分隔符有要求，必须为 `\`
-    wstring wsPath = util::s2w(fs::path(path).make_preferred().string());
-    WxString wxPath(wsPath);
-    vector<QWORD> *pv = (vector<QWORD> *)HeapAlloc(GetProcessHeap(), 0, 0x20);
-    RawVector_t *pRv  = (RawVector_t *)pv;
-    pRv->finish       = pRv->start;
-    char buff[0x98]   = { 0 };
-    memcpy(buff, &pRv->start, sizeof(QWORD));
-
-    QWORD mgr  = GetOCRManager();
-    ret.status = (int)DoOCRTask(mgr, (QWORD)&wxPath, unused, (QWORD)buff, (QWORD)&pUnk1, (QWORD)&pUnk2);
-
-    QWORD count = util::get_qword(buff + 0x8);
-    if (count > 0) {
-        QWORD header = util::get_qword(buff);
-        for (QWORD i = 0; i < count; i++) {
-            QWORD content = util::get_qword(header);
-            ret.result += util::w2s(get_pp_wstring(content + 0x28));
-            ret.result += "\n";
-            header = content;
-        }
-    }
-#endif
-    return ret;
 }
 
 int revoke_message(uint64_t id)
 {
     int status = -1;
-#if 0 // 这个挺鸡肋的，因为自己发的消息没法直接获得 msgid，就这样吧
-    QWORD localId;
+    uint64_t localId;
     uint32_t dbIdx;
-    if (GetLocalIdandDbidx(id, &localId, &dbIdx) != 0) {
+    if (db::get_local_id_and_dbidx(id, &localId, &dbIdx) != 0) {
         LOG_ERROR("Failed to get localId, Please check id: {}", to_string(id));
         return status;
     }
-#endif
+
+    // ChatMsg 精确 0x2D8 字节（同发送侧），栈上构造后按 localId/dbIdx 加载再撤回。
+    char chat_msg[0x2D8] = { 0 };
+
+    auto initChatMsg     = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_CTOR);
+    auto loadMsg         = reinterpret_cast<LoadAttachmentMetaFn>(g_WeChatWinDllAddr + Offsets::Attachment::LOAD_MSG);
+    auto getRevokeMgr    = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::Revoke::MGR_GETTER);
+    auto revokeMessageFn = reinterpret_cast<RevokeMessageFn>(g_WeChatWinDllAddr + Offsets::Revoke::REVOKE_MSG);
+    auto destroyChatMsg  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Message::Send::CHATMSG_DTOR);
+
+    initChatMsg(chat_msg);
+    // GetMgrByPrefixLocalId 内部自初始化 ChatMgr，无需单独 warmup
+    loadMsg(chat_msg, static_cast<uint32_t>(localId), dbIdx);
+
+    void *manager = getRevokeMgr();
+    if (manager != nullptr) {
+        status = revokeMessageFn(manager, chat_msg);
+    }
+    destroyChatMsg(chat_msg);
+
     return status;
+}
+
+std::string get_audio(uint64_t id, const std::string &dir)
+{
+    // 语音存于 MediaMSGn.db 的 Media 表（Buf 列为 silk 编码，首字节为标志需跳过）；取出后转 mp3 落盘。
+    // 依赖数据库层的 MSG 多库枚举（MultiDBMsgMgr），否则 get_audio_data 查不到 MediaMSG 库。
+    if (dir.empty()) {
+        LOG_ERROR("Empty dir.");
+        return "";
+    }
+
+    std::string mp3path = (dir.back() == '\\' || dir.back() == '/') ? dir : (dir + "/");
+    mp3path += to_string(id) + ".mp3";
+    std::replace(mp3path.begin(), mp3path.end(), '\\', '/');
+    if (fs::exists(mp3path)) {
+        return mp3path;
+    }
+
+    std::vector<uint8_t> silk = db::get_audio_data(id);
+    if (silk.empty()) {
+        LOG_ERROR("Empty audio data.");
+        return "";
+    }
+
+    if (Silk2Mp3(silk, mp3path, 24000) != 0 || !fs::exists(mp3path)) {
+        return "";
+    }
+
+    return mp3path;
+}
+
+// OCR 结果链表头：std::list 头（哨兵指针 + 计数）后接缓存命中时被回填的标量字段，须留足空间避免越界
+struct OcrResultList {
+    void    *head;  // +0x00 哨兵结点（自环空链表）
+    uint32_t count; // +0x04 结点数
+    uint32_t f8;    // +0x08 缓存命中回填
+    uint32_t fc;    // +0x0C
+    uint64_t f10;   // +0x10
+    uint64_t pad;   // +0x18 冗余，覆盖缓存命中的整段写入
+};
+
+OcrResult_t get_ocr_result(const std::string &path)
+{
+    OcrResult_t ret = { -1, "" };
+
+    if (!fs::exists(path)) {
+        LOG_ERROR("Can not find: {}", path);
+        return ret;
+    }
+
+    std::wstring wsPath = util::s2w(fs::path(path).make_preferred().string());
+
+    WxString wxPath(wsPath);
+    WxString nullObj;
+
+    auto opNew         = reinterpret_cast<OperatorNewFn>(g_WeChatWinDllAddr + Offsets::OCR::RESULT_NEW);
+    auto getOcrManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::OCR::MGR_GETTER);
+    auto runOcr        = reinterpret_cast<RunOcrFn>(g_WeChatWinDllAddr + Offsets::OCR::RUN_OCR);
+    auto destroyList   = reinterpret_cast<OcrResultDtorFn>(g_WeChatWinDllAddr + Offsets::OCR::RESULT_DTOR);
+
+    // 构造合法空链表：哨兵结点自环（与 WeChat 内联初始化一致），
+    // 缓存命中路径 DoOCRTask 会 splice 结点，无有效哨兵会崩。
+    OcrResultList buffer = { 0 };
+    void **sentinel      = static_cast<void **>(opNew(0x58));
+    if (sentinel == nullptr) {
+        LOG_ERROR("Failed to alloc OCR result buffer.");
+        return ret;
+    }
+    sentinel[0]  = sentinel; // next -> self
+    sentinel[1]  = sentinel; // prev -> self
+    buffer.head  = sentinel;
+
+    uint32_t found = 0;
+    int status     = -1;
+
+    void *manager = getOcrManager();
+    if (manager != nullptr) {
+        status = runOcr(manager, &wxPath, 0, &buffer, &found, &nullObj);
+    }
+
+    // DoOCRTask 缓存命中返回 0 并同步回填链表；异步入队返回非 0 task_id（此时无同步结果）。
+    if (status != 0) {
+        destroyList(&buffer);
+        return ret;
+    }
+
+    ret.status = status;
+
+    uint32_t addr   = reinterpret_cast<uint32_t>(&buffer);
+    uint32_t header = util::get_dword(addr);       // 哨兵/首结点
+    uint32_t num    = util::get_dword(addr + 0x4); // 结点数
+    for (uint32_t i = 0; i < num; i++) {
+        uint32_t content = util::get_dword(header);                     // 下一结点
+        ret.result += util::w2s(util::get_wstring(content + 0x14));     // 结点内文本 WxString.wptr
+        ret.result += "\n";
+        header = content;
+    }
+
+    destroyList(&buffer);
+    return ret;
 }
 
 std::string get_login_url()
 {
-    std::string uri;
-    auto get_qr_code_mgr = Spy::getFunction<get_qr_code_mgr_t>(OsMisc::QR_CODE);
-
-    uint64_t addr = get_qr_code_mgr() + 0x68;
-    uint64_t len  = *(uint64_t *)(addr + 0x10);
-    if (len == 0) {
-        LOG_ERROR("获取二维码失败.");
-        return uri;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return "";
     }
 
-    if (*(uint64_t *)(addr + 0x18) == 0xF) {
-        uri = std::string((char *)addr, len);
-    } else {
-        uri = std::string(*(char **)(addr), len);
+    // 已登录则无二维码可刷（SERVICE != 0 即在线，与 account::is_logged_in 语义一致）。
+    if (util::get_dword(g_WeChatWinDllAddr + Offsets::Account::SERVICE) != 0) {
+        LOG_DEBUG("Already logged in, no QR code to refresh.");
+        return "";
     }
 
-    return "http://weixin.qq.com/x/" + uri;
+    // getQRCodeImage 经 doScene 异步获取，完成后把登录 uuid 回填到管理器 +8 的 std::string
+    auto getQrCodeManager = reinterpret_cast<ManagerGetterFn>(g_WeChatWinDllAddr + Offsets::QRCode::MGR_GETTER);
+    auto getQrCodeImage   = reinterpret_cast<RefreshLoginQrCodeFn>(g_WeChatWinDllAddr + Offsets::QRCode::GET_QRCODE);
+
+    void *manager = getQrCodeManager();
+    if (manager == nullptr) {
+        LOG_ERROR("Failed to get QRCodeLoginMgr.");
+        return "";
+    }
+    getQrCodeImage(manager);
+
+    // uuid 存于管理器 +8 的 MSVC std::string（size@+0x10、cap@+0x14）；异步回填故轮询 size。
+    uint32_t strAddr = g_WeChatWinDllAddr + Offsets::QRCode::URL;
+    uint8_t cnt      = 0;
+    while (util::get_dword(strAddr + 0x10) == 0) {
+        if (cnt > 5) {
+            LOG_ERROR("Refresh QR Code timeout.");
+            return "";
+        }
+        Sleep(1000);
+        cnt++;
+    }
+
+    // 短 uuid 走 SSO（地址即缓冲区），容量 >= 16 时 +0 处为堆指针。
+    uint32_t size    = util::get_dword(strAddr + 0x10);
+    uint32_t cap     = util::get_dword(strAddr + 0x14);
+    const char *uuid = (cap >= 16) ? *reinterpret_cast<const char **>(strAddr)
+                                   : reinterpret_cast<const char *>(strAddr);
+    if (uuid == nullptr) {
+        return "";
+    }
+    return "http://weixin.qq.com/x/" + std::string(uuid, size);
 }
 
 int receive_transfer(const std::string &wxid, const std::string &transferid, const std::string &transactionid)
 {
-    LOG_ERROR("技术太菜，实现不了。");
-    return -1;
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
+
+    int rv = -1;
+
+    // WCPayInfo 带虚表且约 0x158 字节；先默认构造再逐字段 ASSIGN，最后析构。缓冲取 0x160 冗余覆盖。
+    char payInfo[0x160] = { 0 };
+
+    std::wstring wsWxid = util::s2w(wxid);
+    std::wstring wsTfid = util::s2w(transferid);
+    std::wstring wsTaid = util::s2w(transactionid);
+
+    // wxid 仅被受理入口读取（内部转 std::string、真实调用者调用后自行 free），故用非拥有 WxString 视图。
+    WxString wxWxid(wsWxid);
+
+    LOG_DEBUG("Receiving transfer, from: {}, transferid: {}, transactionid: {}", wxid, transferid, transactionid);
+
+    auto initPayInfo     = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Transfer::PAY_INFO_CTOR);
+    auto receiveTransfer = reinterpret_cast<ReceiveTransferFn>(g_WeChatWinDllAddr + Offsets::Transfer::RECV_TRANSFER);
+    auto assignField     = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
+    auto destroyPayInfo  = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Transfer::PAY_INFO_DTOR);
+
+    // 受理入口会拷贝构造 payInfo，故所有成员须先默认构造初始化
+    initPayInfo(payInfo);
+
+    *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_PAYSUBTYPE)     = 1;
+    *reinterpret_cast<uint32_t *>(payInfo + Offsets::Transfer::F_EFFECTIVE_DATE) = 1;
+
+    // 交易号/转账单号会被析构器 mm_free，须用 ASSIGN 建 WeChat 拥有副本
+    assignField(payInfo + Offsets::Transfer::F_TRANSACTION_ID, wsTaid.c_str(), -1);
+    assignField(payInfo + Offsets::Transfer::F_TRANSFER_ID, wsTfid.c_str(), -1);
+
+    // confirm=1 表示接受/领取；scratch 为废弃占位传 0。
+    rv = receiveTransfer(payInfo, &wxWxid, 0, 1);
+    destroyPayInfo(payInfo);
+
+    return rv;
 }
 
 bool rpc_get_audio(const AudioMsg &am, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_GET_AUDIO_MSG>(
-        out, len, [&](Response &rsp) { rsp.msg.str = (char *)get_audio(am.id, am.dir).c_str(); });
+    return fill_response<Functions_FUNC_GET_AUDIO_MSG>(out, len, [&am](Response &rsp) {
+        std::string path = "";
+        if (am.dir == NULL) {
+            LOG_ERROR("Empty dir.");
+        } else {
+            path = get_audio(am.id, am.dir);
+        }
+        rsp.msg.str = (char *)path.c_str();
+    });
 }
-
-bool rpc_get_pcm_audio(uint64_t id, const fs::path &dir, int32_t sr, uint8_t *out, size_t *len) { return false; }
 
 bool rpc_decrypt_image(const DecPath &dec, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_DECRYPT_IMAGE>(
-        out, len, [&](Response &rsp) { rsp.msg.str = (char *)decrypt_image(dec.src, dec.dst).c_str(); });
-}
-
-bool rpc_get_login_url(uint8_t *out, size_t *len)
-{
-    return fill_response<Functions_FUNC_REFRESH_QRCODE>(
-        out, len, [&](Response &rsp) { rsp.msg.str = (char *)get_login_url().c_str(); });
+    return fill_response<Functions_FUNC_DECRYPT_IMAGE>(out, len, [&dec](Response &rsp) {
+        std::string path = "";
+        if ((dec.src == NULL) || (dec.dst == NULL)) {
+            LOG_ERROR("Empty src or dst.");
+        } else {
+            path = decrypt_image(dec.src, dec.dst);
+        }
+        rsp.msg.str = (char *)path.c_str();
+    });
 }
 
 bool rpc_refresh_pyq(uint64_t id, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_REFRESH_PYQ>(out, len,
-                                                     [&](Response &rsp) { rsp.msg.status = refresh_pyq(id); });
+    return fill_response<Functions_FUNC_REFRESH_PYQ>(out, len, [id](Response &rsp) {
+        int status     = refresh_pyq(id);
+        rsp.msg.status = status;
+    });
 }
 
 bool rpc_download_attachment(const AttachMsg &att, uint8_t *out, size_t *len)
 {
-    int status = -1;
-    if (att.thumb || att.extra) {
+    return fill_response<Functions_FUNC_DOWNLOAD_ATTACH>(out, len, [&att](Response &rsp) {
         std::string thumb = att.thumb ? att.thumb : "";
         std::string extra = att.extra ? att.extra : "";
-        status            = download_attachment(att.id, thumb, extra);
-    } else {
-        LOG_ERROR("文件地址不能全为空");
-    }
-
-    return fill_response<Functions_FUNC_DOWNLOAD_ATTACH>(out, len, [&](Response &rsp) { rsp.msg.status = status; });
+        int status        = download_attachment(att.id, thumb, extra);
+        rsp.msg.status    = status;
+    });
 }
 
 bool rpc_revoke_message(uint64_t id, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_REVOKE_MSG>(out, len,
-                                                    [&](Response &rsp) { rsp.msg.status = revoke_message(id); });
+    return fill_response<Functions_FUNC_REVOKE_MSG>(out, len, [id](Response &rsp) {
+        int status     = revoke_message(id);
+        rsp.msg.status = status;
+    });
 }
 
-bool rpc_get_ocr_result(const fs::path &path, uint8_t *out, size_t *len)
+bool rpc_get_ocr_result(const std::string &path, uint8_t *out, size_t *len)
 {
-    auto ret = get_ocr_result(path);
-    return fill_response<Functions_FUNC_EXEC_OCR>(out, len, [&](Response &rsp) {
-        rsp.msg.ocr.status = ret.status;
-        rsp.msg.ocr.result = (char *)ret.result.c_str();
+    return fill_response<Functions_FUNC_EXEC_OCR>(out, len, [&path](Response &rsp) {
+        OcrResult_t ocr    = get_ocr_result(path);
+        rsp.msg.ocr.status = ocr.status;
+        rsp.msg.ocr.result = (char *)ocr.result.c_str();
+    });
+}
+
+bool rpc_get_login_url(uint8_t *out, size_t *len)
+{
+    return fill_response<Functions_FUNC_REFRESH_QRCODE>(out, len, [](Response &rsp) {
+        std::string url = get_login_url();
+        rsp.msg.str     = (char *)url.c_str();
     });
 }
 
 bool rpc_receive_transfer(const Transfer &tf, uint8_t *out, size_t *len)
 {
-    return fill_response<Functions_FUNC_RECV_TRANSFER>(
-        out, len, [&](Response &rsp) { rsp.msg.status = receive_transfer(tf.wxid, tf.tfid, tf.taid); });
-}
-
-bool rpc_shutdown(uint8_t *out, size_t *len)
-{
-    return fill_response<Functions_FUNC_SHUTDOWN>(out, len, [&](Response &rsp) {
-        rsp.msg.status = 0;
-        std::thread([]() {
-            Sleep(100);
-            RpcServer::destroyInstance();
-            Spy::Cleanup();
-        }).detach();
-        return true;
+    return fill_response<Functions_FUNC_RECV_TRANSFER>(out, len, [&tf](Response &rsp) {
+        if ((tf.wxid == NULL) || (tf.tfid == NULL) || (tf.taid == NULL)) {
+            LOG_ERROR("Empty wxid, tfid or taid.");
+            rsp.msg.status = -1;
+        } else {
+            int status     = receive_transfer(tf.wxid, tf.tfid, tf.taid);
+            rsp.msg.status = status;
+        }
     });
 }
+
 } // namespace misc

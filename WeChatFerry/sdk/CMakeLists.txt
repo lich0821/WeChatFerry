@@ -12,8 +12,8 @@ add_library(sdk SHARED
   sdk.def
   
   # Common files
-  ${CMAKE_SOURCE_DIR}/com/util.cpp
-  ${CMAKE_SOURCE_DIR}/com/util.h
+  ${CMAKE_SOURCE_DIR}/spy/com/util.cpp
+  ${CMAKE_SOURCE_DIR}/spy/com/util.h
 )
 
 target_link_libraries(sdk PRIVATE

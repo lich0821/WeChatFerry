@@ -1,161 +1,180 @@
-﻿#include "sdk.h"
-
-#include <chrono>
-#include <filesystem>
-#include <fstream>
-#include <optional>
-#include <process.h>
-#include <sstream>
-#include <thread>
-
+﻿#include "Shlwapi.h"
 #include "framework.h"
+#include <filesystem>
+#include <process.h>
 #include <tlhelp32.h>
 
 #include "injector.h"
+#include "sdk.h"
 #include "util.h"
 
-extern "C" IMAGE_DOS_HEADER __ImageBase;
+#define WCF_LOCK L".wcf.lock"
 
-static bool injected    = false;
-static HANDLE wcProcess = NULL;
-static HMODULE spyBase  = NULL;
-static std::string spyDllPath;
+static bool debugMode             = false;
+static HANDLE wcProcess           = NULL;
+static HMODULE spyBase            = NULL;
+static WCHAR spyDllPath[MAX_PATH] = { 0 };
 
-//区分MSVC和MinGW
-#ifdef _MSC_VER
-constexpr char WCFSDKDLL[]       = "sdk.dll";
-constexpr char WCFSPYDLL[]       = "spy.dll";
-constexpr char WCFSPYDLL_DEBUG[] = "spy_debug.dll";
-#else
-constexpr char WCFSDKDLL[]       = "libsdk.dll";
-constexpr char WCFSPYDLL[]       = "libspy.dll";
-constexpr char WCFSPYDLL_DEBUG[] = "libspyd.dll";
-#endif
+void WxSetGuiMode(bool enable) { g_guiMode = enable; }
 
-constexpr std::string_view DISCLAIMER_FLAG      = ".license_accepted.flag";
-constexpr std::string_view DISCLAIMER_TEXT_FILE = "DISCLAIMER.md";
-
-namespace fs = std::filesystem;
-
-static fs::path get_module_directory()
+// 取 sdk.dll 所在目录（注入器自身目录），用作 lock 文件与 spy 工作目录的锚点，
+// 避免依赖调用方 CWD——否则 start/stop 若 CWD 不同，stop 找不到 lock。
+static void GetModuleDir(WCHAR *dir)
 {
-    char buffer[MAX_PATH] = { 0 };
-    HMODULE hModule       = reinterpret_cast<HMODULE>(&__ImageBase);
-    GetModuleFileNameA(hModule, buffer, MAX_PATH);
-    fs::path modulePath(buffer);
-    return modulePath.parent_path();
+    GetModuleFileName(GetModuleHandle(WECHATSDKDLL), dir, MAX_PATH);
+    PathRemoveFileSpec(dir);
 }
 
-static bool show_disclaimer()
+static void GetLockPath(WCHAR *lockPath)
 {
-    fs::path sdk_path = get_module_directory();
-    if (fs::exists(sdk_path / DISCLAIMER_FLAG)) {
-        return true;
-    }
-
-    fs::path path = sdk_path / DISCLAIMER_TEXT_FILE;
-    std::ifstream file(path, std::ios::binary);
-    if (!file.is_open()) {
-        util::MsgBox(NULL, "免责声明文件读取失败。", "错误", MB_ICONERROR);
-        return false;
-    }
-
-    auto disclaimerText = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    if (disclaimerText.empty()) {
-        util::MsgBox(NULL, "免责声明文件为空", "错误", MB_ICONERROR);
-        return false;
-    }
-
-    int result = util::MsgBox(NULL, disclaimerText.c_str(), "免责声明", MB_ICONWARNING | MB_OKCANCEL | MB_DEFBUTTON2);
-    if (result == IDCANCEL) {
-        util::MsgBox(NULL, "您拒绝了免责声明，程序将退出。", "提示", MB_ICONINFORMATION);
-        return false;
-    }
-
-    std::ofstream flagFile(sdk_path / DISCLAIMER_FLAG, std::ios::out | std::ios::trunc);
-    if (!flagFile) {
-        util::MsgBox(NULL, "无法创建协议标志文件。", "错误", MB_ICONERROR);
-        return false;
-    }
-    flagFile << "User accepted the license agreement.";
-
-    return true;
+    GetModuleDir(lockPath);
+    PathAppend(lockPath, WCF_LOCK);
 }
 
-static std::string get_dll_path(bool debug)
+// 检查目标进程是否已加载 spy 模块，用于 start 幂等：重复 start 会二次注入，
+// 导致 RPC 端口重复绑定。比 lock 文件可靠——微信重启换 pid 后 lock 会残留成
+// 过期状态，而模块列表反映的是当前真实加载情况。
+static bool IsSpyInjected(uint32_t pid)
 {
-    char buffer[MAX_PATH] = { 0 };
-    GetModuleFileNameA(GetModuleHandleA(WCFSDKDLL), buffer, MAX_PATH);
-
-    fs::path path(buffer);
-    path.remove_filename(); // 只保留目录路径
-    path /= debug ? WCFSPYDLL_DEBUG : WCFSPYDLL;
-
-    if (!fs::exists(path)) {
-        util::MsgBox(NULL, path.string().c_str(), "文件不存在", MB_ICONERROR);
-        return "";
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
+    if (snapshot == INVALID_HANDLE_VALUE) {
+        return false;
     }
 
-    return path.string();
+    bool found        = false;
+    MODULEENTRY32W me = { 0 };
+    me.dwSize         = sizeof(me);
+    if (Module32FirstW(snapshot, &me)) {
+        do {
+            if (_wcsicmp(me.szModule, WECHATINJECTDLL) == 0 || _wcsicmp(me.szModule, WECHATINJECTDLL_DEBUG) == 0) {
+                found = true;
+                break;
+            }
+        } while (Module32NextW(snapshot, &me));
+    }
+    CloseHandle(snapshot);
+    return found;
 }
-extern "C" {
-__declspec(dllexport) int WxInitSDK(bool debug, int port)
+
+static int GetDllPath(bool debug, wchar_t *dllPath)
 {
-    if (!show_disclaimer()) {
-        exit(-1); // 用户拒绝协议，退出程序
+    GetModuleDir(spyDllPath);
+    if (debug) {
+        PathAppend(spyDllPath, WECHATINJECTDLL_DEBUG);
+    } else {
+        PathAppend(spyDllPath, WECHATINJECTDLL);
     }
 
+    if (!PathFileExists(spyDllPath)) {
+        ReportError(spyDllPath, L"文件不存在");
+        return WX_ERR_DLL_NOT_FOUND;
+    }
+
+    return WX_OK;
+}
+
+int WxInitSDK(bool debug, int port)
+{
     int status  = 0;
-    DWORD wcPid = 0;
+    uint32_t wcPid = 0;
 
-    spyDllPath = get_dll_path(debug);
-    if (spyDllPath.empty()) {
-        return ERROR_FILE_NOT_FOUND; // DLL 文件路径不存在
-    }
-
-    status = util::open_wechat(wcPid);
+    status = GetDllPath(debug, spyDllPath);
     if (status != 0) {
-        util::MsgBox(NULL, "打开微信失败", "WxInitSDK", 0);
         return status;
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(2)); // 等待微信打开
-    wcProcess = inject_dll(wcPid, spyDllPath, &spyBase);
+    bool launched = false;
+    if (util::open_wechat(&wcPid, &launched) != ERROR_SUCCESS) {
+        ReportError(L"打开微信失败", L"WxInitSDK");
+        return WX_ERR_OPEN_WECHAT;
+    }
+
+    if (IsSpyInjected(wcPid)) {
+        ReportError(L"spy 已注入，请勿重复 start（如需重启请先 stop）", L"WxInitSDK");
+        return WX_ERR_ALREADY_INJECTED;
+    }
+
+    if (launched) {
+        Sleep(2000); // 仅新拉起微信时才等待其启动；已在运行则无需空等
+    }
+    wcProcess = InjectDll(wcPid, spyDllPath, &spyBase);
     if (wcProcess == NULL) {
-        util::MsgBox(NULL, "注入失败", "WxInitSDK", 0);
-        return -1;
-    }
-    injected = true;
-
-    util::PortPath pp = { 0 };
-    pp.port           = port;
-    snprintf(pp.path, MAX_PATH, "%s", fs::current_path().string().c_str());
-
-    status       = -3; // TODO: 统一错误码
-    bool success = call_dll_func_ex(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(util::PortPath),
-                                    (DWORD *)&status);
-    if (!success || status != 0) {
-        WxDestroySDK();
+        ReportError(L"注入失败", L"WxInitSDK");
+        return WX_ERR_INJECT;
     }
 
-    return status;
+    WCHAR moduleDir[MAX_PATH] = { 0 };
+    GetModuleDir(moduleDir);
+
+    PortPath_t pp = { 0 };
+    pp.port       = port;
+    sprintf_s(pp.path, MAX_PATH, "%s", util::w2s(moduleDir).c_str());
+
+    if (!CallDllFuncEx(wcProcess, spyDllPath, spyBase, "InitSpy", (LPVOID)&pp, sizeof(PortPath_t), NULL)) {
+        ReportError(L"初始化失败", L"WxInitSDK");
+        return WX_ERR_INIT_SPY;
+    }
+
+#ifdef WCF
+    WCHAR lockPath[MAX_PATH] = { 0 };
+    GetLockPath(lockPath);
+    FILE *fd = _wfopen(lockPath, L"wb");
+    if (fd == NULL) {
+        ReportError(L"无法打开lock文件", L"WxInitSDK");
+        return WX_ERR_LOCK;
+    }
+    fwrite((uint8_t *)&debug, sizeof(debug), 1, fd);
+    fwrite((uint8_t *)&spyBase, sizeof(spyBase), 1, fd);
+    fclose(fd);
+#endif
+    debugMode = debug;
+    return WX_OK;
 }
 
-__declspec(dllexport) int WxDestroySDK()
+int WxDestroySDK()
 {
-    if (!injected) {
-        return 1; // 未注入
+    int status = WX_OK;
+#ifdef WCF
+    bool debug;
+    uint32_t pid = util::get_wechat_pid();
+    if (pid == 0) {
+        ReportError(L"微信未运行", L"WxDestroySDK");
+        return WX_ERR_WECHAT_NOT_RUNNING;
     }
 
-    if (!call_dll_func(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL)) {
-        return -1;
+    wcProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+    if (wcProcess == NULL) {
+        ReportError(L"打开微信进程失败", L"WxDestroySDK");
+        return WX_ERR_WECHAT_NOT_RUNNING;
     }
 
-    if (!eject_dll(wcProcess, spyBase)) {
-        return -2;
+    WCHAR lockPath[MAX_PATH] = { 0 };
+    GetLockPath(lockPath);
+    FILE *fd = _wfopen(lockPath, L"rb");
+    if (fd == NULL) {
+        ReportError(L"无法打开lock文件", L"WxDestroySDK");
+        return WX_ERR_LOCK;
     }
-    injected = false;
+    fread((uint8_t *)&debug, sizeof(debug), 1, fd);
+    fread((uint8_t *)&spyBase, sizeof(spyBase), 1, fd);
+    fclose(fd);
+    status = GetDllPath(debug, spyDllPath);
+#else
+    status = GetDllPath(debugMode, spyDllPath);
+#endif
 
-    return 0;
-}
+    if (status != 0) {
+        return status;
+    }
+
+    if (!CallDllFunc(wcProcess, spyDllPath, spyBase, "CleanupSpy", NULL, NULL)) {
+        ReportError(L"清理 spy 失败", L"WxDestroySDK");
+        return WX_ERR_EJECT;
+    }
+
+    if (!EjectDll(wcProcess, spyBase)) {
+        return WX_ERR_EJECT;
+    }
+
+    return WX_OK;
 }

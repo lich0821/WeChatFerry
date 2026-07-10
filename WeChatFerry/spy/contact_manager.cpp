@@ -2,152 +2,260 @@
 
 #include "contact_manager.h"
 
+#include <algorithm>
+#include <set>
+#include <string>
+#include <vector>
+
+#include "database_executor.h"
 #include "log.hpp"
-#include "offsets.h"
 #include "pb_util.h"
 #include "rpc_helper.h"
 #include "spy.h"
+#include "spy_types.h"
 #include "util.h"
+#include "offsets.h"
 
-using namespace std;
+namespace
+{
+
+struct WxStringValue {
+    const wchar_t *wptr;
+    uint32_t size;
+    uint32_t capacity;
+    const char *ptr;
+    uint32_t clen;
+};
+
+using BufferInitFn        = void(__thiscall *)(void *buffer);
+using BufferCleanupFn     = void(__thiscall *)(void *buffer);
+using WxStringAssignFn    = void *(__thiscall *)(void *dest, const wchar_t *src, int len);
+using AcceptNewFriendFn   = int(__thiscall *)(void *buffer, const WxString *v3, void *nullbuffer,
+                                              int reserved1, uint64_t scratch, WxStringValue v4,
+                                              int scene, int reserved2);
+
+WxStringValue to_value(const WxString &value)
+{
+    return { value.wptr, value.size, value.capacity, value.ptr, value.clen };
+}
+
+std::string field_to_string(const DbField_t &field)
+{
+    return std::string(field.content.begin(), field.content.end());
+}
+
+std::set<std::string> get_contact_columns()
+{
+    std::set<std::string> columns;
+    DbRows_t rows = db::exec_db_query("MicroMsg.db", "PRAGMA table_info(Contact);");
+    for (const auto &row : rows) {
+        for (const auto &field : row) {
+            if (field.column == "name") {
+                columns.insert(field_to_string(field));
+            }
+        }
+    }
+    return columns;
+}
+
+bool has_column(const std::set<std::string> &columns, const char *name)
+{
+    return columns.find(name) != columns.end();
+}
+
+std::string select_expr(const std::set<std::string> &columns, const char *source, const char *alias, bool numeric = false)
+{
+    if (has_column(columns, source)) {
+        return std::string(source) + " AS " + alias;
+    }
+    return numeric ? ("0 AS " + std::string(alias)) : ("'' AS " + std::string(alias));
+}
+
+std::string escape_sql_string(const std::string &value)
+{
+    std::string escaped;
+    escaped.reserve(value.size());
+    for (char ch : value) {
+        escaped.push_back(ch);
+        if (ch == '\'') {
+            escaped.push_back('\'');
+        }
+    }
+    return escaped;
+}
+
+std::string build_contact_query(const std::string *wxid)
+{
+    std::set<std::string> columns = get_contact_columns();
+    if (!has_column(columns, "UserName")) {
+        return "";
+    }
+
+    std::vector<std::string> fields = {
+        select_expr(columns, "UserName", "wxid"),
+        select_expr(columns, "Alias", "code"),
+        select_expr(columns, "Remark", "remark"),
+        select_expr(columns, "NickName", "name"),
+        select_expr(columns, "Sex", "gender", true),
+        select_expr(columns, "Country", "country"),
+        select_expr(columns, "Province", "province"),
+        select_expr(columns, "City", "city"),
+    };
+
+    std::string sql = "SELECT ";
+    for (size_t i = 0; i < fields.size(); ++i) {
+        if (i != 0) {
+            sql += ", ";
+        }
+        sql += fields[i];
+    }
+    sql += " FROM Contact";
+
+    if (wxid != nullptr) {
+        sql += " WHERE UserName='";
+        sql += escape_sql_string(*wxid);
+        sql += "'";
+    }
+
+    return sql + ";";
+}
+
+RpcContact_t row_to_contact(const DbRow_t &row)
+{
+    RpcContact_t contact = {};
+    for (const auto &field : row) {
+        std::string value = field_to_string(field);
+        if (field.column == "wxid") {
+            contact.wxid = value;
+        } else if (field.column == "code") {
+            contact.code = value;
+        } else if (field.column == "remark") {
+            contact.remark = value;
+        } else if (field.column == "name") {
+            contact.name = value;
+        } else if (field.column == "country") {
+            contact.country = value;
+        } else if (field.column == "province") {
+            contact.province = value;
+        } else if (field.column == "city") {
+            contact.city = value;
+        } else if (field.column == "gender") {
+            contact.gender = value.empty() ? 0 : atoi(value.c_str());
+        }
+    }
+
+    return contact;
+}
+
+} // namespace
 
 namespace contact
 {
-namespace OsCon = Offsets::Contact;
 
-using get_contact_mgr_t  = QWORD (*)();
-using get_contact_list_t = QWORD (*)(QWORD, QWORD);
-using func_verify_new_t  = QWORD (*)(QWORD, WxString *);
-using func_verify_ok_t   = QWORD (*)(QWORD, WxString *, QWORD *, QWORD, QWORD, QWORD, QWORD, QWORD, WxString *);
-
-#define FEAT_LEN 5
-static const uint8_t FEAT_COUNTRY[FEAT_LEN]  = { 0xA4, 0xD9, 0x02, 0x4A, 0x18 };
-static const uint8_t FEAT_PROVINCE[FEAT_LEN] = { 0xE2, 0xEA, 0xA8, 0xD1, 0x18 };
-static const uint8_t FEAT_CITY[FEAT_LEN]     = { 0x1D, 0x02, 0x5B, 0xBF, 0x18 };
-
-static QWORD find_mem(QWORD start, QWORD end, const void *target, size_t len)
+std::vector<RpcContact_t> get_contacts()
 {
-    uint8_t *p = reinterpret_cast<uint8_t *>(start);
-    while (reinterpret_cast<QWORD>(p) < end) {
-        if (memcmp(p, target, len) == 0) {
-            return reinterpret_cast<QWORD>(p);
-        }
-        p++;
-    }
-    return 0;
-}
+    std::vector<RpcContact_t> contacts;
 
-static string get_cnt_string(QWORD start, QWORD end, const uint8_t *feat, size_t len)
-{
-    QWORD pfeat = find_mem(start, end, feat, len);
-    if (pfeat == 0) {
-        return "";
-    }
-
-    DWORD lfeat = util::get_dword(pfeat + len);
-    if (lfeat <= 2) {
-        return "";
-    }
-
-    return util::w2s(util::get_p_wstring(pfeat + FEAT_LEN + 4, lfeat));
-}
-
-vector<RpcContact_t> get_contacts()
-{
-    vector<RpcContact_t> contacts;
-    auto func_get_contact_mgr  = Spy::getFunction<get_contact_mgr_t>(OsCon::MGR);
-    auto func_get_contact_list = Spy::getFunction<get_contact_list_t>(OsCon::LIST);
-
-    QWORD mgr     = func_get_contact_mgr();
-    QWORD addr[3] = { 0 };
-    if (func_get_contact_list(mgr, reinterpret_cast<QWORD>(addr)) != 1) {
-        LOG_ERROR("get_contacts failed");
+    // 依据 MicroMsg.db 的 Contact 表实际列动态拼 SQL（缺列以 '' / 0 占位）
+    std::string sql = build_contact_query(nullptr);
+    if (sql.empty()) {
+        LOG_ERROR("Failed to build contact query (missing UserName column?).");
         return contacts;
     }
 
-    QWORD pstart = addr[0];
-    QWORD pend   = addr[2];
-    while (pstart < pend) {
-        RpcContact_t cnt;
-        QWORD pbin   = util::get_qword(pstart + OsCon::BIN);
-        QWORD lenbin = util::get_dword(pstart + OsCon::BIN_LEN);
-
-        cnt.wxid   = util::get_str_by_wstr_addr(pstart + OsCon::WXID);
-        cnt.code   = util::get_str_by_wstr_addr(pstart + OsCon::CODE);
-        cnt.remark = util::get_str_by_wstr_addr(pstart + OsCon::REMARK);
-        cnt.name   = util::get_str_by_wstr_addr(pstart + OsCon::NAME);
-
-        cnt.country  = get_cnt_string(pbin, pbin + lenbin, FEAT_COUNTRY, FEAT_LEN);
-        cnt.province = get_cnt_string(pbin, pbin + lenbin, FEAT_PROVINCE, FEAT_LEN);
-        cnt.city     = get_cnt_string(pbin, pbin + lenbin, FEAT_CITY, FEAT_LEN);
-
-        cnt.gender = (pbin == 0) ? 0 : static_cast<DWORD>(*(uint8_t *)(pbin + OsCon::GENDER));
-
-        contacts.push_back(cnt);
-        pstart += OsCon::STEP;
+    DbRows_t rows = db::exec_db_query("MicroMsg.db", sql);
+    contacts.reserve(rows.size());
+    for (const auto &row : rows) {
+        contacts.push_back(row_to_contact(row));
     }
-
     return contacts;
 }
 
 int accept_new_friend(const std::string &v3, const std::string &v4, int scene)
 {
-    // TODO: 备注、标签等
-    auto func_new    = Spy::getFunction<func_verify_new_t>(OsCon::VERIFY_NEW);
-    auto func_verify = Spy::getFunction<func_verify_ok_t>(OsCon::VERIFY_OK);
+    if (g_WeChatWinDllAddr == 0) {
+        LOG_ERROR("WeChatWin.dll not located.");
+        return -1;
+    }
 
-    QWORD helper = util::get_qword(Spy::WeChatDll.load() + OsCon::ADD_FRIEND_HELPER);
-    QWORD fvdf   = util::get_qword(Spy::WeChatDll.load() + OsCon::FVDF);
+    // v3（加密 username）仅被读取（拷入 this+24），用非拥有视图即可；
+    // v4（ticket）会被 VerifyOK mm_free，须用 ASSIGN 建 WeChat 拥有副本。
+    auto ctor      = reinterpret_cast<BufferInitFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_CTOR);
+    auto verify_ok = reinterpret_cast<AcceptNewFriendFn>(g_WeChatWinDllAddr + Offsets::Friend::VERIFY_OK);
+    auto dtor      = reinterpret_cast<BufferCleanupFn>(g_WeChatWinDllAddr + Offsets::Friend::ACCEPT_DTOR);
+    auto assign    = reinterpret_cast<WxStringAssignFn>(g_WeChatWinDllAddr + Offsets::RichText::ASSIGN);
 
-    auto pV3 = util::CreateWxString(v3);
-    auto pV4 = util::CreateWxString(v4);
+    LOG_DEBUG("accept_new_friend v3: {}, v4: {}, scene: {}", v3, v4, scene);
 
-    QWORD v4Array[4] = { 0 };
-    QWORD pV4Buff    = func_new(reinterpret_cast<QWORD>(&v4Array), pV4);
+    std::wstring wsV3 = util::s2w(v3);
+    std::wstring wsV4 = util::s2w(v4);
+    WxString wxV3(wsV3);                       // 非拥有视图：VerifyOK 只读取
+    WxString wxV4;                             // ticket：须为 WeChat 拥有副本（VerifyOK 末尾 mm_free 它）
+    assign(&wxV4, wsV4.c_str(), -1);
 
-    char buff[0x100] = { 0 };
-    memcpy(buff, &helper, sizeof(&helper));
-    QWORD a1 = reinterpret_cast<QWORD>(&buff);
+    char buffer[0x40]      = { 0 };
+    char nullbuffer[0x3CC] = { 0 };
 
-    QWORD ret = func_verify(a1, pV3, &fvdf, 0x1D08B4, pV4Buff, 0x1, pV4Buff, scene, 0x0);
-    util::FreeWxString(pV3);
-    util::FreeWxString(pV4);
+    ctor(buffer);
+    int success = verify_ok(buffer, &wxV3, nullbuffer, 0, 0, to_value(wxV4), scene, 0);
+    dtor(buffer);
 
-    return static_cast<int>(ret); // 成功返回 1
+    return success;
 }
 
-RpcContact_t get_contact_by_wxid(const string &wxid)
+int add_friend_by_wxid(const std::string &wxid, const std::string &msg)
 {
-    RpcContact_t contact;
-    LOG_ERROR("技术太菜，实现不了。");
+    (void)wxid;
+    (void)msg;
+    return 0;
+}
+
+RpcContact_t get_contact_by_wxid(const std::string &wxid)
+{
+    RpcContact_t contact = {};
+    contact.wxid         = wxid;
+
+    // 与 get_contacts 同一条链，仅带 WHERE UserName=? 过滤单个联系人。
+    std::string sql = build_contact_query(&wxid);
+    if (sql.empty()) {
+        LOG_ERROR("Failed to build contact query (missing UserName column?).");
+        return contact;
+    }
+
+    DbRows_t rows = db::exec_db_query("MicroMsg.db", sql);
+    if (!rows.empty()) {
+        contact = row_to_contact(rows.front());
+    }
     return contact;
 }
 
 bool rpc_get_contacts(uint8_t *out, size_t *len)
 {
-    vector<RpcContact_t> contacts = get_contacts();
-    return fill_response<Functions_FUNC_GET_CONTACTS>(out, len, [&](Response &rsp) {
+    std::vector<RpcContact_t> contacts = get_contacts();
+    return fill_response<Functions_FUNC_GET_CONTACTS>(out, len, contacts, [](Response &rsp, auto &contacts) {
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
 }
 
-bool rpc_get_contact_info(const string &wxid, uint8_t *out, size_t *len)
+bool rpc_get_contact_info(const std::string &wxid, uint8_t *out, size_t *len)
 {
-    vector<RpcContact_t> contacts = { get_contact_by_wxid(wxid) };
-    return fill_response<Functions_FUNC_GET_CONTACT_INFO>(out, len, [&](Response &rsp) {
+    std::vector<RpcContact_t> contacts;
+    if (!wxid.empty()) {
+        contacts.push_back(get_contact_by_wxid(wxid));
+    }
+    return fill_response<Functions_FUNC_GET_CONTACT_INFO>(out, len, contacts, [](Response &rsp, auto &contacts) {
         rsp.msg.contacts.contacts.funcs.encode = encode_contacts;
         rsp.msg.contacts.contacts.arg          = &contacts;
     });
 }
 
-bool rpc_accept_friend(const Verification &v, uint8_t *out, size_t *len)
+bool rpc_accept_friend(const std::string &v3, const std::string &v4, int scene, uint8_t *out, size_t *len)
 {
-    const string v3 = v.v3 ? v.v3 : "";
-    const string v4 = v.v4 ? v.v4 : "";
-    int scene       = v.scene;
-    return fill_response<Functions_FUNC_ACCEPT_FRIEND>(
-        out, len, [&](Response &rsp) { rsp.msg.status = accept_new_friend(v3, v4, scene); });
+    int result = accept_new_friend(v3, v4, scene);
+    return fill_response<Functions_FUNC_ACCEPT_FRIEND>(out, len, [result](Response &rsp) {
+        rsp.msg.status = result;
+    });
 }
 
 } // namespace contact

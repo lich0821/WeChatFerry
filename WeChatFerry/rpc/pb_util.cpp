@@ -68,6 +68,7 @@ bool encode_contacts(pb_ostream_t *stream, const pb_field_t *field, void *const 
     vector<RpcContact_t> *v = (vector<RpcContact_t> *)*arg;
     RpcContact message      = RpcContact_init_default;
 
+    LOG_DEBUG("encode_contacts[{}]", v->size());
     for (auto it = v->begin(); it != v->end(); it++) {
         message.wxid.funcs.encode = &encode_string;
         message.wxid.arg          = (void *)(*it).wxid.c_str();

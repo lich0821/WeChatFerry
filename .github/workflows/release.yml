@@ -46,7 +46,7 @@ jobs:
             -Path "tmp/*" `
             -DestinationPath "tmp/v${{ env.version }}.zip"
 
-          Remove-Item -Path "tmp/*.dll", "tmp/*.md"
+          Remove-Item -Path "tmp/*.dll", "tmp/*.md", "tmp/*.exe"
 
           # 下载对应版本微信安装包
           Invoke-WebRequest `

@@ -1,0 +1,4 @@
+﻿EXPORTS
+    WxInitSDK
+    WxDestroySDK
+    WxSetGuiMode
