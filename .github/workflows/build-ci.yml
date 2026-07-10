@@ -71,6 +71,9 @@ jobs:
             msbuild WeChatFerry/WeChatFerry.sln `
               /p:Configuration=$cfg `
               /p:Platform="x86" `
+              /p:VcpkgEnableManifest=true `
+              /p:VcpkgManifestInstall=false `
+              /p:VcpkgInstalledDir="${{ github.workspace }}/WeChatFerry/vcpkg_installed" `
               /verbosity:minimal
           }
         shell: pwsh
